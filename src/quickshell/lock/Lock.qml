@@ -480,6 +480,7 @@ Scope {
 
     PamContext {
         id: fpPam
+        user: (typeof SystemInfo !== "undefined" && SystemInfo.username !== "") ? SystemInfo.username : (Quickshell.env("USER") || "")
 
         onPamMessage: root.handleFingerprintMessage()
         onCompleted: (result) => root.handleFingerprintCompleted(result)
@@ -488,6 +489,7 @@ Scope {
 
     PamContext {
         id: pam
+        user: (typeof SystemInfo !== "undefined" && SystemInfo.username !== "") ? SystemInfo.username : (Quickshell.env("USER") || "")
 
         onResponseRequiredChanged: {
             if (!responseRequired || root.pendingPassword === "") return;
