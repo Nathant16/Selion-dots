@@ -49,7 +49,9 @@
       "theme_apps": "App-thema's",
       "theme_wallpapers": "Achtergronden",
       "general_main": "Algemeen",
-      "general_presets": "Voorinstellingen"
+      "general_presets": "Voorinstellingen",
+      "fingerprint": "Vingerafdrukken",
+      "power": "Energie"
     },
     "launcher": {
       "position": {
@@ -333,7 +335,8 @@
         },
         "fingerprint": {
           "title": "Inloggen met vingerafdruk inschakelen",
-          "desc": "Ontgrendelen van het vergrendelscherm met een vingerafdruk toestaan"
+          "desc": "Ontgrendelen van het vergrendelscherm met een vingerafdruk toestaan",
+          "manage": "Configureren..."
         },
         "background": {
           "select": "Achtergrond selecteren",
@@ -1085,6 +1088,120 @@
         "title": "Screenshotmap",
         "desc": "Map waarin screenshots worden opgeslagen",
         "select_dir": "Map selecteren..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "Vernieuwen",
+      "cancel": "Annuleren",
+      "enrolled_count": "vingerafdrukken geregistreerd",
+      "header": {
+        "title": "Vingerafdrukken",
+        "desc": "Beheer biometrische authenticatie en vingerafdruklezer",
+        "ready": "Sensor gereed",
+        "not_found": "Geen sensor gedetecteerd",
+        "not_found_desc": "Biometrische sensor niet gevonden op dit systeem",
+        "touch_type": "Aanraking",
+        "swipe_type": "Vegen",
+        "stages_count": "Stappen: {count}"
+      },
+      "master": {
+        "title": "Vingerafdrukauthenticatie",
+        "desc": "Schermontgrendeling en verificatie met vingerafdruk toestaan"
+      },
+      "enrolled": {
+        "title": "Opgeslagen vingerafdrukken",
+        "desc": "Lijst met geregistreerde vingers in het systeem",
+        "empty_title": "Geen vingerafdrukken opgeslagen",
+        "empty_desc": "Registreer hieronder een vinger om in te loggen zonder wachtwoord",
+        "item_desc": "Biometrische ontgrendeling actief",
+        "delete_tooltip": "Vingerafdruk verwijderen",
+        "delete_all": "Alles verwijderen",
+        "confirm_delete_title": "Vingerafdruk verwijderen?",
+        "confirm_delete_desc": "Weet u zeker dat u deze vingerafdruk wilt verwijderen?",
+        "deleted": "Vingerafdruk succesvol verwijderd"
+      },
+      "enroll": {
+        "title": "Vingerafdruk toevoegen",
+        "desc": "Selecteer een vinger en scan op de sensor",
+        "select_finger": "Selecteer vinger",
+        "hand_left": "Linkerhand",
+        "hand_right": "Rechterhand",
+        "button_start": "Toevoegen",
+        "button_cancel": "Annuleren",
+        "button_done": "Klaar",
+        "button_retry": "Opnieuw proberen",
+        "active_title": "Scannen: {finger}",
+        "step": "Stap {current} van {total}",
+        "step_passed": "Geweldig! Til vinger op en plaats opnieuw",
+        "place_finger": "Plaats uw vinger op de sensor",
+        "retry": "Niet herkend. Probeer het opnieuw",
+        "swipe_too_short": "Te korte veeg. Veeg langzamer",
+        "not_centered": "Plaats vinger in het midden van de sensor",
+        "remove_retry": "Haal vinger weg en plaats opnieuw",
+        "success": "Vingerafdruk succesvol toegevoegd!",
+        "failed": "Registratie van vingerafdruk mislukt",
+        "already_enrolled": "Al geregistreerd"
+      },
+      "fingers": {
+        "right-thumb": "Rechterduim",
+        "right-index-finger": "Rechterwijsvinger",
+        "right-middle-finger": "Rechtermiddelvinger",
+        "right-ring-finger": "Rechterringvinger",
+        "right-little-finger": "Rechterpink",
+        "left-thumb": "Linkerduim",
+        "left-index-finger": "Linkerwijsvinger",
+        "left-middle-finger": "Linkermiddelvinger",
+        "left-ring-finger": "Linkerringvinger",
+        "left-little-finger": "Linkerpink"
+      },
+      "finger_short": {
+        "thumb": "Duim",
+        "index-finger": "Wijsvinger",
+        "middle-finger": "Middelvinger",
+        "ring-finger": "Ringvinger",
+        "little-finger": "Pink"
+      },
+      "limits": {
+        "title": "Mislukte pogingen beperken",
+        "desc": "Sensor tijdelijk uitschakelen na 5 opeenvolgende mislukkingen",
+        "attempts_title": "Maximale pogingen vingerafdruk",
+        "attempts_desc": "Aantal mislukte scans voordat sensor wordt geblokkeerd tot wachtwoord"
+      }
+    },
+    "power": {
+      "refresh": "Vernieuwen",
+      "health_label": "Gezondheid: %1%",
+      "status": {
+        "ac": "Netstroom",
+        "charging": "Opladen",
+        "discharging": "Ontladen",
+        "full": "Volledig opgeladen"
+      },
+      "desc": {
+        "ac_connected": "Werkt op netstroomadapter",
+        "battery_active": "Werkt op batterijvoeding"
+      },
+      "profile": {
+        "title": "Energieprofiel",
+        "desc": "Prestaties en stroomverbruik balanceren"
+      },
+      "profiles": {
+        "title": "Energieprofielen",
+        "desc": "Kies modus voor CPU, GPU en koeling",
+        "saver_title": "Energiebesparing",
+        "saver_desc": "Minimaal verbruik. Turbo Boost uitgeschakeld",
+        "balanced_title": "Gebalanceerd",
+        "balanced_desc": "Optimale balans tussen soepelheid en accuduur",
+        "perf_title": "Prestaties",
+        "perf_desc": "Maximale kloksnelheden en actieve Boost"
+      },
+      "threshold": {
+        "title": "Batterijbescherming",
+        "desc": "Oplaadlimiet om batterijlevensduur te verlengen",
+        "conservation_title": "Behoudsmodus",
+        "conservation_desc": "Beperk opladen tot 80% om levensduur te sparen",
+        "custom_label": "Oplaadlimiet",
+        "custom_desc": "Maximaal oplaadpercentage van de batterij"
       }
     }
   },

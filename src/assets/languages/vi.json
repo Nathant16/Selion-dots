@@ -49,7 +49,9 @@
       "theme_apps": "Giao diện ứng dụng",
       "theme_wallpapers": "Hình nền",
       "general_main": "Chung",
-      "general_presets": "Cấu hình sẵn"
+      "general_presets": "Cấu hình sẵn",
+      "fingerprint": "Vân tay",
+      "power": "Nguồn điện"
     },
     "launcher": {
       "position": {
@@ -333,7 +335,8 @@
         },
         "fingerprint": {
           "title": "Bật đăng nhập bằng vân tay",
-          "desc": "Cho phép mở khóa màn hình khóa bằng vân tay"
+          "desc": "Cho phép mở khóa màn hình khóa bằng vân tay",
+          "manage": "Cấu hình..."
         },
         "background": {
           "select": "Chọn nền",
@@ -1085,6 +1088,120 @@
         "title": "Thư mục ảnh chụp màn hình",
         "desc": "Thư mục lưu ảnh chụp màn hình",
         "select_dir": "Chọn thư mục..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "Làm mới",
+      "cancel": "Hủy",
+      "enrolled_count": "vân tay đã lưu",
+      "header": {
+        "title": "Dấu vân tay",
+        "desc": "Quản lý xác thực sinh trắc học và đầu đọc vân tay",
+        "ready": "Cảm biến sẵn sàng",
+        "not_found": "Không tìm thấy cảm biến",
+        "not_found_desc": "Không tìm thấy đầu đọc vân tay trên hệ thống",
+        "touch_type": "Chạm",
+        "swipe_type": "Vuốt",
+        "stages_count": "Số bước: {count}"
+      },
+      "master": {
+        "title": "Xác thực bằng vân tay",
+        "desc": "Cho phép mở khóa màn hình và xác thực bằng vân tay"
+      },
+      "enrolled": {
+        "title": "Vân tay đã lưu",
+        "desc": "Danh sách các ngón tay đã đăng ký trong hệ thống",
+        "empty_title": "Chưa có vân tay nào",
+        "empty_desc": "Đăng ký ngón tay bên dưới để đăng nhập không cần mật khẩu",
+        "item_desc": "Mở khóa sinh trắc học đang hoạt động",
+        "delete_tooltip": "Xóa vân tay",
+        "delete_all": "Xóa tất cả",
+        "confirm_delete_title": "Xóa vân tay?",
+        "confirm_delete_desc": "Bạn có chắc chắn muốn xóa dấu vân tay này không?",
+        "deleted": "Đã xóa vân tay thành công"
+      },
+      "enroll": {
+        "title": "Thêm vân tay",
+        "desc": "Chọn ngón tay và quét trên cảm biến",
+        "select_finger": "Chọn ngón tay",
+        "hand_left": "Tay trái",
+        "hand_right": "Tay phải",
+        "button_start": "Thêm",
+        "button_cancel": "Hủy",
+        "button_done": "Hoàn tất",
+        "button_retry": "Thử lại",
+        "active_title": "Đang quét: {finger}",
+        "step": "Bước {current} / {total}",
+        "step_passed": "Tuyệt vời! Nhấc ngón tay lên và đặt lại",
+        "place_finger": "Đặt ngón tay lên cảm biến",
+        "retry": "Không nhận diện được. Vui lòng thử lại",
+        "swipe_too_short": "Vuốt quá ngắn. Hãy vuốt chậm hơn",
+        "not_centered": "Đặt ngón tay vào giữa cảm biến",
+        "remove_retry": "Nhấc ngón tay ra và đặt lại",
+        "success": "Đã thêm vân tay thành công!",
+        "failed": "Đăng ký vân tay thất bại",
+        "already_enrolled": "Đã được đăng ký"
+      },
+      "fingers": {
+        "right-thumb": "Ngón cái phải",
+        "right-index-finger": "Ngón trỏ phải",
+        "right-middle-finger": "Ngón giữa phải",
+        "right-ring-finger": "Ngón áp út phải",
+        "right-little-finger": "Ngón út phải",
+        "left-thumb": "Ngón cái trái",
+        "left-index-finger": "Ngón trỏ trái",
+        "left-middle-finger": "Ngón giữa trái",
+        "left-ring-finger": "Ngón áp út trái",
+        "left-little-finger": "Ngón út trái"
+      },
+      "finger_short": {
+        "thumb": "Cái",
+        "index-finger": "Trỏ",
+        "middle-finger": "Giữa",
+        "ring-finger": "Áp út",
+        "little-finger": "Út"
+      },
+      "limits": {
+        "title": "Giới hạn lần thử thất bại",
+        "desc": "Tạm thời tắt cảm biến sau 5 lần quét sai liên tiếp",
+        "attempts_title": "Số lần thử tối đa",
+        "attempts_desc": "Số lần quét sai trước khi yêu cầu nhập mật khẩu"
+      }
+    },
+    "power": {
+      "refresh": "Làm mới",
+      "health_label": "Độ chai pin: %1%",
+      "status": {
+        "ac": "Đang dùng nguồn điện",
+        "charging": "Đang sạc",
+        "discharging": "Đang dùng pin",
+        "full": "Đã sạc đầy"
+      },
+      "desc": {
+        "ac_connected": "Đang chạy bằng bộ sạc AC",
+        "battery_active": "Đang chạy bằng nguồn pin"
+      },
+      "profile": {
+        "title": "Cấu hình nguồn điện",
+        "desc": "Cân bằng hiệu năng và mức tiêu thụ điện"
+      },
+      "profiles": {
+        "title": "Chế độ năng lượng",
+        "desc": "Chọn chế độ cho CPU, GPU và quạt tản nhiệt",
+        "saver_title": "Tiết kiệm pin",
+        "saver_desc": "Tiêu thụ tối thiểu. Tắt Turbo Boost",
+        "balanced_title": "Cân bằng",
+        "balanced_desc": "Cân bằng tối ưu giữa độ mượt và thời lượng pin",
+        "perf_title": "Hiệu năng cao",
+        "perf_desc": "Xung nhịp tối đa và bật Boost"
+      },
+      "threshold": {
+        "title": "Bảo vệ pin",
+        "desc": "Đặt giới hạn sạc để kéo dài tuổi thọ của pin",
+        "conservation_title": "Chế độ bảo tồn",
+        "conservation_desc": "Giới hạn mức sạc ở 80% để bảo vệ pin",
+        "custom_label": "Giới hạn sạc",
+        "custom_desc": "Phần trăm pin tối đa khi sạc"
       }
     }
   },

@@ -49,7 +49,9 @@
       "theme_apps": "앱 테마",
       "theme_wallpapers": "배경화면",
       "general_main": "일반",
-      "general_presets": "프리셋"
+      "general_presets": "프리셋",
+      "fingerprint": "지문",
+      "power": "전원"
     },
     "launcher": {
       "position": {
@@ -333,7 +335,8 @@
         },
         "fingerprint": {
           "title": "지문 로그인 사용",
-          "desc": "지문으로 잠금 화면을 해제할 수 있도록 허용합니다"
+          "desc": "지문으로 잠금 화면을 해제할 수 있도록 허용합니다",
+          "manage": "설정..."
         },
         "background": {
           "select": "배경 선택",
@@ -1085,6 +1088,120 @@
         "title": "스크린샷 폴더",
         "desc": "스크린샷이 저장되는 폴더",
         "select_dir": "디렉터리 선택..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "새로고침",
+      "cancel": "취소",
+      "enrolled_count": "개 등록됨",
+      "header": {
+        "title": "지문 인식",
+        "desc": "생체 인증 및 지문 인식기 관리",
+        "ready": "센서 준비됨",
+        "not_found": "센서 감지되지 않음",
+        "not_found_desc": "시스템에서 지문 리더기를 찾을 수 없습니다",
+        "touch_type": "터치식",
+        "swipe_type": "스와이프식",
+        "stages_count": "단계: {count}"
+      },
+      "master": {
+        "title": "지문 인증",
+        "desc": "지문으로 화면 잠금 해제 및 인증 허용"
+      },
+      "enrolled": {
+        "title": "저장된 지문",
+        "desc": "시스템에 등록된 손가락 목록",
+        "empty_title": "저장된 지문 없음",
+        "empty_desc": "비밀번호 입력 없이 잠금을 해제하려면 아래에서 지문을 등록하세요",
+        "item_desc": "생체 잠금 해제 활성화됨",
+        "delete_tooltip": "지문 삭제",
+        "delete_all": "모두 삭제",
+        "confirm_delete_title": "지문을 삭제하시겠습니까?",
+        "confirm_delete_desc": "이 지문을 정말 삭제하시겠습니까?",
+        "deleted": "지문이 성공적으로 삭제되었습니다"
+      },
+      "enroll": {
+        "title": "지문 추가",
+        "desc": "손가락을 선택하고 센서에 스캔하세요",
+        "select_finger": "손가락 선택",
+        "hand_left": "왼손",
+        "hand_right": "오른손",
+        "button_start": "등록",
+        "button_cancel": "취소",
+        "button_done": "완료",
+        "button_retry": "재시도",
+        "active_title": "스캔 중: {finger}",
+        "step": "{total}단계 중 {current}단계",
+        "step_passed": "좋습니다! 손가락을 떼었다가 다시 대세요",
+        "place_finger": "센서에 손가락을 대세요",
+        "retry": "인식되지 않았습니다. 다시 시도하세요",
+        "swipe_too_short": "스와이프가 너무 짧습니다. 더 천천히 문지르세요",
+        "not_centered": "손가락을 센서 중앙에 맞추세요",
+        "remove_retry": "손가락을 떼었다가 다시 올려놓으세요",
+        "success": "지문이 성공적으로 등록되었습니다!",
+        "failed": "지문 등록 실패",
+        "already_enrolled": "이미 등록되어 있습니다"
+      },
+      "fingers": {
+        "right-thumb": "오른손 엄지",
+        "right-index-finger": "오른손 검지",
+        "right-middle-finger": "오른손 중지",
+        "right-ring-finger": "오른손 약지",
+        "right-little-finger": "오른손 새끼손가락",
+        "left-thumb": "왼손 엄지",
+        "left-index-finger": "왼손 검지",
+        "left-middle-finger": "왼손 중지",
+        "left-ring-finger": "왼손 약지",
+        "left-little-finger": "왼손 새끼손가락"
+      },
+      "finger_short": {
+        "thumb": "엄지",
+        "index-finger": "검지",
+        "middle-finger": "중지",
+        "ring-finger": "약지",
+        "little-finger": "새끼손가락"
+      },
+      "limits": {
+        "title": "실패 횟수 제한",
+        "desc": "5회 연속 실패 시 센서를 일시적으로 비활성화",
+        "attempts_title": "최대 지문 시도 횟수",
+        "attempts_desc": "비밀번호 입력을 요구하기 전까지 허용되는 실패 횟수"
+      }
+    },
+    "power": {
+      "refresh": "새로고침",
+      "health_label": "배터리 수명: %1%",
+      "status": {
+        "ac": "전원 연결됨",
+        "charging": "충전 중",
+        "discharging": "방전 중",
+        "full": "완충됨"
+      },
+      "desc": {
+        "ac_connected": "전원 어댑터로 작동 중",
+        "battery_active": "배터리 전원으로 작동 중"
+      },
+      "profile": {
+        "title": "전원 프로필",
+        "desc": "성능과 에너지 소비의 균형 조정"
+      },
+      "profiles": {
+        "title": "전원 프로필 설정",
+        "desc": "CPU, GPU 및 냉각 팬의 작동 모드 선택",
+        "saver_title": "절전 모드",
+        "saver_desc": "최소 전력 소비. Turbo Boost 비활성화",
+        "balanced_title": "균형 모드",
+        "balanced_desc": "부드러운 성능과 배터리 수명의 최적 균형",
+        "perf_title": "성능 모드",
+        "perf_desc": "최대 클럭 및 활성 Boost"
+      },
+      "threshold": {
+        "title": "배터리 수명 보호",
+        "desc": "배터리 수명 연장을 위한 충전 임계값 설정",
+        "conservation_title": "수명 보존 모드",
+        "conservation_desc": "배터리 노화를 방지하기 위해 80%까지만 충전",
+        "custom_label": "충전 한도",
+        "custom_desc": "최대 충전 허용 비율"
       }
     }
   },

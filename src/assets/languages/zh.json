@@ -49,7 +49,9 @@
       "theme_apps": "应用主题",
       "theme_wallpapers": "壁纸",
       "general_main": "通用",
-      "general_presets": "预设"
+      "general_presets": "预设",
+      "fingerprint": "指纹",
+      "power": "电源"
     },
     "launcher": {
       "position": {
@@ -333,7 +335,8 @@
         },
         "fingerprint": {
           "title": "启用指纹登录",
-          "desc": "允许使用指纹解锁锁屏"
+          "desc": "允许使用指纹解锁锁屏",
+          "manage": "配置..."
         },
         "background": {
           "select": "选择背景",
@@ -1085,6 +1088,120 @@
         "title": "截图文件夹",
         "desc": "保存截图的文件夹",
         "select_dir": "选择目录..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "刷新",
+      "cancel": "取消",
+      "enrolled_count": "个已录入的指纹",
+      "header": {
+        "title": "指纹识别",
+        "desc": "管理生物识别认证和指纹扫描器",
+        "ready": "传感器就绪",
+        "not_found": "未检测到传感器",
+        "not_found_desc": "系统中未找到指纹读取设备",
+        "touch_type": "按压式",
+        "swipe_type": "滑动式",
+        "stages_count": "录入阶段：{count}"
+      },
+      "master": {
+        "title": "指纹认证",
+        "desc": "允许使用指纹解锁屏幕和系统身份认证"
+      },
+      "enrolled": {
+        "title": "已保存的指纹",
+        "desc": "系统中已注册的手指列表",
+        "empty_title": "尚未保存任何指纹",
+        "empty_desc": "在下方录入手指，即可免密登录与解锁",
+        "item_desc": "生物识别解锁已激活",
+        "delete_tooltip": "删除指纹",
+        "delete_all": "全部删除",
+        "confirm_delete_title": "删除指纹？",
+        "confirm_delete_desc": "您确定要删除此指纹吗？",
+        "deleted": "指纹删除成功"
+      },
+      "enroll": {
+        "title": "添加指纹",
+        "desc": "选择手指并在传感器上按压扫描",
+        "select_finger": "选择手指",
+        "hand_left": "左手",
+        "hand_right": "右手",
+        "button_start": "录入",
+        "button_cancel": "取消",
+        "button_done": "完成",
+        "button_retry": "重试",
+        "active_title": "正在扫描：{finger}",
+        "step": "第 {current} 步，共 {total} 步",
+        "step_passed": "很好！请抬起手指并再次按压",
+        "place_finger": "请将手指放在传感器上",
+        "retry": "无法识别，请重试",
+        "swipe_too_short": "滑动太短，请慢速滑过",
+        "not_centered": "请将手指对准传感器中心",
+        "remove_retry": "请移开手指并重新放置",
+        "success": "指纹录入成功！",
+        "failed": "指纹录入失败",
+        "already_enrolled": "已存在该指纹"
+      },
+      "fingers": {
+        "right-thumb": "右手大拇指",
+        "right-index-finger": "右手食指",
+        "right-middle-finger": "右手中指",
+        "right-ring-finger": "右手无名指",
+        "right-little-finger": "右手小指",
+        "left-thumb": "左手大拇指",
+        "left-index-finger": "左手食指",
+        "left-middle-finger": "左手中指",
+        "left-ring-finger": "左手无名指",
+        "left-little-finger": "左手小指"
+      },
+      "finger_short": {
+        "thumb": "大拇指",
+        "index-finger": "食指",
+        "middle-finger": "中指",
+        "ring-finger": "无名指",
+        "little-finger": "小指"
+      },
+      "limits": {
+        "title": "限制失败尝试次数",
+        "desc": "连续失败 5 次后暂时停用传感器",
+        "attempts_title": "指纹最大尝试次数",
+        "attempts_desc": "在要求输入密码前允许的错误扫描次数"
+      }
+    },
+    "power": {
+      "refresh": "刷新",
+      "health_label": "健康度：%1%",
+      "status": {
+        "ac": "已连接电源",
+        "charging": "正在充电",
+        "discharging": "正在放电",
+        "full": "已充满"
+      },
+      "desc": {
+        "ac_connected": "正在通过电源适配器供电",
+        "battery_active": "正在通过电池供电"
+      },
+      "profile": {
+        "title": "电源模式",
+        "desc": "平衡系统性能与能源消耗"
+      },
+      "profiles": {
+        "title": "性能与电源配置",
+        "desc": "选择 CPU、GPU 和风扇的运行策略",
+        "saver_title": "节能模式",
+        "saver_desc": "最低能耗，禁用 Turbo Boost",
+        "balanced_title": "平衡模式",
+        "balanced_desc": "系统流畅度与续航的最佳平衡",
+        "perf_title": "高性能模式",
+        "perf_desc": "最高核心频率，开启睿频"
+      },
+      "threshold": {
+        "title": "电池养护",
+        "desc": "设置充电阈值以延长电池使用寿命",
+        "conservation_title": "养护模式",
+        "conservation_desc": "限制充电至 80% 以延缓电池老化",
+        "custom_label": "充电上限",
+        "custom_desc": "允许充入的最高电量百分比"
       }
     }
   },

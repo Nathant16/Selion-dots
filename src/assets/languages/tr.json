@@ -49,7 +49,9 @@
       "theme_apps": "Uygulama temaları",
       "theme_wallpapers": "Duvar kâğıtları",
       "general_main": "Genel",
-      "general_presets": "Ön ayarlar"
+      "general_presets": "Ön ayarlar",
+      "fingerprint": "Parmak izleri",
+      "power": "Güç"
     },
     "launcher": {
       "position": {
@@ -333,7 +335,8 @@
         },
         "fingerprint": {
           "title": "Parmak izi ile girişi etkinleştir",
-          "desc": "Kilit ekranını parmak iziyle açmaya izin ver"
+          "desc": "Kilit ekranını parmak iziyle açmaya izin ver",
+          "manage": "Yapılandır..."
         },
         "background": {
           "select": "Arka plan seç",
@@ -1085,6 +1088,120 @@
         "title": "Ekran görüntüsü klasörü",
         "desc": "Ekran görüntülerinin kaydedildiği klasör",
         "select_dir": "Dizin seçin..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "Yenile",
+      "cancel": "İptal",
+      "enrolled_count": "parmak izi kayıtlı",
+      "header": {
+        "title": "Parmak izleri",
+        "desc": "Biyometrik kimlik doğrulama ve parmak izi okuyucusunu yönetin",
+        "ready": "Sensör hazır",
+        "not_found": "Sensör algılanmadı",
+        "not_found_desc": "Bu sistemde biyometrik okuyucu bulunamadı",
+        "touch_type": "Dokunma",
+        "swipe_type": "Kaydırma",
+        "stages_count": "Aşama: {count}"
+      },
+      "master": {
+        "title": "Parmak izi ile giriş",
+        "desc": "Ekran kilidini açmaya ve parmak iziyle doğrulamaya izin ver"
+      },
+      "enrolled": {
+        "title": "Kayıtlı parmak izleri",
+        "desc": "Sistemde kayıtlı parmakların listesi",
+        "empty_title": "Kayıtlı parmak izi yok",
+        "empty_desc": "Parola girmeden oturum açmak için aşağıdan bir parmak kaydedin",
+        "item_desc": "Biyometrik kilit açma etkin",
+        "delete_tooltip": "Parmak izini sil",
+        "delete_all": "Tümünü sil",
+        "confirm_delete_title": "Parmak izi silinsin mi?",
+        "confirm_delete_desc": "Bu parmak izini silmek istediğinizden emin misiniz?",
+        "deleted": "Parmak izi başarıyla silindi"
+      },
+      "enroll": {
+        "title": "Parmak izi ekle",
+        "desc": "Bir parmak seçin ve sensör üzerinde tarayın",
+        "select_finger": "Parmak seçin",
+        "hand_left": "Sol el",
+        "hand_right": "Sağ el",
+        "button_start": "Ekle",
+        "button_cancel": "İptal",
+        "button_done": "Tamam",
+        "button_retry": "Tekrar dene",
+        "active_title": "Taranıyor: {finger}",
+        "step": "Aşama {current} / {total}",
+        "step_passed": "Harika! Parmağınızı kaldırın ve tekrar dokundurun",
+        "place_finger": "Parmağınızı sensöre yerleştirin",
+        "retry": "Tanınamadı. Lütfen tekrar deneyin",
+        "swipe_too_short": "Çok kısa kaydırma. Daha yavaş kaydırın",
+        "not_centered": "Parmağınızı sensörün ortasına yerleştirin",
+        "remove_retry": "Parmağınızı kaldırın ve tekrar yerleştirin",
+        "success": "Parmak izi başarıyla eklendi!",
+        "failed": "Parmak izi kaydedilemedi",
+        "already_enrolled": "Zaten kayıtlı"
+      },
+      "fingers": {
+        "right-thumb": "Sağ başparmak",
+        "right-index-finger": "Sağ işaret parmağı",
+        "right-middle-finger": "Sağ orta parmak",
+        "right-ring-finger": "Sağ yüzük parmağı",
+        "right-little-finger": "Sağ serçe parmak",
+        "left-thumb": "Sol başparmak",
+        "left-index-finger": "Sol işaret parmağı",
+        "left-middle-finger": "Sol orta parmak",
+        "left-ring-finger": "Sol yüzük parmağı",
+        "left-little-finger": "Sol serçe parmak"
+      },
+      "finger_short": {
+        "thumb": "Başparmak",
+        "index-finger": "İşaret",
+        "middle-finger": "Orta",
+        "ring-finger": "Yüzük",
+        "little-finger": "Serçe"
+      },
+      "limits": {
+        "title": "Hatalı denemeleri sınırla",
+        "desc": "Üst üste 5 başarısız denemeden sonra sensörü geçici olarak devre dışı bırak",
+        "attempts_title": "Maksimum parmak izi denemesi",
+        "attempts_desc": "Şifre girilene kadar sensörün kilitlenmesi için gereken hatalı deneme sayısı"
+      }
+    },
+    "power": {
+      "refresh": "Yenile",
+      "health_label": "Pil Sağlığı: %1%",
+      "status": {
+        "ac": "Şebeke elektriği",
+        "charging": "Şarj oluyor",
+        "discharging": "Deşarj oluyor",
+        "full": "Tam şarjlı"
+      },
+      "desc": {
+        "ac_connected": "Güç adaptörüyle çalışıyor",
+        "battery_active": "Pil gücüyle çalışıyor"
+      },
+      "profile": {
+        "title": "Güç profili",
+        "desc": "Performans ve enerji tüketimi dengesi"
+      },
+      "profiles": {
+        "title": "Güç profilleri",
+        "desc": "İşlemci, grafik kartı ve soğutma için çalışma modunu seçin",
+        "saver_title": "Güç tasarrufu",
+        "saver_desc": "Minimum tüketim. Turbo Boost devre dışı",
+        "balanced_title": "Dengeli",
+        "balanced_desc": "Akıcılık ve pil ömrü arasında ideal denge",
+        "perf_title": "Performans",
+        "perf_desc": "Maksimum çekirdek frekansları ve aktif Boost"
+      },
+      "threshold": {
+        "title": "Pil koruması",
+        "desc": "Pil ömrünü uzatmak için şarj eşiği ayarı",
+        "conservation_title": "Koruma modu",
+        "conservation_desc": "Pil ömrünü korumak için şarjı %80 ile sınırla",
+        "custom_label": "Şarj sınırı",
+        "custom_desc": "Maksimum pil şarj yüzdesi"
       }
     }
   },

@@ -49,7 +49,9 @@
       "theme_apps": "應用程式主題",
       "theme_wallpapers": "桌布",
       "general_main": "一般",
-      "general_presets": "預設集"
+      "general_presets": "預設集",
+      "fingerprint": "指紋",
+      "power": "電源"
     },
     "launcher": {
       "position": {
@@ -333,7 +335,8 @@
         },
         "fingerprint": {
           "title": "啟用指紋登入",
-          "desc": "允許使用指紋解鎖鎖定畫面"
+          "desc": "允許使用指紋解鎖鎖定畫面",
+          "manage": "設定..."
         },
         "background": {
           "select": "選擇背景",
@@ -1085,6 +1088,120 @@
         "title": "螢幕截圖資料夾",
         "desc": "儲存螢幕截圖的資料夾",
         "select_dir": "選取目錄..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "重新整理",
+      "cancel": "取消",
+      "enrolled_count": "個已註冊的指紋",
+      "header": {
+        "title": "指紋辨識",
+        "desc": "管理生物辨識認證與指紋感測器",
+        "ready": "感測器就緒",
+        "not_found": "未偵測到感測器",
+        "not_found_desc": "在此系統上找不到指紋讀取器",
+        "touch_type": "按壓式",
+        "swipe_type": "滑動式",
+        "stages_count": "階段：{count}"
+      },
+      "master": {
+        "title": "指紋認證",
+        "desc": "允許使用指紋解鎖螢幕與進行身分驗證"
+      },
+      "enrolled": {
+        "title": "已儲存的指紋",
+        "desc": "系統中已註冊的手指列表",
+        "empty_title": "尚未儲存任何指紋",
+        "empty_desc": "在下方註冊手指，即可免密碼登入與解鎖",
+        "item_desc": "生物辨識解鎖運作中",
+        "delete_tooltip": "刪除指紋",
+        "delete_all": "全部刪除",
+        "confirm_delete_title": "刪除指紋？",
+        "confirm_delete_desc": "確定要刪除此指紋嗎？",
+        "deleted": "指紋刪除成功"
+      },
+      "enroll": {
+        "title": "新增指紋",
+        "desc": "選擇手指並在感測器上按壓掃描",
+        "select_finger": "選擇手指",
+        "hand_left": "左手",
+        "hand_right": "右手",
+        "button_start": "註冊",
+        "button_cancel": "取消",
+        "button_done": "完成",
+        "button_retry": "重試",
+        "active_title": "正在掃描：{finger}",
+        "step": "第 {current} 步，共 {total} 步",
+        "step_passed": "很好！請抬起手指並再次按壓",
+        "place_finger": "請將手指放在感測器上",
+        "retry": "無法辨識，請重試",
+        "swipe_too_short": "滑動太短，請放慢滑動速度",
+        "not_centered": "請將手指置於感測器中央",
+        "remove_retry": "請移開手指並重新放置",
+        "success": "指紋新增成功！",
+        "failed": "指紋註冊失敗",
+        "already_enrolled": "該手指已註冊"
+      },
+      "fingers": {
+        "right-thumb": "右手大拇指",
+        "right-index-finger": "右手食指",
+        "right-middle-finger": "右手中指",
+        "right-ring-finger": "右手無名指",
+        "right-little-finger": "右手小指",
+        "left-thumb": "左手大拇指",
+        "left-index-finger": "左手食指",
+        "left-middle-finger": "左手中指",
+        "left-ring-finger": "左手無名指",
+        "left-little-finger": "左手小指"
+      },
+      "finger_short": {
+        "thumb": "大拇指",
+        "index-finger": "食指",
+        "middle-finger": "中指",
+        "ring-finger": "無名指",
+        "little-finger": "小指"
+      },
+      "limits": {
+        "title": "限制失敗次數",
+        "desc": "連續失敗 5 次後暫時停用感測器",
+        "attempts_title": "指紋最大嘗試次數",
+        "attempts_desc": "要求輸入密碼前允許的失敗掃描次數"
+      }
+    },
+    "power": {
+      "refresh": "重新整理",
+      "health_label": "健康度：%1%",
+      "status": {
+        "ac": "電源供應中",
+        "charging": "充電中",
+        "discharging": "放電中",
+        "full": "已充飽"
+      },
+      "desc": {
+        "ac_connected": "正在由電源轉接器供電",
+        "battery_active": "正在由電池供電"
+      },
+      "profile": {
+        "title": "電源模式",
+        "desc": "平衡效能與能源消耗"
+      },
+      "profiles": {
+        "title": "效能與電源設定",
+        "desc": "選擇 CPU、GPU 與散熱的運作模式",
+        "saver_title": "省電模式",
+        "saver_desc": "最低功耗，停用 Turbo Boost",
+        "balanced_title": "平衡模式",
+        "balanced_desc": "效能與電池續航力的最佳平衡",
+        "perf_title": "高效能模式",
+        "perf_desc": "最大時脈頻率，啟用 Turbo Boost"
+      },
+      "threshold": {
+        "title": "電池保護",
+        "desc": "設定充電上限以延長電池使用壽命",
+        "conservation_title": "保護模式",
+        "conservation_desc": "限制充電至 80% 以減緩電池老化",
+        "custom_label": "充電上限",
+        "custom_desc": "允許充電的最高百分比"
       }
     }
   },

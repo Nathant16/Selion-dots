@@ -49,7 +49,9 @@
       "theme_apps": "Tema dos aplicativos",
       "theme_wallpapers": "Papéis de parede",
       "general_main": "Geral",
-      "general_presets": "Predefinições"
+      "general_presets": "Predefinições",
+      "fingerprint": "Impressões digitais",
+      "power": "Energia"
     },
     "launcher": {
       "position": {
@@ -333,7 +335,8 @@
         },
         "fingerprint": {
           "title": "Ativar login por impressão digital",
-          "desc": "Permitir desbloquear a tela de bloqueio com uma impressão digital"
+          "desc": "Permitir desbloquear a tela de bloqueio com uma impressão digital",
+          "manage": "Configurar..."
         },
         "background": {
           "select": "Selecionar plano de fundo",
@@ -1085,6 +1088,120 @@
         "title": "Pasta de capturas de tela",
         "desc": "Pasta onde as capturas de tela são salvas",
         "select_dir": "Selecionar pasta..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "Atualizar",
+      "cancel": "Cancelar",
+      "enrolled_count": "impressões registradas",
+      "header": {
+        "title": "Impressões digitais",
+        "desc": "Gerenciar autenticação biométrica e leitor de digitais",
+        "ready": "Sensor pronto",
+        "not_found": "Nenhum sensor detectado",
+        "not_found_desc": "Leitor biométrico não encontrado neste sistema",
+        "touch_type": "Toque",
+        "swipe_type": "Deslizar",
+        "stages_count": "Etapas: {count}"
+      },
+      "master": {
+        "title": "Autenticação por biometria",
+        "desc": "Permitir desbloqueio de tela e autenticação por impressão digital"
+      },
+      "enrolled": {
+        "title": "Impressões salvas",
+        "desc": "Lista de dedos registrados no sistema",
+        "empty_title": "Nenhuma impressão salva",
+        "empty_desc": "Cadastre um dedo abaixo para entrar sem digitar senha",
+        "item_desc": "Desbloqueio biométrico ativo",
+        "delete_tooltip": "Excluir impressão",
+        "delete_all": "Excluir todas",
+        "confirm_delete_title": "Excluir impressão?",
+        "confirm_delete_desc": "Tem certeza de que deseja excluir esta impressão digital?",
+        "deleted": "Impressão excluída com sucesso"
+      },
+      "enroll": {
+        "title": "Adicionar impressão",
+        "desc": "Selecione um dedo e escaneie no sensor",
+        "select_finger": "Selecionar dedo",
+        "hand_left": "Mão esquerda",
+        "hand_right": "Mão direita",
+        "button_start": "Adicionar",
+        "button_cancel": "Cancelar",
+        "button_done": "Concluído",
+        "button_retry": "Tentar novamente",
+        "active_title": "Escaneando: {finger}",
+        "step": "Etapa {current} de {total}",
+        "step_passed": "Ótimo! Levante o dedo e encoste novamente",
+        "place_finger": "Coloque o dedo no sensor",
+        "retry": "Não reconhecido. Tente novamente",
+        "swipe_too_short": "Movimento muito curto. Deslize mais devagar",
+        "not_centered": "Centralize o dedo no sensor",
+        "remove_retry": "Retire o dedo e coloque novamente",
+        "success": "Impressão adicionada com sucesso!",
+        "failed": "Falha ao registrar impressão",
+        "already_enrolled": "Já cadastrado"
+      },
+      "fingers": {
+        "right-thumb": "Polegar direito",
+        "right-index-finger": "Indicador direito",
+        "right-middle-finger": "Médio direito",
+        "right-ring-finger": "Anelar direito",
+        "right-little-finger": "Mínimo direito",
+        "left-thumb": "Polegar esquerdo",
+        "left-index-finger": "Indicador esquerdo",
+        "left-middle-finger": "Médio esquerdo",
+        "left-ring-finger": "Anelar esquerdo",
+        "left-little-finger": "Mínimo esquerdo"
+      },
+      "finger_short": {
+        "thumb": "Polegar",
+        "index-finger": "Indicador",
+        "middle-finger": "Médio",
+        "ring-finger": "Anelar",
+        "little-finger": "Mínimo"
+      },
+      "limits": {
+        "title": "Limitar tentativas falhas",
+        "desc": "Desativar sensor temporariamente após 5 falhas consecutivas",
+        "attempts_title": "Tentativas máximas de digital",
+        "attempts_desc": "Leituras falhas antes de desativar o sensor até inserir a senha"
+      }
+    },
+    "power": {
+      "refresh": "Atualizar",
+      "health_label": "Saúde: %1%",
+      "status": {
+        "ac": "Ligado à corrente",
+        "charging": "Carregando",
+        "discharging": "Descarregando",
+        "full": "Totalmente carregada"
+      },
+      "desc": {
+        "ac_connected": "Operando com adaptador de energia",
+        "battery_active": "Operando na bateria"
+      },
+      "profile": {
+        "title": "Perfil de energia",
+        "desc": "Equilibrar desempenho e consumo energético"
+      },
+      "profiles": {
+        "title": "Perfis de energia",
+        "desc": "Modo de operação para CPU, GPU e ventilação",
+        "saver_title": "Economia de energia",
+        "saver_desc": "Consumo mínimo. Turbo Boost desativado",
+        "balanced_title": "Equilibrado",
+        "balanced_desc": "Equilíbrio ideal entre fluidez e autonomia",
+        "perf_title": "Desempenho",
+        "perf_desc": "Frequências máximas e Boost ativo"
+      },
+      "threshold": {
+        "title": "Proteção da bateria",
+        "desc": "Limite de carga para prolongar a vida útil da bateria",
+        "conservation_title": "Modo de conservação",
+        "conservation_desc": "Limitar carga a 80% para preservar vida útil",
+        "custom_label": "Limite de carga",
+        "custom_desc": "Porcentagem máxima de carga da bateria"
       }
     }
   },

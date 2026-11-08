@@ -902,7 +902,9 @@
       "theme_apps": "Motywy aplikacji",
       "theme_wallpapers": "Tapety",
       "general_main": "Ogólne",
-      "general_presets": "Presety"
+      "general_presets": "Presety",
+      "fingerprint": "Odciski palców",
+      "power": "Zasilanie"
     },
     "launcher": {
       "position": {
@@ -1186,7 +1188,8 @@
         },
         "fingerprint": {
           "title": "Włącz logowanie odciskiem palca",
-          "desc": "Zezwalaj na odblokowanie ekranu blokady odciskiem palca"
+          "desc": "Zezwalaj na odblokowanie ekranu blokady odciskiem palca",
+          "manage": "Konfiguruj..."
         },
         "background": {
           "select": "Wybierz tło",
@@ -1938,6 +1941,120 @@
         "title": "Folder zrzutów ekranu",
         "desc": "Folder, w którym zapisywane są zrzuty ekranu",
         "select_dir": "Wybierz katalog..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "Odśwież",
+      "cancel": "Anuluj",
+      "enrolled_count": "zarejestrowanych odcisków",
+      "header": {
+        "title": "Odciski palców",
+        "desc": "Zarządzanie uwierzytelnianiem biometrycznym i czytnikiem",
+        "ready": "Czytnik gotowy",
+        "not_found": "Nie wykryto czytnika",
+        "not_found_desc": "W tym systemie nie znaleziono czytnika biometrycznego",
+        "touch_type": "Dotyk",
+        "swipe_type": "Przeciągnięcie",
+        "stages_count": "Kroki: {count}"
+      },
+      "master": {
+        "title": "Logowanie odciskiem palca",
+        "desc": "Zezwalaj na odblokowywanie ekranu i uwierzytelnianie odciskiem"
+      },
+      "enrolled": {
+        "title": "Zapisane odciski",
+        "desc": "Lista palców zarejestrowanych w systemie",
+        "empty_title": "Brak zapisanych odcisków",
+        "empty_desc": "Zarejestruj palec poniżej, aby logować się bez wpisywania hasła",
+        "item_desc": "Odblokowywanie biometryczne aktywne",
+        "delete_tooltip": "Usuń odcisk",
+        "delete_all": "Usuń wszystkie",
+        "confirm_delete_title": "Usunąć odcisk?",
+        "confirm_delete_desc": "Czy na pewno chcesz usunąć ten odcisk palca?",
+        "deleted": "Odcisk pomyślnie usunięty"
+      },
+      "enroll": {
+        "title": "Dodaj odcisk",
+        "desc": "Wybierz palec i zeskanuj go na czytniku",
+        "select_finger": "Wybierz palec",
+        "hand_left": "Lewa ręka",
+        "hand_right": "Prawa ręka",
+        "button_start": "Dodaj",
+        "button_cancel": "Anuluj",
+        "button_done": "Gotowe",
+        "button_retry": "Spróbuj ponownie",
+        "active_title": "Skanowanie: {finger}",
+        "step": "Krok {current} z {total}",
+        "step_passed": "Świetnie! Podnieś palec i przyłóż ponownie",
+        "place_finger": "Przyłóż palec do czytnika",
+        "retry": "Nie rozpoznano. Spróbuj ponownie",
+        "swipe_too_short": "Za krótki ruch. Przeciągnij wolniej",
+        "not_centered": "Wyśrodkuj palec na czytniku",
+        "remove_retry": "Zabierz palec i przyłóż z powrotem",
+        "success": "Odcisk pomyślnie dodany!",
+        "failed": "Nie udało się zarejestrować odcisku",
+        "already_enrolled": "Już zarejestrowany"
+      },
+      "fingers": {
+        "right-thumb": "Prawy kciuk",
+        "right-index-finger": "Prawy palec wskazujący",
+        "right-middle-finger": "Prawy palec środkowy",
+        "right-ring-finger": "Prawy palec serdeczny",
+        "right-little-finger": "Prawy mały palec",
+        "left-thumb": "Lewy kciuk",
+        "left-index-finger": "Lewy palec wskazujący",
+        "left-middle-finger": "Lewy palec środkowy",
+        "left-ring-finger": "Lewy palec serdeczny",
+        "left-little-finger": "Lewy mały palec"
+      },
+      "finger_short": {
+        "thumb": "Kciuk",
+        "index-finger": "Wskazujący",
+        "middle-finger": "Środkowy",
+        "ring-finger": "Serdeczny",
+        "little-finger": "Mały"
+      },
+      "limits": {
+        "title": "Limit nieudanych prób",
+        "desc": "Tymczasowo wyłącz czytnik po 5 nieudanych próbach z rzędu",
+        "attempts_title": "Maksymalna liczba prób odcisku",
+        "attempts_desc": "Liczba błędnych skanów przed blokadą czytnika do podania hasła"
+      }
+    },
+    "power": {
+      "refresh": "Odśwież",
+      "health_label": "Kondycja: %1%",
+      "status": {
+        "ac": "Zasilanie sieciowe",
+        "charging": "Ładowanie",
+        "discharging": "Rozładowywanie",
+        "full": "W pełni naładowana"
+      },
+      "desc": {
+        "ac_connected": "Praca na zasilaczu sieciowym",
+        "battery_active": "Praca na baterii"
+      },
+      "profile": {
+        "title": "Profil zasilania",
+        "desc": "Równowaga wydajności i zużycia energii"
+      },
+      "profiles": {
+        "title": "Profile zasilania",
+        "desc": "Wybierz tryb pracy procesora, karty graficznej i chłodzenia",
+        "saver_title": "Oszczędzanie energii",
+        "saver_desc": "Minimalne zużycie. Turbo Boost wyłączony",
+        "balanced_title": "Zrównoważony",
+        "balanced_desc": "Optymalna równowaga płynności i czasu pracy",
+        "perf_title": "Wydajność",
+        "perf_desc": "Maksymalne taktowanie i aktywny Boost"
+      },
+      "threshold": {
+        "title": "Ochrona baterii",
+        "desc": "Limit ładowania wydłużający żywotność ogniw",
+        "conservation_title": "Tryb oszczędzania",
+        "conservation_desc": "Ograniczenie ładowania do 80% w celu wydłużenia żywotności",
+        "custom_label": "Limit ładowania",
+        "custom_desc": "Maksymalny procent naładowania baterii"
       }
     }
   }

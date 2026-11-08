@@ -49,7 +49,9 @@
       "theme_apps": "Tema aplikasi",
       "theme_wallpapers": "Wallpaper",
       "general_main": "Umum",
-      "general_presets": "Preset"
+      "general_presets": "Preset",
+      "fingerprint": "Sidik jari",
+      "power": "Daya"
     },
     "launcher": {
       "position": {
@@ -333,7 +335,8 @@
         },
         "fingerprint": {
           "title": "Aktifkan login sidik jari",
-          "desc": "Izinkan membuka layar kunci dengan sidik jari"
+          "desc": "Izinkan membuka layar kunci dengan sidik jari",
+          "manage": "Konfigurasi..."
         },
         "background": {
           "select": "Pilih latar belakang",
@@ -1085,6 +1088,120 @@
         "title": "Folder tangkapan layar",
         "desc": "Folder tempat tangkapan layar disimpan",
         "select_dir": "Pilih direktori..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "Segarkan",
+      "cancel": "Batal",
+      "enrolled_count": "sidik jari terdaftar",
+      "header": {
+        "title": "Sidik jari",
+        "desc": "Kelola autentikasi biometrik dan pemindai sidik jari",
+        "ready": "Sensor siap",
+        "not_found": "Sensor tidak terdeteksi",
+        "not_found_desc": "Pembaca biometrik tidak ditemukan di sistem ini",
+        "touch_type": "Sentuh",
+        "swipe_type": "Usap",
+        "stages_count": "Tahap: {count}"
+      },
+      "master": {
+        "title": "Autentikasi sidik jari",
+        "desc": "Izinkan buka kunci layar dan autentikasi dengan sidik jari"
+      },
+      "enrolled": {
+        "title": "Sidik jari tersimpan",
+        "desc": "Daftar jari yang terdaftar dalam sistem",
+        "empty_title": "Belum ada sidik jari tersimpan",
+        "empty_desc": "Daftarkan jari di bawah untuk masuk tanpa memasukkan kata sandi",
+        "item_desc": "Buka kunci biometrik aktif",
+        "delete_tooltip": "Hapus sidik jari",
+        "delete_all": "Hapus semua",
+        "confirm_delete_title": "Hapus sidik jari?",
+        "confirm_delete_desc": "Apakah Anda yakin ingin menghapus sidik jari ini?",
+        "deleted": "Sidik jari berhasil dihapus"
+      },
+      "enroll": {
+        "title": "Tambah sidik jari",
+        "desc": "Pilih jari dan pindai pada sensor",
+        "select_finger": "Pilih jari",
+        "hand_left": "Tangan kiri",
+        "hand_right": "Tangan kanan",
+        "button_start": "Tambah",
+        "button_cancel": "Batal",
+        "button_done": "Selesai",
+        "button_retry": "Coba lagi",
+        "active_title": "Memindai: {finger}",
+        "step": "Langkah {current} dari {total}",
+        "step_passed": "Bagus! Angkat jari dan letakkan lagi",
+        "place_finger": "Letakkan jari Anda pada sensor",
+        "retry": "Tidak dikenali. Silakan coba lagi",
+        "swipe_too_short": "Usapan terlalu pendek. Usap lebih lambat",
+        "not_centered": "Posisikan jari di tengah sensor",
+        "remove_retry": "Angkat jari dan letakkan kembali",
+        "success": "Sidik jari berhasil ditambahkan!",
+        "failed": "Gagal mendaftarkan sidik jari",
+        "already_enrolled": "Sudah terdaftar"
+      },
+      "fingers": {
+        "right-thumb": "Ibu jari kanan",
+        "right-index-finger": "Jari telunjuk kanan",
+        "right-middle-finger": "Jari tengah kanan",
+        "right-ring-finger": "Jari manis kanan",
+        "right-little-finger": "Jari kelingking kanan",
+        "left-thumb": "Ibu jari kiri",
+        "left-index-finger": "Jari telunjuk kiri",
+        "left-middle-finger": "Jari tengah kiri",
+        "left-ring-finger": "Jari manis kiri",
+        "left-little-finger": "Jari kelingking kiri"
+      },
+      "finger_short": {
+        "thumb": "Ibu jari",
+        "index-finger": "Telunjuk",
+        "middle-finger": "Tengah",
+        "ring-finger": "Manis",
+        "little-finger": "Kelingking"
+      },
+      "limits": {
+        "title": "Batasi percobaan gagal",
+        "desc": "Nonaktifkan sensor sementara setelah 5 kali gagal berturut-turut",
+        "attempts_title": "Batas percobaan sidik jari",
+        "attempts_desc": "Jumlah kegagalan sebelum sensor dinonaktifkan hingga sandi dimasukkan"
+      }
+    },
+    "power": {
+      "refresh": "Segarkan",
+      "health_label": "Kesehatan: %1%",
+      "status": {
+        "ac": "Daya Listrik AC",
+        "charging": "Mengisi daya",
+        "discharging": "Menggunakan baterai",
+        "full": "Terisi penuh"
+      },
+      "desc": {
+        "ac_connected": "Berjalan dengan adaptor daya",
+        "battery_active": "Berjalan dengan daya baterai"
+      },
+      "profile": {
+        "title": "Profil daya",
+        "desc": "Sesuaikan performa dan konsumsi daya"
+      },
+      "profiles": {
+        "title": "Profil daya sistem",
+        "desc": "Pilih mode performa untuk CPU, GPU, dan pendingin",
+        "saver_title": "Hemat daya",
+        "saver_desc": "Konsumsi daya terendah. Turbo Boost dimatikan",
+        "balanced_title": "Seimbang",
+        "balanced_desc": "Keseimbangan optimal antara kecepatan dan daya tahan",
+        "perf_title": "Performa",
+        "perf_desc": "Kecepatan clock maksimal dan Boost aktif"
+      },
+      "threshold": {
+        "title": "Perlindungan baterai",
+        "desc": "Batas pengisian untuk memperpanjang masa pakai baterai",
+        "conservation_title": "Mode konservasi",
+        "conservation_desc": "Batasi pengisian hingga 80% untuk menghemat baterai",
+        "custom_label": "Batas pengisian",
+        "custom_desc": "Persentase batas pengisian baterai"
       }
     }
   },

@@ -902,7 +902,9 @@
       "theme_apps": "アプリのテーマ",
       "theme_wallpapers": "壁紙",
       "general_main": "一般",
-      "general_presets": "プリセット"
+      "general_presets": "プリセット",
+      "fingerprint": "指紋",
+      "power": "電源"
     },
     "launcher": {
       "position": {
@@ -1186,7 +1188,8 @@
         },
         "fingerprint": {
           "title": "指紋ログインを有効にする",
-          "desc": "指紋でロック画面を解除できるようにします"
+          "desc": "指紋でロック画面を解除できるようにします",
+          "manage": "設定..."
         },
         "background": {
           "select": "背景を選択",
@@ -1938,6 +1941,120 @@
         "title": "スクリーンショットの保存先",
         "desc": "スクリーンショットを保存するフォルダー",
         "select_dir": "ディレクトリを選択..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "更新",
+      "cancel": "キャンセル",
+      "enrolled_count": "個の登録済み指紋",
+      "header": {
+        "title": "指紋認証",
+        "desc": "生体認証と指紋リーダーの管理",
+        "ready": "センサー準備完了",
+        "not_found": "センサーが検出されません",
+        "not_found_desc": "指紋リーダーが見つかりませんでした",
+        "touch_type": "タッチ式",
+        "swipe_type": "スワイプ式",
+        "stages_count": "ステージ: {count}"
+      },
+      "master": {
+        "title": "指紋認証",
+        "desc": "指紋による画面ロック解除と認証を許可"
+      },
+      "enrolled": {
+        "title": "登録済み指紋",
+        "desc": "システムに登録されている指のリスト",
+        "empty_title": "登録された指紋がありません",
+        "empty_desc": "以下で指を登録すると、パスワードなしでロック解除できます",
+        "item_desc": "生体ロック解除が有効",
+        "delete_tooltip": "指紋を削除",
+        "delete_all": "すべて削除",
+        "confirm_delete_title": "指紋を削除しますか？",
+        "confirm_delete_desc": "この指紋を削除してもよろしいですか？",
+        "deleted": "指紋を削除しました"
+      },
+      "enroll": {
+        "title": "指紋を追加",
+        "desc": "指を選択してセンサーでスキャンしてください",
+        "select_finger": "指を選択",
+        "hand_left": "左手",
+        "hand_right": "右手",
+        "button_start": "登録",
+        "button_cancel": "キャンセル",
+        "button_done": "完了",
+        "button_retry": "再試行",
+        "active_title": "スキャン中: {finger}",
+        "step": "ステップ {current} / {total}",
+        "step_passed": "良好です！指を離してもう一度置いてください",
+        "place_finger": "センサーに指を置いてください",
+        "retry": "認識できませんでした。やり直してください",
+        "swipe_too_short": "スワイプが短すぎます。ゆっくり滑らせてください",
+        "not_centered": "センサーの中央に指を置いてください",
+        "remove_retry": "指を離して置き直してください",
+        "success": "指紋が正常に登録されました！",
+        "failed": "指紋の登録に失敗しました",
+        "already_enrolled": "すでに登録されています"
+      },
+      "fingers": {
+        "right-thumb": "右手の親指",
+        "right-index-finger": "右手の人差し指",
+        "right-middle-finger": "右手の中指",
+        "right-ring-finger": "右手の薬指",
+        "right-little-finger": "右手の小指",
+        "left-thumb": "左手の親指",
+        "left-index-finger": "左手の人差し指",
+        "left-middle-finger": "左手の中指",
+        "left-ring-finger": "左手の薬指",
+        "left-little-finger": "左手の小指"
+      },
+      "finger_short": {
+        "thumb": "親指",
+        "index-finger": "人差し指",
+        "middle-finger": "中指",
+        "ring-finger": "薬指",
+        "little-finger": "小指"
+      },
+      "limits": {
+        "title": "失敗試行回数の制限",
+        "desc": "5回連続で失敗した場合、センサーを一時的に無効化",
+        "attempts_title": "指紋の最大試行回数",
+        "attempts_desc": "パスワード入力が必要になるまでの失敗許容回数"
+      }
+    },
+    "power": {
+      "refresh": "更新",
+      "health_label": "バッテリー健康度: %1%",
+      "status": {
+        "ac": "電源に接続",
+        "charging": "充電中",
+        "discharging": "放電中",
+        "full": "満充電"
+      },
+      "desc": {
+        "ac_connected": "ACアダプターから給電中",
+        "battery_active": "バッテリーで駆動中"
+      },
+      "profile": {
+        "title": "電源プロファイル",
+        "desc": "パフォーマンスと消費電力のバランスを調整"
+      },
+      "profiles": {
+        "title": "電源プロファイル設定",
+        "desc": "CPU、GPU、冷却ファンの動作モードを選択",
+        "saver_title": "省電力",
+        "saver_desc": "最小電力消費。Turbo Boost 無効",
+        "balanced_title": "バランス",
+        "balanced_desc": "動作の軽快さとバッテリー持ちの最適バランス",
+        "perf_title": "パフォーマンス",
+        "perf_desc": "最大クロックとTurbo Boost有効"
+      },
+      "threshold": {
+        "title": "バッテリー保護",
+        "desc": "充電上限を設定してバッテリー寿命を延ばします",
+        "conservation_title": "保全モード",
+        "conservation_desc": "劣化を防ぐため充電を80%に制限",
+        "custom_label": "充電上限",
+        "custom_desc": "充電を停止する最大バッテリー割合"
       }
     }
   }

@@ -49,7 +49,9 @@
       "theme_apps": "Thème des applications",
       "theme_wallpapers": "Fonds d'écran",
       "general_main": "Général",
-      "general_presets": "Préréglages"
+      "general_presets": "Préréglages",
+      "fingerprint": "Empreintes",
+      "power": "Alimentation"
     },
     "launcher": {
       "position": {
@@ -333,7 +335,8 @@
         },
         "fingerprint": {
           "title": "Activer la connexion par empreinte digitale",
-          "desc": "Autoriser le déverrouillage de l'écran avec une empreinte digitale"
+          "desc": "Autoriser le déverrouillage de l'écran avec une empreinte digitale",
+          "manage": "Configurer..."
         },
         "background": {
           "select": "Choisir l'arrière-plan",
@@ -1085,6 +1088,120 @@
         "title": "Dossier des captures d'écran",
         "desc": "Dossier où les captures d'écran sont enregistrées",
         "select_dir": "Sélectionner le dossier..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "Actualiser",
+      "cancel": "Annuler",
+      "enrolled_count": "empreintes enregistrées",
+      "header": {
+        "title": "Empreintes digitales",
+        "desc": "Gérer l'authentification biométrique et le lecteur d'empreintes",
+        "ready": "Capteur prêt",
+        "not_found": "Aucun capteur détecté",
+        "not_found_desc": "Lecteur d'empreintes non détecté sur ce système",
+        "touch_type": "Toucher",
+        "swipe_type": "Glisser",
+        "stages_count": "Étapes : {count}"
+      },
+      "master": {
+        "title": "Authentification par empreinte",
+        "desc": "Autoriser le déverrouillage et l'authentification par empreinte"
+      },
+      "enrolled": {
+        "title": "Empreintes enregistrées",
+        "desc": "Liste des doigts enregistrés dans le système",
+        "empty_title": "Aucune empreinte enregistrée",
+        "empty_desc": "Enregistrez un doigt ci-dessous pour déverrouiller sans mot de passe",
+        "item_desc": "Déverrouillage biométrique actif",
+        "delete_tooltip": "Supprimer l'empreinte",
+        "delete_all": "Tout supprimer",
+        "confirm_delete_title": "Supprimer l'empreinte ?",
+        "confirm_delete_desc": "Voulez-vous vraiment supprimer cette empreinte digitale ?",
+        "deleted": "Empreinte supprimée avec succès"
+      },
+      "enroll": {
+        "title": "Ajouter une empreinte",
+        "desc": "Sélectionnez un doigt et scannez-le sur le capteur",
+        "select_finger": "Sélectionner un doigt",
+        "hand_left": "Main gauche",
+        "hand_right": "Main droite",
+        "button_start": "Enregistrer",
+        "button_cancel": "Annuler",
+        "button_done": "Terminé",
+        "button_retry": "Réessayer",
+        "active_title": "Numérisation : {finger}",
+        "step": "Étape {current} sur {total}",
+        "step_passed": "Parfait ! Levez le doigt et posez-le à nouveau",
+        "place_finger": "Posez votre doigt sur le capteur",
+        "retry": "Non reconnu. Veuillez réessayer",
+        "swipe_too_short": "Mouvement trop court. Glissez plus lentement",
+        "not_centered": "Centrez votre doigt sur le capteur",
+        "remove_retry": "Retirez le doigt et reposez-le",
+        "success": "Empreinte enregistrée avec succès !",
+        "failed": "Échec de l'enregistrement de l'empreinte",
+        "already_enrolled": "Déjà enregistrée"
+      },
+      "fingers": {
+        "right-thumb": "Pouce droit",
+        "right-index-finger": "Index droit",
+        "right-middle-finger": "Majeur droit",
+        "right-ring-finger": "Annulaire droit",
+        "right-little-finger": "Auriculaire droit",
+        "left-thumb": "Pouce gauche",
+        "left-index-finger": "Index gauche",
+        "left-middle-finger": "Majeur gauche",
+        "left-ring-finger": "Annulaire gauche",
+        "left-little-finger": "Auriculaire gauche"
+      },
+      "finger_short": {
+        "thumb": "Pouce",
+        "index-finger": "Index",
+        "middle-finger": "Majeur",
+        "ring-finger": "Annulaire",
+        "little-finger": "Auriculaire"
+      },
+      "limits": {
+        "title": "Limiter les échecs",
+        "desc": "Désactiver temporairement le capteur après 5 échecs consécutifs",
+        "attempts_title": "Nombre maximal de tentatives",
+        "attempts_desc": "Nombre d'échecs avant désactivation du capteur jusqu'au mot de passe"
+      }
+    },
+    "power": {
+      "refresh": "Actualiser",
+      "health_label": "Santé : %1%",
+      "status": {
+        "ac": "Sur secteur",
+        "charging": "En charge",
+        "discharging": "En décharge",
+        "full": "Complètement chargée"
+      },
+      "desc": {
+        "ac_connected": "Fonctionne sur adaptateur secteur",
+        "battery_active": "Fonctionne sur batterie"
+      },
+      "profile": {
+        "title": "Profil d'alimentation",
+        "desc": "Équilibrer performances et consommation d'énergie"
+      },
+      "profiles": {
+        "title": "Profils d'alimentation",
+        "desc": "Choisir le mode pour processeur, carte graphique et ventilation",
+        "saver_title": "Économie d'énergie",
+        "saver_desc": "Consommation minimale. Turbo Boost désactivé",
+        "balanced_title": "Équilibré",
+        "balanced_desc": "Équilibre parfait entre fluidité et autonomie",
+        "perf_title": "Performances",
+        "perf_desc": "Fréquences maximales et Turbo Boost actif"
+      },
+      "threshold": {
+        "title": "Protection de la batterie",
+        "desc": "Seuil de charge pour prolonger la longévité de la batterie",
+        "conservation_title": "Mode conservation",
+        "conservation_desc": "Limiter la charge à 80% pour préserver la durée de vie",
+        "custom_label": "Limite de charge",
+        "custom_desc": "Pourcentage maximal de charge de la batterie"
       }
     }
   },

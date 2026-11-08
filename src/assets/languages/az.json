@@ -49,7 +49,9 @@
       "theme_apps": "Tətbiq mövzuları",
       "theme_wallpapers": "Divar kağızları",
       "general_main": "Ümumi",
-      "general_presets": "Hazır ayarlar"
+      "general_presets": "Hazır ayarlar",
+      "fingerprint": "Barmaq izləri",
+      "power": "Qida"
     },
     "launcher": {
       "position": {
@@ -331,7 +333,8 @@
         },
         "fingerprint": {
           "title": "Barmaq izi ilə girişi aktiv et",
-          "desc": "Kilid ekranını barmaq izi ilə açmağa icazə ver"
+          "desc": "Kilid ekranını barmaq izi ilə açmağa icazə ver",
+          "manage": "Tənzimlə..."
         },
         "background": {
           "select": "Fon seç",
@@ -1079,6 +1082,120 @@
         "title": "Skrinşot qovluğu",
         "desc": "Skrinşotların saxlanıldığı qovluq",
         "select_dir": "Qovluq seç..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "Yenilə",
+      "cancel": "Ləğv et",
+      "enrolled_count": "barmaq izi qeydiyyatdadır",
+      "header": {
+        "title": "Barmaq izləri",
+        "desc": "Biometrik autentifikasiya və skaneri idarə et",
+        "ready": "Skaner hazırdır",
+        "not_found": "Skaner aşkar edilmədi",
+        "not_found_desc": "Bu sistemdə biometrik oxuyucu tapılmadı",
+        "touch_type": "Toxunma",
+        "swipe_type": "Sürüşdürmə",
+        "stages_count": "Mərhələlər: {count}"
+      },
+      "master": {
+        "title": "Barmaq izi ilə giriş",
+        "desc": "Ekran kilidini açmağa və barmaq izi ilə təsdiqə icazə ver"
+      },
+      "enrolled": {
+        "title": "Saxlanılmış izlər",
+        "desc": "Sistemdə qeydiyyatdan keçmiş barmaqların siyahısı",
+        "empty_title": "Saxlanılmış iz yoxdur",
+        "empty_desc": "Şifrə yazmadan daxil olmaq üçün aşağıda barmaq qeydiyyatdan keçirin",
+        "item_desc": "Biometrik kilidaçma aktivdir",
+        "delete_tooltip": "Barmaq izini sil",
+        "delete_all": "Hamısını sil",
+        "confirm_delete_title": "İz silinsin?",
+        "confirm_delete_desc": "Bu barmaq izini silmək istədiyinizə əminsiniz?",
+        "deleted": "Barmaq izi uğurla silindi"
+      },
+      "enroll": {
+        "title": "Barmaq izi əlavə et",
+        "desc": "Barmaq seçin və skanerdə oxudun",
+        "select_finger": "Barmaq seçin",
+        "hand_left": "Sol əl",
+        "hand_right": "Sağ əl",
+        "button_start": "Əlavə et",
+        "button_cancel": "Ləğv et",
+        "button_done": "Hazırdır",
+        "button_retry": "Yenidən cəhd et",
+        "active_title": "Skan edilir: {finger}",
+        "step": "Mərhələ {current} / {total}",
+        "step_passed": "Əla! Barmağınızı qaldırın və yenidən qoyun",
+        "place_finger": "Barmağınızı skanerə qoyun",
+        "retry": "Tanınmadı. Yenidən cəhd edin",
+        "swipe_too_short": "Hərəkət çox qısadır. Daha yavaş sürüşdürün",
+        "not_centered": "Barmağı mərkəzə qoyun",
+        "remove_retry": "Barmağı götürün və yenidən qoyun",
+        "success": "Barmaq izi uğurla əlavə edildi!",
+        "failed": "Barmaq izini qeyd etmək mümkün olmadı",
+        "already_enrolled": "Artıq qeyd edilib"
+      },
+      "fingers": {
+        "right-thumb": "Sağ baş barmaq",
+        "right-index-finger": "Sağ şəhadət barmağı",
+        "right-middle-finger": "Sağ orta barmaq",
+        "right-ring-finger": "Sağ adsız barmaq",
+        "right-little-finger": "Sağ çeçələ barmaq",
+        "left-thumb": "Sol baş barmaq",
+        "left-index-finger": "Sol şəhadət barmağı",
+        "left-middle-finger": "Sol orta barmaq",
+        "left-ring-finger": "Sol adsız barmaq",
+        "left-little-finger": "Sol çeçələ barmaq"
+      },
+      "finger_short": {
+        "thumb": "Baş",
+        "index-finger": "Şəhadət",
+        "middle-finger": "Orta",
+        "ring-finger": "Adsız",
+        "little-finger": "Çeçələ"
+      },
+      "limits": {
+        "title": "Uğursuz cəhdləri məhdudlaşdır",
+        "desc": "Ardıcıl 5 uğursuz cəhddən sonra skaneri müvəqqəti söndür",
+        "attempts_title": "Maksimum cəhd sayı",
+        "attempts_desc": "Şifrə daxil edilənə qədər skanerin bağlanması üçün xəta sayı"
+      }
+    },
+    "power": {
+      "refresh": "Yenilə",
+      "health_label": "Sağlamlıq: %1%",
+      "status": {
+        "ac": "Şəbəkədən qidalanma",
+        "charging": "Doldurulur",
+        "discharging": "Boşalır",
+        "full": "Tam dolub"
+      },
+      "desc": {
+        "ac_connected": "Şəbəkə adapterindən işləyir",
+        "battery_active": "Batareya enerjisi ilə işləyir"
+      },
+      "profile": {
+        "title": "Enerji profili",
+        "desc": "Məhsuldarlıq və enerji sərfiyyatı balansı"
+      },
+      "profiles": {
+        "title": "Enerji profilləri",
+        "desc": "Prosessor, qrafika və soyutma üçün rejim seçin",
+        "saver_title": "Enerjiyə qənaət",
+        "saver_desc": "Minimum sərfiyyat. Turbo Boost söndürülüb",
+        "balanced_title": "Balanslaşdırılmış",
+        "balanced_desc": "Sürət və batareya ömrü arasında optimal balans",
+        "perf_title": "Məhsuldarlıq",
+        "perf_desc": "Maksimal tezliklər və aktiv Boost"
+      },
+      "threshold": {
+        "title": "Batareya qorunması",
+        "desc": "Batareya ömrünü uzatmaq üçün şarj həddi",
+        "conservation_title": "Qorunma rejimi",
+        "conservation_desc": "Batareyanın ömrünü uzatmaq üçün şarjı 80%-lə məhdudlaşdır",
+        "custom_label": "Şarj həddi",
+        "custom_desc": "Maksimum batareya şarj faizi"
       }
     }
   },

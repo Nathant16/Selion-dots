@@ -49,7 +49,9 @@
       "theme_apps": "Tema delle app",
       "theme_wallpapers": "Sfondi",
       "general_main": "Generale",
-      "general_presets": "Preimpostazioni"
+      "general_presets": "Preimpostazioni",
+      "fingerprint": "Impronte digitali",
+      "power": "Alimentazione"
     },
     "launcher": {
       "position": {
@@ -333,7 +335,8 @@
         },
         "fingerprint": {
           "title": "Abilita l'accesso con impronta digitale",
-          "desc": "Consenti lo sblocco della schermata con un'impronta digitale"
+          "desc": "Consenti lo sblocco della schermata con un'impronta digitale",
+          "manage": "Configura..."
         },
         "background": {
           "select": "Seleziona sfondo",
@@ -1084,6 +1087,120 @@
         "title": "Cartella degli screenshot",
         "desc": "Cartella in cui vengono salvati gli screenshot",
         "select_dir": "Seleziona cartella..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "Aggiorna",
+      "cancel": "Annulla",
+      "enrolled_count": "impronte registrate",
+      "header": {
+        "title": "Impronte digitali",
+        "desc": "Gestisci autenticazione biometrica e lettore di impronte",
+        "ready": "Sensore pronto",
+        "not_found": "Nessun sensore rilevato",
+        "not_found_desc": "Lettore biometrico non trovato su questo sistema",
+        "touch_type": "Tocco",
+        "swipe_type": "Scorrimento",
+        "stages_count": "Passaggi: {count}"
+      },
+      "master": {
+        "title": "Autenticazione impronta",
+        "desc": "Consenti sblocco e autenticazione tramite impronta digitale"
+      },
+      "enrolled": {
+        "title": "Impronte salvate",
+        "desc": "Elenco delle dita registrate nel sistema",
+        "empty_title": "Nessuna impronta salvata",
+        "empty_desc": "Registra un dito qui sotto per accedere senza digitare la password",
+        "item_desc": "Sblocco biometrico attivo",
+        "delete_tooltip": "Elimina impronta",
+        "delete_all": "Elimina tutte",
+        "confirm_delete_title": "Eliminare l'impronta?",
+        "confirm_delete_desc": "Sei sicuro di voler eliminare questa impronta digitale?",
+        "deleted": "Impronta eliminata con successo"
+      },
+      "enroll": {
+        "title": "Aggiungi impronta",
+        "desc": "Seleziona un dito e scansionalo sul sensore",
+        "select_finger": "Seleziona dito",
+        "hand_left": "Mano sinistra",
+        "hand_right": "Mano destra",
+        "button_start": "Aggiungi",
+        "button_cancel": "Annulla",
+        "button_done": "Fatto",
+        "button_retry": "Riprova",
+        "active_title": "Scansione: {finger}",
+        "step": "Passo {current} di {total}",
+        "step_passed": "Ottimo! Solleva il dito e poggialo di nuovo",
+        "place_finger": "Posiziona il dito sul sensore",
+        "retry": "Non riconosciuto. Riprova",
+        "swipe_too_short": "Movimento troppo breve. Scorri più lentamente",
+        "not_centered": "Centra il dito sul sensore",
+        "remove_retry": "Rimuovi il dito e riposizionalo",
+        "success": "Impronta aggiunta con successo!",
+        "failed": "Registrazione impronta fallita",
+        "already_enrolled": "Già registrata"
+      },
+      "fingers": {
+        "right-thumb": "Pollice destro",
+        "right-index-finger": "Indice destro",
+        "right-middle-finger": "Medio destro",
+        "right-ring-finger": "Anulare destro",
+        "right-little-finger": "Mignolo destro",
+        "left-thumb": "Pollice sinistro",
+        "left-index-finger": "Indice sinistro",
+        "left-middle-finger": "Medio sinistro",
+        "left-ring-finger": "Anulare sinistro",
+        "left-little-finger": "Mignolo sinistro"
+      },
+      "finger_short": {
+        "thumb": "Pollice",
+        "index-finger": "Indice",
+        "middle-finger": "Medio",
+        "ring-finger": "Anulare",
+        "little-finger": "Mignolo"
+      },
+      "limits": {
+        "title": "Limita tentativi falliti",
+        "desc": "Disattiva temporaneamente il sensore dopo 5 tentativi consecutivi errati",
+        "attempts_title": "Tentativi massimi impronta",
+        "attempts_desc": "Scansioni fallite prima della disattivazione del sensore fino alla password"
+      }
+    },
+    "power": {
+      "refresh": "Aggiorna",
+      "health_label": "Salute: %1%",
+      "status": {
+        "ac": "Alimentazione da rete",
+        "charging": "In carica",
+        "discharging": "In scarica",
+        "full": "Completamente carica"
+      },
+      "desc": {
+        "ac_connected": "Alimentato da adattatore CA",
+        "battery_active": "Alimentato da batteria"
+      },
+      "profile": {
+        "title": "Profilo energetico",
+        "desc": "Bilancia prestazioni e consumo di energia"
+      },
+      "profiles": {
+        "title": "Profili energetici",
+        "desc": "Modalità operativa per CPU, GPU e raffreddamento",
+        "saver_title": "Risparmio energetico",
+        "saver_desc": "Consumo minimo. Turbo Boost disattivato",
+        "balanced_title": "Bilanciato",
+        "balanced_desc": "Equilibrio ottimale tra fluidità e autonomia",
+        "perf_title": "Prestazioni",
+        "perf_desc": "Frequenze massime e Turbo Boost attivo"
+      },
+      "threshold": {
+        "title": "Protezione batteria",
+        "desc": "Soglia di carica per allungare la vita utile della batteria",
+        "conservation_title": "Modalità conservazione",
+        "conservation_desc": "Limita carica all'80% per prolungare la longevità",
+        "custom_label": "Limite di carica",
+        "custom_desc": "Percentuale massima di carica della batteria"
       }
     }
   },

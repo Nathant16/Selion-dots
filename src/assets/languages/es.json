@@ -50,7 +50,9 @@
       "theme_apps": "Tema de aplicaciones",
       "theme_wallpapers": "Fondos de pantalla",
       "general_main": "General",
-      "general_presets": "Preajustes"
+      "general_presets": "Preajustes",
+      "fingerprint": "Huellas dactilares",
+      "power": "Energía"
     },
     "launcher": {
       "position": {
@@ -334,7 +336,8 @@
         },
         "fingerprint": {
           "title": "Activar inicio con huella dactilar",
-          "desc": "Permitir desbloquear la pantalla de bloqueo con una huella dactilar"
+          "desc": "Permitir desbloquear la pantalla de bloqueo con una huella dactilar",
+          "manage": "Configurar..."
         },
         "background": {
           "select": "Seleccionar fondo",
@@ -1129,6 +1132,120 @@
         "title": "Carpeta de capturas de pantalla",
         "desc": "Carpeta donde se guardan las capturas de pantalla",
         "select_dir": "Seleccionar directorio..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "Actualizar",
+      "cancel": "Cancelar",
+      "enrolled_count": "huellas registradas",
+      "header": {
+        "title": "Huellas dactilares",
+        "desc": "Administrar autenticación biométrica y lector de huellas",
+        "ready": "Sensor listo",
+        "not_found": "No se detectó sensor",
+        "not_found_desc": "No se encontró lector biométrico en este sistema",
+        "touch_type": "Toque",
+        "swipe_type": "Deslizar",
+        "stages_count": "Pasos: {count}"
+      },
+      "master": {
+        "title": "Autenticación por huella",
+        "desc": "Permitir desbloqueo y autenticación con huella dactilar"
+      },
+      "enrolled": {
+        "title": "Huellas guardadas",
+        "desc": "Lista de dedos registrados en el sistema",
+        "empty_title": "Sin huellas guardadas",
+        "empty_desc": "Registra un dedo a continuación para iniciar sesión sin contraseña",
+        "item_desc": "Desbloqueo biométrico activo",
+        "delete_tooltip": "Eliminar huella",
+        "delete_all": "Eliminar todas",
+        "confirm_delete_title": "¿Eliminar huella?",
+        "confirm_delete_desc": "¿Seguro que deseas eliminar esta huella dactilar?",
+        "deleted": "Huella eliminada con éxito"
+      },
+      "enroll": {
+        "title": "Agregar huella",
+        "desc": "Selecciona un dedo y escanéalo en el sensor",
+        "select_finger": "Seleccionar dedo",
+        "hand_left": "Mano izquierda",
+        "hand_right": "Mano derecha",
+        "button_start": "Agregar",
+        "button_cancel": "Cancelar",
+        "button_done": "Listo",
+        "button_retry": "Reintentar",
+        "active_title": "Escaneando: {finger}",
+        "step": "Paso {current} de {total}",
+        "step_passed": "¡Excelente! Levanta el dedo y vuelve a colocarlo",
+        "place_finger": "Coloca tu dedo en el sensor",
+        "retry": "No reconocido. Intenta de nuevo",
+        "swipe_too_short": "Movimiento muy corto. Desliza más despacio",
+        "not_centered": "Centra tu dedo en el sensor",
+        "remove_retry": "Retira el dedo y vuelve a colocarlo",
+        "success": "¡Huella registrada con éxito!",
+        "failed": "Error al registrar la huella",
+        "already_enrolled": "Ya está registrada"
+      },
+      "fingers": {
+        "right-thumb": "Pulgar derecho",
+        "right-index-finger": "Índice derecho",
+        "right-middle-finger": "Medio derecho",
+        "right-ring-finger": "Anular derecho",
+        "right-little-finger": "Meñique derecho",
+        "left-thumb": "Pulgar izquierdo",
+        "left-index-finger": "Índice izquierdo",
+        "left-middle-finger": "Medio izquierdo",
+        "left-ring-finger": "Anular izquierdo",
+        "left-little-finger": "Meñique izquierdo"
+      },
+      "finger_short": {
+        "thumb": "Pulgar",
+        "index-finger": "Índice",
+        "middle-finger": "Medio",
+        "ring-finger": "Anular",
+        "little-finger": "Meñique"
+      },
+      "limits": {
+        "title": "Limitar intentos fallidos",
+        "desc": "Desactivar temporalmente el sensor tras 5 intentos fallidos consecutivos",
+        "attempts_title": "Máximo de intentos por huella",
+        "attempts_desc": "Intentos fallidos antes de desactivar el sensor hasta ingresar contraseña"
+      }
+    },
+    "power": {
+      "refresh": "Actualizar",
+      "health_label": "Salud: %1%",
+      "status": {
+        "ac": "Conectado a la red",
+        "charging": "Cargando",
+        "discharging": "Descargando",
+        "full": "Carga completa"
+      },
+      "desc": {
+        "ac_connected": "Funcionando con adaptador de corriente",
+        "battery_active": "Funcionando con batería"
+      },
+      "profile": {
+        "title": "Perfil de energía",
+        "desc": "Equilibrar rendimiento y consumo de energía"
+      },
+      "profiles": {
+        "title": "Perfiles de energía",
+        "desc": "Modo de rendimiento para CPU, GPU y ventilación",
+        "saver_title": "Ahorro de energía",
+        "saver_desc": "Mínimo consumo. Turbo Boost desactivado",
+        "balanced_title": "Equilibrado",
+        "balanced_desc": "Equilibrio ideal entre fluidez y autonomía",
+        "perf_title": "Rendimiento",
+        "perf_desc": "Frecuencias máximas y Boost activo"
+      },
+      "threshold": {
+        "title": "Protección de batería",
+        "desc": "Límite de carga para prolongar la vida útil de la batería",
+        "conservation_title": "Modo de conservación",
+        "conservation_desc": "Limitar carga al 80% para alargar la vida útil",
+        "custom_label": "Límite de carga",
+        "custom_desc": "Porcentaje máximo de carga de la batería"
       }
     }
   },

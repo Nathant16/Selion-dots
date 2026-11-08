@@ -50,7 +50,9 @@
       "theme_apps": "App-Design",
       "theme_wallpapers": "Hintergründe",
       "general_main": "Allgemein",
-      "general_presets": "Voreinstellungen"
+      "general_presets": "Voreinstellungen",
+      "fingerprint": "Fingerabdrücke",
+      "power": "Energie"
     },
     "launcher": {
       "position": {
@@ -334,7 +336,8 @@
         },
         "fingerprint": {
           "title": "Fingerabdruck-Anmeldung aktivieren",
-          "desc": "Entsperren des Sperrbildschirms per Fingerabdruck erlauben"
+          "desc": "Entsperren des Sperrbildschirms per Fingerabdruck erlauben",
+          "manage": "Konfigurieren..."
         },
         "background": {
           "select": "Hintergrund auswählen",
@@ -1129,6 +1132,120 @@
         "title": "Screenshot-Ordner",
         "desc": "Ordner, in dem Screenshots gespeichert werden",
         "select_dir": "Ordner auswählen..."
+      }
+    },
+    "fingerprint": {
+      "refresh": "Aktualisieren",
+      "cancel": "Abbrechen",
+      "enrolled_count": "Fingerabdrücke registriert",
+      "header": {
+        "title": "Fingerabdrücke",
+        "desc": "Biometrische Authentifizierung und Scanner verwalten",
+        "ready": "Sensor bereit",
+        "not_found": "Kein Sensor erkannt",
+        "not_found_desc": "Biometrischer Sensor wurde auf diesem System nicht gefunden",
+        "touch_type": "Berührung",
+        "swipe_type": "Wischen",
+        "stages_count": "Schritte: {count}"
+      },
+      "master": {
+        "title": "Fingerabdruck-Authentifizierung",
+        "desc": "Entsperren und Authentifizierung per Fingerabdruck erlauben"
+      },
+      "enrolled": {
+        "title": "Gespeicherte Fingerabdrücke",
+        "desc": "Liste der im System registrierten Finger",
+        "empty_title": "Keine Fingerabdrücke gespeichert",
+        "empty_desc": "Registrieren Sie unten einen Finger, um sich ohne Passworteingabe anzumelden",
+        "item_desc": "Biometrische Entsperrung aktiv",
+        "delete_tooltip": "Fingerabdruck löschen",
+        "delete_all": "Alle löschen",
+        "confirm_delete_title": "Fingerabdruck löschen?",
+        "confirm_delete_desc": "Möchten Sie diesen Fingerabdruck wirklich löschen?",
+        "deleted": "Fingerabdruck erfolgreich gelöscht"
+      },
+      "enroll": {
+        "title": "Fingerabdruck hinzufügen",
+        "desc": "Finger auswählen und auf dem Sensor scannen",
+        "select_finger": "Finger auswählen",
+        "hand_left": "Linke Hand",
+        "hand_right": "Rechte Hand",
+        "button_start": "Hinzufügen",
+        "button_cancel": "Abbrechen",
+        "button_done": "Fertig",
+        "button_retry": "Wiederholen",
+        "active_title": "Scan läuft: {finger}",
+        "step": "Schritt {current} von {total}",
+        "step_passed": "Ausgezeichnet! Finger anheben und erneut auflegen",
+        "place_finger": "Finger auf den Sensor legen",
+        "retry": "Nicht erkannt. Bitte erneut versuchen",
+        "swipe_too_short": "Zu kurze Bewegung. Bitte langsamer wischen",
+        "not_centered": "Finger mittig auf dem Sensor platzieren",
+        "remove_retry": "Finger abheben und erneut auflegen",
+        "success": "Fingerabdruck erfolgreich hinzugefügt!",
+        "failed": "Registrierung des Fingerabdrucks fehlgeschlagen",
+        "already_enrolled": "Bereits registriert"
+      },
+      "fingers": {
+        "right-thumb": "Rechter Daumen",
+        "right-index-finger": "Rechter Zeigefinger",
+        "right-middle-finger": "Rechter Mittelfinger",
+        "right-ring-finger": "Rechter Ringfinger",
+        "right-little-finger": "Rechter kleiner Finger",
+        "left-thumb": "Linker Daumen",
+        "left-index-finger": "Linker Zeigefinger",
+        "left-middle-finger": "Linker Mittelfinger",
+        "left-ring-finger": "Linker Ringfinger",
+        "left-little-finger": "Linker kleiner Finger"
+      },
+      "finger_short": {
+        "thumb": "Daumen",
+        "index-finger": "Zeigefinger",
+        "middle-finger": "Mittelfinger",
+        "ring-finger": "Ringfinger",
+        "little-finger": "Kleiner Finger"
+      },
+      "limits": {
+        "title": "Fehlversuche begrenzen",
+        "desc": "Sensor nach 5 aufeinanderfolgenden Fehlversuchen vorübergehend sperren",
+        "attempts_title": "Maximale Fingerabdruckversuche",
+        "attempts_desc": "Anzahl fehlgeschlagener Scans vor Sensor-Deaktivierung bis zur Passworteingabe"
+      }
+    },
+    "power": {
+      "refresh": "Aktualisieren",
+      "health_label": "Zustand: %1%",
+      "status": {
+        "ac": "Netzbetrieb",
+        "charging": "Wird geladen",
+        "discharging": "Entladen",
+        "full": "Vollständig geladen"
+      },
+      "desc": {
+        "ac_connected": "Betrieb über Netzteil",
+        "battery_active": "Batteriebetrieb"
+      },
+      "profile": {
+        "title": "Energieprofil",
+        "desc": "Leistung und Energieverbrauch anpassen"
+      },
+      "profiles": {
+        "title": "Energieprofile",
+        "desc": "Leistungsmodus für CPU, GPU und Kühlung wählen",
+        "saver_title": "Energiesparmodus",
+        "saver_desc": "Minimaler Verbrauch. Turbo Boost deaktiviert",
+        "balanced_title": "Ausbalanciert",
+        "balanced_desc": "Optimale Balance aus Leistung und Akkulaufzeit",
+        "perf_title": "Leistung",
+        "perf_desc": "Maximale Taktraten und aktiver Boost"
+      },
+      "threshold": {
+        "title": "Akkuschutz",
+        "desc": "Ladeschwelle einstellen, um die Akkulebensdauer zu verlängern",
+        "conservation_title": "Erhaltungsmodus",
+        "conservation_desc": "Ladung auf 80% begrenzen für längere Lebensdauer",
+        "custom_label": "Ladelimit",
+        "custom_desc": "Maximaler Ladeprozentsatz des Akkus"
       }
     }
   },
