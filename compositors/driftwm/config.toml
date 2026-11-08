@@ -1,0 +1,193 @@
+# DriftWM Configuration - Synchronized with PC and SelionOS
+
+mod_key = "super"
+focus_follows_mouse = false
+focus_placement = "center"
+window_placement = "center"
+
+autostart = [
+    "wl-paste --type text --watch cliphist store",
+    "wl-paste --type image --watch cliphist store",
+    "xwayland-satellite",
+    "serpantinumd start"
+]
+
+[session]
+suspend_on_close = false
+restore_windows = true
+restore_camera = true
+restore_bookmarks = true
+
+[env]
+TERMINAL = "kitty"
+QT_WAYLAND_DISABLE_WINDOWDECORATION = "1"
+QT_QPA_PLATFORM = "wayland"
+QT_QPA_PLATFORMTHEME = "qt6ct"
+MOZ_ENABLE_WAYLAND = "1"
+XDG_CURRENT_DESKTOP = "driftwm:sway:wlroots"
+XDG_SESSION_DESKTOP = "driftwm"
+
+[input.keyboard]
+layout = "us,ru"
+repeat_rate = 25
+repeat_delay = 200
+layout_independent = true
+num_lock = true
+
+[input.trackpad]
+tap_to_click = true
+natural_scroll = true
+tap_and_drag = true
+click_method = "clickfinger"
+accel_speed = 0.0
+accel_profile = "adaptive"
+disable_while_typing = true
+
+[cursor]
+inactive_opacity = 0.5
+
+[zoom]
+step = 1.25
+trackpad_speed = 1.5
+fit_padding = 40.0
+
+[decorations]
+corner_radius = 16
+shadow = true
+default_mode = "minimal"
+border_width = 2
+border_color = "#38342b"
+border_color_focused = "#e0c56d"
+opacity = 1.0
+opacity_focused = 1.0
+
+[background]
+type = "none"
+
+[[window_rules]]
+app_id = "kitty"
+size = [960, 600]
+
+[[window_rules]]
+app_id = "nemo"
+decoration = "minimal"
+
+[keybindings]
+# Раскладка клавиатуры
+"alt+shift" = "switch-layout next"
+"ctrl+shift" = "switch-layout next"
+
+# Терминал, файловый менеджер и монитор процессов
+"mod+return" = "exec kitty"
+"mod+e" = "exec nemo"
+"ctrl+shift+escape" = "exec kitty -e btop"
+
+# Управление окнами
+"mod+q" = "close-window"
+"mod+shift+q" = "suspend-window"
+"alt+return" = "toggle-fullscreen"
+"mod+t" = "toggle-pin-to-screen"
+"mod+backspace" = "center-window"
+
+# Навигация и фокус окон (как на ПК)
+"mod+left" = "focus-nearest left"
+"mod+right" = "focus-nearest right"
+"mod+up" = "focus-nearest up"
+"mod+down" = "focus-nearest down"
+"alt+tab" = "cycle-windows forward"
+"alt+shift+tab" = "cycle-windows backward"
+
+# Перемещение окон и панорамирование
+"mod+shift+left" = "move-to-snap left"
+"mod+shift+right" = "move-to-snap right"
+"mod+shift+up" = "move-to-snap up"
+"mod+shift+down" = "move-to-snap down"
+
+"mod+ctrl+left" = "pan-viewport left"
+"mod+ctrl+right" = "pan-viewport right"
+"mod+ctrl+up" = "pan-viewport up"
+"mod+ctrl+down" = "pan-viewport down"
+
+# Приложения (соответствие ПК / userprefs)
+"mod+shift+c" = "exec code"
+"mod+shift+f" = "exec zen-browser"
+"mod+shift+a" = "exec antigravity-ide"
+"mod+shift+s" = "exec spotify"
+"mod+shift+t" = "exec AyuGram"
+"mod+shift+g" = "exec steam"
+"mod+shift+m" = "exec prismlauncher"
+"mod+shift+d" = "exec discord"
+"mod+shift+o" = "exec obsidian"
+"mod+shift+n" = "exec notion-app"
+"mod+shift+p" = "exec pwvucontrol"
+
+# Оболочка, лаунчер, буфер обмена и меню питания
+"mod+space" = "spawn serpantinum msg toggle launcher"
+"mod+r" = "spawn serpantinum msg toggle launcher"
+"mod+v" = "spawn serpantinum msg toggle clipboard"
+"mod+shift+x" = "spawn serpantinum lock"
+"mod+x" = "spawn serpantinum lock"
+"mod+l" = "spawn serpantinum lock"
+"mod+p" = "spawn /usr/local/bin/battery --cycle"
+"XF86Launch1" = "spawn /usr/local/bin/battery --cycle"
+"mod+b" = "spawn serpantinum msg bar autohide"
+"mod+n" = "spawn serpantinum msg bar autohide"
+"mod+w" = "spawn serpantinum msg toggle wallpaper"
+"mod+shift+r" = "reload-config"
+"mod+m" = "quit"
+"mod+ctrl+shift+q" = "quit"
+
+# Скриншоты
+"Print" = "exec serpantinum screenshot"
+"shift+Print" = "exec serpantinum screenshot --edit"
+"mod+Print" = "exec serpantinum screenshot --full"
+"mod+shift+Print" = "exec serpantinum screenshot --full --edit"
+
+# Мультимедийные клавиши ноутбука
+"XF86MonBrightnessDown" = "exec serpantinum brightness lower"
+"XF86MonBrightnessUp" = "exec serpantinum brightness raise"
+"XF86AudioLowerVolume" = "exec serpantinum volume lower"
+"XF86AudioRaiseVolume" = "exec serpantinum volume raise"
+"XF86AudioMute" = "exec serpantinum volume mute-toggle"
+"XF86AudioMicMute" = "exec serpantinum volume mic-toggle"
+"XF86AudioPlay" = "spawn playerctl play-pause"
+"XF86AudioPause" = "spawn playerctl play-pause"
+"XF86AudioPrev" = "spawn playerctl previous"
+"XF86AudioNext" = "spawn playerctl next"
+
+# Зум холста DriftWM
+"mod+equal" = "zoom-in"
+"mod+minus" = "zoom-out"
+"mod+0" = "zoom-reset"
+"mod+shift+w" = "zoom-to-fit"
+
+# Закладки (воркспейсы)
+"mod+1" = "go-to-bookmark 1"
+"mod+2" = "go-to-bookmark 2"
+"mod+3" = "go-to-bookmark 3"
+"mod+4" = "go-to-bookmark 4"
+"mod+5" = "go-to-bookmark 5"
+"mod+6" = "go-to-bookmark 6"
+"mod+7" = "go-to-bookmark 7"
+"mod+8" = "go-to-bookmark 8"
+"mod+9" = "go-to-bookmark 9"
+
+"mod+shift+1" = "move-to-bookmark 1"
+"mod+shift+2" = "move-to-bookmark 2"
+"mod+shift+3" = "move-to-bookmark 3"
+"mod+shift+4" = "move-to-bookmark 4"
+"mod+shift+5" = "move-to-bookmark 5"
+"mod+shift+6" = "move-to-bookmark 6"
+"mod+shift+7" = "move-to-bookmark 7"
+"mod+shift+8" = "move-to-bookmark 8"
+"mod+shift+9" = "move-to-bookmark 9"
+
+"mod+ctrl+1" = "set-bookmark 1"
+"mod+ctrl+2" = "set-bookmark 2"
+"mod+ctrl+3" = "set-bookmark 3"
+"mod+ctrl+4" = "set-bookmark 4"
+"mod+ctrl+5" = "set-bookmark 5"
+"mod+ctrl+6" = "set-bookmark 6"
+"mod+ctrl+7" = "set-bookmark 7"
+"mod+ctrl+8" = "set-bookmark 8"
+"mod+ctrl+9" = "set-bookmark 9"

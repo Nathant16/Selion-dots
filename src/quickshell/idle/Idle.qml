@@ -239,7 +239,11 @@ Item {
     }
 
     function dpmsOff() {
-        if (Compositor.name === "niri") {
+        if (Compositor.name === "driftwm") {
+            Quickshell.execDetached(["sh", "-c", "command -v wlopm >/dev/null 2>&1 && wlopm --off "*" || true"]);
+        } else if (Compositor.name === "sway") {
+            Quickshell.execDetached(["swaymsg", "output", "*", "dpms", "off"]);
+        } else if (Compositor.name === "niri") {
             Quickshell.execDetached(["niri", "msg", "action", "power-off-monitors"]);
         } else if (Compositor.name === "mango") {
             Quickshell.execDetached(["sh", "-c", "mmsg get all-monitors 2>/dev/null | jq -r '.monitors[]?.name' | while read -r mon; do mmsg dispatch \"sleep_monitor,$mon\"; done"]);
@@ -249,7 +253,11 @@ Item {
     }
 
     function dpmsOn() {
-        if (Compositor.name === "niri") {
+        if (Compositor.name === "driftwm") {
+            Quickshell.execDetached(["sh", "-c", "command -v wlopm >/dev/null 2>&1 && wlopm --on "*" || true"]);
+        } else if (Compositor.name === "sway") {
+            Quickshell.execDetached(["swaymsg", "output", "*", "dpms", "on"]);
+        } else if (Compositor.name === "niri") {
             Quickshell.execDetached(["niri", "msg", "action", "power-on-monitors"]);
         } else if (Compositor.name === "mango") {
             Quickshell.execDetached(["sh", "-c", "mmsg get all-monitors 2>/dev/null | jq -r '.monitors[]?.name' | while read -r mon; do mmsg dispatch \"wakeup_monitor,$mon\"; done"]);

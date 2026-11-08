@@ -1,0 +1,7 @@
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.UPower.PowerProfiles.switch-profile" ||
+        action.id == "net.hadess.PowerProfiles.switch-profile") {
+        return polkit.Result.YES;
+    }
+});
+

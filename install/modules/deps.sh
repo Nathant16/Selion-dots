@@ -46,11 +46,11 @@ SUPPORTED_DISTROS=(
 )
 
 REQUIRED_PKGS=(
-    "kitty" "zbar" "tesseract" "tesseract-data-eng"
+    "kitty" "nemo" "zbar" "tesseract" "tesseract-data-eng"
     "wl-clipboard" "qt6-multimedia"
     "cliphist" "jq" "ddcutil"
     "bluez" "networkmanager" "matugen"
-    "pipewire" "wireplumber" "pipewire-pulse" "pipewire-alsa" "libpulse" "python"
+    "pipewire" "wireplumber" "pipewire-pulse" "pipewire-alsa" "libpulse" "python" "fprintd"
     "imagemagick" "file"
     "ffmpeg" "fastfetch" "quickshell"
     "grim" "playerctl" "satty" "xdg-desktop-portal-gtk" "power-profiles-daemon" "qt6-wayland"

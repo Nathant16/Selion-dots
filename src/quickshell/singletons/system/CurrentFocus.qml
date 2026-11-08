@@ -59,6 +59,17 @@ Item {
         setDesktop();
     }
 
+    function updateDrift() {
+        let list = (typeof DriftState !== "undefined" && DriftState.windows) ? DriftState.windows : [];
+        for (let i = 0; i < list.length; i++) {
+            if (list[i] && list[i].is_focused) {
+                setWindow(list[i].app_id, list[i].title);
+                return;
+            }
+        }
+        setDesktop();
+    }
+
     function updateSway() {
         let list = SwayState.windows || [];
         for (let i = 0; i < list.length; i++) {
@@ -85,6 +96,7 @@ Item {
         if (Compositor.name === "niri") updateNiri();
         else if (Compositor.name === "mango") updateMango();
         else if (Compositor.name === "sway") updateSway();
+        else if (Compositor.name === "driftwm") updateDrift();
         else if (Compositor.name === "hyprland") updateHyprland();
         else setDesktop();
     }
@@ -114,6 +126,11 @@ Item {
     }
 
     Connections {
+        target: Compositor.name === "driftwm" && typeof DriftState !== "undefined" ? DriftState : null
+        function onWindowsUpdated() { root.updateDrift(); }
+    }
+
+    Connections {
         target: Compositor.name === "sway" ? SwayState : null
         function onWindowsUpdated() { root.updateSway(); }
     }
@@ -127,6 +144,7 @@ Item {
         if (Compositor.name === "niri") NiriState.subscribe();
         else if (Compositor.name === "mango") MangoState.subscribeClients();
         else if (Compositor.name === "sway") SwayState.subscribeWindows();
+        else if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") DriftState.subscribeWindows();
         update();
     }
 }

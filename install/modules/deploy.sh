@@ -424,6 +424,7 @@ deploy_package() {
                 local target_config_name
                 case "$comp" in
                     hyprland) target_config_name="hypr" ;;
+                    driftwm) target_config_name="driftwm" ;;
                     niri) target_config_name="niri" ;;
                     sway) target_config_name="sway" ;;
                     *) target_config_name="$comp" ;;
@@ -571,6 +572,52 @@ deploy_package() {
     if [ -f "$TARGET_BASE/bin/serpantinumd" ]; then
         ln -sf "$TARGET_BASE/bin/serpantinumd" "$BIN_DIR/serpantinumd"
         sudo ln -sf "$TARGET_BASE/bin/serpantinumd" /usr/local/bin/serpantinumd 2>/dev/null || true
+    fi
+
+    # Deploy battery & power optimization tools
+    if [ -f "$TARGET_BASE/src/scripts/system/apply-power-profile.sh" ]; then
+        sudo cp "$TARGET_BASE/src/scripts/system/apply-power-profile.sh" /usr/local/bin/apply-power-profile.sh 2>/dev/null || true
+        sudo chmod 755 /usr/local/bin/apply-power-profile.sh 2>/dev/null || true
+    fi
+    if [ -f "$TARGET_BASE/src/scripts/system/battery" ]; then
+        sudo cp "$TARGET_BASE/src/scripts/system/battery" /usr/local/bin/battery 2>/dev/null || true
+        sudo chmod 755 /usr/local/bin/battery 2>/dev/null || true
+        sudo ln -sf /usr/local/bin/battery /usr/local/bin/power 2>/dev/null || true
+    fi
+
+    # Deploy USB mouse power rules (disable autosuspend on mice/receivers)
+    if [ -f "$TARGET_BASE/src/assets/udev/50-usb-mouse-power.rules" ]; then
+        sudo mkdir -p /etc/udev/rules.d 2>/dev/null || true
+        sudo cp "$TARGET_BASE/src/assets/udev/50-usb-mouse-power.rules" /etc/udev/rules.d/50-usb-mouse-power.rules 2>/dev/null || true
+        sudo udevadm control --reload-rules 2>/dev/null || true
+        sudo udevadm trigger --subsystem-match=usb 2>/dev/null || true
+    fi
+
+    # Deploy polkit rules for powerprofilesctl and fprintd passwordless management
+    if [ -f "$TARGET_BASE/src/assets/polkit/49-power-profiles.rules" ]; then
+        sudo mkdir -p /etc/polkit-1/rules.d 2>/dev/null || true
+        sudo cp "$TARGET_BASE/src/assets/polkit/49-power-profiles.rules" /etc/polkit-1/rules.d/49-power-profiles.rules 2>/dev/null || true
+        sudo chmod 644 /etc/polkit-1/rules.d/49-power-profiles.rules 2>/dev/null || true
+    fi
+    if [ -f "$TARGET_BASE/src/assets/polkit/50-net.reactivated.fprint.rules" ]; then
+        sudo mkdir -p /etc/polkit-1/rules.d 2>/dev/null || true
+        sudo cp "$TARGET_BASE/src/assets/polkit/50-net.reactivated.fprint.rules" /etc/polkit-1/rules.d/50-net.reactivated.fprint.rules 2>/dev/null || true
+        sudo chmod 644 /etc/polkit-1/rules.d/50-net.reactivated.fprint.rules 2>/dev/null || true
+    fi
+
+    # Deploy Twemoji fontconfig and ensure emoji font availability
+    if [ -f "$TARGET_BASE/src/assets/fontconfig/75-twemoji.conf" ]; then
+        local fontconfig_avail="/usr/share/fontconfig/conf.avail"
+        [ -d "$fontconfig_avail" ] || fontconfig_avail="/etc/fonts/conf.avail"
+        sudo mkdir -p "$fontconfig_avail" /etc/fonts/conf.d 2>/dev/null || true
+        sudo cp "$TARGET_BASE/src/assets/fontconfig/75-twemoji.conf" "$fontconfig_avail/75-twemoji.conf" 2>/dev/null || true
+        sudo ln -sf "$fontconfig_avail/75-twemoji.conf" /etc/fonts/conf.d/75-twemoji.conf 2>/dev/null || true
+    fi
+    if ! fc-list : family 2>/dev/null | grep -qi "Twitter Color Emoji"; then
+        sudo mkdir -p /usr/share/fonts/twemoji 2>/dev/null || true
+        curl -fsSL "https://raw.githubusercontent.com/quarrel/broken-flag-emojis-win11-twemoji/main/Twemoji-16.0.1-SVG-COLR1.ttf" -o /tmp/Twemoji.ttf 2>/dev/null && \
+        sudo mv /tmp/Twemoji.ttf /usr/share/fonts/twemoji/Twemoji.ttf 2>/dev/null && \
+        sudo fc-cache -f 2>/dev/null || true
     fi
 
     remove_settings_desktop_entry

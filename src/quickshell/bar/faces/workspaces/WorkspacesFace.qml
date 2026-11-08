@@ -46,6 +46,19 @@ Item {
         if (want) MangoState.subscribe();
         else MangoState.unsubscribe();
     }
+    readonly property int driftActiveIndex: (typeof DriftState !== "undefined") ? DriftState.activeIndex : 0
+    readonly property var driftOccupiedMap: (typeof DriftState !== "undefined") ? DriftState.occupiedMap : ({})
+    property bool driftSubscribed: false
+
+    function syncDriftSubscription() {
+        let want = Compositor.name === "driftwm" && moduleActive;
+        if (want === driftSubscribed) return;
+        driftSubscribed = want;
+        if (typeof DriftState !== "undefined") {
+            if (want) DriftState.subscribe();
+            else DriftState.unsubscribe();
+        }
+    }
     readonly property int swayActiveIndex: SwayState.activeIndexFor(myOutput)
     readonly property var swayOccupiedMap: SwayState.occupiedMap
     property bool swaySubscribed: false
@@ -205,6 +218,7 @@ Item {
 
     function isOccupied(index) {
         if (Compositor.name === "niri") return !!(niriExistingMap[index] && niriOccupiedMap[index]);
+        if (Compositor.name === "driftwm") return !!(driftOccupiedMap && driftOccupiedMap[index]);
         if (Compositor.name === "sway") return !!swayOccupiedMap[index];
         if (Compositor.name === "mango") return !!(mangoOccupiedMap && MangoState.isOccupied(myOutput, index));
         let ws = wsForId(hyprBase + index + 1);
@@ -220,6 +234,8 @@ Item {
         let wsId = (Compositor.name !== "hyprland" ? 0 : hyprBase) + index + 1;
         if (Compositor.name === "niri") {
             Quickshell.execDetached(["niri", "msg", "action", "focus-workspace", wsId.toString()]);
+        } else if (Compositor.name === "driftwm") {
+            if (typeof DriftState !== "undefined") DriftState.focusWorkspace(index);
         } else if (Compositor.name === "sway") {
             SwayState.focusWorkspace(index);
         } else if (Compositor.name === "mango") {
@@ -233,6 +249,8 @@ Item {
         let idx = -1;
         if (Compositor.name === "niri") {
             idx = (niriExistingMap[niriActiveIndex] || Object.keys(niriExistingMap).length === 0) ? niriActiveIndex : -1;
+        } else if (Compositor.name === "driftwm") {
+            idx = driftActiveIndex;
         } else if (Compositor.name === "sway") {
             idx = swayActiveIndex;
         } else if (Compositor.name === "mango") {
@@ -249,6 +267,7 @@ Item {
         syncNiriSubscription();
         syncMangoSubscription();
         syncSwaySubscription();
+        syncDriftSubscription();
         syncModel();
     }
 
@@ -256,17 +275,19 @@ Item {
         if (niriSubscribed) NiriState.unsubscribe();
         if (mangoSubscribed) MangoState.unsubscribe();
         if (swaySubscribed) SwayState.unsubscribe();
+        if (driftSubscribed && typeof DriftState !== "undefined") DriftState.unsubscribe();
     }
 
     onModuleActiveChanged: {
         syncNiriSubscription();
         syncMangoSubscription();
         syncSwaySubscription();
+        syncDriftSubscription();
     }
 
     Connections {
         target: Compositor
-        function onNameChanged() { root.syncSwaySubscription(); }
+        function onNameChanged() { root.syncSwaySubscription(); root.syncDriftSubscription(); }
     }
 
     property real targetLength: (moduleActive && workspaceCount > 0 && faceLoader.item) ? (isVertical ? faceLoader.item.implicitHeight : faceLoader.item.implicitWidth) + s(isCompact ? 18 : 22) : 0

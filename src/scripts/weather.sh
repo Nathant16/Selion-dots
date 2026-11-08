@@ -182,7 +182,7 @@ get_data() {
 
     if [[ "$VERBOSE" == "true" ]]; then
         log_debug "Executing curl payload fetch..."
-        raw_api=$(curl -sS --max-time 15 "$forecast_url" 2>&1)
+        raw_api=$(curl -sS --max-time 3 "$forecast_url" 2>&1)
         curl_status=$?
         log_debug "Curl exit status code: $curl_status"
         if [ $curl_status -ne 0 ]; then
@@ -195,9 +195,19 @@ get_data() {
             log_debug "Successfully downloaded API payload. Payload size: ${#raw_api} bytes."
         fi
     else
-        raw_api=$(curl -sf --max-time 15 "$forecast_url")
+        raw_api=$(curl -sf --max-time 3 "$forecast_url")
     fi
     
+    if [ -z "" ]; then
+        log_debug "Open-Meteo failed/blocked. Attempting wttr.in fallback..."
+        fallback_script="$(dirname "$(realpath "${BASH_SOURCE[0]}")")/wttr_fallback.py"
+        if [ -f "$fallback_script" ]; then
+            raw_api=$(python3 "$fallback_script" "$lat" "$lon" 2>/dev/null)
+            if [ -n "$raw_api" ]; then
+                log_debug "Successfully retrieved forecast via wttr.in fallback."
+            fi
+        fi
+    fi
     if [ -z "$raw_api" ]; then
         log_debug "Raw API data is empty. Reverting to dummy data structures."
         mark_offline_if_stale

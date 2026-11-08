@@ -537,6 +537,8 @@ Item {
         { id: "Notifications", key: "notifications", name: "Notifications", icon: "󰂚", file: "notifications/NotificationsTab.qml" },
         { id: "Screenshot", key: "screenshot", name: "Screenshot", icon: "󰹑", file: "screenshot/ScreenshotTab.qml" },
         { id: "Wellbeing", key: "wellbeing", name: "Wellbeing", icon: "󰄉", separatorBefore: true, file: "wellbeing/DigitalWellbeingTab.qml" },
+        { id: "Power", key: "power", name: "Power", icon: "󰂄", file: "PowerTab.qml" },
+        { id: "Fingerprint", key: "fingerprint", name: "Fingerprints", icon: "󰈷", file: "FingerprintTab.qml" },
         { id: "Idle", key: "idle", name: "Idle", icon: "󰒲", file: "IdleTab.qml" },
         { id: "About", key: "about", name: "About", icon: "󰋽", separatorBefore: true, file: "AboutTab.qml" }
     ]

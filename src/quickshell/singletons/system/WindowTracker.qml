@@ -26,6 +26,7 @@ Item {
             if (Compositor.name === "niri" && typeof NiriState !== "undefined") NiriState.subscribe();
             if (Compositor.name === "mango") MangoState.subscribeClients();
             if (Compositor.name === "sway") SwayState.subscribeWindows();
+            if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") DriftState.subscribeWindows();
             _requestRebuild();
         }
     }
@@ -36,6 +37,7 @@ Item {
             if (Compositor.name === "niri" && typeof NiriState !== "undefined") NiriState.unsubscribe();
             if (Compositor.name === "mango") MangoState.unsubscribeClients();
             if (Compositor.name === "sway") SwayState.unsubscribeWindows();
+            if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") DriftState.unsubscribeWindows();
         }
     }
 
@@ -68,7 +70,13 @@ Item {
 
         if (Compositor.name === "niri") {
             rawList = root._collectNiriWindows();
-        } else if (Compositor.name === "sway") {
+        } else if (Compositor.name === "driftwm") {
+            rawList = root._collectDriftWindows();
+        } else if (Compositor.name === "driftwm") {
+            root._focusDrift(win);
+            return;
+        }
+        if (Compositor.name === "sway") {
             rawList = root._collectSwayWindows();
         } else if (Compositor.name === "mango") {
             rawList = root._collectMangoWindows();
@@ -256,6 +264,58 @@ Item {
         return list;
     }
 
+    function _collectDriftWindows() {
+        let list = [];
+        let wins = (typeof DriftState !== "undefined" && DriftState.windows) ? DriftState.windows : [];
+        for (let i = 0; i < wins.length; i++) {
+            let w = wins[i];
+            if (!w || w.id === undefined || w.id === null) continue;
+            let rawApp = w.app_id || "";
+            let appKey = AppMatcher.normalizeKey(rawApp);
+            let dId = AppMatcher.resolve(rawApp);
+            let cid = dId !== "" ? AppMatcher.canonicalId(dId) : AppMatcher.canonicalId(rawApp);
+            let gKey = cid !== "" ? cid : (appKey !== "" ? appKey : ("win:" + w.id));
+            let isFoc = Boolean(w.is_focused);
+            if (isFoc) _recordFocus(w.id);
+
+            let wsIdx = (w.position && Array.isArray(w.position)) ? Math.max(0, Math.min(8, Math.round(w.position[0] / 2500))) : 0;
+            let wsLabel = String(wsIdx + 1);
+
+            list.push({
+                id: "drift:" + w.id,
+                nativeId: w.id,
+                seq: ++_seqCounter,
+                appId: rawApp,
+                appKey: appKey,
+                title: w.title || rawApp,
+                workspace: wsIdx + 1,
+                workspaceLabel: wsLabel,
+                output: "",
+                focused: isFoc,
+                lastFocus: _getMru(w.id),
+                desktopId: dId !== "" ? (dId.endsWith(".desktop") ? dId : (dId + ".desktop")) : (rawApp ? (rawApp + ".desktop") : ""),
+                canonicalId: cid,
+                groupKey: gKey,
+                native: null
+            });
+        }
+        return list;
+    }
+
+    function _focusDrift(win) {
+        if (!win) return;
+        let nid = (typeof win === "object") ? win.nativeId : win;
+        if (nid === undefined || nid === null || nid === "") return;
+        Quickshell.execDetached(["driftwm", "msg", "focus", "--id", String(nid)]);
+    }
+
+    function _closeDrift(win) {
+        if (!win) return;
+        let nid = (typeof win === "object") ? win.nativeId : win;
+        if (nid === undefined || nid === null || nid === "") return;
+        Quickshell.execDetached(["driftwm", "msg", "close", "--id", String(nid)]);
+    }
+
     function _collectSwayWindows() {
         let list = [];
         let wins = SwayState.windows || [];
@@ -381,6 +441,10 @@ Item {
             return;
         }
 
+        if (Compositor.name === "driftwm") {
+            root._focusDrift(win);
+            return;
+        }
         if (Compositor.name === "sway") {
             root._focusSway(win);
             return;
@@ -423,6 +487,10 @@ Item {
         }
         if (Compositor.name === "niri" && nid) {
             root._closeNiri(win);
+            return;
+        }
+        if (Compositor.name === "driftwm" && nid) {
+            root._closeDrift(win);
             return;
         }
         if (Compositor.name === "sway" && nid) {
@@ -532,6 +600,13 @@ Item {
         }
         function onWindowsMapChanged() {
             if (Compositor.name === "niri") root._requestRebuild();
+        }
+    }
+
+    Connections {
+        target: (typeof DriftState !== "undefined") ? DriftState : null
+        function onWindowsUpdated() {
+            if (Compositor.name === "driftwm") root._requestRebuild();
         }
     }
 

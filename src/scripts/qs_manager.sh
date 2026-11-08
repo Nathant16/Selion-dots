@@ -76,7 +76,13 @@ if [[ "$ACTION" =~ ^[0-9]+$ ]]; then
     DE="${XDG_CURRENT_DESKTOP:-${DESKTOP_SESSION:-}}"
     DE="${DE,,}"
 
-    if [[ "$DE" == *"niri"* ]] || [[ -n "${NIRI_SOCKET:-}" ]]; then
+    if [[ "$DE" == *"drift"* ]] || [[ -n "${DRIFTWM_SOCKET:-}" ]]; then
+        if [[ "$TARGET" == "move" ]]; then
+            driftwm msg action move-to-bookmark "$ACTION" >/dev/null 2>&1 &
+        else
+            driftwm msg action go-to-bookmark "$ACTION" >/dev/null 2>&1 &
+        fi
+    elif [[ "$DE" == *"niri"* ]] || [[ -n "${NIRI_SOCKET:-}" ]]; then
         if [[ "$TARGET" == "move" ]]; then
             niri msg action move-window-to-workspace "$ACTION" >/dev/null 2>&1 &
         else

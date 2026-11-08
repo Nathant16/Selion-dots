@@ -1,7 +1,7 @@
 {
   "name": "Kitty",
   "category": "terminals",
-  "icon": "󰄛",
+  "icon": "\udb80\udd1b",
   "default": true,
   "detect": {
     "bin": [
@@ -24,6 +24,6 @@
     }
   ],
   "reload": [
-    "pkill -USR1 -x kitty; pkill -USR1 -x .kitty-wrapped; true"
+    "pkill -USR1 -x kitty; pkill -USR1 -x .kitty-wrapped; pkill -USR1 -x fish; true"
   ]
 }

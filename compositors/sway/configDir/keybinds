@@ -1,58 +1,91 @@
+# Sway Keybindings - Synchronized with PC
+
+# Terminal, File Manager & Task Manager
 bindsym $mod+Return exec $terminal
-bindsym $mod+F exec firefox
-bindsym $mod+E exec ski
-bindsym $mod+BackSpace scratchpad show
+bindsym $mod+E exec nemo
+bindsym Ctrl+Shift+Escape exec $terminal -e btop
+
+# App Shortcuts (Synchronized with PC)
+bindsym $mod+Shift+C exec code
+bindsym $mod+Shift+F exec zen-browser
+bindsym $mod+Shift+A exec antigravity-ide
+bindsym $mod+Shift+S exec spotify
+bindsym $mod+Shift+T exec AyuGram
+bindsym $mod+Shift+G exec steam
+bindsym $mod+Shift+M exec prismlauncher
+bindsym $mod+Shift+D exec discord
+bindsym $mod+Shift+O exec obsidian
+bindsym $mod+Shift+N exec notion-app
+bindsym $mod+Shift+P exec pwvucontrol
+
+# Window Actions
 bindsym $mod+Q kill
-bindsym $mod+Shift+F floating toggle
+bindsym Alt+Return fullscreen toggle
+bindsym $mod+Shift+space floating toggle
 
-bindsym XF86MonBrightnessDown exec serpantinum brightness lower
-bindsym XF86MonBrightnessUp exec serpantinum brightness raise
-
-bindsym Print exec serpantinum screenshot
-bindsym Shift+Print exec serpantinum screenshot --edit
-bindsym $mod+Print exec serpantinum screenshot --full
-bindsym $mod+Shift+Print exec serpantinum screenshot --full --edit
-
-bindsym XF86PowerOff exec serpantinum lock
-bindsym $mod+L exec serpantinum lock
-
-bindsym $mod+space exec playerctl play-pause
-bindsym XF86AudioPause exec playerctl play-pause
-bindsym XF86AudioPlay exec playerctl play-pause
-bindsym XF86AudioPrev exec playerctl previous
-bindsym XF86AudioNext exec playerctl next
-bindsym XF86AudioMicMute exec serpantinum volume mic-toggle
-bindsym XF86AudioMute exec serpantinum volume mute-toggle
-bindsym XF86AudioLowerVolume exec serpantinum volume lower
-bindsym XF86AudioRaiseVolume exec serpantinum volume raise
-
-bindsym $mod+R exec serpantinum reload
-bindsym $mod+C exec serpantinum msg toggle clipboard
-bindsym $mod+D exec serpantinum msg toggle launcher
-bindsym $mod+M exec serpantinum msg toggle music
-bindsym $mod+B exec serpantinum msg toggle system
-bindsym $mod+W exec serpantinum msg toggle wallpaper
-bindsym $mod+S exec serpantinum msg toggle calendar
-bindsym $mod+N exec serpantinum msg toggle network
-bindsym $mod+V exec serpantinum msg toggle volume
-bindsym $mod+H exec serpantinum msg toggle settings
-bindsym $mod+A exec serpantinum msg bar autohide
-
+# Focus & Navigation
 bindsym $mod+Left focus left
 bindsym $mod+Right focus right
-bindsym $mod+Up workspace prev
-bindsym $mod+Down workspace next
+bindsym $mod+Up focus up
+bindsym $mod+Down focus down
+bindsym Alt+Tab focus next
+bindsym Alt+Shift+Tab focus prev
 
-bindsym $mod+Ctrl+Left move left
-bindsym $mod+Ctrl+Right move right
-bindsym $mod+Ctrl+Up move container to workspace prev; workspace prev
-bindsym $mod+Ctrl+Down move container to workspace next; workspace next
-
+# Resize Windows
 bindsym $mod+Shift+Left resize shrink width 5 ppt
 bindsym $mod+Shift+Right resize grow width 5 ppt
 bindsym $mod+Shift+Up resize shrink height 5 ppt
 bindsym $mod+Shift+Down resize grow height 5 ppt
 
+# Move Windows
+bindsym $mod+Ctrl+Left move left
+bindsym $mod+Ctrl+Right move right
+bindsym $mod+Ctrl+Up move up
+bindsym $mod+Ctrl+Down move down
+bindsym $mod+Shift+Ctrl+Left move left
+bindsym $mod+Shift+Ctrl+Right move right
+bindsym $mod+Shift+Ctrl+Up move up
+bindsym $mod+Shift+Ctrl+Down move down
+
+# Scratchpad / Special Workspace
+bindsym $mod+S scratchpad show
+bindsym $mod+Alt+S move scratchpad
+bindsym $mod+BackSpace scratchpad show
+
+# Shell, Launcher, Clipboard & System Controls
+bindsym $mod+space exec serpantinum msg toggle launcher
+bindsym $mod+R exec serpantinum msg toggle launcher
+bindsym $mod+V exec serpantinum msg toggle clipboard
+bindsym $mod+Shift+X exec serpantinum lock
+bindsym $mod+X exec serpantinum lock
+bindsym $mod+L exec serpantinum lock
+bindsym XF86PowerOff exec serpantinum lock
+bindsym $mod+P exec /usr/local/bin/battery --cycle
+bindsym XF86Launch1 exec /usr/local/bin/battery --cycle
+bindsym $mod+B exec serpantinum msg bar autohide
+bindsym $mod+N exec serpantinum msg bar autohide
+bindsym $mod+W exec serpantinum msg toggle wallpaper
+bindsym $mod+Shift+R reload
+
+# Screenshots
+bindsym Print exec serpantinum screenshot
+bindsym Shift+Print exec serpantinum screenshot --edit
+bindsym $mod+Print exec serpantinum screenshot --full
+bindsym $mod+Shift+Print exec serpantinum screenshot --full --edit
+
+# Hardware & Media Controls
+bindsym XF86MonBrightnessDown exec serpantinum brightness lower
+bindsym XF86MonBrightnessUp exec serpantinum brightness raise
+bindsym XF86AudioLowerVolume exec serpantinum volume lower
+bindsym XF86AudioRaiseVolume exec serpantinum volume raise
+bindsym XF86AudioMute exec serpantinum volume mute-toggle
+bindsym XF86AudioMicMute exec serpantinum volume mic-toggle
+bindsym XF86AudioPause exec playerctl play-pause
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioNext exec playerctl next
+
+# Workspaces 1..10
 bindsym $mod+1 exec serpantinum msg workspace 1
 bindsym $mod+2 exec serpantinum msg workspace 2
 bindsym $mod+3 exec serpantinum msg workspace 3

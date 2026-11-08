@@ -257,7 +257,10 @@ GuideTab {
         stdout: StdioCollector {
             onStreamFinished: {
                 let out = this.text;
-                if (!out) return;
+                if (!out) {
+                    displayTabRoot.loadFallbackScreens();
+                    return;
+                }
                 let mList = [];
                 try {
                     let data = JSON.parse(out.trim());
@@ -340,14 +343,46 @@ GuideTab {
                 if (mList.length > 0) {
                     displayTabRoot.monitorsList = mList;
                     displayTabRoot.refreshDisplaySettings();
+                } else {
+                    displayTabRoot.loadFallbackScreens();
                 }
             }
         }
     }
 
+
+    function loadFallbackScreens() {
+        if (typeof Quickshell !== "undefined" && Quickshell.screens && Quickshell.screens.length > 0) {
+            let mList = [];
+            for (let i = 0; i < Quickshell.screens.length; i++) {
+                let scr = Quickshell.screens[i];
+                if (scr && scr.name) {
+                    let w = scr.width || 1920;
+                    let h = scr.height || 1080;
+                    let sc = (scr.scale !== undefined && scr.scale > 0) ? scr.scale : 1.0;
+                    mList.push({
+                        name: scr.name,
+                        dimensions: w + "x" + h,
+                        framerate: "60",
+                        scale: sc,
+                        active: true
+                    });
+                }
+            }
+            if (mList.length > 0) {
+                displayTabRoot.monitorsList = mList;
+                displayTabRoot.refreshDisplaySettings();
+            }
+        }
+    }
+
     function reloadMonitors() {
-        monitorDetector.running = false;
-        monitorDetector.running = true;
+        if (displayTabRoot.compositor === "niri" || displayTabRoot.compositor === "sway" || displayTabRoot.compositor === "mango" || displayTabRoot.compositor === "hyprland") {
+            monitorDetector.running = false;
+            monitorDetector.running = true;
+        } else {
+            loadFallbackScreens();
+        }
     }
 
     function updateMonitorSetting(monName, key, value) {
@@ -477,6 +512,7 @@ GuideTab {
 
     Component.onCompleted: {
         displayTabRoot.refreshDisplaySettings();
+        displayTabRoot.loadFallbackScreens();
         if (visible) {
             reloadMonitorsDebounceTimer.restart();
         }

@@ -20,6 +20,9 @@ elif [ -n "$NIRI_SOCKET" ] || pgrep -x niri &>/dev/null; then
     niri msg action quit --skip-confirmation 2>/dev/null || \
     niri msg action quit 2>/dev/null || \
     pkill -SIGTERM -x niri 2>/dev/null
+elif [ -n "$DRIFTWM_SOCKET" ] || pgrep -x driftwm &>/dev/null; then
+    driftwm msg action quit 2>/dev/null || \
+    pkill -SIGTERM -x driftwm 2>/dev/null
 elif [ -n "$SWAYSOCK" ] || pgrep -x sway &>/dev/null; then
     swaymsg exit 2>/dev/null || \
     pkill -SIGTERM -x sway 2>/dev/null

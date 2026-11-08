@@ -2099,6 +2099,7 @@ PanelWindow {
                                     Text {
                                         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                                         text: model.emoji
+                                        font.family: "Twitter Color Emoji, Twemoji, emoji"
                                         font.pixelSize: launcherWindow.s(22)
                                         horizontalAlignment: Text.AlignHCenter
                                         verticalAlignment: Text.AlignVCenter

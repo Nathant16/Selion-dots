@@ -30,6 +30,7 @@ Item {
         widget.hideEmptyWorkspaces;
         widget.niriOccupiedMap;
         widget.swayOccupiedMap;
+        widget.driftOccupiedMap;
         widget.mangoOccupiedMap;
         if (Compositor.name === "hyprland")
             Hyprland.workspaces.values;

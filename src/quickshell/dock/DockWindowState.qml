@@ -145,6 +145,8 @@ PanelWindow {
         let idx = -1;
         if (Compositor.name === "niri") {
             idx = niriActiveIndex;
+        } else if (Compositor.name === "driftwm") {
+            idx = (typeof DriftState !== "undefined") ? DriftState.activeIndex : 0;
         } else if (Compositor.name === "sway") {
             idx = swayActiveIndex;
         } else if (Compositor.name === "mango") {
@@ -192,6 +194,9 @@ PanelWindow {
     readonly property bool isWorkspaceBusy: {
         if (Compositor.name === "niri") {
             return !!niriOccupiedMap[activeIndex];
+        }
+        if (Compositor.name === "driftwm") {
+            return (typeof DriftState !== "undefined" && DriftState.occupiedMap) ? !!DriftState.occupiedMap[activeIndex] : false;
         }
         if (Compositor.name === "sway") {
             return !!swayOccupiedMap[activeIndex];

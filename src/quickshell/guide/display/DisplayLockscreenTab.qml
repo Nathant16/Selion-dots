@@ -71,6 +71,24 @@ DisplayLockscreenState {
                 description: I18n.t("guide.display.lockscreen.fingerprint.desc", "Allow unlocking the lock screen with a fingerprint")
                 searchKeywords: "lockscreen lock screen fingerprint fprintd biometric login"
 
+                ClickButton {
+                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                    implicitHeight: rootObj.s(28)
+                    horizontalPadding: rootObj.s(10)
+                    cornerRadius: ThemeBackend.borderRadius
+                    buttonText: I18n.t("guide.display.lockscreen.fingerprint.manage", "Настроить...")
+                    buttonIcon: "󰈷"
+                    iconFontSize: rootObj.s(13)
+                    textFontSize: rootObj.s(11)
+                    accentColor: ThemeBackend.surface1
+                    textColor: ThemeBackend.text
+                    onClicked: {
+                        if (displayLockscreenRoot.rootObj && typeof displayLockscreenRoot.rootObj.gotoTab === "function") {
+                            displayLockscreenRoot.rootObj.gotoTab("fingerprint");
+                        }
+                    }
+                }
+
                 Toggle {
                     id: fingerprintToggle
                     Layout.alignment: Qt.AlignRight | Qt.AlignVCenter

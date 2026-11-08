@@ -32,6 +32,15 @@ Singleton {
             applyNiriLayout();
             return;
         }
+        if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") {
+            DriftState.subscribeKeyboard();
+            applyDriftLayout();
+            return;
+        }
+        if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") {
+            DriftState.unsubscribeKeyboard();
+            return;
+        }
         if (Compositor.name === "sway") {
             SwayState.subscribeKeyboard();
             applySwayLayout();
@@ -50,6 +59,11 @@ Singleton {
     function stop() {
         if (Compositor.name === "niri") {
             NiriState.unsubscribe();
+            return;
+        }
+        if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") {
+            DriftState.subscribeKeyboard();
+            applyDriftLayout();
             return;
         }
         if (Compositor.name === "sway") {
@@ -72,7 +86,12 @@ Singleton {
     function switchNext() {
         if (Compositor.name === "niri") {
             Quickshell.execDetached(["niri", "msg", "action", "switch-layout", "next"]);
-        } else if (Compositor.name === "sway") {
+        } else if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") {
+            DriftState.subscribeKeyboard();
+            applyDriftLayout();
+            return;
+        }
+        if (Compositor.name === "sway") {
             Quickshell.execDetached(["swaymsg", "input", "type:keyboard", "xkb_switch_layout", "next"]);
         } else if (Compositor.name === "mango") {
             Quickshell.execDetached(["mmsg", "dispatch", "switch_keyboard_layout"]);
@@ -93,6 +112,19 @@ Singleton {
         enabled: Compositor.name === "niri" && root.active
         function onShortKeyboardLayoutChanged() { root.applyNiriLayout(); }
         function onKeyboardReadyChanged() { root.applyNiriLayout(); }
+    }
+
+    function applyDriftLayout() {
+        if (!DriftState.keyboardReady) return;
+        root.layout = DriftState.shortKeyboardLayout;
+        root.ready = true;
+    }
+
+    Connections {
+        target: (typeof DriftState !== "undefined") ? DriftState : null
+        enabled: Compositor.name === "driftwm" && root.active
+        function onShortKeyboardLayoutChanged() { root.applyDriftLayout(); }
+        function onKeyboardReadyChanged() { root.applyDriftLayout(); }
     }
 
     function applySwayLayout() {

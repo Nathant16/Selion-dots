@@ -49,7 +49,9 @@
       "theme_apps": "App theming",
       "theme_wallpapers": "Wallpapers",
       "general_main": "General",
-      "general_presets": "Presets"
+      "general_presets": "Presets",
+      "fingerprint": "Fingerprints",
+      "power": "Power"
     },
     "launcher": {
       "position": {
@@ -333,7 +335,8 @@
         },
         "fingerprint": {
           "title": "Enable fingerprint login",
-          "desc": "Allow unlocking the lock screen with a fingerprint"
+          "desc": "Allow unlocking the lock screen with a fingerprint",
+          "manage": "Configure..."
         },
         "background": {
           "select": "Select background",
@@ -1115,6 +1118,132 @@
         "title": "Screenshot directory",
         "desc": "Folder where screenshots are saved",
         "select_dir": "Select directory..."
+      }
+    },
+    "fingerprint": {
+      "header": {
+        "title": "Fingerprints",
+        "desc": "Manage biometric authentication and fingerprint reader",
+        "ready": "Sensor ready",
+        "not_found": "No sensor detected",
+        "not_found_desc": "Biometric fingerprint reader was not found on this system",
+        "touch_type": "Touch",
+        "swipe_type": "Swipe",
+        "stages_count": "Stages: {count}"
+      },
+      "master": {
+        "title": "Use fingerprints",
+        "desc": "Allow unlocking the screen and authenticating with fingerprint"
+      },
+      "enrolled": {
+        "title": "Saved fingerprints",
+        "desc": "List of fingers registered in the system",
+        "empty_title": "No fingerprints saved",
+        "empty_desc": "Enroll a finger below to log in and unlock without typing your password",
+        "item_desc": "Biometric unlock active",
+        "delete_tooltip": "Delete fingerprint",
+        "delete_all": "Delete all",
+        "confirm_delete_title": "Delete fingerprint?",
+        "confirm_delete_desc": "Are you sure you want to delete this fingerprint?",
+        "deleted": "Fingerprint deleted successfully"
+      },
+      "enroll": {
+        "title": "Add fingerprint",
+        "desc": "Select a finger and scan it on the sensor",
+        "select_finger": "Select finger",
+        "hand_left": "Left hand",
+        "hand_right": "Right hand",
+        "button_start": "Start scanning",
+        "button_cancel": "Cancel",
+        "button_done": "Done",
+        "button_retry": "Try again",
+        "active_title": "Scanning: {finger}",
+        "step": "Step {current} of {total}",
+        "step_passed": "Great! Lift your finger and press again",
+        "place_finger": "Place your finger on the sensor",
+        "retry": "Couldn't read. Try again",
+        "swipe_too_short": "Swipe too short. Try again slower",
+        "not_centered": "Center your finger on the sensor",
+        "remove_retry": "Remove your finger and place it again",
+        "success": "Fingerprint enrolled successfully!",
+        "failed": "Failed to enroll fingerprint",
+        "already_enrolled": "Already enrolled"
+      },
+      "fingers": {
+        "right-thumb": "Right thumb",
+        "right-index-finger": "Right index finger",
+        "right-middle-finger": "Right middle finger",
+        "right-ring-finger": "Right ring finger",
+        "right-little-finger": "Right little finger",
+        "left-thumb": "Left thumb",
+        "left-index-finger": "Left index finger",
+        "left-middle-finger": "Left middle finger",
+        "left-ring-finger": "Left ring finger",
+        "left-little-finger": "Left little finger"
+      },
+      "finger_short": {
+        "thumb": "Thumb",
+        "index-finger": "Index",
+        "middle-finger": "Middle",
+        "ring-finger": "Ring",
+        "little-finger": "Little"
+      },
+      "limits": {
+        "title": "Attempt limits",
+        "desc": "Temporarily disable the fingerprint reader after too many failed attempts",
+        "attempts_title": "Maximum fingerprint attempts",
+        "attempts_desc": "Number of failed scans before sensor is disabled until password unlock"
+      }
+    },
+    "power": {
+      "header": {
+        "title": "Power & Battery",
+        "desc": "Manage power consumption, performance profiles, and battery protection",
+        "status_discharging": "Discharging",
+        "status_charging": "Charging",
+        "status_full": "Fully charged",
+        "status_ac": "AC Connected",
+        "watts": "{w} W",
+        "health": "Health: {val}%",
+        "capacity_wh": "{now} / {full} Wh",
+        "cycles": "{count} cycles"
+      },
+      "profiles": {
+        "title": "Power Profiles",
+        "desc": "Select performance mode for CPU, GPU, and cooling system",
+        "saver_title": "Power Saver",
+        "saver_desc": "Lowest power draw (~5-8 W). Turbo Boost disabled",
+        "balanced_title": "Balanced",
+        "balanced_desc": "Optimal balance of performance and battery life",
+        "perf_title": "Performance",
+        "perf_desc": "Maximum clock speeds and active Turbo Boost"
+      },
+      "threshold": {
+        "title": "Battery Protection (Charge Threshold)",
+        "desc": "Limiting maximum charge to 80% extends battery longevity by years",
+        "conservation_active": "Battery conservation active (charges up to 80%)",
+        "full_active": "Full charge mode (charges up to 100%)",
+        "btn_conservation": "Conservation Mode (80%)",
+        "btn_full": "Full Capacity (100%)",
+        "custom_label": "Custom Charge Limit",
+        "custom_desc": "Battery level at which charging stops",
+        "hint": "When plugged into AC continuously, keeping battery at 100% accelerates cell degradation. An 80% limit preserves battery health."
+      },
+      "hardware": {
+        "title": "Hardware Parameters",
+        "desc": "Current state of CPU scaling governor, Turbo Boost, and GPU",
+        "governor": "CPU Scaling Governor",
+        "boost": "CPU Turbo Boost",
+        "boost_on": "ON",
+        "boost_off": "OFF",
+        "gpu_dpm": "GPU Power Profile",
+        "brightness": "Display Brightness",
+        "brightness_hint": "Lowering display brightness to ~35-40% saves up to 2 W of power"
+      },
+      "idle_link": {
+        "title": "Sleep & Display Timeouts",
+        "desc": "Configure automatic display turn-off (DPMS) and suspend timeouts",
+        "button": "Configure timeouts..."
       }
     }
   },

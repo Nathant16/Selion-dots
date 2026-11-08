@@ -244,6 +244,9 @@ DockWindowApps {
         if (Compositor.name === "niri") {
             NiriState.subscribe();
         }
+        if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") {
+            DriftState.subscribe();
+        }
         if (Compositor.name === "sway") {
             dockWindowRoot.swaySubscribed = true;
             SwayState.subscribe();
@@ -270,6 +273,9 @@ DockWindowApps {
         }
         if (dockWindowRoot.swaySubscribed) {
             SwayState.unsubscribe();
+        }
+        if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") {
+            DriftState.unsubscribe();
         }
         if (typeof WindowTracker !== "undefined") {
             WindowTracker.unsubscribe();

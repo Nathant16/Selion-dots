@@ -1,58 +1,54 @@
 {
-  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
   "logo": {
-    "type": "small",
+    "type": "data",
+    "source": "$1       /\\\n$1      /  \\\n$3     /\\   \\\n$3    /      \\\n$2   /   ,,   \\\n$2  /   |  |  -\\\n$2 /_-''    ''-_\\",
     "color": {
-      "1": "{{colors.primary.default.hex}}",
-      "2": "{{colors.tertiary.default.hex}}",
+      "1": "{{colors.tertiary.default.hex}}",
+      "2": "{{colors.primary.default.hex}}",
       "3": "{{colors.secondary.default.hex}}"
     },
     "padding": {
-      "top": 1,
-      "left": 2,
-      "right": 3
+      "right": 3,
+      "top": 1
     }
   },
   "display": {
-    "separator": "  ",
+    "separator": ": ",
+    "key": {
+      "type": "string",
+      "width": 0
+    },
     "color": {
-      "separator": "{{colors.on_surface.default.hex}}"
+      "keys": "{{colors.primary.default.hex}}",
+      "title": "{{colors.tertiary.default.hex}}",
+      "output": "{{colors.outline.default.hex}}",
+      "separator": "{{colors.primary.default.hex}}"
     }
   },
   "modules": [
-    "break",
     {
       "type": "title",
-      "format": "{1}",
       "color": {
-        "user": "{{colors.primary.default.hex}}"
+        "user": "{{colors.tertiary.default.hex}}",
+        "at": "{{colors.outline.default.hex}}",
+        "host": "{{colors.tertiary.default.hex}}"
       }
     },
-    "break",
     {
-      "type": "os",
-      "key": "󱄅 os ",
-      "keyColor": "{{colors.primary.default.hex}}"
+      "type": "separator",
+      "string": "─",
+      "outputColor": "{{colors.outline.default.hex}}"
     },
+    "os",
+    "kernel",
+    "uptime",
+    "packages",
+    "shell",
     {
-      "type": "cpu",
-      "key": " cpu",
-      "keyColor": "{{colors.tertiary.default.hex}}"
+      "type": "wm",
+      "key": "WM"
     },
-    {
-      "type": "memory",
-      "key": "󰘚 ram",
-      "keyColor": "{{colors.secondary.default.hex}}"
-    },
-    {
-      "type": "shell",
-      "key": " sh ",
-      "keyColor": "{{colors.inverse_primary.default.hex}}"
-    },
-    "break",
-    {
-      "type": "colors",
-      "symbol": "circle"
-    }
+    "terminal"
   ]
 }
