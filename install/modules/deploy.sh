@@ -367,17 +367,6 @@ setup_pam_service() {
         fi
     fi
 
-    # Configure sddm: instant password login + fingerprint fallback on empty enter
-    if [ -f "$pam_dir/sddm" ]; then
-        if ! grep -qs "try_first_pass likeauth nullok" "$pam_dir/sddm"; then
-            if grep -qs "pam_fprintd" "$pam_dir/sddm"; then
-                sudo sed -i -E "s/.*pam_fprintd.*\.so.*/auth        [success=1 new_authtok_reqd=1 default=ignore] pam_unix.so try_first_pass likeauth nullok\nauth        sufficient  pam_fprintd.so/g" "$pam_dir/sddm" 2>/dev/null || true
-            else
-                sudo sed -i "1s/^/auth        [success=1 new_authtok_reqd=1 default=ignore] pam_unix.so try_first_pass likeauth nullok\nauth        sufficient  pam_fprintd.so\n/" "$pam_dir/sddm" 2>/dev/null || true
-            fi
-        fi
-    fi
-
     # Configure system-local-login
     if [ -f "$pam_dir/system-local-login" ]; then
         if grep -qs "pam_fprintd" "$pam_dir/system-local-login"; then
