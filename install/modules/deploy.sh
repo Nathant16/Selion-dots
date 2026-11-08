@@ -338,12 +338,43 @@ setup_pam_service() {
     content+="auth        include      $base"$'\n'
     content+="account     include      $base"$'\n'
 
-    if [ -f "$target" ] && [ "$(cat "$target" 2>/dev/null)" = "${content%$'\n'}" ]; then
-        return 0
+    if [ ! -f "$target" ] || [ "$(cat "$target" 2>/dev/null)" != "${content%$'\n'}" ]; then
+        printf '%s' "$content" | sudo tee "$target" >/dev/null 2>&1 || true
+        sudo chmod 644 "$target" 2>/dev/null || true
     fi
 
-    printf '%s' "$content" | sudo tee "$target" >/dev/null 2>&1 || true
-    sudo chmod 644 "$target" 2>/dev/null || true
+    # Simultaneous fingerprint + password authentication for sudo, polkit, and login
+    local fp_mod="pam_fprintd.so"
+    if [ -f /usr/lib/security/pam_fprintd_grosshack.so ]; then
+        fp_mod="pam_fprintd_grosshack.so"
+    fi
+
+    # Configure sudo: allow typing password OR scanning fingerprint simultaneously
+    if [ -f "$pam_dir/sudo" ]; then
+        if grep -qs "pam_fprintd" "$pam_dir/sudo"; then
+            sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/$fp_mod/g" "$pam_dir/sudo" 2>/dev/null || true
+        else
+            sudo sed -i "1s/^/auth\t\tsufficient\t$fp_mod\n/" "$pam_dir/sudo" 2>/dev/null || true
+        fi
+    fi
+
+    # Configure polkit-1: allow typing password OR scanning fingerprint simultaneously
+    if [ -f "$pam_dir/polkit-1" ]; then
+        if grep -qs "pam_fprintd" "$pam_dir/polkit-1"; then
+            sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/$fp_mod/g" "$pam_dir/polkit-1" 2>/dev/null || true
+        else
+            sudo sed -i "1s/^/-auth       sufficient  $fp_mod\n/" "$pam_dir/polkit-1" 2>/dev/null || true
+        fi
+    fi
+
+    # Configure system-local-login
+    if [ -f "$pam_dir/system-local-login" ]; then
+        if grep -qs "pam_fprintd" "$pam_dir/system-local-login"; then
+            sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/$fp_mod/g" "$pam_dir/system-local-login" 2>/dev/null || true
+        else
+            sudo sed -i "1s/^/-auth      sufficient $fp_mod\n/" "$pam_dir/system-local-login" 2>/dev/null || true
+        fi
+    fi
 }
 
 remove_settings_desktop_entry() {
