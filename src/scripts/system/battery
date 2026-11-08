@@ -38,7 +38,7 @@ def format_time(seconds):
         return "N/A"
     h = int(seconds // 3600)
     m = int((seconds % 3600) // 60)
-    return f"{h}ч {m:02d}м"
+    return f"{h}h {m:02d}m"
 
 def get_json_data():
     b = get_battery_info()
@@ -124,15 +124,15 @@ def get_json_data():
     if status == "Discharging" and power_now_w > 0.1:
         hours = energy_now_wh / power_now_w
         time_seconds = int(hours * 3600)
-        time_str = f"~{format_time(time_seconds)} осталось"
+        time_str = f"~{format_time(time_seconds)} remaining"
     elif status == "Charging" and power_now_w > 0.1:
         hours = (energy_full_wh - energy_now_wh) / power_now_w
         time_seconds = int(hours * 3600)
-        time_str = f"~{format_time(time_seconds)} до полного заряда"
+        time_str = f"~{format_time(time_seconds)} until full"
     elif status == "Full":
-        time_str = "Полностью заряжен"
+        time_str = "Fully charged"
     else:
-        time_str = "Подключен к сети"
+        time_str = "AC Connected"
 
     health_pct = round((energy_full_wh / energy_design_wh * 100.0) if energy_design_wh > 0 else 100.0, 1)
     cycles = b.get("POWER_SUPPLY_CYCLE_COUNT", "0")

@@ -1210,6 +1210,20 @@
         "desc": "Sensor nach 5 aufeinanderfolgenden Fehlversuchen vorübergehend sperren",
         "attempts_title": "Maximale Fingerabdruckversuche",
         "attempts_desc": "Anzahl fehlgeschlagener Scans vor Sensor-Deaktivierung bis zur Passworteingabe"
+      },
+      "objects_header": {
+        "title": "Registrierte Fingerabdrücke",
+        "desc": "Gespeicherte Fingerabdrücke verwalten und neue hinzufügen"
+      },
+      "finger_registered": "Registriert auf %1",
+      "modal": {
+        "title": "Fingerabdruck hinzufügen",
+        "select_desc": "Wählen Sie einen Finger zur Registrierung",
+        "start": "Scan starten",
+        "cancel": "Abbrechen",
+        "done": "Fertig",
+        "all_enrolled": "Alle 10 Finger sind bereits registriert",
+        "stage_info": "Stufe %1 von %2 (%3%)"
       }
     },
     "power": {
@@ -1246,7 +1260,11 @@
         "conservation_desc": "Ladung auf 80% begrenzen für längere Lebensdauer",
         "custom_label": "Ladelimit",
         "custom_desc": "Maximaler Ladeprozentsatz des Akkus"
-      }
+      },
+      "time_remaining": "~%1 verbleibend",
+      "time_until_full": "~%1 bis voll",
+      "hours_short": "Std.",
+      "minutes_short": "Min."
     }
   },
   "sysnotif": {

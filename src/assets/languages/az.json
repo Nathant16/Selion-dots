@@ -1160,6 +1160,20 @@
         "desc": "Ardıcıl 5 uğursuz cəhddən sonra skaneri müvəqqəti söndür",
         "attempts_title": "Maksimum cəhd sayı",
         "attempts_desc": "Şifrə daxil edilənə qədər skanerin bağlanması üçün xəta sayı"
+      },
+      "objects_header": {
+        "title": "Qeydiyyatdan keçmiş barmaq izləri",
+        "desc": "Barmaq izlərini idarə edin və yenilərini əlavə edin"
+      },
+      "finger_registered": "%1 cihazında qeydiyyatdan keçib",
+      "modal": {
+        "title": "Barmaq izi əlavə et",
+        "select_desc": "Qeydiyyat üçün barmaq seçin",
+        "start": "Skan etməyə başla",
+        "cancel": "Ləğv et",
+        "done": "Hazırdır",
+        "all_enrolled": "Bütün 10 barmaq artıq qeydiyyatdan keçib",
+        "stage_info": "Mərhələ %1 / %2 (%3%)"
       }
     },
     "power": {
@@ -1196,7 +1210,11 @@
         "conservation_desc": "Batareyanın ömrünü uzatmaq üçün şarjı 80%-lə məhdudlaşdır",
         "custom_label": "Şarj həddi",
         "custom_desc": "Maksimum batareya şarj faizi"
-      }
+      },
+      "time_remaining": "~%1 qaldı",
+      "time_until_full": "tam dolmağa ~%1",
+      "hours_short": "saat",
+      "minutes_short": "dəq"
     }
   },
   "sysnotif": {

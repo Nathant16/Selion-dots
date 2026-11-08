@@ -1210,6 +1210,20 @@
         "desc": "Desactivar temporalmente el sensor tras 5 intentos fallidos consecutivos",
         "attempts_title": "Máximo de intentos por huella",
         "attempts_desc": "Intentos fallidos antes de desactivar el sensor hasta ingresar contraseña"
+      },
+      "objects_header": {
+        "title": "Huellas registradas",
+        "desc": "Administrar huellas dactilares y agregar nuevos dedos"
+      },
+      "finger_registered": "Registrado en %1",
+      "modal": {
+        "title": "Registrar huella digital",
+        "select_desc": "Seleccione un dedo para registrar",
+        "start": "Iniciar escaneo",
+        "cancel": "Cancelar",
+        "done": "Listo",
+        "all_enrolled": "Los 10 dedos ya están registrados",
+        "stage_info": "Paso %1 de %2 (%3%)"
       }
     },
     "power": {
@@ -1246,7 +1260,11 @@
         "conservation_desc": "Limitar carga al 80% para alargar la vida útil",
         "custom_label": "Límite de carga",
         "custom_desc": "Porcentaje máximo de carga de la batería"
-      }
+      },
+      "time_remaining": "~%1 restante",
+      "time_until_full": "~%1 hasta carga completa",
+      "hours_short": "h",
+      "minutes_short": "m"
     }
   },
   "sysnotif": {

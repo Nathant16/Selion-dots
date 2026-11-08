@@ -1166,6 +1166,20 @@
         "desc": "連續失敗 5 次後暫時停用感測器",
         "attempts_title": "指紋最大嘗試次數",
         "attempts_desc": "要求輸入密碼前允許的失敗掃描次數"
+      },
+      "objects_header": {
+        "title": "已登記指紋",
+        "desc": "管理已登記的指紋並新增手指"
+      },
+      "finger_registered": "已於 %1 登記",
+      "modal": {
+        "title": "錄入指紋",
+        "select_desc": "選擇要錄入的手指",
+        "start": "開始掃描",
+        "cancel": "取消",
+        "done": "完成",
+        "all_enrolled": "所有 10 隻手指均已登記",
+        "stage_info": "階段 %1 / %2 (%3%)"
       }
     },
     "power": {
@@ -1202,7 +1216,11 @@
         "conservation_desc": "限制充電至 80% 以減緩電池老化",
         "custom_label": "充電上限",
         "custom_desc": "允許充電的最高百分比"
-      }
+      },
+      "time_remaining": "剩餘約 %1",
+      "time_until_full": "距充飽約 %1",
+      "hours_short": "小時",
+      "minutes_short": "分"
     }
   },
   "sysnotif": {

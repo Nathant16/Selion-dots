@@ -1166,6 +1166,20 @@
         "desc": "Desativar sensor temporariamente após 5 falhas consecutivas",
         "attempts_title": "Tentativas máximas de digital",
         "attempts_desc": "Leituras falhas antes de desativar o sensor até inserir a senha"
+      },
+      "objects_header": {
+        "title": "Impressões registradas",
+        "desc": "Gerenciar impressões digitais e adicionar novos dedos"
+      },
+      "finger_registered": "Registrado em %1",
+      "modal": {
+        "title": "Registrar impressão digital",
+        "select_desc": "Selecione um dedo para registrar",
+        "start": "Iniciar escaneamento",
+        "cancel": "Cancelar",
+        "done": "Concluído",
+        "all_enrolled": "Todos os 10 dedos já estão registrados",
+        "stage_info": "Etapa %1 de %2 (%3%)"
       }
     },
     "power": {
@@ -1202,7 +1216,11 @@
         "conservation_desc": "Limitar carga a 80% para preservar vida útil",
         "custom_label": "Limite de carga",
         "custom_desc": "Porcentagem máxima de carga da bateria"
-      }
+      },
+      "time_remaining": "~%1 restante",
+      "time_until_full": "~%1 até carga completa",
+      "hours_short": "h",
+      "minutes_short": "m"
     }
   },
   "sysnotif": {

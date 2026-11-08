@@ -1166,6 +1166,20 @@
         "desc": "Nonaktifkan sensor sementara setelah 5 kali gagal berturut-turut",
         "attempts_title": "Batas percobaan sidik jari",
         "attempts_desc": "Jumlah kegagalan sebelum sensor dinonaktifkan hingga sandi dimasukkan"
+      },
+      "objects_header": {
+        "title": "Sidik Jari Terdaftar",
+        "desc": "Kelola sidik jari dan tambahkan jari baru"
+      },
+      "finger_registered": "Terdaftar pada %1",
+      "modal": {
+        "title": "Daftarkan Sidik Jari",
+        "select_desc": "Pilih jari untuk didaftarkan",
+        "start": "Mulai Pindai",
+        "cancel": "Batal",
+        "done": "Selesai",
+        "all_enrolled": "Semua 10 jari sudah terdaftar",
+        "stage_info": "Tahap %1 dari %2 (%3%)"
       }
     },
     "power": {
@@ -1202,7 +1216,11 @@
         "conservation_desc": "Batasi pengisian hingga 80% untuk menghemat baterai",
         "custom_label": "Batas pengisian",
         "custom_desc": "Persentase batas pengisian baterai"
-      }
+      },
+      "time_remaining": "tersisa ~%1",
+      "time_until_full": "~%1 hingga penuh",
+      "hours_short": "j",
+      "minutes_short": "m"
     }
   },
   "sysnotif": {

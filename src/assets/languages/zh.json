@@ -1166,6 +1166,20 @@
         "desc": "连续失败 5 次后暂时停用传感器",
         "attempts_title": "指纹最大尝试次数",
         "attempts_desc": "在要求输入密码前允许的错误扫描次数"
+      },
+      "objects_header": {
+        "title": "已登记指纹",
+        "desc": "管理已登记的指纹并添加新手指"
+      },
+      "finger_registered": "已在 %1 登记",
+      "modal": {
+        "title": "录入指纹",
+        "select_desc": "选择要录入的手指",
+        "start": "开始扫描",
+        "cancel": "取消",
+        "done": "完成",
+        "all_enrolled": "所有 10 个手指均已登记",
+        "stage_info": "阶段 %1 / %2 (%3%)"
       }
     },
     "power": {
@@ -1202,7 +1216,11 @@
         "conservation_desc": "限制充电至 80% 以延缓电池老化",
         "custom_label": "充电上限",
         "custom_desc": "允许充入的最高电量百分比"
-      }
+      },
+      "time_remaining": "剩余约 %1",
+      "time_until_full": "距充满约 %1",
+      "hours_short": "小时",
+      "minutes_short": "分"
     }
   },
   "sysnotif": {

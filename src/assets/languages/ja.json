@@ -2019,6 +2019,20 @@
         "desc": "5回連続で失敗した場合、センサーを一時的に無効化",
         "attempts_title": "指紋の最大試行回数",
         "attempts_desc": "パスワード入力が必要になるまでの失敗許容回数"
+      },
+      "objects_header": {
+        "title": "登録済み指紋",
+        "desc": "指紋の管理と新しい指の登録"
+      },
+      "finger_registered": "%1 に登録済み",
+      "modal": {
+        "title": "指紋を登録",
+        "select_desc": "登録する指を選択してください",
+        "start": "スキャン開始",
+        "cancel": "キャンセル",
+        "done": "完了",
+        "all_enrolled": "10 本すべての指が登録済みです",
+        "stage_info": "ステップ %1 / %2 (%3%)"
       }
     },
     "power": {
@@ -2055,7 +2069,11 @@
         "conservation_desc": "劣化を防ぐため充電を80%に制限",
         "custom_label": "充電上限",
         "custom_desc": "充電を停止する最大バッテリー割合"
-      }
+      },
+      "time_remaining": "残り約 %1",
+      "time_until_full": "満充電まで約 %1",
+      "hours_short": "時間",
+      "minutes_short": "分"
     }
   }
 }

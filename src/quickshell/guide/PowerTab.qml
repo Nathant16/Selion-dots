@@ -15,6 +15,7 @@ GuideTab {
     property string status: "Unknown"
     property real powerWatts: 0.0
     property string timeRemainingStr: ""
+    property int timeSeconds: 0
     property string activeProfile: "balanced"
     property int thresholdEnd: 100
     property bool hasThresholdSupport: false
@@ -24,6 +25,30 @@ GuideTab {
     readonly property string batteryScriptPath: (typeof Caching !== "undefined" && Caching.serpantinumDir)
         ? (Caching.serpantinumDir + "/scripts/system/battery")
         : "battery"
+
+    function formatTimeSeconds(sec) {
+        if (!sec || sec <= 0 || sec > 86400 * 2) return "";
+        let h = Math.floor(sec / 3600);
+        let m = Math.floor((sec % 3600) / 60);
+        let hUnit = I18n.t("guide.power.hours_short", "h");
+        let mUnit = I18n.t("guide.power.minutes_short", "m");
+        if (h > 0) {
+            return h + hUnit + " " + (m < 10 ? "0" + m : m) + mUnit;
+        }
+        return m + mUnit;
+    }
+
+    function getTimeRemainingText() {
+        if (powerTabRoot.timeSeconds <= 0) return "";
+        let formatted = formatTimeSeconds(powerTabRoot.timeSeconds);
+        if (!formatted) return "";
+        if (powerTabRoot.status === "Discharging") {
+            return I18n.t("guide.power.time_remaining", "~%1 remaining").arg(formatted);
+        } else if (powerTabRoot.status === "Charging") {
+            return I18n.t("guide.power.time_until_full", "~%1 until full").arg(formatted);
+        }
+        return "";
+    }
 
     function refresh() {
         if (!statusProc.running) {
@@ -63,6 +88,7 @@ GuideTab {
                     powerTabRoot.status = String(d.status || "Unknown");
                     powerTabRoot.powerWatts = Number(d.power_w) || 0.0;
                     powerTabRoot.timeRemainingStr = String(d.time_str || "");
+                    powerTabRoot.timeSeconds = Number(d.time_seconds) || 0;
                     
                     let prof = String(d.profile || "").toLowerCase();
                     if (prof === "low-power") prof = "power-saver";
@@ -161,7 +187,9 @@ GuideTab {
                     description: {
                         if (!powerTabRoot.hasBattery) return I18n.t("guide.power.desc.ac_connected", "Running on AC adapter power");
                         let parts = [];
-                        if (powerTabRoot.timeRemainingStr !== "") parts.push(powerTabRoot.timeRemainingStr);
+                        let remText = powerTabRoot.getTimeRemainingText();
+                        if (remText !== "") parts.push(remText);
+                        else if (powerTabRoot.timeRemainingStr !== "") parts.push(powerTabRoot.timeRemainingStr);
                         if (powerTabRoot.powerWatts > 0) parts.push(powerTabRoot.powerWatts.toFixed(1) + " W");
                         if (powerTabRoot.healthPct > 0) parts.push(I18n.t("guide.power.health_label", "Health: %1%").arg(Math.round(powerTabRoot.healthPct)));
                         return parts.length > 0 ? parts.join(" • ") : I18n.t("guide.power.desc.battery_active", "Battery power supply");

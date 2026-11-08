@@ -1166,6 +1166,20 @@
         "desc": "Tạm thời tắt cảm biến sau 5 lần quét sai liên tiếp",
         "attempts_title": "Số lần thử tối đa",
         "attempts_desc": "Số lần quét sai trước khi yêu cầu nhập mật khẩu"
+      },
+      "objects_header": {
+        "title": "Vân tay đã lưu",
+        "desc": "Quản lý vân tay và thêm ngón tay mới"
+      },
+      "finger_registered": "Đã đăng ký trên %1",
+      "modal": {
+        "title": "Thêm vân tay",
+        "select_desc": "Chọn ngón tay để đăng ký",
+        "start": "Bắt đầu quét",
+        "cancel": "Hủy",
+        "done": "Xong",
+        "all_enrolled": "Tất cả 10 ngón tay đã được đăng ký",
+        "stage_info": "Bước %1 / %2 (%3%)"
       }
     },
     "power": {
@@ -1202,7 +1216,11 @@
         "conservation_desc": "Giới hạn mức sạc ở 80% để bảo vệ pin",
         "custom_label": "Giới hạn sạc",
         "custom_desc": "Phần trăm pin tối đa khi sạc"
-      }
+      },
+      "time_remaining": "còn lại khoảng %1",
+      "time_until_full": "khoảng %1 đến khi đầy",
+      "hours_short": "g",
+      "minutes_short": "p"
     }
   },
   "sysnotif": {

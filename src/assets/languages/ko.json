@@ -1166,6 +1166,20 @@
         "desc": "5회 연속 실패 시 센서를 일시적으로 비활성화",
         "attempts_title": "최대 지문 시도 횟수",
         "attempts_desc": "비밀번호 입력을 요구하기 전까지 허용되는 실패 횟수"
+      },
+      "objects_header": {
+        "title": "등록된 지문",
+        "desc": "등록된 지문 관리 및 새 손가락 추가"
+      },
+      "finger_registered": "%1에 등록됨",
+      "modal": {
+        "title": "지문 등록",
+        "select_desc": "등록할 손가락을 선택하세요",
+        "start": "스캔 시작",
+        "cancel": "취소",
+        "done": "완료",
+        "all_enrolled": "10개의 손가락이 모두 등록되었습니다",
+        "stage_info": "단계 %1 / %2 (%3%)"
       }
     },
     "power": {
@@ -1202,7 +1216,11 @@
         "conservation_desc": "배터리 노화를 방지하기 위해 80%까지만 충전",
         "custom_label": "충전 한도",
         "custom_desc": "최대 충전 허용 비율"
-      }
+      },
+      "time_remaining": "약 %1 남음",
+      "time_until_full": "완충까지 약 %1",
+      "hours_short": "시간",
+      "minutes_short": "분"
     }
   },
   "sysnotif": {

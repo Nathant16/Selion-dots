@@ -1166,6 +1166,20 @@
         "desc": "Désactiver temporairement le capteur après 5 échecs consécutifs",
         "attempts_title": "Nombre maximal de tentatives",
         "attempts_desc": "Nombre d'échecs avant désactivation du capteur jusqu'au mot de passe"
+      },
+      "objects_header": {
+        "title": "Empreintes enregistrées",
+        "desc": "Gérer les empreintes digitales et ajouter de nouveaux doigts"
+      },
+      "finger_registered": "Enregistré sur %1",
+      "modal": {
+        "title": "Ajouter une empreinte",
+        "select_desc": "Sélectionnez un doigt à enregistrer",
+        "start": "Démarrer le scan",
+        "cancel": "Annuler",
+        "done": "Terminé",
+        "all_enrolled": "Les 10 doigts sont déjà enregistrés",
+        "stage_info": "Étape %1 sur %2 (%3%)"
       }
     },
     "power": {
@@ -1202,7 +1216,11 @@
         "conservation_desc": "Limiter la charge à 80% pour préserver la durée de vie",
         "custom_label": "Limite de charge",
         "custom_desc": "Pourcentage maximal de charge de la batterie"
-      }
+      },
+      "time_remaining": "~%1 restant",
+      "time_until_full": "~%1 jusqu'à charge complète",
+      "hours_short": "h",
+      "minutes_short": "m"
     }
   },
   "sysnotif": {

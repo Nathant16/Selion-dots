@@ -1166,6 +1166,20 @@
         "desc": "Üst üste 5 başarısız denemeden sonra sensörü geçici olarak devre dışı bırak",
         "attempts_title": "Maksimum parmak izi denemesi",
         "attempts_desc": "Şifre girilene kadar sensörün kilitlenmesi için gereken hatalı deneme sayısı"
+      },
+      "objects_header": {
+        "title": "Kayıtlı Parmak İzleri",
+        "desc": "Kayıtlı parmak izlerini yönetin ve yeni parmaklar ekleyin"
+      },
+      "finger_registered": "%1 üzerinde kayıtlı",
+      "modal": {
+        "title": "Parmak İzi Ekle",
+        "select_desc": "Kaydetmek için bir parmak seçin",
+        "start": "Taramayı Başlat",
+        "cancel": "İptal",
+        "done": "Tamam",
+        "all_enrolled": "10 parmağın tümü zaten kayıtlı",
+        "stage_info": "Aşama %1 / %2 (%%3)"
       }
     },
     "power": {
@@ -1202,7 +1216,11 @@
         "conservation_desc": "Pil ömrünü korumak için şarjı %80 ile sınırla",
         "custom_label": "Şarj sınırı",
         "custom_desc": "Maksimum pil şarj yüzdesi"
-      }
+      },
+      "time_remaining": "yaklaşık %1 kaldı",
+      "time_until_full": "tam doluma %1",
+      "hours_short": "sa",
+      "minutes_short": "dk"
     }
   },
   "sysnotif": {

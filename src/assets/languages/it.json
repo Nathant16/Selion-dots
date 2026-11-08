@@ -1165,6 +1165,20 @@
         "desc": "Disattiva temporaneamente il sensore dopo 5 tentativi consecutivi errati",
         "attempts_title": "Tentativi massimi impronta",
         "attempts_desc": "Scansioni fallite prima della disattivazione del sensore fino alla password"
+      },
+      "objects_header": {
+        "title": "Impronte registrate",
+        "desc": "Gestisci le impronte digitali e aggiungi nuove dita"
+      },
+      "finger_registered": "Registrato su %1",
+      "modal": {
+        "title": "Registra impronta digitale",
+        "select_desc": "Seleziona un dito da registrare",
+        "start": "Avvia scansione",
+        "cancel": "Annulla",
+        "done": "Fatto",
+        "all_enrolled": "Tutte le 10 dita sono già registrate",
+        "stage_info": "Passo %1 di %2 (%3%)"
       }
     },
     "power": {
@@ -1201,7 +1215,11 @@
         "conservation_desc": "Limita carica all'80% per prolungare la longevità",
         "custom_label": "Limite di carica",
         "custom_desc": "Percentuale massima di carica della batteria"
-      }
+      },
+      "time_remaining": "~%1 rimanente",
+      "time_until_full": "~%1 alla carica completa",
+      "hours_short": "o",
+      "minutes_short": "m"
     }
   },
   "sysnotif": {

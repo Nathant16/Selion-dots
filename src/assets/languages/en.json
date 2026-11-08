@@ -1196,6 +1196,20 @@
         "desc": "Temporarily disable sensor after 5 consecutive failed attempts",
         "attempts_title": "Maximum fingerprint attempts",
         "attempts_desc": "Number of failed scans before sensor is disabled until password unlock"
+      },
+      "objects_header": {
+        "title": "Registered Fingerprints",
+        "desc": "Manage enrolled fingerprints and add new fingers"
+      },
+      "finger_registered": "Registered on %1",
+      "modal": {
+        "title": "Enroll Fingerprint",
+        "select_desc": "Select a finger to register",
+        "start": "Start Scan",
+        "cancel": "Cancel",
+        "done": "Done",
+        "all_enrolled": "All 10 fingers are already enrolled",
+        "stage_info": "Stage %1 of %2 (%3%)"
       }
     },
     "power": {
@@ -1232,7 +1246,11 @@
         "conservation_desc": "Limit charging to 80% to prolong battery lifespan",
         "custom_label": "Charge limit",
         "custom_desc": "Maximum battery charge percentage"
-      }
+      },
+      "time_remaining": "~%1 remaining",
+      "time_until_full": "~%1 until full",
+      "hours_short": "h",
+      "minutes_short": "m"
     }
   },
   "sysnotif": {

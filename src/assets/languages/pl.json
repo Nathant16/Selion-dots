@@ -2019,6 +2019,20 @@
         "desc": "Tymczasowo wyłącz czytnik po 5 nieudanych próbach z rzędu",
         "attempts_title": "Maksymalna liczba prób odcisku",
         "attempts_desc": "Liczba błędnych skanów przed blokadą czytnika do podania hasła"
+      },
+      "objects_header": {
+        "title": "Zarejestrowane odciski",
+        "desc": "Zarządzaj odciskami palców i dodawaj nowe"
+      },
+      "finger_registered": "Zarejestrowano na %1",
+      "modal": {
+        "title": "Dodaj odcisk palca",
+        "select_desc": "Wybierz palec do zarejestrowania",
+        "start": "Rozpocznij skanowanie",
+        "cancel": "Anuluj",
+        "done": "Gotowe",
+        "all_enrolled": "Wszystkie 10 palców jest już zarejestrowanych",
+        "stage_info": "Krok %1 z %2 (%3%)"
       }
     },
     "power": {
@@ -2055,7 +2069,11 @@
         "conservation_desc": "Ograniczenie ładowania do 80% w celu wydłużenia żywotności",
         "custom_label": "Limit ładowania",
         "custom_desc": "Maksymalny procent naładowania baterii"
-      }
+      },
+      "time_remaining": "pozostało ~%1",
+      "time_until_full": "~%1 do pełnego naładowania",
+      "hours_short": "godz.",
+      "minutes_short": "min."
     }
   }
 }

@@ -1166,6 +1166,20 @@
         "desc": "Sensor tijdelijk uitschakelen na 5 opeenvolgende mislukkingen",
         "attempts_title": "Maximale pogingen vingerafdruk",
         "attempts_desc": "Aantal mislukte scans voordat sensor wordt geblokkeerd tot wachtwoord"
+      },
+      "objects_header": {
+        "title": "Geregistreerde vingerafdrukken",
+        "desc": "Beheer vingerafdrukken en voeg nieuwe vingers toe"
+      },
+      "finger_registered": "Geregistreerd op %1",
+      "modal": {
+        "title": "Vingerafdruk toevoegen",
+        "select_desc": "Kies een vinger om te registreren",
+        "start": "Start scan",
+        "cancel": "Annuleren",
+        "done": "Klaar",
+        "all_enrolled": "Alle 10 vingers zijn al geregistreerd",
+        "stage_info": "Stap %1 van %2 (%3%)"
       }
     },
     "power": {
@@ -1202,7 +1216,11 @@
         "conservation_desc": "Beperk opladen tot 80% om levensduur te sparen",
         "custom_label": "Oplaadlimiet",
         "custom_desc": "Maximaal oplaadpercentage van de batterij"
-      }
+      },
+      "time_remaining": "~%1 resterend",
+      "time_until_full": "~%1 tot volledig opgeladen",
+      "hours_short": "u",
+      "minutes_short": "m"
     }
   },
   "sysnotif": {
