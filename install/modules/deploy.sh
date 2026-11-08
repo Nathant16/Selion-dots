@@ -367,6 +367,15 @@ setup_pam_service() {
         fi
     fi
 
+    # Configure sddm: allow typing password OR scanning fingerprint simultaneously
+    if [ -f "$pam_dir/sddm" ]; then
+        if grep -qs "pam_fprintd" "$pam_dir/sddm"; then
+            sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/$fp_mod/g" "$pam_dir/sddm" 2>/dev/null || true
+        else
+            sudo sed -i "1s/^/-auth       sufficient  $fp_mod\n/" "$pam_dir/sddm" 2>/dev/null || true
+        fi
+    fi
+
     # Configure system-local-login
     if [ -f "$pam_dir/system-local-login" ]; then
         if grep -qs "pam_fprintd" "$pam_dir/system-local-login"; then
