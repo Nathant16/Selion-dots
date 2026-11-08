@@ -198,7 +198,7 @@ get_data() {
         raw_api=$(curl -sf --max-time 3 "$forecast_url")
     fi
     
-    if [ -z "" ]; then
+    if [ -z "$raw_api" ]; then
         log_debug "Open-Meteo failed/blocked. Attempting wttr.in fallback..."
         fallback_script="$(dirname "$(realpath "${BASH_SOURCE[0]}")")/wttr_fallback.py"
         if [ -f "$fallback_script" ]; then
@@ -275,14 +275,14 @@ process_forecast() {
           ([$day_hours[].wind] | max | round) as $wind_max |
           (([$day_hours[].humidity] | add / length) | round) as $humidity_avg |
           
-          ($day_hours[12].code // $day_hours[0].code) as $d_code |
+          ($day_hours[($day_hours | length / 2 | floor)].code // $day_hours[0].code) as $d_code |
           wmo_map($d_code; 1) as $d_map |
           
           [
-            range(0; $day_hours | length) | select(. % 3 == 0) as $h_idx |
-            $day_hours[$h_idx] |
+            $day_hours[] |
             (.time_raw | split("T")[1]) as $t_str |
             ($t_str | split(":")[0] | tonumber) as $hour_num |
+            select($hour_num % 3 == 0) |
             (if $hour_num >= 6 and $hour_num <= 18 then 1 else 0 end) as $slot_day |
             wmo_map(.code; $slot_day) as $s_map |
             {
