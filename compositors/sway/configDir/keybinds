@@ -15,7 +15,6 @@ bindsym $mod+Shift+G exec steam
 bindsym $mod+Shift+M exec prismlauncher
 bindsym $mod+Shift+D exec discord
 bindsym $mod+Shift+O exec obsidian
-bindsym $mod+Shift+N exec notion-app
 bindsym $mod+Shift+P exec pwvucontrol
 
 # Window Actions
@@ -63,7 +62,6 @@ bindsym XF86PowerOff exec serpantinum lock
 bindsym $mod+P exec /usr/local/bin/battery --cycle
 bindsym XF86Launch1 exec /usr/local/bin/battery --cycle
 bindsym $mod+B exec serpantinum msg bar autohide
-bindsym $mod+N exec serpantinum msg bar autohide
 bindsym $mod+W exec serpantinum msg toggle wallpaper
 bindsym $mod+Shift+R reload
 

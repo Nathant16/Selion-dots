@@ -23,7 +23,6 @@ hl.bind(subMod .. " + G", hl.dsp.exec_cmd("steam"), { description = "Open Steam"
 hl.bind(subMod .. " + M", hl.dsp.exec_cmd("prismlauncher"), { description = "Open Prism Launcher" })
 hl.bind(subMod .. " + D", hl.dsp.exec_cmd("discord"), { description = "Open Discord" })
 hl.bind(subMod .. " + O", hl.dsp.exec_cmd("obsidian"), { description = "Open Obsidian" })
-hl.bind(subMod .. " + N", hl.dsp.exec_cmd("notion-app"), { description = "Open Notion" })
 hl.bind(subMod .. " + P", hl.dsp.exec_cmd("pwvucontrol"), { description = "Open audio control" })
 
 -- ==> Shell, Launcher, Clipboard & System
@@ -38,7 +37,6 @@ hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("serpantinum lock"), { description = 
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("serpantinum lock"), { locked = true, description = "Lock screen" })
 hl.bind("XF86PowerOff", hl.dsp.exec_cmd("serpantinum lock"), { locked = true, description = "Lock screen" })
 
-hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("serpantinum msg bar autohide"), { description = "Toggle status bar / shell" })
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("serpantinum msg bar autohide"), { description = "Toggle status bar / shell" })
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("serpantinum msg toggle wallpaper"), { description = "Toggle wallpaper picker" })
 
