@@ -354,16 +354,16 @@ setup_pam_service() {
         if grep -qs "pam_fprintd" "$pam_dir/sudo"; then
             sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/$fp_mod/g" "$pam_dir/sudo" 2>/dev/null || true
         else
-            sudo sed -i "1s/^/auth\t\tsufficient\t$fp_mod\n/" "$pam_dir/sudo" 2>/dev/null || true
+            sudo sed -i "1s/^/-auth\t\tsufficient\t$fp_mod\n/" "$pam_dir/sudo" 2>/dev/null || true
         fi
     fi
 
-    # Configure polkit-1: allow typing password OR scanning fingerprint simultaneously
+    # Configure polkit-1: allow typing password OR scanning fingerprint simultaneously (always standard pam_fprintd to avoid conversation errors)
     if [ -f "$pam_dir/polkit-1" ]; then
         if grep -qs "pam_fprintd" "$pam_dir/polkit-1"; then
-            sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/$fp_mod/g" "$pam_dir/polkit-1" 2>/dev/null || true
+            sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/pam_fprintd.so/g" "$pam_dir/polkit-1" 2>/dev/null || true
         else
-            sudo sed -i "1s/^/-auth       sufficient  $fp_mod\n/" "$pam_dir/polkit-1" 2>/dev/null || true
+            sudo sed -i "1s/^/-auth       sufficient  pam_fprintd.so\n/" "$pam_dir/polkit-1" 2>/dev/null || true
         fi
     fi
 

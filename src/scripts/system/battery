@@ -22,8 +22,20 @@ def write_val(path, val):
         res = subprocess.run(["sudo", "sh", "-c", f"echo {val} > {path}"], capture_output=True)
         return res.returncode == 0
 
+def get_battery_dir():
+    candidates = sorted(glob.glob("/sys/class/power_supply/BAT*"))
+    if candidates:
+        return candidates[0]
+    for p in glob.glob("/sys/class/power_supply/*"):
+        if read_val(os.path.join(p, "type")).lower() == "battery":
+            return p
+    return None
+
 def get_battery_info():
-    uevent_path = "/sys/class/power_supply/BAT0/uevent"
+    bat_dir = get_battery_dir()
+    if not bat_dir:
+        return {}
+    uevent_path = os.path.join(bat_dir, "uevent")
     info = {}
     if os.path.exists(uevent_path):
         with open(uevent_path, "r") as f:
@@ -41,8 +53,9 @@ def format_time(seconds):
     return f"{h}h {m:02d}m"
 
 def get_json_data():
+    bat_dir = get_battery_dir()
     b = get_battery_info()
-    has_bat = bool(b and os.path.exists("/sys/class/power_supply/BAT0"))
+    has_bat = bool(b and bat_dir and os.path.exists(bat_dir))
 
     platform_profile = read_val("/sys/firmware/acpi/platform_profile", "")
     if not platform_profile or platform_profile == "unknown":
@@ -66,9 +79,9 @@ def get_json_data():
     else:
         bl_pct = 100
 
-    start_file = "/sys/class/power_supply/BAT0/charge_control_start_threshold"
-    end_file = "/sys/class/power_supply/BAT0/charge_control_end_threshold"
-    has_threshold_support = os.path.exists(end_file)
+    start_file = os.path.join(bat_dir, "charge_control_start_threshold") if bat_dir else ""
+    end_file = os.path.join(bat_dir, "charge_control_end_threshold") if bat_dir else ""
+    has_threshold_support = bool(end_file and os.path.exists(end_file))
     try:
         th_start = int(read_val(start_file, "0")) if has_threshold_support else 0
     except ValueError:
@@ -167,7 +180,7 @@ def get_json_data():
 def show_status():
     d = get_json_data()
     if not d["has_battery"]:
-        print("\033[1;33mВнимание: батарея BAT0 не найдена (ПК или питание от сети).\033[0m")
+        print("\033[1;33mВнимание: батарея не найдена (ПК или питание от сети).\033[0m")
         print(f"Текущий профиль питания: \033[1;32m{d['profile']}\033[0m (Gov: {d['governor']})")
         return
 
@@ -245,8 +258,13 @@ def set_profile(prof):
     print(f"\033[1;32m✔ Установлен профиль энергопотребления:\033[0m \033[1m{prof}\033[0m")
 
 def set_limit(limit_val):
-    start_path = "/sys/class/power_supply/BAT0/charge_control_start_threshold"
-    end_path = "/sys/class/power_supply/BAT0/charge_control_end_threshold"
+    bat_dir = get_battery_dir()
+    if not bat_dir:
+        print("\033[1;31mБатарея не найдена.\033[0m")
+        return False
+
+    start_path = os.path.join(bat_dir, "charge_control_start_threshold")
+    end_path = os.path.join(bat_dir, "charge_control_end_threshold")
     
     if not os.path.exists(end_path):
         print("\033[1;31mУправление порогом зарядки не поддерживается этим устройством.\033[0m")

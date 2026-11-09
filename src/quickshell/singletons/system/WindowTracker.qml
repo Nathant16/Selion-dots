@@ -72,11 +72,7 @@ Item {
             rawList = root._collectNiriWindows();
         } else if (Compositor.name === "driftwm") {
             rawList = root._collectDriftWindows();
-        } else if (Compositor.name === "driftwm") {
-            root._focusDrift(win);
-            return;
-        }
-        if (Compositor.name === "sway") {
+        } else if (Compositor.name === "sway") {
             rawList = root._collectSwayWindows();
         } else if (Compositor.name === "mango") {
             rawList = root._collectMangoWindows();

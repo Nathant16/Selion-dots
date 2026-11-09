@@ -99,9 +99,11 @@ stdenv.mkDerivation (finalAttrs: {
     rm -f "$out/share/${finalAttrs.pname}/version.txt"
     cp -r config "$out/share/${finalAttrs.pname}/config"
     cp version.txt "$out/share/${finalAttrs.pname}/version.txt"
-    find "$out/share/${finalAttrs.pname}" -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} +
+    find "$out/share/${finalAttrs.pname}" -type f \( -name "*.sh" -o -name "*.py" -o -name "battery" \) -exec chmod +x {} +
     install -Dm755 bin/serpantinum  "$out/bin/.serpantinum-wrapped"
     install -Dm755 bin/serpantinumd "$out/bin/.serpantinumd-wrapped"
+    ln -s "$out/share/${finalAttrs.pname}/scripts/system/battery" "$out/bin/battery"
+    ln -s "$out/bin/battery" "$out/bin/power"
     ln -s "${lib.getExe serpantinum-audio}" "$out/bin/serpantinum-audio"
     ln -s "${lib.getExe serpantinum-gamma}" "$out/bin/serpantinum-gamma"
     ln -s "${lib.getExe serpantinum-core}" "$out/bin/serpantinum-core"

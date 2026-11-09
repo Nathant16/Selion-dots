@@ -166,7 +166,45 @@ for snd_c in /sys/module/snd_hda_intel/parameters/power_save_controller; do
 done
 
 # ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------# 9. NVMe & USB RUNTIME POWER MANAGEMENT (Protected for Input Devices)# ------------------------------------------------------------------------------case "$PROFILE" in    power-saver)        for ctrl in /sys/bus/pci/devices/*/power/control; do            pci_dir=$(dirname "$ctrl")            if [ -f "$pci_dir/class" ]; then                pci_class=$(cat "$pci_dir/class" 2>/dev/null)                if [[ "$pci_class" =~ ^0x0c03 ]]; then                    [ -w "$ctrl" ] && echo on > "$ctrl" 2>/dev/null                    continue                fi            fi            [ -w "$ctrl" ] && echo auto > "$ctrl" 2>/dev/null        done        for uctrl in /sys/bus/usb/devices/*/power/control; do            udev_dir=$(dirname "$uctrl")            prod=$(cat "$udev_dir/product" 2>/dev/null || cat "$udev_dir/../product" 2>/dev/null)            vendor=$(cat "$udev_dir/idVendor" 2>/dev/null || cat "$udev_dir/../idVendor" 2>/dev/null)            if [[ "$prod" =~ (Receiver|Mouse|Keyboard) ]] || [ "$vendor" = "046d" ]; then                [ -w "$uctrl" ] && echo on > "$uctrl" 2>/dev/null                [ -w "$udev_dir/autosuspend_delay_ms" ] && echo -1 > "$udev_dir/autosuspend_delay_ms" 2>/dev/null            else                [ -w "$uctrl" ] && echo auto > "$uctrl" 2>/dev/null            fi        done        ;;    balanced|performance)        for ctrl in /sys/bus/pci/devices/*/power/control; do            [ -w "$ctrl" ] && echo on > "$ctrl" 2>/dev/null        done        for uctrl in /sys/bus/usb/devices/*/power/control; do            [ -w "$uctrl" ] && echo on > "$uctrl" 2>/dev/null        done        ;;esac# ------------------------------------------------------------------------------# 10. DISK WRITEBACK CENTISECS
+# 9. NVMe & USB RUNTIME POWER MANAGEMENT (Protected for Input Devices)
+# ------------------------------------------------------------------------------
+case "$PROFILE" in
+    power-saver)
+        for ctrl in /sys/bus/pci/devices/*/power/control; do
+            pci_dir=$(dirname "$ctrl")
+            if [ -f "$pci_dir/class" ]; then
+                pci_class=$(cat "$pci_dir/class" 2>/dev/null)
+                if [[ "$pci_class" =~ ^0x0c03 ]]; then
+                    [ -w "$ctrl" ] && echo on > "$ctrl" 2>/dev/null
+                    continue
+                fi
+            fi
+            [ -w "$ctrl" ] && echo auto > "$ctrl" 2>/dev/null
+        done
+        for uctrl in /sys/bus/usb/devices/*/power/control; do
+            udev_dir=$(dirname "$uctrl")
+            prod=$(cat "$udev_dir/product" 2>/dev/null || cat "$udev_dir/../product" 2>/dev/null)
+            vendor=$(cat "$udev_dir/idVendor" 2>/dev/null || cat "$udev_dir/../idVendor" 2>/dev/null)
+            if [[ "$prod" =~ (Receiver|Mouse|Keyboard) ]] || [ "$vendor" = "046d" ]; then
+                [ -w "$uctrl" ] && echo on > "$uctrl" 2>/dev/null
+                [ -w "$udev_dir/autosuspend_delay_ms" ] && echo -1 > "$udev_dir/autosuspend_delay_ms" 2>/dev/null
+            else
+                [ -w "$uctrl" ] && echo auto > "$uctrl" 2>/dev/null
+            fi
+        done
+        ;;
+    balanced|performance)
+        for ctrl in /sys/bus/pci/devices/*/power/control; do
+            [ -w "$ctrl" ] && echo on > "$ctrl" 2>/dev/null
+        done
+        for uctrl in /sys/bus/usb/devices/*/power/control; do
+            [ -w "$uctrl" ] && echo on > "$uctrl" 2>/dev/null
+        done
+        ;;
+esac
+
+# ------------------------------------------------------------------------------
+# 10. DISK WRITEBACK CENTISECS
 # ------------------------------------------------------------------------------
 DIRTY_PARAM="/proc/sys/vm/dirty_writeback_centisecs"
 if [ -w "$DIRTY_PARAM" ]; then

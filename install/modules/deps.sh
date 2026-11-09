@@ -50,7 +50,7 @@ REQUIRED_PKGS=(
     "wl-clipboard" "qt6-multimedia"
     "cliphist" "jq" "ddcutil"
     "bluez" "networkmanager" "matugen"
-    "pipewire" "wireplumber" "pipewire-pulse" "pipewire-alsa" "libpulse" "python" "fprintd" "pam-fprint-grosshack-fork-git"
+    "pipewire" "wireplumber" "pipewire-pulse" "pipewire-alsa" "libpulse" "python" "fprintd"
     "imagemagick" "file"
     "ffmpeg" "fastfetch" "quickshell"
     "grim" "playerctl" "satty" "xdg-desktop-portal-gtk" "power-profiles-daemon" "qt6-wayland"
