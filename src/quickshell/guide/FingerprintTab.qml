@@ -65,8 +65,7 @@ GuideTab {
     // Enrollment selection state
     property string selectedFingerName: availableFingers.length > 0 ? availableFingers[0] : "right-index-finger"
 
-    // Active enrollment process and modal state
-    property bool showEnrollModal: false
+    // Active enrollment process state
     property bool isEnrolling: false
     property int currentStage: 0
     property int currentPercent: 0
@@ -112,27 +111,6 @@ GuideTab {
         return I18n.t("guide.fingerprint.fingers." + fingerId, fingerId);
     }
 
-    function openEnrollModal() {
-        if (availableFingers.length === 0) return;
-        selectedFingerName = availableFingers[0];
-        currentStage = 0;
-        currentPercent = 0;
-        enrollStatus = "ready";
-        enrollMessage = I18n.t("guide.fingerprint.enroll.place_finger", "Place your finger on the sensor");
-        iconPulseScale = 1.0;
-        iconShakeX = 0.0;
-        iconCurrentColor = ThemeBackend.mauve;
-        showEnrollModal = true;
-    }
-
-    function closeEnrollModal() {
-        if (isEnrolling) {
-            cancelEnrollment();
-        }
-        showEnrollModal = false;
-        autoCloseTimer.stop();
-    }
-
     function startEnrollment() {
         currentStage = 0;
         currentPercent = 0;
@@ -142,7 +120,6 @@ GuideTab {
         iconShakeX = 0.0;
         iconCurrentColor = ThemeBackend.mauve;
         isEnrolling = true;
-        showEnrollModal = true;
         enrollProcess.command = ["bash", fingerprintTabRoot.scriptPath, "enroll", selectedFingerName];
         enrollProcess.running = true;
     }
@@ -153,8 +130,8 @@ GuideTab {
         }
         isEnrolling = false;
         enrollStatus = "ready";
-        showEnrollModal = false;
         autoCloseTimer.stop();
+        enrollPopup.close();
     }
 
     function deleteFinger(finger) {
@@ -196,7 +173,7 @@ GuideTab {
         interval: 1500
         repeat: false
         onTriggered: {
-            fingerprintTabRoot.closeEnrollModal();
+            enrollPopup.close();
         }
     }
 
@@ -331,11 +308,9 @@ GuideTab {
             syncSettings();
             refreshHardware();
         } else {
-            if (modalFingerDropdown && modalFingerDropdown.isOpen) modalFingerDropdown.closePopup();
+            enrollPopup.close();
             if (fingerprintTabRoot.isEnrolling) {
                 cancelEnrollment();
-            } else {
-                showEnrollModal = false;
             }
         }
     }
@@ -352,14 +327,55 @@ GuideTab {
         }
     }
 
+    Component {
+        id: fingerCardDelegate
+        SettingsRow {
+            id: fingerCard
+            required property var modelData
+            required property int index
+
+            rootObj: fingerprintTabRoot.rootObj
+            Layout.fillWidth: true
+
+            settingId: "fingerprint_finger_" + modelData
+            searchKeywords: "fingerprint " + modelData
+            title: fingerprintTabRoot.getFingerLabel(modelData)
+            description: I18n.t("guide.fingerprint.finger_registered", "Registered on %1").arg(fingerprintTabRoot.deviceName || "Synaptics Sensors")
+            icon: "󰈷"
+            showIcon: true
+            iconSize: 32
+            iconFontSize: 16
+            iconAccentColor: ThemeBackend.surface0
+            iconTextColor: "#ffffff"
+
+            baseColor: Qt.alpha(ThemeBackend.surface0, 0.4)
+            borderColor: Qt.alpha(ThemeBackend.surface1, 0.4)
+            borderWidth: 1
+            horizontalPadding: rootObj.s(12)
+            verticalPadding: rootObj.s(10)
+            spacing: rootObj.s(12)
+            innerSpacing: 0
+            bottomSpacing: 0
+
+            DeleteButton {
+                Layout.alignment: Qt.AlignVCenter
+                size: rootObj.s(28)
+                cornerRadius: rootObj.s(8)
+                iconFontSize: rootObj.s(14)
+                onClicked: {
+                    fingerprintTabRoot.deleteFinger(fingerCard.modelData);
+                }
+            }
+        }
+    }
+
     Flickable {
         anchors.fill: parent
         anchors.topMargin: rootObj.s(8)
         anchors.leftMargin: rootObj.s(8)
         anchors.rightMargin: rootObj.s(8)
         anchors.bottomMargin: rootObj.s(8)
-        contentHeight: settingsCol.implicitHeight + rootObj.s(16)
-        contentWidth: width
+        contentHeight: settingsCol.implicitHeight
         clip: true
         boundsBehavior: Flickable.StopAtBounds
 
@@ -376,7 +392,7 @@ GuideTab {
 
         ColumnLayout {
             id: settingsCol
-            width: parent.width - (parent.contentHeight > parent.height ? rootObj.s(6) : 0)
+            width: parent.width
             spacing: rootObj.s(6)
 
             // 1. Master Authentication Toggle
@@ -404,126 +420,150 @@ GuideTab {
                 }
             }
 
-            // 2. Hardware Status Section (Hidden if master switch is OFF, like in Dock)
-            SettingsBlob {
-                visible: fingerprintTabRoot.currentFingerprintEnabled
+            // 2. Hardware Status Section (Smoothly collapses when master toggle is off)
+            CollapsibleSection {
+                open: fingerprintTabRoot.currentFingerprintEnabled
+                row: hardwareBlob
 
-                SettingsRow {
-                    settingId: "fingerprint_hardware"
-                    searchKeywords: "fingerprint scanner sensor reader device hardware"
-                    rootObj: fingerprintTabRoot.rootObj
-                    icon: fingerprintTabRoot.hardwareAvailable ? "󰍹" : "󱏙"
-                    title: fingerprintTabRoot.hardwareAvailable
-                        ? (fingerprintTabRoot.deviceName || I18n.t("guide.fingerprint.header.title", "Fingerprint Reader"))
-                        : I18n.t("guide.fingerprint.header.not_found", "No scanner detected")
-                    description: fingerprintTabRoot.hardwareAvailable
-                        ? (fingerprintTabRoot.enrolledFingers.length + " " + I18n.t("guide.fingerprint.enrolled_count", "fingerprints registered") + " • " + (fingerprintTabRoot.scanType === "swipe" ? I18n.t("guide.fingerprint.header.swipe_type", "Swipe") : I18n.t("guide.fingerprint.header.touch_type", "Touch")))
-                        : I18n.t("guide.fingerprint.header.not_found_desc", "Biometric reader not found on this system")
+                SettingsBlob {
+                    id: hardwareBlob
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    SettingsRow {
+                        settingId: "fingerprint_hardware"
+                        searchKeywords: "fingerprint scanner sensor reader device hardware"
+                        rootObj: fingerprintTabRoot.rootObj
+                        icon: fingerprintTabRoot.hardwareAvailable ? "󰍹" : "󱏙"
+                        title: fingerprintTabRoot.hardwareAvailable
+                            ? (fingerprintTabRoot.deviceName || I18n.t("guide.fingerprint.header.title", "Fingerprint Reader"))
+                            : I18n.t("guide.fingerprint.header.not_found", "No scanner detected")
+                        description: fingerprintTabRoot.hardwareAvailable
+                            ? (fingerprintTabRoot.enrolledFingers.length + " " + I18n.t("guide.fingerprint.enrolled_count", "fingerprints registered") + " • " + (fingerprintTabRoot.scanType === "swipe" ? I18n.t("guide.fingerprint.header.swipe_type", "Swipe") : I18n.t("guide.fingerprint.header.touch_type", "Touch")))
+                            : I18n.t("guide.fingerprint.header.not_found_desc", "Biometric reader not found on this system")
+                    }
                 }
             }
 
-            // 3. Registered Fingerprints Objects Section (Structured like Idle timeout objects)
-            SettingsBlob {
-                visible: fingerprintTabRoot.currentFingerprintEnabled && fingerprintTabRoot.hardwareAvailable
+            // 3. Registered Fingerprints Objects Section (Matches Idle Timeout Objects composition)
+            CollapsibleSection {
+                open: fingerprintTabRoot.currentFingerprintEnabled && fingerprintTabRoot.hardwareAvailable
+                row: objectsCard
 
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: rootObj.s(10)
+                Rectangle {
+                    id: objectsCard
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    implicitHeight: objectsBoxCol.implicitHeight + rootObj.s(24)
+                    radius: ThemeBackend.borderRadius
+                    color: gf1.active ? "transparent" : Qt.alpha(ThemeBackend.surface0, 0.4)
+                    clip: true
 
-                    // Section Header with + icon button
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: rootObj.s(10)
-
-                        Item {
-                            implicitWidth: rootObj.s(32)
-                            implicitHeight: rootObj.s(32)
-                            Rectangle {
-                                anchors.fill: parent
-                                radius: rootObj.s(8)
-                                color: ThemeBackend.surface0
-                                Text {
-                                   anchors.centerIn: parent
-                                   text: "󰈷"
-                                   font.family: ThemeBackend.fontFamily
-                                   font.pixelSize: rootObj.s(16)
-                                   color: ThemeBackend.mauve
-                                }
-                            }
-                        }
-
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            spacing: rootObj.s(2)
-
-                            Text {
-                                Layout.fillWidth: true
-                                text: I18n.t("guide.fingerprint.objects_header.title", "Registered Fingerprints")
-                                font.family: ThemeBackend.fontFamily
-                                font.pixelSize: rootObj.s(14)
-                                font.weight: Font.DemiBold
-                                color: ThemeBackend.text
-                                elide: Text.ElideRight
-                            }
-
-                            Text {
-                                Layout.fillWidth: true
-                                text: I18n.t("guide.fingerprint.objects_header.desc", "Manage enrolled fingerprints and add new fingers")
-                                font.family: ThemeBackend.fontFamily
-                                font.pixelSize: rootObj.s(11)
-                                color: ThemeBackend.subtext0
-                                elide: Text.ElideRight
-                            }
-                        }
-
-                        IconButton {
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            size: rootObj.s(32)
-                            cornerRadius: rootObj.s(8)
-                            buttonIcon: "󰐕"
-                            iconFontSize: rootObj.s(14)
-                            accentColor: ThemeBackend.surface0
-                            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.overlay2
-                            enabled: !fingerprintTabRoot.isEnrolling && fingerprintTabRoot.availableFingers.length > 0
-                            onClicked: {
-                                fingerprintTabRoot.openEnrollModal();
-                            }
-                        }
+                    GlassFill {
+                        id: gf1
+                        anchors.fill: parent
+                        radius: parent.radius
+                        tintColor: Qt.alpha(ThemeBackend.surface0, 0.4)
+                        tintAmount: 0.25
                     }
 
-                    // List of Enrolled Fingerprints
                     ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: rootObj.s(6)
+                        id: objectsBoxCol
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.margins: rootObj.s(12)
+                        spacing: rootObj.s(10)
 
-                        SettingsRow {
-                            visible: fingerprintTabRoot.enrolledFingers.length === 0
-                            settingId: "fingerprint_none"
-                            searchKeywords: "fingerprint empty no fingerprints enrolled"
-                            rootObj: fingerprintTabRoot.rootObj
-                            icon: "󰋗"
-                            title: I18n.t("guide.fingerprint.enrolled.empty_title", "No fingerprints saved")
-                            description: I18n.t("guide.fingerprint.enrolled.empty_desc", "Click + to register a finger for quick login and unlocking")
+                        // Section Header
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: rootObj.s(12)
+
+                            IconButton {
+                                enabled: false
+                                size: rootObj.s(32)
+                                Layout.preferredWidth: rootObj.s(32)
+                                Layout.preferredHeight: rootObj.s(32)
+                                Layout.alignment: Qt.AlignVCenter
+                                cornerRadius: ThemeBackend.borderRadius
+                                buttonIcon: "󰈷"
+                                iconFontSize: rootObj.s(16)
+                                accentColor: ThemeBackend.surface0
+                                textColor: "#ffffff"
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 0
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: rootObj.s(2)
+
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: I18n.t("guide.fingerprint.objects_header.title", "Registered Fingerprints")
+                                    font.family: ThemeBackend.fontFamily
+                                    font.pixelSize: rootObj.s(14)
+                                    color: ThemeBackend.text
+                                    elide: Text.ElideRight
+                                }
+
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: I18n.t("guide.fingerprint.objects_header.desc", "Manage enrolled fingerprints and add new fingers")
+                                    font.family: ThemeBackend.fontFamily
+                                    font.pixelSize: rootObj.s(11)
+                                    color: ThemeBackend.subtext0
+                                    elide: Text.ElideRight
+                                }
+                            }
+
+                            IconButton {
+                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                size: rootObj.s(32)
+                                Layout.preferredWidth: rootObj.s(32)
+                                Layout.preferredHeight: rootObj.s(32)
+                                cornerRadius: rootObj.s(8)
+                                buttonIcon: "󰐕"
+                                iconFontSize: rootObj.s(14)
+                                accentColor: ThemeBackend.surface0
+                                textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.overlay2
+                                enabled: !fingerprintTabRoot.isEnrolling && fingerprintTabRoot.availableFingers.length > 0
+                                onClicked: {
+                                    enrollPopup.openPopup();
+                                }
+                            }
                         }
 
-                        Repeater {
-                            model: fingerprintTabRoot.enrolledFingers
-                            delegate: SettingsRow {
-                                required property var modelData
-                                settingId: "fingerprint_finger_" + modelData
-                                searchKeywords: "fingerprint " + modelData
-                                rootObj: fingerprintTabRoot.rootObj
-                                icon: "󰈷"
-                                title: fingerprintTabRoot.getFingerLabel(modelData)
-                                description: I18n.t("guide.fingerprint.finger_registered", "Registered on %1").arg(fingerprintTabRoot.deviceName || "Synaptics Sensors")
+                        // List of Fingerprint Cards
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: rootObj.s(8)
 
-                                DeleteButton {
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    size: rootObj.s(28)
-                                    cornerRadius: Math.min(ThemeBackend.borderRadius, rootObj.s(8))
-                                    iconFontSize: rootObj.s(14)
-                                    onClicked: fingerprintTabRoot.deleteFinger(modelData)
-                                }
+                            Repeater {
+                                model: fingerprintTabRoot.enrolledFingers
+                                delegate: fingerCardDelegate
+                            }
+
+                            SettingsRow {
+                                visible: fingerprintTabRoot.enrolledFingers.length === 0
+                                rootObj: fingerprintTabRoot.rootObj
+                                settingId: "fingerprint_none"
+                                title: I18n.t("guide.fingerprint.enrolled.empty_title", "No fingerprints saved")
+                                description: I18n.t("guide.fingerprint.enrolled.empty_desc", "Click + to register a finger for quick login and unlocking")
+                                icon: "󰋗"
+                                iconSize: 32
+                                iconFontSize: 16
+                                iconAccentColor: ThemeBackend.surface0
+                                iconTextColor: "#ffffff"
+                                baseColor: Qt.alpha(ThemeBackend.surface0, 0.4)
+                                borderColor: Qt.alpha(ThemeBackend.surface1, 0.4)
+                                borderWidth: 1
+                                horizontalPadding: rootObj.s(12)
+                                verticalPadding: rootObj.s(10)
+                                spacing: rootObj.s(12)
                             }
                         }
                     }
@@ -532,275 +572,9 @@ GuideTab {
         }
     }
 
-    // Modal Floating Banner for Fingerprint Enrollment (Cannot be dismissed while scanning)
-    Item {
-        id: modalOverlay
-        anchors.fill: parent
-        visible: opacity > 0.001
-        opacity: (fingerprintTabRoot.showEnrollModal || fingerprintTabRoot.isEnrolling) ? 1.0 : 0.0
-        z: 100
-        Behavior on opacity { NumberAnimation { duration: 200 } }
-
-        // Semi-transparent backdrop
-        Rectangle {
-            anchors.fill: parent
-            color: Qt.alpha(ThemeBackend.crust, 0.75)
-            MouseArea {
-                anchors.fill: parent
-                // While enrolling, clicking outside CANNOT close the modal!
-                onClicked: {
-                    if (!fingerprintTabRoot.isEnrolling) {
-                        fingerprintTabRoot.closeEnrollModal();
-                    }
-                }
-            }
-        }
-
-        // Floating Card in the center
-        Rectangle {
-            id: modalCard
-            anchors.centerIn: parent
-            width: Math.min(parent.width - rootObj.s(32), rootObj.s(380))
-            implicitHeight: modalCardCol.implicitHeight + rootObj.s(36)
-            radius: Math.min(rootObj.s(18), ThemeBackend.borderRadius * 1.5)
-            color: ThemeBackend.mantle
-            border.color: Qt.alpha(ThemeBackend.surface1, 0.8)
-            border.width: 1
-            clip: true
-
-            MouseArea {
-                anchors.fill: parent
-                // Absorb clicks so they don't penetrate
-            }
-
-            ColumnLayout {
-                id: modalCardCol
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.margins: rootObj.s(18)
-                spacing: rootObj.s(14)
-
-                // Modal Header
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: rootObj.s(8)
-
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: rootObj.s(2)
-
-                        Text {
-                            Layout.fillWidth: true
-                            text: I18n.t("guide.fingerprint.modal.title", "Enroll Fingerprint")
-                            font.family: ThemeBackend.fontFamily
-                            font.pixelSize: rootObj.s(16)
-                            font.weight: Font.Bold
-                            color: ThemeBackend.text
-                            elide: Text.ElideRight
-                        }
-
-                        Text {
-                            Layout.fillWidth: true
-                            text: fingerprintTabRoot.isEnrolling
-                                ? fingerprintTabRoot.getFingerLabel(fingerprintTabRoot.selectedFingerName)
-                                : I18n.t("guide.fingerprint.modal.select_desc", "Select a finger to register")
-                            font.family: ThemeBackend.fontFamily
-                            font.pixelSize: rootObj.s(11)
-                            color: ThemeBackend.subtext0
-                            elide: Text.ElideRight
-                        }
-                    }
-
-                    CloseButton {
-                        visible: !fingerprintTabRoot.isEnrolling
-                        Layout.alignment: Qt.AlignRight | Qt.AlignTop
-                        size: rootObj.s(28)
-                        cornerRadius: rootObj.s(8)
-                        onClicked: fingerprintTabRoot.closeEnrollModal()
-                    }
-                }
-
-                // Central Fingerprint Icon with reactive touch animations
-                Item {
-                    Layout.alignment: Qt.AlignHCenter
-                    implicitWidth: rootObj.s(110)
-                    implicitHeight: rootObj.s(110)
-
-                    // Background pulsing glow ring
-                    Rectangle {
-                        anchors.centerIn: parent
-                        width: parent.width * fingerprintTabRoot.iconPulseScale
-                        height: parent.height * fingerprintTabRoot.iconPulseScale
-                        radius: width / 2
-                        color: Qt.alpha(fingerprintTabRoot.iconCurrentColor, 0.12)
-                        Behavior on color { ColorAnimation { duration: 250 } }
-                    }
-
-                    // Inner circle
-                    Rectangle {
-                        anchors.centerIn: parent
-                        width: rootObj.s(86)
-                        height: rootObj.s(86)
-                        radius: width / 2
-                        color: ThemeBackend.surface0
-                        border.color: Qt.alpha(fingerprintTabRoot.iconCurrentColor, 0.5)
-                        border.width: 2
-                        Behavior on border.color { ColorAnimation { duration: 200 } }
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: fingerprintTabRoot.enrollStatus === "completed" ? "󰄲" : "󰈷"
-                            font.family: ThemeBackend.fontFamily
-                            font.pixelSize: rootObj.s(44)
-                            scale: fingerprintTabRoot.iconPulseScale
-                            color: fingerprintTabRoot.iconCurrentColor
-                            transform: Translate { x: fingerprintTabRoot.iconShakeX }
-                            Behavior on color { ColorAnimation { duration: 200 } }
-                        }
-                    }
-                }
-
-                // Instruction message
-                Text {
-                    Layout.fillWidth: true
-                    Layout.leftMargin: rootObj.s(8)
-                    Layout.rightMargin: rootObj.s(8)
-                    horizontalAlignment: Text.AlignHCenter
-                    wrapMode: Text.WordWrap
-                    text: fingerprintTabRoot.enrollMessage
-                    font.family: ThemeBackend.fontFamily
-                    font.pixelSize: rootObj.s(13)
-                    font.weight: Font.Medium
-                    color: fingerprintTabRoot.iconCurrentColor === ThemeBackend.peach
-                        ? ThemeBackend.peach
-                        : (fingerprintTabRoot.enrollStatus === "completed" ? ThemeBackend.green : ThemeBackend.text)
-                    Behavior on color { ColorAnimation { duration: 200 } }
-                }
-
-                // Progress Bar & Stage Indicator (Visible when enrolling or completed)
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    visible: fingerprintTabRoot.isEnrolling || fingerprintTabRoot.enrollStatus === "completed"
-                    spacing: rootObj.s(6)
-
-                    Text {
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignHCenter
-                        text: I18n.t("guide.fingerprint.modal.stage_info", "Stage %1 of %2 (%3%)")
-                            .arg(fingerprintTabRoot.currentStage)
-                            .arg(fingerprintTabRoot.enrollStages)
-                            .arg(fingerprintTabRoot.currentPercent)
-                        font.family: ThemeBackend.fontFamily
-                        font.pixelSize: rootObj.s(11)
-                        color: ThemeBackend.subtext0
-                    }
-
-                    Rectangle {
-                        Layout.fillWidth: true
-                        implicitHeight: rootObj.s(6)
-                        radius: rootObj.s(3)
-                        color: ThemeBackend.surface0
-                        clip: true
-
-                        Rectangle {
-                            height: parent.height
-                            width: parent.width * (fingerprintTabRoot.currentPercent / 100.0)
-                            radius: rootObj.s(3)
-                            color: fingerprintTabRoot.enrollStatus === "completed" ? ThemeBackend.green : ThemeBackend.mauve
-                            Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                            Behavior on color { ColorAnimation { duration: 200 } }
-                        }
-                    }
-                }
-
-                // Selection phase controls (when NOT enrolling yet)
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    visible: !fingerprintTabRoot.isEnrolling && fingerprintTabRoot.enrollStatus !== "completed"
-                    spacing: rootObj.s(12)
-
-                    Dropdown {
-                        id: modalFingerDropdown
-                        Layout.fillWidth: true
-                        implicitHeight: rootObj.s(34)
-                        options: {
-                            let opts = [];
-                            for (let i = 0; i < fingerprintTabRoot.availableFingers.length; i++) {
-                                opts.push(fingerprintTabRoot.getFingerLabel(fingerprintTabRoot.availableFingers[i]));
-                            }
-                            return opts;
-                        }
-                        currentIndex: 0
-                        accentColor: ThemeBackend.mauve
-                        baseColor: ThemeBackend.surface0
-                        hoverColor: ThemeBackend.surface1
-                        dropdownColor: ThemeBackend.surface0
-                        borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
-                        textColor: ThemeBackend.text
-                        activeTextColor: ThemeBackend.crust
-                        fontPixelSize: rootObj.s(12)
-                        onValueChanged: function(index, value) {
-                            if (index >= 0 && index < fingerprintTabRoot.availableFingers.length) {
-                                fingerprintTabRoot.selectedFingerName = fingerprintTabRoot.availableFingers[index];
-                            }
-                        }
-                    }
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: rootObj.s(8)
-
-                        ClickButton {
-                            Layout.fillWidth: true
-                            implicitHeight: rootObj.s(34)
-                            buttonText: I18n.t("guide.fingerprint.modal.cancel", "Cancel")
-                            accentColor: ThemeBackend.surface0
-                            textColor: ThemeBackend.text
-                            cornerRadius: ThemeBackend.borderRadius
-                            onTriggered: fingerprintTabRoot.closeEnrollModal()
-                        }
-
-                        ClickButton {
-                            Layout.fillWidth: true
-                            implicitHeight: rootObj.s(34)
-                            buttonText: I18n.t("guide.fingerprint.modal.start", "Start Scan")
-                            buttonIcon: "󰐕"
-                            accentColor: ThemeBackend.mauve
-                            textColor: ThemeBackend.crust
-                            cornerRadius: ThemeBackend.borderRadius
-                            enabled: fingerprintTabRoot.availableFingers.length > 0
-                            onTriggered: fingerprintTabRoot.startEnrollment()
-                        }
-                    }
-                }
-
-                // Active scanning / Finished controls
-                RowLayout {
-                    Layout.fillWidth: true
-                    visible: fingerprintTabRoot.isEnrolling || fingerprintTabRoot.enrollStatus === "completed"
-                    spacing: rootObj.s(8)
-
-                    ClickButton {
-                        Layout.fillWidth: true
-                        implicitHeight: rootObj.s(34)
-                        buttonText: fingerprintTabRoot.enrollStatus === "completed"
-                            ? I18n.t("guide.fingerprint.modal.done", "Done")
-                            : I18n.t("guide.fingerprint.modal.cancel", "Cancel")
-                        buttonIcon: fingerprintTabRoot.enrollStatus === "completed" ? "󰄲" : "󰜺"
-                        accentColor: fingerprintTabRoot.enrollStatus === "completed" ? ThemeBackend.green : ThemeBackend.surface0
-                        textColor: fingerprintTabRoot.enrollStatus === "completed" ? ThemeBackend.crust : ThemeBackend.text
-                        cornerRadius: ThemeBackend.borderRadius
-                        onTriggered: {
-                            if (fingerprintTabRoot.enrollStatus === "completed") {
-                                fingerprintTabRoot.closeEnrollModal();
-                            } else {
-                                fingerprintTabRoot.cancelEnrollment();
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    FingerprintEnrollPopup {
+        id: enrollPopup
+        tab: fingerprintTabRoot
+        rootObj: fingerprintTabRoot.rootObj
     }
 }
