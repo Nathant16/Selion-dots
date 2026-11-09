@@ -167,7 +167,7 @@ GuideTab {
                             accentColor: ThemeBackend.surface0
                             textColor: ThemeBackend.text
 
-                            onTriggered: Quickshell.execDetached(["xdg-open", "https://github.com/ilyamiro/serpantinum/blob/master/CHANGELOG.md"])
+                            onTriggered: Quickshell.execDetached(["xdg-open", "https://github.com/Nathant16/Selion-dots/blob/master/CHANGELOG.md"])
                         }
 
                         FillButton {
@@ -374,7 +374,7 @@ GuideTab {
                     accentColor: ThemeBackend.surface0
                     textColor: ThemeBackend.text
 
-                    onTriggered: Quickshell.execDetached(["xdg-open", "https://github.com/ilyamiro/serpantinum"])
+                    onTriggered: Quickshell.execDetached(["xdg-open", "https://github.com/Nathant16/Selion-dots"])
                 }
             }
         }
