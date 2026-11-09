@@ -741,6 +741,8 @@ Item {
             window.loadMonitors();
             if (!window._refreshedForDisplay) {
                 window.refreshForDisplay();
+            } else if (window.currentFilter !== "Search") {
+                window.selectCurrentWallpaperTabAndFocus();
             } else if (displayModel.count > 0 && view.currentIndex >= 0) {
                 view.positionViewAtIndex(view.currentIndex, ListView.Center);
             }
@@ -1365,6 +1367,7 @@ Item {
                 view.currentIndex = indexToFocus;
                 if (forceSnap) {
                     view.positionViewAtIndex(indexToFocus, ListView.Center);
+                    view.currentIndex = indexToFocus;
                 }
 
                 if (targetIndex !== -1 || cleanTarget === "") {
@@ -1545,6 +1548,7 @@ Item {
                     view.forceLayout();
                 }
                 view.positionViewAtIndex(indexToFocus, ListView.Center);
+                view.currentIndex = indexToFocus;
             }
 
             if (targetIndex !== -1 || cleanTarget === "") {
