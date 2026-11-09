@@ -21,6 +21,7 @@ GuideTab {
     property bool hasThresholdSupport: false
     property bool conservationMode: false
     property real healthPct: 100.0
+    property var optimizationsModel: []
 
     readonly property string batteryScriptPath: (typeof Caching !== "undefined" && Caching.serpantinumDir)
         ? (Caching.serpantinumDir + "/scripts/system/battery")
@@ -75,6 +76,18 @@ GuideTab {
         }
     }
 
+    function setOptimization(optId, enabled) {
+        let list = [];
+        for (let i = 0; i < powerTabRoot.optimizationsModel.length; i++) {
+            let item = Object.assign({}, powerTabRoot.optimizationsModel[i]);
+            if (item.id === optId) item.enabled = enabled;
+            list.push(item);
+        }
+        powerTabRoot.optimizationsModel = list;
+        cmdProc.command = [powerTabRoot.batteryScriptPath, "set-opt", optId, enabled ? "true" : "false"];
+        cmdProc.running = true;
+    }
+
     Process {
         id: statusProc
         command: [powerTabRoot.batteryScriptPath, "json"]
@@ -98,6 +111,7 @@ GuideTab {
                     powerTabRoot.hasThresholdSupport = Boolean(d.has_threshold_support);
                     powerTabRoot.conservationMode = Boolean(d.is_conservation_mode || powerTabRoot.thresholdEnd <= 80);
                     powerTabRoot.healthPct = Number(d.health_pct) || 100.0;
+                    powerTabRoot.optimizationsModel = d.optimizations || [];
                 } catch(e) {}
             }
         }
@@ -159,59 +173,7 @@ GuideTab {
             width: parent.width - (parent.contentHeight > parent.height ? rootObj.s(6) : 0)
             spacing: rootObj.s(6)
 
-            // 1. Status Section
-            SettingsBlob {
-                SettingsRow {
-                    settingId: "power_status"
-                    searchKeywords: "battery charge power status percentage watts level health"
-                    rootObj: powerTabRoot.rootObj
-                    icon: {
-                        if (!powerTabRoot.hasBattery) return "󰚥";
-                        if (powerTabRoot.status === "Charging") return "󰂄";
-                        if (powerTabRoot.status === "Full") return "󰁹";
-                        if (powerTabRoot.capacity > 80) return "󰁹";
-                        if (powerTabRoot.capacity > 60) return "󰂁";
-                        if (powerTabRoot.capacity > 40) return "󰁿";
-                        if (powerTabRoot.capacity > 20) return "󰁽";
-                        return "󰁺";
-                    }
-                    title: {
-                        if (!powerTabRoot.hasBattery) return I18n.t("guide.power.status.ac", "AC Power Connected");
-                        let st = powerTabRoot.status;
-                        let statusLabel = st;
-                        if (st === "Charging") statusLabel = I18n.t("guide.power.status.charging", "Charging");
-                        else if (st === "Discharging") statusLabel = I18n.t("guide.power.status.discharging", "Discharging");
-                        else if (st === "Full") statusLabel = I18n.t("guide.power.status.full", "Fully charged");
-                        return powerTabRoot.capacity + "% • " + statusLabel;
-                    }
-                    description: {
-                        if (!powerTabRoot.hasBattery) return I18n.t("guide.power.desc.ac_connected", "Running on AC adapter power");
-                        let parts = [];
-                        let remText = powerTabRoot.getTimeRemainingText();
-                        if (remText !== "") parts.push(remText);
-                        else if (powerTabRoot.timeRemainingStr !== "") parts.push(powerTabRoot.timeRemainingStr);
-                        if (powerTabRoot.powerWatts > 0) parts.push(powerTabRoot.powerWatts.toFixed(1) + " W");
-                        if (powerTabRoot.healthPct > 0) parts.push(I18n.t("guide.power.health_label", "Health: %1%").arg(Math.round(powerTabRoot.healthPct)));
-                        return parts.length > 0 ? parts.join(" • ") : I18n.t("guide.power.desc.battery_active", "Battery power supply");
-                    }
-
-                    ClickButton {
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        implicitHeight: rootObj.s(32)
-                        buttonText: I18n.t("guide.power.refresh", "Refresh")
-                        buttonIcon: "󰑐"
-                        accentColor: ThemeBackend.mauve
-                        textColor: ThemeBackend.crust
-                        cornerRadius: ThemeBackend.borderRadius
-                        horizontalPadding: rootObj.s(14)
-                        iconFontSize: rootObj.s(14)
-                        textFontSize: rootObj.s(11)
-                        onTriggered: powerTabRoot.refresh()
-                    }
-                }
-            }
-
-            // 2. Power Profiles Section
+            // 1. Power Profiles Section
             SettingsBlob {
                 SettingsRow {
                     id: profileRow
@@ -255,7 +217,7 @@ GuideTab {
                 }
             }
 
-            // 3. Battery Care Section
+            // 2. Battery Conservation Mode
             SettingsBlob {
                 visible: powerTabRoot.hasBattery
 
@@ -279,42 +241,88 @@ GuideTab {
                         }
                     }
                 }
+            }
 
-                SettingsRow {
-                    visible: powerTabRoot.hasThresholdSupport
-                    settingId: "power_threshold_limit"
-                    searchKeywords: "charge limit threshold percentage stop charging"
-                    rootObj: powerTabRoot.rootObj
-                    icon: "󰚥"
-                    title: I18n.t("guide.power.threshold.custom_label", "Charge limit")
-                    description: I18n.t("guide.power.threshold.custom_desc", "Maximum battery charge percentage")
+            // Charge limit (Dropdown) - smoothly expands ONLY when Conservation mode is enabled
+            CollapsibleSection {
+                open: powerTabRoot.hasBattery && powerTabRoot.conservationMode && powerTabRoot.hasThresholdSupport
+                row: limitBlob
 
-                    Dropdown {
-                        id: limitDropdown
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        implicitWidth: rootObj.s(140)
-                        implicitHeight: rootObj.s(32)
-                        options: ["70%", "75%", "80%", "85%", "90%", "100%"]
-                        currentIndex: {
-                            let val = powerTabRoot.thresholdEnd;
-                            if (val <= 70) return 0;
-                            if (val <= 75) return 1;
-                            if (val <= 80) return 2;
-                            if (val <= 85) return 3;
-                            if (val <= 90) return 4;
-                            return 5;
+                SettingsBlob {
+                    id: limitBlob
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    SettingsRow {
+                        settingId: "power_threshold_limit"
+                        searchKeywords: "charge limit threshold percentage stop charging"
+                        rootObj: powerTabRoot.rootObj
+                        icon: "󰚥"
+                        title: I18n.t("guide.power.threshold.custom_label", "Charge limit")
+                        description: I18n.t("guide.power.threshold.custom_desc", "Maximum battery charge percentage")
+
+                        Dropdown {
+                            id: limitDropdown
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            implicitWidth: rootObj.s(140)
+                            implicitHeight: rootObj.s(32)
+                            options: ["70%", "75%", "80%", "85%", "90%", "100%"]
+                            currentIndex: {
+                                let val = powerTabRoot.thresholdEnd;
+                                if (val <= 70) return 0;
+                                if (val <= 75) return 1;
+                                if (val <= 80) return 2;
+                                if (val <= 85) return 3;
+                                if (val <= 90) return 4;
+                                return 5;
+                            }
+                            accentColor: ThemeBackend.mauve
+                            baseColor: ThemeBackend.surface0
+                            hoverColor: ThemeBackend.surface1
+                            dropdownColor: ThemeBackend.surface0
+                            borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
+                            textColor: ThemeBackend.text
+                            activeTextColor: ThemeBackend.crust
+                            fontPixelSize: rootObj.s(11)
+                            onValueChanged: function(index, value) {
+                                let limits = [70, 75, 80, 85, 90, 100];
+                                powerTabRoot.setLimit(limits[index]);
+                            }
                         }
-                        accentColor: ThemeBackend.mauve
-                        baseColor: ThemeBackend.surface0
-                        hoverColor: ThemeBackend.surface1
-                        dropdownColor: ThemeBackend.surface0
-                        borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
-                        textColor: ThemeBackend.text
-                        activeTextColor: ThemeBackend.crust
-                        fontPixelSize: rootObj.s(11)
-                        onValueChanged: function(index, value) {
-                            let limits = [70, 75, 80, 85, 90, 100];
-                            powerTabRoot.setLimit(limits[index]);
+                    }
+                }
+            }
+
+            // 3. Power Saving Optimizations Section
+            SettingsBlob {
+                visible: powerTabRoot.optimizationsModel && powerTabRoot.optimizationsModel.length > 0
+
+                Repeater {
+                    model: powerTabRoot.optimizationsModel
+
+                    delegate: SettingsRow {
+                        id: optRow
+                        required property var modelData
+                        required property int index
+
+                        settingId: "power_opt_" + modelData.id
+                        searchKeywords: "power optimization " + modelData.id + " battery save tweak"
+                        rootObj: powerTabRoot.rootObj
+                        icon: modelData.icon || "󰚥"
+                        title: I18n.t("guide.power.optimizations." + modelData.id + "_title", modelData.title)
+                        description: I18n.t("guide.power.optimizations." + modelData.id + "_desc", modelData.desc)
+
+                        Toggle {
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            checked: Boolean(modelData.enabled)
+                            accentColor: ThemeBackend.mauve
+                            baseColor: ThemeBackend.surface1
+                            handleColor: ThemeBackend.crust
+                            handleOffColor: ThemeBackend.text
+                            onToggled: function(val) {
+                                powerTabRoot.setOptimization(modelData.id, val);
+                            }
                         }
                     }
                 }

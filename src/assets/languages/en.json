@@ -1250,7 +1250,25 @@
       "time_remaining": "~%1 remaining",
       "time_until_full": "~%1 until full",
       "hours_short": "h",
-      "minutes_short": "m"
+      "minutes_short": "m",
+      "optimizations": {
+        "title": "Power saving optimizations",
+        "desc": "Toggle hardware power management and battery saving tweaks",
+        "cpu_boost_title": "CPU Turbo Boost",
+        "cpu_boost_desc": "Allow processor cores to boost above base clock",
+        "wifi_powersave_title": "Wi-Fi Power Save",
+        "wifi_powersave_desc": "Reduce Wi-Fi power draw during idle periods",
+        "device_pm_title": "Device Runtime PM",
+        "device_pm_desc": "Auto-suspend idle bus controllers and USB devices",
+        "audio_powersave_title": "Audio Power Save",
+        "audio_powersave_desc": "Power down audio codec when silent",
+        "disk_writeback_title": "Delayed Disk Writeback",
+        "disk_writeback_desc": "Flush dirty buffers every 60s to let drive sleep",
+        "nmi_watchdog_title": "Disable NMI Watchdog",
+        "nmi_watchdog_desc": "Stop periodic timer interrupts for deeper C-states",
+        "bluetooth_sleep_title": "Bluetooth Auto Power-Off",
+        "bluetooth_sleep_desc": "Turn off Bluetooth radio when no devices connected"
+      }
     }
   },
   "sysnotif": {

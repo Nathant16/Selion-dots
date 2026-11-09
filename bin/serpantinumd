@@ -266,6 +266,25 @@ if [ "$COMMAND" == "start" ]; then
 
     [ "$VERBOSE" = true ] && echo "$(t "daemon.launching")"
 
+    # Hyprland moved IPC sockets to $XDG_RUNTIME_DIR/hypr; ensure /tmp/hypr compatibility symlink
+    if [ -n "$XDG_RUNTIME_DIR" ] && [ -d "$XDG_RUNTIME_DIR/hypr" ] && [ ! -e "/tmp/hypr" ]; then
+        ln -sf "$XDG_RUNTIME_DIR/hypr" /tmp/hypr 2>/dev/null || true
+    fi
+
+    # Ensure state compatibility symlink for focustime between serpantinum and quickshell
+    mkdir -p "$HOME/.local/state/serpantinum/focustime" "$HOME/.local/state/quickshell" 2>/dev/null || true
+    if [ ! -e "$HOME/.local/state/quickshell/focustime" ]; then
+        ln -sf "$HOME/.local/state/serpantinum/focustime" "$HOME/.local/state/quickshell/focustime" 2>/dev/null || true
+    fi
+
+    # Ensure serpantinum-core daemon is running
+    command -v serpantinum-core >/dev/null 2>&1 && serpantinum-core start >/dev/null 2>&1
+
+    # Apply saved power optimizations on startup
+    if [ -f "$SERPANTINUM_DIR/scripts/system/battery" ]; then
+        python3 "$SERPANTINUM_DIR/scripts/system/battery" apply-opts >/dev/null 2>&1 &
+    fi
+
     (
         bash "$SERPANTINUM_DIR/scripts/migrate_easyeffects.sh"
         command -v serpantinum-audio >/dev/null 2>&1 && serpantinum-audio start

@@ -616,6 +616,12 @@ deploy_package() {
         sudo ln -sf /usr/local/bin/battery /usr/local/bin/power 2>/dev/null || true
     fi
 
+    # Deploy sudoers rule for hardware power optimizations
+    if [ -d /etc/sudoers.d ]; then
+        echo "%wheel ALL=(ALL) NOPASSWD: /usr/local/bin/apply-power-profile.sh, /usr/bin/sysctl, /usr/bin/iw" | sudo tee /etc/sudoers.d/99-serpantinum-power >/dev/null 2>&1 || true
+        sudo chmod 0440 /etc/sudoers.d/99-serpantinum-power 2>/dev/null || true
+    fi
+
     # Deploy USB mouse power rules (disable autosuspend on mice/receivers)
     if [ -f "$TARGET_BASE/src/assets/udev/50-usb-mouse-power.rules" ]; then
         sudo mkdir -p /etc/udev/rules.d 2>/dev/null || true

@@ -308,6 +308,222 @@ def set_limit(limit_val):
     print(f"\033[1;32m✔ Режим защиты аккумулятора:\033[0m {desc}")
     return True
 
+OPTS_CONFIG_PATH = os.path.expanduser("~/.config/serpantinum/power_optimizations.json")
+
+def load_opts_config():
+    defaults = {
+        "cpu_boost": True,
+        "wifi_powersave": True,
+        "device_pm": True,
+        "audio_powersave": True,
+        "disk_writeback": True,
+        "nmi_watchdog": True,
+        "bluetooth_sleep": True,
+    }
+    if os.path.exists(OPTS_CONFIG_PATH):
+        try:
+            with open(OPTS_CONFIG_PATH, "r") as f:
+                saved = json.load(f)
+                defaults.update(saved)
+        except Exception:
+            pass
+    return defaults
+
+def save_opts_config(cfg):
+    try:
+        os.makedirs(os.path.dirname(OPTS_CONFIG_PATH), exist_ok=True)
+        with open(OPTS_CONFIG_PATH, "w") as f:
+            json.dump(cfg, f, indent=2)
+    except Exception as e:
+        print(f"Failed to save opts config: {e}", file=sys.stderr)
+
+def get_hw_opt_state(opt_id, saved_val):
+    if opt_id == "cpu_boost":
+        v = read_val("/sys/devices/system/cpu/cpufreq/boost", "")
+        if v:
+            return v != "0"
+        return saved_val
+    elif opt_id == "wifi_powersave":
+        for w in glob.glob("/sys/class/net/*/wireless"):
+            dev = os.path.basename(os.path.dirname(w))
+            try:
+                res = subprocess.run(["iw", "dev", dev, "get", "power_save"], capture_output=True, text=True, timeout=1)
+                if "power save: on" in res.stdout.lower():
+                    return True
+                elif "power save: off" in res.stdout.lower():
+                    return False
+            except Exception:
+                pass
+        return saved_val
+    elif opt_id == "audio_powersave":
+        v = read_val("/sys/module/snd_hda_intel/parameters/power_save", "")
+        if v:
+            return v == "1"
+        return saved_val
+    elif opt_id == "disk_writeback":
+        v = read_val("/proc/sys/vm/dirty_writeback_centisecs", "")
+        try:
+            if v and int(v) >= 1500:
+                return True
+            elif v:
+                return False
+        except ValueError:
+            pass
+        return saved_val
+    elif opt_id == "nmi_watchdog":
+        v = read_val("/proc/sys/kernel/nmi_watchdog", "")
+        if v:
+            return v == "0"
+        return saved_val
+    elif opt_id == "device_pm":
+        pci_ctrls = glob.glob("/sys/bus/pci/devices/*/power/control")
+        if pci_ctrls:
+            states = [read_val(c, "") for c in pci_ctrls[:10]]
+            if "auto" in states:
+                return True
+            if "on" in states:
+                return False
+        return saved_val
+    elif opt_id == "bluetooth_sleep":
+        return saved_val
+    return saved_val
+
+def apply_single_opt(opt_id, enabled):
+    if opt_id == "cpu_boost":
+        val = "1" if enabled else "0"
+        if os.path.exists("/sys/devices/system/cpu/cpufreq/boost"):
+            write_val("/sys/devices/system/cpu/cpufreq/boost", val)
+        for pb in glob.glob("/sys/devices/system/cpu/cpufreq/policy*/boost"):
+            write_val(pb, val)
+    elif opt_id == "wifi_powersave":
+        mode = "on" if enabled else "off"
+        for w in glob.glob("/sys/class/net/*/wireless"):
+            dev = os.path.basename(os.path.dirname(w))
+            res = subprocess.run(["iw", "dev", dev, "set", "power_save", mode], capture_output=True)
+            if res.returncode != 0:
+                subprocess.run(["sudo", "-n", "iw", "dev", dev, "set", "power_save", mode], capture_output=True)
+    elif opt_id == "audio_powersave":
+        val = "1" if enabled else "0"
+        if os.path.exists("/sys/module/snd_hda_intel/parameters/power_save"):
+            write_val("/sys/module/snd_hda_intel/parameters/power_save", val)
+        if os.path.exists("/sys/module/snd_hda_intel/parameters/power_save_controller"):
+            write_val("/sys/module/snd_hda_intel/parameters/power_save_controller", "Y" if enabled else "N")
+    elif opt_id == "disk_writeback":
+        val = "6000" if enabled else "500"
+        if not write_val("/proc/sys/vm/dirty_writeback_centisecs", val):
+            subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", f"vm.dirty_writeback_centisecs={val}"], capture_output=True)
+    elif opt_id == "nmi_watchdog":
+        val = "0" if enabled else "1"
+        if not write_val("/proc/sys/kernel/nmi_watchdog", val):
+            subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", f"kernel.nmi_watchdog={val}"], capture_output=True)
+    elif opt_id == "device_pm":
+        if enabled:
+            for ctrl in glob.glob("/sys/bus/pci/devices/*/power/control"):
+                pci_dir = os.path.dirname(ctrl)
+                pci_class = read_val(os.path.join(pci_dir, "class"), "")
+                if pci_class.startswith("0x0c03"):
+                    write_val(ctrl, "on")
+                    continue
+                write_val(ctrl, "auto")
+            for uctrl in glob.glob("/sys/bus/usb/devices/*/power/control"):
+                udev_dir = os.path.dirname(uctrl)
+                prod = read_val(os.path.join(udev_dir, "product"), "") + read_val(os.path.join(udev_dir, "..", "product"), "")
+                vendor = read_val(os.path.join(udev_dir, "idVendor"), "") + read_val(os.path.join(udev_dir, "..", "idVendor"), "")
+                if any(x in prod for x in ("Receiver", "Mouse", "Keyboard")) or vendor == "046d":
+                    write_val(uctrl, "on")
+                    delay_ms = os.path.join(udev_dir, "autosuspend_delay_ms")
+                    if os.path.exists(delay_ms):
+                        write_val(delay_ms, "-1")
+                else:
+                    write_val(uctrl, "auto")
+        else:
+            for ctrl in glob.glob("/sys/bus/pci/devices/*/power/control"):
+                write_val(ctrl, "on")
+            for uctrl in glob.glob("/sys/bus/usb/devices/*/power/control"):
+                write_val(uctrl, "on")
+    elif opt_id == "bluetooth_sleep":
+        if enabled:
+            try:
+                res = subprocess.run(["bluetoothctl", "devices", "Connected"], capture_output=True, text=True, timeout=1)
+                if not res.stdout.strip():
+                    subprocess.run(["bluetoothctl", "power", "off"], capture_output=True, timeout=1)
+            except Exception:
+                pass
+        else:
+            try:
+                subprocess.run(["bluetoothctl", "power", "on"], capture_output=True, timeout=1)
+            except Exception:
+                pass
+
+def get_optimizations_list():
+    saved = load_opts_config()
+    meta = [
+        {
+            "id": "cpu_boost",
+            "title": "CPU Turbo Boost",
+            "desc": "Allow processor cores to boost above base clock",
+            "icon": "󰓅",
+        },
+        {
+            "id": "wifi_powersave",
+            "title": "Wi-Fi Power Save",
+            "desc": "Reduce Wi-Fi power draw when idle",
+            "icon": "󰤨",
+        },
+        {
+            "id": "device_pm",
+            "title": "Device Runtime PM",
+            "desc": "Auto-suspend idle bus controllers and USB devices",
+            "icon": "󰚥",
+        },
+        {
+            "id": "audio_powersave",
+            "title": "Audio Power Save",
+            "desc": "Power down audio codec when silent",
+            "icon": "󰕾",
+        },
+        {
+            "id": "disk_writeback",
+            "title": "Delayed Disk Writeback",
+            "desc": "Flush dirty buffers every 60s to let drive sleep",
+            "icon": "󰋊",
+        },
+        {
+            "id": "nmi_watchdog",
+            "title": "Disable NMI Watchdog",
+            "desc": "Stop periodic timer interrupts for deeper C-states",
+            "icon": "󰒲",
+        },
+        {
+            "id": "bluetooth_sleep",
+            "title": "Bluetooth Auto Power-Off",
+            "desc": "Turn off Bluetooth radio when no devices connected",
+            "icon": "󰂯",
+        }
+    ]
+    result = []
+    for m in meta:
+        opt_id = m["id"]
+        saved_val = saved.get(opt_id, True)
+        curr_val = get_hw_opt_state(opt_id, saved_val)
+        item = dict(m)
+        item["enabled"] = bool(curr_val)
+        result.append(item)
+    return result
+
+def set_optimization(opt_id, enabled):
+    saved = load_opts_config()
+    saved[opt_id] = bool(enabled)
+    save_opts_config(saved)
+    apply_single_opt(opt_id, bool(enabled))
+    return get_optimizations_list()
+
+def apply_all_optimizations():
+    saved = load_opts_config()
+    for opt_id, val in saved.items():
+        apply_single_opt(opt_id, bool(val))
+    return True
+
 def main():
     if len(sys.argv) < 2:
         show_status()
@@ -315,7 +531,22 @@ def main():
 
     arg = sys.argv[1].lower()
     if arg in ("json", "--json", "-j"):
-        print(json.dumps(get_json_data()))
+        data = get_json_data()
+        data["optimizations"] = get_optimizations_list()
+        print(json.dumps(data))
+    elif arg in ("opts", "optimizations", "get-opts"):
+        print(json.dumps(get_optimizations_list(), indent=2))
+    elif arg in ("set-opt", "opt"):
+        if len(sys.argv) > 3:
+            opt_id = sys.argv[2]
+            val = sys.argv[3].lower() in ("true", "1", "on", "yes", "enable")
+            res = set_optimization(opt_id, val)
+            print(json.dumps({"success": True, "optimizations": res}))
+        else:
+            print("Usage: battery set-opt <id> <true|false>")
+    elif arg in ("apply-opts", "apply-optimizations"):
+        apply_all_optimizations()
+        print("✔ Applied power optimizations from config.")
     elif arg in ("status", "show", "info", "-s"):
         if len(sys.argv) > 2 and sys.argv[2].lower() in ("json", "--json"):
             print(json.dumps(get_json_data()))

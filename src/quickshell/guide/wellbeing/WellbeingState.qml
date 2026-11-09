@@ -312,21 +312,25 @@ GuideTab {
         tabRoot.weekTotalSeconds = wk;
     }
 
+    function runStatsPoller() {
+        tabRoot.lastLiveRaw = "";
+        let cmd = ["serpantinum-core", "screentime", "stats", getIsoDate(tabRoot.activeDate)];
+        if (tabRoot.selectedAppClass !== "") {
+            cmd.push("--app");
+            cmd.push(tabRoot.selectedAppClass);
+        }
+        cmd.push("--db-dir");
+        cmd.push(rootObj.appPaths.getStateDir("focustime"));
+        statsPoller.command = cmd;
+        statsPoller.running = true;
+    }
+
     function requestDataUpdate() {
-        if (tabRoot.selectedAppClass === "" && getIsoDate(tabRoot.activeDate) === getIsoDate(new Date())) {
+        if (tabRoot.selectedAppClass === "" && getIsoDate(tabRoot.activeDate) === getIsoDate(new Date()) && tabRoot.lastLiveRaw !== "") {
             tabRoot.liveReadPending = true;
             liveFileReader.reload();
         } else {
-            tabRoot.lastLiveRaw = "";
-            let cmd = ["serpantinum-core", "screentime", "stats", getIsoDate(tabRoot.activeDate)];
-            if (tabRoot.selectedAppClass !== "") {
-                cmd.push("--app");
-                cmd.push(tabRoot.selectedAppClass);
-            }
-            cmd.push("--db-dir");
-            cmd.push(rootObj.appPaths.getStateDir("focustime"));
-            statsPoller.command = cmd;
-            statsPoller.running = true;
+            runStatsPoller();
         }
     }
 
@@ -339,7 +343,10 @@ GuideTab {
             if (!tabRoot.liveReadPending) return;
             tabRoot.liveReadPending = false;
             let raw = liveFileReader.text().trim();
-            if (raw === "") return;
+            if (raw === "") {
+                tabRoot.runStatsPoller();
+                return;
+            }
             if (!tabRoot.isFirstLoad && raw === tabRoot.lastLiveRaw) return;
             try {
                 let data = JSON.parse(raw);
@@ -347,9 +354,13 @@ GuideTab {
                 tabRoot.lastLiveRaw = raw;
             } catch(e) {
                 tabRoot.lastLiveRaw = "";
+                tabRoot.runStatsPoller();
             }
         }
-        onLoadFailed: tabRoot.liveReadPending = false
+        onLoadFailed: {
+            tabRoot.liveReadPending = false;
+            tabRoot.runStatsPoller();
+        }
     }
 
     Timer {

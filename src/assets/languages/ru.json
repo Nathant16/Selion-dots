@@ -1272,7 +1272,25 @@
       "time_remaining": "~%1 осталось",
       "time_until_full": "~%1 до полного заряда",
       "hours_short": "ч",
-      "minutes_short": "м"
+      "minutes_short": "м",
+      "optimizations": {
+        "title": "Оптимизации энергосбережения",
+        "desc": "Управление настройками оборудования для экономии заряда батареи",
+        "cpu_boost_title": "Turbo Boost процессора",
+        "cpu_boost_desc": "Разрешить ядрам процессора повышать частоту выше базовой",
+        "wifi_powersave_title": "Энергосбережение Wi-Fi",
+        "wifi_powersave_desc": "Снижение энергопотребления беспроводного модуля в простое",
+        "device_pm_title": "Автосон контроллеров и USB",
+        "device_pm_desc": "Автоматический переход в сон неиспользуемых шин и устройств",
+        "audio_powersave_title": "Спящий режим аудиочипа",
+        "audio_powersave_desc": "Отключение питания аудиокодека при отсутствии звука",
+        "disk_writeback_title": "Отложенная запись на диск",
+        "disk_writeback_desc": "Сброс буфера диска раз в 60 с для редких пробуждений SSD",
+        "nmi_watchdog_title": "Отключение NMI Watchdog",
+        "nmi_watchdog_desc": "Отключение аппаратного таймера NMI для глубокого сна ядер (C6/C10)",
+        "bluetooth_sleep_title": "Автоотключение Bluetooth",
+        "bluetooth_sleep_desc": "Отключение радиомодуля Bluetooth при отсутствии активных подключений"
+      }
     }
   },
   "sysnotif": {
