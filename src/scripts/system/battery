@@ -462,7 +462,7 @@ def get_cpu_freq_info():
     except ValueError:
         cur_max = base_khz
 
-    # Range: from base_khz down towards hardware min, safely bounded by cpuinfo_min_freq and 1.0 GHz
+    # Range: adaptive to hardware P-states or continuous frequency drivers
     hw_min = 0
     try:
         hw_min = int(read_val(os.path.join(p0, "cpuinfo_min_freq"), "0"))
@@ -470,23 +470,50 @@ def get_cpu_freq_info():
         hw_min = 0
 
     min_floor = max(hw_min, 1_000_000)
-    min_khz = max(min_floor, base_khz - 1_000_000)
+
     opts = []
-    current = base_khz
-    while current >= min_khz - 1000:
-        ghz = current / 1e6
-        if abs(ghz * 10 - round(ghz * 10)) < 1e-4:
-            lbl = f"{ghz:.1f} GHz"
+    # 1. If driver provides discrete scaling_available_frequencies (e.g. acpi-cpufreq)
+    avail_file = os.path.join(p0, "scaling_available_frequencies")
+    avail = []
+    if os.path.exists(avail_file):
+        try:
+            with open(avail_file, "r") as f:
+                avail = sorted(list(set(int(x) for x in f.read().split() if x.strip())), reverse=True)
+        except Exception:
+            pass
+
+    if avail:
+        filtered = [f for f in avail if f <= base_khz and f >= min_floor]
+        if not filtered and avail:
+            filtered = [f for f in avail if f <= base_khz]
+        for f in filtered:
+            ghz = f / 1e6
+            lbl = f"{ghz:.1f} GHz" if abs(ghz * 10 - round(ghz * 10)) < 1e-4 else f"{ghz:.2f} GHz"
+            opts.append({"khz": f, "label": lbl})
+
+    # 2. Fallback for continuous drivers (e.g. intel_pstate, amd_pstate-epp)
+    if not opts:
+        freq_span = base_khz - min_floor
+        if freq_span <= 0:
+            step = 100_000
+        elif freq_span <= 600_000:
+            step = 100_000
+        elif freq_span <= 1_600_000:
+            step = 200_000
         else:
-            lbl = f"{ghz:.2f} GHz"
-        opts.append({"khz": current, "label": lbl})
-        if current - 200_000 < min_khz and current > min_khz:
-            # Add exact min floor if not aligned on 200 MHz step
-            current = min_khz
+            step = 400_000
+
+        current = base_khz
+        while current >= min_floor - 1000:
             ghz = current / 1e6
-            opts.append({"khz": current, "label": f"{ghz:.1f} GHz"})
-            break
-        current -= 200_000
+            lbl = f"{ghz:.1f} GHz" if abs(ghz * 10 - round(ghz * 10)) < 1e-4 else f"{ghz:.2f} GHz"
+            opts.append({"khz": current, "label": lbl})
+            if current - step < min_floor and current > min_floor:
+                ghz = min_floor / 1e6
+                lbl = f"{ghz:.1f} GHz" if abs(ghz * 10 - round(ghz * 10)) < 1e-4 else f"{ghz:.2f} GHz"
+                opts.append({"khz": min_floor, "label": lbl})
+                break
+            current -= step
 
     saved_cfg = load_opts_config()
     saved_mode = saved_cfg.get("cpu_freq_mode", "auto")
@@ -494,10 +521,14 @@ def get_cpu_freq_info():
 
     current_index = 0
     if saved_khz > 0:
+        found = False
         for idx, o in enumerate(opts):
             if o["khz"] == saved_khz:
                 current_index = idx
+                found = True
                 break
+        if not found and opts:
+            current_index = min(range(len(opts)), key=lambda i: abs(opts[i]["khz"] - saved_khz))
     else:
         if cur_max < base_khz and cur_max > 0:
             for idx, o in enumerate(opts):
