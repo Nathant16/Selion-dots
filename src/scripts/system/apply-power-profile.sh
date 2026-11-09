@@ -264,15 +264,17 @@ if [ -f "$DRIFT_CONF" ] && command -v driftwm >/dev/null 2>&1; then
 fi
 
 # ------------------------------------------------------------------------------
-# 13. USER SAVED POWER OPTIMIZATIONS OVERRIDE
+# 13. USER SAVED POWER OPTIMIZATIONS OVERRIDE (ONLY FOR POWER-SAVER)
 # ------------------------------------------------------------------------------
-OPTS_CONF="${XDG_CONFIG_HOME:-$HOME/.config}/serpantinum/power_optimizations.json"
-if [ -f "$OPTS_CONF" ]; then
-    BATTERY_SCRIPT="${SERPANTINUM_DIR:-$HOME/.local/share/serpantinum/src}/scripts/system/battery"
-    if [ -f "$BATTERY_SCRIPT" ]; then
-        python3 "$BATTERY_SCRIPT" apply-opts >/dev/null 2>&1 || true
-    elif command -v battery >/dev/null 2>&1; then
-        battery apply-opts >/dev/null 2>&1 || true
+if [ "$PROFILE" = "power-saver" ]; then
+    OPTS_CONF="${XDG_CONFIG_HOME:-$HOME/.config}/serpantinum/power_optimizations.json"
+    if [ -f "$OPTS_CONF" ]; then
+        BATTERY_SCRIPT="${SERPANTINUM_DIR:-$HOME/.local/share/serpantinum/src}/scripts/system/battery"
+        if [ -f "$BATTERY_SCRIPT" ]; then
+            python3 "$BATTERY_SCRIPT" apply-opts >/dev/null 2>&1 || true
+        elif command -v battery >/dev/null 2>&1; then
+            battery apply-opts >/dev/null 2>&1 || true
+        fi
     fi
 fi
 

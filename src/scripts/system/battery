@@ -698,9 +698,8 @@ def get_optimizations_list():
     for m in meta:
         opt_id = m["id"]
         saved_val = saved.get(opt_id, True)
-        curr_val = get_hw_opt_state(opt_id, saved_val)
         item = dict(m)
-        item["enabled"] = bool(curr_val)
+        item["enabled"] = bool(saved_val)
         result.append(item)
     return result
 
@@ -708,16 +707,8 @@ def set_optimization(opt_id, enabled):
     saved = load_opts_config()
     saved[opt_id] = bool(enabled)
     save_opts_config(saved)
-    apply_single_opt(opt_id, bool(enabled))
-    return get_optimizations_list()
 
-def apply_all_optimizations():
-    saved = load_opts_config()
-    for opt_id, val in saved.items():
-        if opt_id not in ("cpu_max_freq", "auto_brightness", "power_saver_brightness"):
-            apply_single_opt(opt_id, bool(val))
-    
-    # Check current profile
+    # Only apply to hardware if currently in power-saver
     platform_profile = read_val("/sys/firmware/acpi/platform_profile", "").lower()
     if not platform_profile or platform_profile == "unknown":
         try:
@@ -727,14 +718,34 @@ def apply_all_optimizations():
         except Exception:
             pass
     if platform_profile in ("low-power", "power-saver"):
-        target_khz = int(saved.get("cpu_max_freq", 0))
-        if target_khz > 0:
-            set_cpu_freq_limit(target_khz)
-        if saved.get("auto_brightness", True):
-            target_b = int(saved.get("power_saver_brightness", 80))
-            cur_b = get_brightness()
-            if cur_b > target_b:
-                set_brightness(target_b)
+        apply_single_opt(opt_id, bool(enabled))
+    return get_optimizations_list()
+
+def apply_all_optimizations():
+    # Only apply if in power-saver
+    platform_profile = read_val("/sys/firmware/acpi/platform_profile", "").lower()
+    if not platform_profile or platform_profile == "unknown":
+        try:
+            res = subprocess.run(["powerprofilesctl", "get"], capture_output=True, text=True, timeout=1)
+            if res.returncode == 0:
+                platform_profile = res.stdout.strip().lower()
+        except Exception:
+            pass
+    if platform_profile not in ("low-power", "power-saver"):
+        return False
+
+    saved = load_opts_config()
+    for opt_id, val in saved.items():
+        if opt_id not in ("cpu_max_freq", "auto_brightness", "power_saver_brightness"):
+            apply_single_opt(opt_id, bool(val))
+    target_khz = int(saved.get("cpu_max_freq", 0))
+    if target_khz > 0:
+        set_cpu_freq_limit(target_khz)
+    if saved.get("auto_brightness", True):
+        target_b = int(saved.get("power_saver_brightness", 80))
+        cur_b = get_brightness()
+        if cur_b > target_b:
+            set_brightness(target_b)
     return True
 
 def main():
