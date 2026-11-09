@@ -341,12 +341,7 @@ GuideTab {
             searchKeywords: "fingerprint " + modelData
             title: fingerprintTabRoot.getFingerLabel(modelData)
             description: I18n.t("guide.fingerprint.registered_desc", "Saved biometric fingerprint")
-            icon: "󰈷"
-            showIcon: true
-            iconSize: 32
-            iconFontSize: 16
-            iconAccentColor: ThemeBackend.surface0
-            iconTextColor: "#ffffff"
+            showIcon: false
 
             baseColor: ThemeBackend.glassActive
                 ? Qt.alpha(ThemeBackend.surface0, ThemeBackend.elementOpacity * 0.6)
