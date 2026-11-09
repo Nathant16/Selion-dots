@@ -1867,7 +1867,7 @@ PanelWindow {
 
                                             Text {
                                                 id: delegateFontIcon
-                                                anchors.centerIn: parent
+                                                anchors.fill: parent
                                                 visible: !delegateIcon.visible
                                                 text: {
                                                     if (model.fontIcon && model.fontIcon !== "") return model.fontIcon;
@@ -1875,7 +1875,7 @@ PanelWindow {
                                                     if (model.isCommand) return "󰆍";
                                                     return "󰵆";
                                                 }
-                                                font.family: ThemeBackend.fontFamily
+                                                font.family: ThemeBackend.iconFont
                                                 font.pixelSize: launcherWindow.s(16)
                                                 color: delegateRoot.isSelected ? ThemeBackend.mauve : ThemeBackend.subtext0
                                                 verticalAlignment: Text.AlignVCenter
