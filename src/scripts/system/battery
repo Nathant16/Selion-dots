@@ -19,8 +19,11 @@ def write_val(path, val):
             f.write(str(val) + "\n")
         return True
     except Exception:
-        res = subprocess.run(["sudo", "sh", "-c", f"echo {val} > {path}"], capture_output=True)
-        return res.returncode == 0
+        try:
+            res = subprocess.run(["sudo", "-n", "tee", path], input=f"{val}\n", capture_output=True, text=True, timeout=1.5)
+            return res.returncode == 0
+        except Exception:
+            return False
 
 def get_battery_dir():
     candidates = sorted(glob.glob("/sys/class/power_supply/BAT*"))

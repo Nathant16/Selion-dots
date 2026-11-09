@@ -618,7 +618,7 @@ deploy_package() {
 
     # Deploy sudoers rule for hardware power optimizations
     if [ -d /etc/sudoers.d ]; then
-        echo "%wheel ALL=(ALL) NOPASSWD: /usr/local/bin/apply-power-profile.sh, /usr/bin/sysctl, /usr/bin/iw" | sudo tee /etc/sudoers.d/99-serpantinum-power >/dev/null 2>&1 || true
+        echo "%wheel ALL=(ALL) NOPASSWD: /usr/local/bin/apply-power-profile.sh, /usr/bin/sysctl, /usr/bin/iw, /usr/bin/tee" | sudo tee /etc/sudoers.d/99-serpantinum-power >/dev/null 2>&1 || true
         sudo chmod 0440 /etc/sudoers.d/99-serpantinum-power 2>/dev/null || true
     fi
 
