@@ -419,78 +419,119 @@ def get_cpu_freq_info():
     if not policies:
         policies = sorted(glob.glob("/sys/devices/system/cpu/cpu*/cpufreq"))
     if not policies:
-        return {"supported": False, "options": [], "current_khz": 0, "current_index": 0}
+        return {"supported": False, "mode": "auto", "options": [], "current_khz": 0, "current_index": 0}
 
     p0 = policies[0]
-    try:
-        min_freq = int(read_val(os.path.join(p0, "cpuinfo_min_freq"), "0"))
-    except ValueError:
-        min_freq = 0
-    try:
-        max_freq = int(read_val(os.path.join(p0, "cpuinfo_max_freq"), "0"))
-    except ValueError:
-        max_freq = 0
-    try:
-        cur_max = int(read_val(os.path.join(p0, "scaling_max_freq"), str(max_freq)))
-    except ValueError:
-        cur_max = max_freq
-
-    avail_file = os.path.join(p0, "scaling_available_frequencies")
-    avail_freqs = []
-    if os.path.exists(avail_file):
+    base_khz = 0
+    bf_path = os.path.join(p0, "base_frequency")
+    if os.path.exists(bf_path):
         try:
-            with open(avail_file, "r") as f:
-                avail_freqs = sorted(list(set(int(x) for x in f.read().split() if x.strip())))
-        except Exception:
-            avail_freqs = []
+            base_khz = int(read_val(bf_path, "0"))
+        except ValueError:
+            base_khz = 0
 
-    if not avail_freqs and min_freq > 0 and max_freq > min_freq:
-        step = (max_freq - min_freq) // 3
-        if step > 0:
-            avail_freqs = [min_freq, min_freq + step, min_freq + 2 * step, max_freq]
+    if base_khz <= 0:
+        avail_file = os.path.join(p0, "scaling_available_frequencies")
+        if os.path.exists(avail_file):
+            try:
+                with open(avail_file, "r") as f:
+                    avail = sorted(list(set(int(x) for x in f.read().split() if x.strip())))
+                    if avail:
+                        base_khz = max(avail)
+            except Exception:
+                pass
 
+    if base_khz <= 0:
+        try:
+            base_khz = int(read_val(os.path.join(p0, "cpuinfo_max_freq"), "0"))
+        except ValueError:
+            base_khz = 0
+
+    if base_khz <= 0:
+        return {"supported": False, "mode": "auto", "options": [], "current_khz": 0, "current_index": 0}
+
+    try:
+        cur_max = int(read_val(os.path.join(p0, "scaling_max_freq"), str(base_khz)))
+    except ValueError:
+        cur_max = base_khz
+
+    # Range: from base_khz down to (base_khz - 1.0 GHz) with step 0.2 GHz (200,000 kHz)
+    # Only parameter itself in labels (e.g. "1.7 GHz", "1.5 GHz"), no text!
+    min_khz = max(200_000, base_khz - 1_000_000)
     opts = []
-    for f in avail_freqs:
-        ghz = f / 1e6
-        ghz_str = f"{ghz:.1f}" if abs(ghz * 10 - round(ghz * 10)) < 1e-4 else f"{ghz:.2f}"
-        if f < max_freq:
-            if f == min_freq:
-                lbl = f"{ghz_str} GHz (Эко / Ниже базовой)"
-            else:
-                lbl = f"{ghz_str} GHz"
-        elif f == max_freq:
-            lbl = f"{ghz_str} GHz (Базовая частота)"
+    current = base_khz
+    while current >= min_khz - 1000:
+        ghz = current / 1e6
+        if abs(ghz * 10 - round(ghz * 10)) < 1e-4:
+            lbl = f"{ghz:.1f} GHz"
         else:
-            lbl = f"{ghz_str} GHz (Турбо)"
-        opts.append({"khz": f, "label": lbl})
-
-    opts.append({"khz": 0, "label": "Авто (Без ограничений)"})
+            lbl = f"{ghz:.2f} GHz"
+        opts.append({"khz": current, "label": lbl})
+        current -= 200_000
 
     saved_cfg = load_opts_config()
+    saved_mode = saved_cfg.get("cpu_freq_mode", "auto")
     saved_khz = int(saved_cfg.get("cpu_max_freq", 0))
 
-    current_index = len(opts) - 1
+    current_index = 0
     if saved_khz > 0:
         for idx, o in enumerate(opts):
             if o["khz"] == saved_khz:
                 current_index = idx
                 break
     else:
-        if cur_max < max_freq and cur_max > 0:
+        if cur_max < base_khz and cur_max > 0:
             for idx, o in enumerate(opts):
-                if o["khz"] == cur_max:
+                if o["khz"] <= cur_max:
                     current_index = idx
                     break
 
+    selected_khz = opts[current_index]["khz"] if opts else base_khz
+
     return {
         "supported": True,
+        "mode": saved_mode,
+        "base_khz": base_khz,
         "options": opts,
-        "current_khz": saved_khz if saved_khz > 0 else cur_max,
-        "current_index": current_index,
-        "min_freq_khz": min_freq,
-        "base_freq_khz": max_freq,
-        "saved_khz": saved_khz
+        "current_khz": selected_khz,
+        "current_index": current_index
     }
+
+def set_cpu_freq_mode(mode):
+    mode = "manual" if str(mode).lower() in ("manual", "man", "1", "true") else "auto"
+    saved = load_opts_config()
+    saved["cpu_freq_mode"] = mode
+    save_opts_config(saved)
+
+    platform_profile = read_val("/sys/firmware/acpi/platform_profile", "").lower()
+    if not platform_profile or platform_profile == "unknown":
+        try:
+            res = subprocess.run(["powerprofilesctl", "get"], capture_output=True, text=True, timeout=1)
+            if res.returncode == 0:
+                platform_profile = res.stdout.strip().lower()
+        except Exception:
+            pass
+
+    if platform_profile in ("low-power", "power-saver"):
+        policies = sorted(glob.glob("/sys/devices/system/cpu/cpufreq/policy*"))
+        if not policies:
+            policies = sorted(glob.glob("/sys/devices/system/cpu/cpu*/cpufreq"))
+        if mode == "auto":
+            for p in policies:
+                max_f = read_val(os.path.join(p, "cpuinfo_max_freq"), "")
+                if max_f:
+                    write_val(os.path.join(p, "scaling_max_freq"), max_f)
+        else:
+            target_khz = int(saved.get("cpu_max_freq", 0))
+            if target_khz <= 0:
+                info = get_cpu_freq_info()
+                target_khz = info.get("current_khz", 0)
+                saved["cpu_max_freq"] = target_khz
+                save_opts_config(saved)
+            if target_khz > 0:
+                for p in policies:
+                    write_val(os.path.join(p, "scaling_max_freq"), str(target_khz))
+    return True
 
 def set_cpu_freq_limit(target_khz):
     policies = sorted(glob.glob("/sys/devices/system/cpu/cpufreq/policy*"))
@@ -504,22 +545,33 @@ def set_cpu_freq_limit(target_khz):
     except ValueError:
         target_khz = 0
 
-    p0 = policies[0]
-    try:
-        max_freq = int(read_val(os.path.join(p0, "cpuinfo_max_freq"), "0"))
-    except ValueError:
-        max_freq = 0
-
-    write_val_khz = max_freq if target_khz <= 0 else target_khz
-
-    for p in policies:
-        scaling_max = os.path.join(p, "scaling_max_freq")
-        if os.path.exists(scaling_max):
-            write_val(scaling_max, write_val_khz)
-
     saved = load_opts_config()
     saved["cpu_max_freq"] = target_khz
+    saved["cpu_freq_mode"] = "manual" if target_khz > 0 else "auto"
     save_opts_config(saved)
+
+    platform_profile = read_val("/sys/firmware/acpi/platform_profile", "").lower()
+    if not platform_profile or platform_profile == "unknown":
+        try:
+            res = subprocess.run(["powerprofilesctl", "get"], capture_output=True, text=True, timeout=1)
+            if res.returncode == 0:
+                platform_profile = res.stdout.strip().lower()
+        except Exception:
+            pass
+
+    if platform_profile in ("low-power", "power-saver"):
+        p0 = policies[0]
+        try:
+            max_freq = int(read_val(os.path.join(p0, "cpuinfo_max_freq"), "0"))
+        except ValueError:
+            max_freq = 0
+
+        write_val_khz = max_freq if target_khz <= 0 else target_khz
+        for p in policies:
+            scaling_max = os.path.join(p, "scaling_max_freq")
+            if os.path.exists(scaling_max):
+                write_val(scaling_max, write_val_khz)
+
     return True
 
 def save_opts_config(cfg):
@@ -736,11 +788,17 @@ def apply_all_optimizations():
 
     saved = load_opts_config()
     for opt_id, val in saved.items():
-        if opt_id not in ("cpu_max_freq", "auto_brightness", "power_saver_brightness"):
+        if opt_id not in ("cpu_max_freq", "cpu_freq_mode", "auto_brightness", "power_saver_brightness"):
             apply_single_opt(opt_id, bool(val))
+    cpu_mode = saved.get("cpu_freq_mode", "auto")
     target_khz = int(saved.get("cpu_max_freq", 0))
-    if target_khz > 0:
+    if cpu_mode == "manual" and target_khz > 0:
         set_cpu_freq_limit(target_khz)
+    else:
+        for p in glob.glob("/sys/devices/system/cpu/cpufreq/policy*"):
+            max_f = read_val(os.path.join(p, "cpuinfo_max_freq"), "")
+            if max_f:
+                write_val(os.path.join(p, "scaling_max_freq"), max_f)
     if saved.get("auto_brightness", True):
         target_b = int(saved.get("power_saver_brightness", 80))
         cur_b = get_brightness()
@@ -768,17 +826,24 @@ def main():
             print(json.dumps({"success": True, "optimizations": res}))
         else:
             print("Usage: battery set-opt <id> <true|false>")
+    elif arg in ("set-freq-mode", "freq-mode"):
+        if len(sys.argv) > 2:
+            mode = sys.argv[2].lower()
+            set_cpu_freq_mode(mode)
+            print(json.dumps({"success": True, "cpu_freq": get_cpu_freq_info()}))
+        else:
+            print("Usage: battery set-freq-mode <auto|manual>")
     elif arg in ("set-freq", "freq", "limit-freq"):
         if len(sys.argv) > 2:
             target = sys.argv[2].lower()
             if target in ("0", "auto", "max", "uncap", "none", "off"):
-                val = 0
+                set_cpu_freq_mode("auto")
             else:
                 try:
                     val = int(target)
                 except ValueError:
                     val = 0
-            set_cpu_freq_limit(val)
+                set_cpu_freq_limit(val)
             print(json.dumps({"success": True, "cpu_freq": get_cpu_freq_info()}))
         else:
             print("Usage: battery set-freq <khz|auto>")

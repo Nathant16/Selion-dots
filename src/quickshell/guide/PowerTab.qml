@@ -29,6 +29,7 @@ GuideTab {
     property var cpuFreqLabels: []
     property int cpuFreqCurrentIndex: 0
     property int cpuFreqCurrentKhz: 0
+    property string cpuFreqMode: "auto"
 
     property bool autoBrightnessEnabled: true
     property int powerSaverBrightness: 80
@@ -84,6 +85,12 @@ GuideTab {
         } else {
             setLimit(80);
         }
+    }
+
+    function setCpuFreqMode(mode) {
+        powerTabRoot.cpuFreqMode = mode;
+        cmdProc.command = [powerTabRoot.batteryScriptPath, "set-freq-mode", mode];
+        cmdProc.running = true;
     }
 
     function setCpuFreqLimit(khz) {
@@ -151,6 +158,7 @@ GuideTab {
                         powerTabRoot.cpuFreqLabels = labels;
                         powerTabRoot.cpuFreqCurrentIndex = Number(d.cpu_freq.current_index) || 0;
                         powerTabRoot.cpuFreqCurrentKhz = Number(d.cpu_freq.current_khz) || 0;
+                        powerTabRoot.cpuFreqMode = String(d.cpu_freq.mode || "auto");
                     }
 
                     if (d.auto_brightness !== undefined) {
@@ -276,9 +284,9 @@ GuideTab {
                     anchors.left: parent.left
                     anchors.right: parent.right
 
-                    // CPU Frequency Cap (Dropdown)
-                    SettingsRow {
-                        id: cpuFreqRow
+                    // CPU Frequency Cap (SettingsGroup with Switch and Dropdown subSetting)
+                    SettingsGroup {
+                        id: cpuFreqGroup
                         visible: powerTabRoot.cpuFreqSupported && powerTabRoot.cpuFreqLabels.length > 0
                         settingId: "power_cpu_freq"
                         searchKeywords: "cpu frequency limit clock speed underclock downclock eco max freq"
@@ -286,29 +294,59 @@ GuideTab {
                         icon: "󰻠"
                         title: I18n.t("guide.power.cpu_freq.title", "Лимит частоты процессора")
                         description: I18n.t("guide.power.cpu_freq.desc", "Ограничение максимальной частоты ядер для режима энергосбережения")
+                        expanded: powerTabRoot.cpuFreqMode === "manual"
 
-                        Dropdown {
-                            id: cpuFreqDropdown
+                        Switch {
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            implicitWidth: rootObj.s(220)
+                            implicitWidth: rootObj.s(170)
                             implicitHeight: rootObj.s(32)
-                            options: powerTabRoot.cpuFreqLabels
-                            currentIndex: powerTabRoot.cpuFreqCurrentIndex
+                            options: [I18n.t("guide.power.cpu_mode_auto", "Auto"), I18n.t("guide.power.cpu_mode_manual", "Manual")]
+                            currentIndex: powerTabRoot.cpuFreqMode === "manual" ? 1 : 0
                             accentColor: ThemeBackend.mauve
                             baseColor: ThemeBackend.surface0
-                            hoverColor: ThemeBackend.surface1
-                            dropdownColor: ThemeBackend.surface0
-                            borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
-                            textColor: ThemeBackend.text
+                            textColor: ThemeBackend.subtext0
                             activeTextColor: ThemeBackend.crust
+                            cornerRadius: ThemeBackend.borderRadius
                             fontPixelSize: rootObj.s(11)
-                            onValueChanged: function(index, value) {
-                                if (powerTabRoot.cpuFreqOptions && powerTabRoot.cpuFreqOptions[index]) {
-                                    let khz = powerTabRoot.cpuFreqOptions[index].khz;
-                                    powerTabRoot.setCpuFreqLimit(khz);
-                                }
+                            onToggled: function(index) {
+                                let newMode = (index === 1) ? "manual" : "auto";
+                                powerTabRoot.setCpuFreqMode(newMode);
                             }
                         }
+
+                        subSettings: [
+                            SettingsRow {
+                                id: cpuFreqSubRow
+                                rootObj: powerTabRoot.rootObj
+                                baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
+                                icon: "󰍜"
+                                title: I18n.t("guide.power.cpu_freq_value.title", "Максимальная частота")
+                                description: I18n.t("guide.power.cpu_freq_value.desc", "Выбранный предел частоты для энергосбережения")
+
+                                Dropdown {
+                                    id: cpuFreqDropdown
+                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                    implicitWidth: rootObj.s(130)
+                                    implicitHeight: rootObj.s(32)
+                                    options: powerTabRoot.cpuFreqLabels
+                                    currentIndex: powerTabRoot.cpuFreqCurrentIndex
+                                    accentColor: ThemeBackend.mauve
+                                    baseColor: ThemeBackend.surface0
+                                    hoverColor: ThemeBackend.surface1
+                                    dropdownColor: ThemeBackend.surface0
+                                    borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
+                                    textColor: ThemeBackend.text
+                                    activeTextColor: ThemeBackend.crust
+                                    fontPixelSize: rootObj.s(11)
+                                    onValueChanged: function(index, value) {
+                                        if (powerTabRoot.cpuFreqOptions && powerTabRoot.cpuFreqOptions[index]) {
+                                            let khz = powerTabRoot.cpuFreqOptions[index].khz;
+                                            powerTabRoot.setCpuFreqLimit(khz);
+                                        }
+                                    }
+                                }
+                            }
+                        ]
                     }
 
                     // Auto-reduce brightness toggle

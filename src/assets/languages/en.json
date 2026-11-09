@@ -1252,6 +1252,12 @@
         "title": "CPU frequency limit",
         "desc": "Cap maximum core frequency for power saving mode"
       },
+      "cpu_mode_auto": "Auto",
+      "cpu_mode_manual": "Manual",
+      "cpu_freq_value": {
+        "title": "Maximum frequency",
+        "desc": "Selected frequency limit for power saving mode"
+      },
       "auto_brightness": {
         "title": "Auto brightness reduction",
         "desc": "Dim screen brightness when entering power saver mode"
