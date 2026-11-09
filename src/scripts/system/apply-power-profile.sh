@@ -119,7 +119,7 @@ case "$PROFILE" in
         AMD_PROF_MODE=1 # 3D_FULL_SCREEN
         ;;
     power-saver)
-        AMD_DPM="auto"
+        AMD_DPM="low"
         AMD_PROF_MODE=2 # POWER_SAVING
         ;;
     balanced|*)
