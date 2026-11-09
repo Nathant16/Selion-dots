@@ -5,6 +5,7 @@ import glob
 import time
 import subprocess
 import json
+import shutil
 
 def read_val(path, default=""):
     try:
