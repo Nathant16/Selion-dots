@@ -319,8 +319,14 @@ GuideTab {
             cmd.push("--app");
             cmd.push(tabRoot.selectedAppClass);
         }
-        cmd.push("--db-dir");
-        cmd.push(rootObj.appPaths.getStateDir("focustime"));
+        let dbDir = (typeof Caching !== "undefined" && Caching.getStateDir)
+            ? Caching.getStateDir("focustime")
+            : (rootObj && rootObj.appPaths ? rootObj.appPaths.getStateDir("focustime") : "");
+        if (dbDir) {
+            cmd.push("--db-dir");
+            cmd.push(dbDir);
+        }
+        statsPoller.running = false;
         statsPoller.command = cmd;
         statsPoller.running = true;
     }

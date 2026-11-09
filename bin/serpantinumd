@@ -271,10 +271,23 @@ if [ "$COMMAND" == "start" ]; then
         ln -sf "$XDG_RUNTIME_DIR/hypr" /tmp/hypr 2>/dev/null || true
     fi
 
-    # Ensure state compatibility symlink for focustime between serpantinum and quickshell
-    mkdir -p "$HOME/.local/state/serpantinum/focustime" "$HOME/.local/state/quickshell" 2>/dev/null || true
-    if [ ! -e "$HOME/.local/state/quickshell/focustime" ]; then
-        ln -sf "$HOME/.local/state/serpantinum/focustime" "$HOME/.local/state/quickshell/focustime" 2>/dev/null || true
+    # Ensure state compatibility symlinks for focustime across quickshell, serpantinum, and share
+    mkdir -p "$HOME/.local/state/quickshell" "$HOME/.local/state/serpantinum" "$HOME/.local/share" 2>/dev/null || true
+    if [ -f "$HOME/.local/state/serpantinum/focustime/focustime.db" ] && [ ! -s "$HOME/.local/state/quickshell/focustime/focustime.db" ]; then
+        mkdir -p "$HOME/.local/state/quickshell/focustime" 2>/dev/null || true
+        cp -a "$HOME/.local/state/serpantinum/focustime"/* "$HOME/.local/state/quickshell/focustime/" 2>/dev/null || true
+    fi
+    if [ ! -L "$HOME/.local/state/serpantinum/focustime" ]; then
+        if [ ! -e "$HOME/.local/state/serpantinum/focustime" ] || [ ! -s "$HOME/.local/state/serpantinum/focustime/focustime.db" ]; then
+            rm -rf "$HOME/.local/state/serpantinum/focustime" 2>/dev/null || true
+            ln -sf "$HOME/.local/state/quickshell/focustime" "$HOME/.local/state/serpantinum/focustime" 2>/dev/null || true
+        fi
+    fi
+    if [ ! -L "$HOME/.local/share/focustime" ]; then
+        if [ ! -e "$HOME/.local/share/focustime" ] || [ ! -s "$HOME/.local/share/focustime/focustime.db" ]; then
+            rm -rf "$HOME/.local/share/focustime" 2>/dev/null || true
+            ln -sf "$HOME/.local/state/quickshell/focustime" "$HOME/.local/share/focustime" 2>/dev/null || true
+        fi
     fi
 
     # Ensure serpantinum-core daemon is running
