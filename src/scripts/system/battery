@@ -6,6 +6,8 @@ import time
 import subprocess
 import json
 import shutil
+import math
+import signal
 
 def read_val(path, default=""):
     try:
@@ -246,17 +248,107 @@ def show_status():
     print("\033[1;36m╰────────────────────────────────────────────────────────────────╯\033[0m")
     print("\033[2mБыстрые команды: battery save | battery bal | battery perf | battery limit 80 | battery limit 100\033[0m\n")
 
-def set_profile(prof):
-    # Try powerprofilesctl first (non-root D-Bus)
+BRI_PID_FILE = "/tmp/serpantinum_bri_fade.pid"
+HOOK_STAMP_FILE = "/tmp/serpantinum_last_profile_hook"
+
+def get_current_profile():
+    p = read_val("/sys/firmware/acpi/platform_profile", "").lower().strip()
+    if p:
+        return "power-saver" if p in ("low-power", "power-saver") else p
     try:
-        res = subprocess.run(["powerprofilesctl", "set", prof], capture_output=True, text=True, timeout=2)
+        res = subprocess.run(["powerprofilesctl", "get"], capture_output=True, text=True, timeout=1)
         if res.returncode == 0:
-            pass
+            p_out = res.stdout.strip().lower()
+            return "power-saver" if p_out in ("low-power", "power-saver") else p_out
+    except Exception:
+        pass
+    return "balanced"
+
+def should_skip_hook(prof):
+    try:
+        if os.path.exists(HOOK_STAMP_FILE):
+            with open(HOOK_STAMP_FILE, "r") as f:
+                data = f.read().strip().split()
+                if len(data) == 2:
+                    last_prof, last_time = data[0], float(data[1])
+                    if last_prof == prof and (time.time() - last_time) < 1.5:
+                        return True
+    except Exception:
+        pass
+    try:
+        with open(HOOK_STAMP_FILE, "w") as f:
+            f.write(f"{prof} {time.time()}")
+    except Exception:
+        pass
+    return False
+
+def fade_brightness_worker(target_pct, duration=5.0):
+    try:
+        target_pct = max(1, min(100, int(target_pct)))
+    except (ValueError, TypeError):
+        return
+
+    try:
+        with open(BRI_PID_FILE, "w") as f:
+            f.write(str(os.getpid()))
     except Exception:
         pass
 
-    # CPU frequency capping logic:
+    try:
+        start_pct = get_brightness()
+        if start_pct == target_pct:
+            return
+
+        steps = 50
+        interval = max(0.02, float(duration) / float(steps))
+        last_pct = start_pct
+
+        for i in range(1, steps + 1):
+            t = i / float(steps)
+            ease = (1.0 - math.cos(math.pi * t)) / 2.0
+            cur = int(round(start_pct + (target_pct - start_pct) * ease))
+            cur = max(1, min(100, cur))
+            if cur != last_pct:
+                set_brightness(cur)
+                last_pct = cur
+            time.sleep(interval)
+        set_brightness(target_pct)
+    finally:
+        try:
+            if os.path.exists(BRI_PID_FILE):
+                with open(BRI_PID_FILE, "r") as f:
+                    if f.read().strip() == str(os.getpid()):
+                        os.remove(BRI_PID_FILE)
+        except Exception:
+            pass
+
+def start_fade_brightness_bg(target_pct, duration=5.0):
+    if os.path.exists(BRI_PID_FILE):
+        try:
+            with open(BRI_PID_FILE, "r") as f:
+                old_pid = int(f.read().strip())
+            os.kill(old_pid, signal.SIGTERM)
+        except Exception:
+            pass
+
+    battery_bin = shutil.which("battery") or "/usr/local/bin/battery"
+    if not os.path.exists(battery_bin):
+        battery_bin = os.path.realpath(__file__)
+    cmd = [battery_bin, "fade-brightness", str(target_pct), str(duration)]
+    subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+
+def apply_profile_optimizations(prof):
+    if prof in ("save", "eco", "low-power"):
+        prof = "power-saver"
+    elif prof in ("bal", "normal"):
+        prof = "balanced"
+    elif prof in ("perf", "max"):
+        prof = "performance"
+
+    saved = load_opts_config()
+
     if prof in ("balanced", "performance"):
+        # 1. Reset CPU max freq back to base/max clock
         policies = sorted(glob.glob("/sys/devices/system/cpu/cpufreq/policy*"))
         if not policies:
             policies = sorted(glob.glob("/sys/devices/system/cpu/cpu*/cpufreq"))
@@ -267,24 +359,51 @@ def set_profile(prof):
                     write_val(os.path.join(p, "scaling_max_freq"), max_f)
             except Exception:
                 pass
+
+        # 2. Revert VM laptop mode & dirty buffers & watchdog
         write_val("/proc/sys/vm/laptop_mode", "0")
         subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", "vm.laptop_mode=0"], capture_output=True)
         subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", "vm.dirty_expire_centisecs=3000"], capture_output=True)
+        subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", "vm.dirty_writeback_centisecs=500"], capture_output=True)
+        write_val("/proc/sys/kernel/nmi_watchdog", "1")
+        subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", "kernel.nmi_watchdog=1"], capture_output=True)
+
+        # 3. Revert Ryzen TDP
         ryzenadj_bin = shutil.which("ryzenadj") or ("/usr/local/bin/ryzenadj" if os.path.exists("/usr/local/bin/ryzenadj") else None)
         if ryzenadj_bin:
             subprocess.run(["sudo", "-n", ryzenadj_bin, "--stapm-limit=25000", "--fast-limit=25000", "--slow-limit=20000"], capture_output=True)
-    elif prof in ("power-saver", "low-power"):
-        saved = load_opts_config()
-        target_khz = int(saved.get("cpu_max_freq", 0))
-        if target_khz > 0:
-            set_cpu_freq_limit(target_khz)
-        if saved.get("auto_brightness", True):
-            target_b = int(saved.get("power_saver_brightness", 80))
-            cur_b = get_brightness()
-            if cur_b > target_b:
-                set_brightness(target_b)
 
-    # Also run apply-power-profile.sh for deep hardware tuning (governor, boost, gpu)
+        # 4. Smoothly restore brightness if pre_saver_brightness was stored
+        pre_b = saved.get("pre_saver_brightness")
+        if pre_b is not None and int(pre_b) > 0:
+            restore_val = int(pre_b)
+            saved["pre_saver_brightness"] = 0
+            save_opts_config(saved)
+            start_fade_brightness_bg(restore_val, duration=5.0)
+
+    elif prof == "power-saver":
+        # 1. Smoothly fade brightness to power_saver_brightness over 5s if auto_brightness is on
+        if saved.get("auto_brightness", True):
+            cur_b = get_brightness()
+            existing_pre = saved.get("pre_saver_brightness", 0)
+            if not existing_pre or int(existing_pre) <= 0:
+                saved["pre_saver_brightness"] = cur_b
+                save_opts_config(saved)
+            target_b = int(saved.get("power_saver_brightness", 80))
+            start_fade_brightness_bg(target_b, duration=5.0)
+
+        # 2. Apply CPU frequency limit
+        cpu_mode = saved.get("cpu_freq_mode", "auto")
+        target_khz = int(saved.get("cpu_max_freq", 0))
+        if cpu_mode == "manual" and target_khz > 0:
+            set_cpu_freq_limit(target_khz)
+
+        # 3. Apply individual optimizations from JSON config
+        for opt_id, val in saved.items():
+            if opt_id not in ("cpu_max_freq", "cpu_freq_mode", "auto_brightness", "power_saver_brightness", "pre_saver_brightness"):
+                apply_single_opt(opt_id, bool(val))
+
+    # Also run apply-power-profile.sh via sudo -n for deep hardware tuning (governor, boost, gpu)
     candidates = [
         "/usr/local/bin/apply-power-profile.sh",
         os.path.expanduser("~/.local/share/serpantinum/src/scripts/system/apply-power-profile.sh"),
@@ -292,8 +411,24 @@ def set_profile(prof):
     ]
     for script in candidates:
         if os.path.exists(script):
-            subprocess.run([script, prof], capture_output=True)
+            subprocess.run(["sudo", "-n", script, prof], capture_output=True)
             break
+
+def set_profile(prof, set_dbus=True):
+    if prof in ("save", "eco", "low-power"):
+        prof = "power-saver"
+    elif prof in ("bal", "normal"):
+        prof = "balanced"
+    elif prof in ("perf", "max"):
+        prof = "performance"
+
+    if set_dbus:
+        try:
+            subprocess.run(["powerprofilesctl", "set", prof], capture_output=True, text=True, timeout=2)
+        except Exception:
+            pass
+
+    apply_profile_optimizations(prof)
     print(f"\033[1;32m✔ Установлен профиль энергопотребления:\033[0m \033[1m{prof}\033[0m")
 
 def set_limit(limit_val):
@@ -408,17 +543,37 @@ def set_auto_brightness(enabled):
     saved = load_opts_config()
     saved["auto_brightness"] = bool(enabled)
     save_opts_config(saved)
+
+    prof = get_current_profile()
+    if prof in ("power-saver", "low-power"):
+        if enabled:
+            cur_b = get_brightness()
+            if not saved.get("pre_saver_brightness"):
+                saved["pre_saver_brightness"] = cur_b
+                save_opts_config(saved)
+            target_b = int(saved.get("power_saver_brightness", 80))
+            start_fade_brightness_bg(target_b, duration=5.0)
+        else:
+            pre_b = saved.get("pre_saver_brightness", 0)
+            if pre_b and int(pre_b) > 0:
+                saved["pre_saver_brightness"] = 0
+                save_opts_config(saved)
+                start_fade_brightness_bg(int(pre_b), duration=5.0)
     return True
 
 def set_saver_brightness(val):
     try:
         val = int(val)
         val = max(50, min(95, val))
-    except ValueError:
+    except (ValueError, TypeError):
         val = 80
     saved = load_opts_config()
     saved["power_saver_brightness"] = val
     save_opts_config(saved)
+
+    prof = get_current_profile()
+    if prof in ("power-saver", "low-power") and saved.get("auto_brightness", True):
+        start_fade_brightness_bg(val, duration=5.0)
     return True
 
 def get_cpu_freq_info():
@@ -553,15 +708,7 @@ def set_cpu_freq_mode(mode):
     saved["cpu_freq_mode"] = mode
     save_opts_config(saved)
 
-    platform_profile = read_val("/sys/firmware/acpi/platform_profile", "").lower()
-    if not platform_profile or platform_profile == "unknown":
-        try:
-            res = subprocess.run(["powerprofilesctl", "get"], capture_output=True, text=True, timeout=1)
-            if res.returncode == 0:
-                platform_profile = res.stdout.strip().lower()
-        except Exception:
-            pass
-
+    platform_profile = get_current_profile()
     if platform_profile in ("low-power", "power-saver"):
         policies = sorted(glob.glob("/sys/devices/system/cpu/cpufreq/policy*"))
         if not policies:
@@ -600,15 +747,7 @@ def set_cpu_freq_limit(target_khz):
     saved["cpu_freq_mode"] = "manual" if target_khz > 0 else "auto"
     save_opts_config(saved)
 
-    platform_profile = read_val("/sys/firmware/acpi/platform_profile", "").lower()
-    if not platform_profile or platform_profile == "unknown":
-        try:
-            res = subprocess.run(["powerprofilesctl", "get"], capture_output=True, text=True, timeout=1)
-            if res.returncode == 0:
-                platform_profile = res.stdout.strip().lower()
-        except Exception:
-            pass
-
+    platform_profile = get_current_profile()
     if platform_profile in ("low-power", "power-saver"):
         p0 = policies[0]
         try:
@@ -845,34 +984,20 @@ def set_optimization(opt_id, enabled):
     save_opts_config(saved)
 
     # Only apply to hardware if currently in power-saver
-    platform_profile = read_val("/sys/firmware/acpi/platform_profile", "").lower()
-    if not platform_profile or platform_profile == "unknown":
-        try:
-            res = subprocess.run(["powerprofilesctl", "get"], capture_output=True, text=True, timeout=1)
-            if res.returncode == 0:
-                platform_profile = res.stdout.strip().lower()
-        except Exception:
-            pass
+    platform_profile = get_current_profile()
     if platform_profile in ("low-power", "power-saver"):
         apply_single_opt(opt_id, bool(enabled))
     return get_optimizations_list()
 
 def apply_all_optimizations():
     # Only apply if in power-saver
-    platform_profile = read_val("/sys/firmware/acpi/platform_profile", "").lower()
-    if not platform_profile or platform_profile == "unknown":
-        try:
-            res = subprocess.run(["powerprofilesctl", "get"], capture_output=True, text=True, timeout=1)
-            if res.returncode == 0:
-                platform_profile = res.stdout.strip().lower()
-        except Exception:
-            pass
+    platform_profile = get_current_profile()
     if platform_profile not in ("low-power", "power-saver"):
         return False
 
     saved = load_opts_config()
     for opt_id, val in saved.items():
-        if opt_id not in ("cpu_max_freq", "cpu_freq_mode", "auto_brightness", "power_saver_brightness"):
+        if opt_id not in ("cpu_max_freq", "cpu_freq_mode", "auto_brightness", "power_saver_brightness", "pre_saver_brightness"):
             apply_single_opt(opt_id, bool(val))
     cpu_mode = saved.get("cpu_freq_mode", "auto")
     target_khz = int(saved.get("cpu_max_freq", 0))
@@ -884,10 +1009,13 @@ def apply_all_optimizations():
             if max_f:
                 write_val(os.path.join(p, "scaling_max_freq"), max_f)
     if saved.get("auto_brightness", True):
-        target_b = int(saved.get("power_saver_brightness", 80))
         cur_b = get_brightness()
-        if cur_b > target_b:
-            set_brightness(target_b)
+        existing_pre = saved.get("pre_saver_brightness", 0)
+        if not existing_pre or int(existing_pre) <= 0:
+            saved["pre_saver_brightness"] = cur_b
+            save_opts_config(saved)
+        target_b = int(saved.get("power_saver_brightness", 80))
+        start_fade_brightness_bg(target_b, duration=5.0)
     return True
 
 def main():
@@ -947,6 +1075,25 @@ def main():
     elif arg in ("apply-opts", "apply-optimizations"):
         apply_all_optimizations()
         print("✔ Applied power optimizations from config.")
+    elif arg in ("fade-brightness", "fade_brightness"):
+        target = 80
+        dur = 5.0
+        if len(sys.argv) > 2:
+            try:
+                target = int(sys.argv[2])
+            except ValueError:
+                pass
+        if len(sys.argv) > 3:
+            try:
+                dur = float(sys.argv[3])
+            except ValueError:
+                pass
+        fade_brightness_worker(target, dur)
+    elif arg in ("apply-profile-hooks", "profile-hooks", "hook"):
+        prof = sys.argv[2].lower() if len(sys.argv) > 2 else get_current_profile()
+        if not should_skip_hook(prof):
+            apply_profile_optimizations(prof)
+        print(f"✔ Hooks applied for profile: {prof}")
     elif arg in ("status", "show", "info", "-s"):
         if len(sys.argv) > 2 and sys.argv[2].lower() in ("json", "--json"):
             print(json.dumps(get_json_data()))

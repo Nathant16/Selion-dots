@@ -693,14 +693,16 @@ Item {
                             }
 
                             onValueChanged: (idx, val) => {
+                                let prof = "balanced";
                                 if (PowerProfiles.hasPerformanceProfile) {
-                                    if (idx === 0) PowerProfiles.profile = PowerProfile.PowerSaver;
-                                    else if (idx === 1) PowerProfiles.profile = PowerProfile.Balanced;
-                                    else PowerProfiles.profile = PowerProfile.Performance;
+                                    if (idx === 0) { PowerProfiles.profile = PowerProfile.PowerSaver; prof = "power-saver"; }
+                                    else if (idx === 1) { PowerProfiles.profile = PowerProfile.Balanced; prof = "balanced"; }
+                                    else { PowerProfiles.profile = PowerProfile.Performance; prof = "performance"; }
                                 } else {
-                                    if (idx === 0) PowerProfiles.profile = PowerProfile.PowerSaver;
-                                    else PowerProfiles.profile = PowerProfile.Balanced;
+                                    if (idx === 0) { PowerProfiles.profile = PowerProfile.PowerSaver; prof = "power-saver"; }
+                                    else { PowerProfiles.profile = PowerProfile.Balanced; prof = "balanced"; }
                                 }
+                                Quickshell.execDetached(["/usr/local/bin/battery", "profile", prof]);
                             }
                         }
                     }

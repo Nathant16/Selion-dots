@@ -62,6 +62,13 @@ GuideTab {
         return "";
     }
 
+    Connections {
+        target: typeof PowerProfiles !== "undefined" ? PowerProfiles : null
+        function onProfileChanged() {
+            powerTabRoot.refresh();
+        }
+    }
+
     function refresh() {
         if (!statusProc.running) {
             statusProc.running = true;

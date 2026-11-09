@@ -16,6 +16,19 @@ ShellRoot {
         function onReloadFailed(errorString) { Quickshell.inhibitReloadPopup() }
     }
 
+    Connections {
+        target: typeof PowerProfiles !== "undefined" ? PowerProfiles : null
+        function onProfileChanged() {
+            let prof = "balanced";
+            switch (PowerProfiles.profile) {
+                case PowerProfile.Performance: prof = "performance"; break;
+                case PowerProfile.PowerSaver: prof = "power-saver"; break;
+                default: prof = "balanced"; break;
+            }
+            Quickshell.execDetached(["battery", "apply-profile-hooks", prof]);
+        }
+    }
+
     LazyLoader {
         id: screenshotLoader
         ScreenshotOverlay {}

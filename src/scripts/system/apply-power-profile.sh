@@ -279,9 +279,14 @@ fi
 # 13. USER SAVED POWER OPTIMIZATIONS OVERRIDE (ONLY FOR POWER-SAVER)
 # ------------------------------------------------------------------------------
 if [ "$PROFILE" = "power-saver" ]; then
-    OPTS_CONF="${XDG_CONFIG_HOME:-$HOME/.config}/serpantinum/power_optimizations.json"
+    REAL_HOME="${HOME}"
+    if [ -n "$SUDO_USER" ] && [ "$SUDO_USER" != "root" ]; then
+        USER_HOME=$(getent passwd "$SUDO_USER" 2>/dev/null | cut -d: -f6)
+        [ -n "$USER_HOME" ] && REAL_HOME="$USER_HOME"
+    fi
+    OPTS_CONF="${XDG_CONFIG_HOME:-$REAL_HOME/.config}/serpantinum/power_optimizations.json"
     if [ -f "$OPTS_CONF" ]; then
-        BATTERY_SCRIPT="${SERPANTINUM_DIR:-$HOME/.local/share/serpantinum/src}/scripts/system/battery"
+        BATTERY_SCRIPT="${SERPANTINUM_DIR:-$REAL_HOME/.local/share/serpantinum/src}/scripts/system/battery"
         if [ -f "$BATTERY_SCRIPT" ]; then
             python3 "$BATTERY_SCRIPT" apply-opts >/dev/null 2>&1 || true
         elif command -v battery >/dev/null 2>&1; then
