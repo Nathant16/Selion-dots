@@ -231,6 +231,34 @@ PanelWindow {
                 }
             }
 
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: polkitWindow.toolbarHeight + polkitWindow.s(6)
+                radius: polkitWindow.crSmall
+                color: ThemeBackend.surface0
+                visible: PolkitService.flow && PolkitService.flow.isResponseRequired === false
+
+                RowLayout {
+                    anchors.centerIn: parent
+                    spacing: polkitWindow.s(10)
+                    layoutDirection: I18n.layoutDirection
+
+                    Text {
+                        text: "󰈷"
+                        font.family: ThemeBackend.iconFont
+                        font.pixelSize: polkitWindow.s(18)
+                        color: ThemeBackend.mauve
+                    }
+
+                    Text {
+                        text: typeof I18n !== "undefined" ? I18n.t("polkit.fingerprint_waiting", "Scan fingerprint or wait for password...") : "Scan fingerprint or wait for password..."
+                        color: ThemeBackend.subtext0
+                        font.family: ThemeBackend.fontFamily
+                        font.pixelSize: polkitWindow.s(13)
+                    }
+                }
+            }
+
             PasswordInput {
                 id: passwordInput
                 Layout.fillWidth: true

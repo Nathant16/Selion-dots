@@ -1406,6 +1406,7 @@
     "default_message": "An application is requesting administrative rights.",
     "default_description": "Authentication is needed to run this action as superuser.",
     "password_placeholder": "Password",
+    "fingerprint_waiting": "Scan fingerprint or wait for password...",
     "error_failed": "Authentication failed. Please try again."
   },
   "applauncher": {
