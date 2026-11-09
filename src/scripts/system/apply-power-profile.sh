@@ -80,8 +80,20 @@ case "$PROFILE" in
         for pb in /sys/devices/system/cpu/cpufreq/policy*/boost; do
             [ -w "$pb" ] && echo 1 > "$pb" 2>/dev/null
         done
+        # Reset CPU max frequency limit back to base/max clock
+        for p in /sys/devices/system/cpu/cpufreq/policy*; do
+            if [ -f "$p/cpuinfo_max_freq" ]; then
+                max_f=$(cat "$p/cpuinfo_max_freq" 2>/dev/null)
+                [ -n "$max_f" ] && [ -w "$p/scaling_max_freq" ] && echo "$max_f" > "$p/scaling_max_freq" 2>/dev/null
+            fi
+        done
         ;;
 esac
+
+# Ensure scaling_max_freq is writable
+for mf in /sys/devices/system/cpu/cpufreq/policy*/scaling_max_freq; do
+    [ -e "$mf" ] && [ ! -w "$mf" ] && chmod 0666 "$mf" 2>/dev/null || true
+done
 
 # ------------------------------------------------------------------------------
 # 4. PCIe ASPM (Active State Power Management)

@@ -116,7 +116,10 @@ def get_json_data():
             "energy_full_wh": 0.0,
             "energy_design_wh": 0.0,
             "cycles": 0,
-            "has_threshold_support": False
+            "has_threshold_support": False,
+            "cpu_freq": get_cpu_freq_info(),
+            "auto_brightness": bool(load_opts_config().get("auto_brightness", True)),
+            "power_saver_brightness": int(load_opts_config().get("power_saver_brightness", 80))
         }
 
     status = b.get("POWER_SUPPLY_STATUS", "Unknown")
@@ -177,7 +180,10 @@ def get_json_data():
         "energy_full_wh": round(energy_full_wh, 2),
         "energy_design_wh": round(energy_design_wh, 2),
         "cycles": cycles,
-        "has_threshold_support": has_threshold_support
+        "has_threshold_support": has_threshold_support,
+        "cpu_freq": get_cpu_freq_info(),
+        "auto_brightness": bool(load_opts_config().get("auto_brightness", True)),
+        "power_saver_brightness": int(load_opts_config().get("power_saver_brightness", 80))
     }
 
 def show_status():
@@ -247,6 +253,29 @@ def set_profile(prof):
             pass
     except Exception:
         pass
+
+    # CPU frequency capping logic:
+    if prof in ("balanced", "performance"):
+        policies = sorted(glob.glob("/sys/devices/system/cpu/cpufreq/policy*"))
+        if not policies:
+            policies = sorted(glob.glob("/sys/devices/system/cpu/cpu*/cpufreq"))
+        for p in policies:
+            try:
+                max_f = int(read_val(os.path.join(p, "cpuinfo_max_freq"), "0"))
+                if max_f > 0:
+                    write_val(os.path.join(p, "scaling_max_freq"), max_f)
+            except Exception:
+                pass
+    elif prof in ("power-saver", "low-power"):
+        saved = load_opts_config()
+        target_khz = int(saved.get("cpu_max_freq", 0))
+        if target_khz > 0:
+            set_cpu_freq_limit(target_khz)
+        if saved.get("auto_brightness", True):
+            target_b = int(saved.get("power_saver_brightness", 80))
+            cur_b = get_brightness()
+            if cur_b > target_b:
+                set_brightness(target_b)
 
     # Also run apply-power-profile.sh for deep hardware tuning (governor, boost, gpu)
     candidates = [
@@ -322,6 +351,9 @@ def load_opts_config():
         "disk_writeback": True,
         "nmi_watchdog": True,
         "bluetooth_sleep": True,
+        "cpu_max_freq": 0,
+        "auto_brightness": True,
+        "power_saver_brightness": 80,
     }
     if os.path.exists(OPTS_CONFIG_PATH):
         try:
@@ -331,6 +363,164 @@ def load_opts_config():
         except Exception:
             pass
     return defaults
+
+def get_brightness():
+    try:
+        res = subprocess.run(["serpantinum-core", "brightness", "get"], capture_output=True, text=True, timeout=1.5)
+        if res.returncode == 0:
+            return int(float(res.stdout.strip()))
+    except Exception:
+        pass
+    bl_dirs = glob.glob("/sys/class/backlight/*")
+    if bl_dirs:
+        bl_act = read_val(f"{bl_dirs[0]}/actual_brightness", "0")
+        bl_max = read_val(f"{bl_dirs[0]}/max_brightness", "65535")
+        return int(float(bl_act) / float(bl_max) * 100) if bl_max and float(bl_max) > 0 else 100
+    return 100
+
+def set_brightness(pct):
+    pct = max(1, min(100, int(pct)))
+    try:
+        res = subprocess.run(["serpantinum-core", "brightness", "set", str(pct)], capture_output=True, timeout=1.5)
+        if res.returncode == 0:
+            return True
+    except Exception:
+        pass
+    bl_dirs = glob.glob("/sys/class/backlight/*")
+    if bl_dirs:
+        bl_max = read_val(f"{bl_dirs[0]}/max_brightness", "255")
+        try:
+            max_v = float(bl_max)
+            target_v = int(max_v * (pct / 100.0))
+            return write_val(f"{bl_dirs[0]}/brightness", target_v)
+        except Exception:
+            pass
+    return False
+
+def set_auto_brightness(enabled):
+    saved = load_opts_config()
+    saved["auto_brightness"] = bool(enabled)
+    save_opts_config(saved)
+    return True
+
+def set_saver_brightness(val):
+    try:
+        val = int(val)
+        val = max(50, min(95, val))
+    except ValueError:
+        val = 80
+    saved = load_opts_config()
+    saved["power_saver_brightness"] = val
+    save_opts_config(saved)
+    return True
+
+def get_cpu_freq_info():
+    policies = sorted(glob.glob("/sys/devices/system/cpu/cpufreq/policy*"))
+    if not policies:
+        policies = sorted(glob.glob("/sys/devices/system/cpu/cpu*/cpufreq"))
+    if not policies:
+        return {"supported": False, "options": [], "current_khz": 0, "current_index": 0}
+
+    p0 = policies[0]
+    try:
+        min_freq = int(read_val(os.path.join(p0, "cpuinfo_min_freq"), "0"))
+    except ValueError:
+        min_freq = 0
+    try:
+        max_freq = int(read_val(os.path.join(p0, "cpuinfo_max_freq"), "0"))
+    except ValueError:
+        max_freq = 0
+    try:
+        cur_max = int(read_val(os.path.join(p0, "scaling_max_freq"), str(max_freq)))
+    except ValueError:
+        cur_max = max_freq
+
+    avail_file = os.path.join(p0, "scaling_available_frequencies")
+    avail_freqs = []
+    if os.path.exists(avail_file):
+        try:
+            with open(avail_file, "r") as f:
+                avail_freqs = sorted(list(set(int(x) for x in f.read().split() if x.strip())))
+        except Exception:
+            avail_freqs = []
+
+    if not avail_freqs and min_freq > 0 and max_freq > min_freq:
+        step = (max_freq - min_freq) // 3
+        if step > 0:
+            avail_freqs = [min_freq, min_freq + step, min_freq + 2 * step, max_freq]
+
+    opts = []
+    for f in avail_freqs:
+        ghz = f / 1e6
+        ghz_str = f"{ghz:.1f}" if abs(ghz * 10 - round(ghz * 10)) < 1e-4 else f"{ghz:.2f}"
+        if f < max_freq:
+            if f == min_freq:
+                lbl = f"{ghz_str} GHz (Эко / Ниже базовой)"
+            else:
+                lbl = f"{ghz_str} GHz"
+        elif f == max_freq:
+            lbl = f"{ghz_str} GHz (Базовая частота)"
+        else:
+            lbl = f"{ghz_str} GHz (Турбо)"
+        opts.append({"khz": f, "label": lbl})
+
+    opts.append({"khz": 0, "label": "Авто (Без ограничений)"})
+
+    saved_cfg = load_opts_config()
+    saved_khz = int(saved_cfg.get("cpu_max_freq", 0))
+
+    current_index = len(opts) - 1
+    if saved_khz > 0:
+        for idx, o in enumerate(opts):
+            if o["khz"] == saved_khz:
+                current_index = idx
+                break
+    else:
+        if cur_max < max_freq and cur_max > 0:
+            for idx, o in enumerate(opts):
+                if o["khz"] == cur_max:
+                    current_index = idx
+                    break
+
+    return {
+        "supported": True,
+        "options": opts,
+        "current_khz": saved_khz if saved_khz > 0 else cur_max,
+        "current_index": current_index,
+        "min_freq_khz": min_freq,
+        "base_freq_khz": max_freq,
+        "saved_khz": saved_khz
+    }
+
+def set_cpu_freq_limit(target_khz):
+    policies = sorted(glob.glob("/sys/devices/system/cpu/cpufreq/policy*"))
+    if not policies:
+        policies = sorted(glob.glob("/sys/devices/system/cpu/cpu*/cpufreq"))
+    if not policies:
+        return False
+
+    try:
+        target_khz = int(target_khz)
+    except ValueError:
+        target_khz = 0
+
+    p0 = policies[0]
+    try:
+        max_freq = int(read_val(os.path.join(p0, "cpuinfo_max_freq"), "0"))
+    except ValueError:
+        max_freq = 0
+
+    write_val_khz = max_freq if target_khz <= 0 else target_khz
+
+    for p in policies:
+        scaling_max = os.path.join(p, "scaling_max_freq")
+        if os.path.exists(scaling_max):
+            write_val(scaling_max, write_val_khz)
+
+    saved = load_opts_config()
+    saved["cpu_max_freq"] = target_khz
+    save_opts_config(saved)
+    return True
 
 def save_opts_config(cfg):
     try:
@@ -524,7 +714,27 @@ def set_optimization(opt_id, enabled):
 def apply_all_optimizations():
     saved = load_opts_config()
     for opt_id, val in saved.items():
-        apply_single_opt(opt_id, bool(val))
+        if opt_id not in ("cpu_max_freq", "auto_brightness", "power_saver_brightness"):
+            apply_single_opt(opt_id, bool(val))
+    
+    # Check current profile
+    platform_profile = read_val("/sys/firmware/acpi/platform_profile", "").lower()
+    if not platform_profile or platform_profile == "unknown":
+        try:
+            res = subprocess.run(["powerprofilesctl", "get"], capture_output=True, text=True, timeout=1)
+            if res.returncode == 0:
+                platform_profile = res.stdout.strip().lower()
+        except Exception:
+            pass
+    if platform_profile in ("low-power", "power-saver"):
+        target_khz = int(saved.get("cpu_max_freq", 0))
+        if target_khz > 0:
+            set_cpu_freq_limit(target_khz)
+        if saved.get("auto_brightness", True):
+            target_b = int(saved.get("power_saver_brightness", 80))
+            cur_b = get_brightness()
+            if cur_b > target_b:
+                set_brightness(target_b)
     return True
 
 def main():
@@ -547,6 +757,33 @@ def main():
             print(json.dumps({"success": True, "optimizations": res}))
         else:
             print("Usage: battery set-opt <id> <true|false>")
+    elif arg in ("set-freq", "freq", "limit-freq"):
+        if len(sys.argv) > 2:
+            target = sys.argv[2].lower()
+            if target in ("0", "auto", "max", "uncap", "none", "off"):
+                val = 0
+            else:
+                try:
+                    val = int(target)
+                except ValueError:
+                    val = 0
+            set_cpu_freq_limit(val)
+            print(json.dumps({"success": True, "cpu_freq": get_cpu_freq_info()}))
+        else:
+            print("Usage: battery set-freq <khz|auto>")
+    elif arg in ("set-auto-brightness", "auto-brightness"):
+        if len(sys.argv) > 2:
+            val = sys.argv[2].lower() in ("true", "1", "on", "yes", "enable")
+            set_auto_brightness(val)
+            print(json.dumps({"success": True, "auto_brightness": val}))
+        else:
+            print("Usage: battery set-auto-brightness <true|false>")
+    elif arg in ("set-saver-brightness", "saver-brightness"):
+        if len(sys.argv) > 2:
+            set_saver_brightness(sys.argv[2])
+            print(json.dumps({"success": True, "power_saver_brightness": int(sys.argv[2])}))
+        else:
+            print("Usage: battery set-saver-brightness <50-95>")
     elif arg in ("apply-opts", "apply-optimizations"):
         apply_all_optimizations()
         print("✔ Applied power optimizations from config.")

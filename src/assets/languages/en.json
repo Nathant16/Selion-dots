@@ -1248,6 +1248,18 @@
         "custom_label": "Charge limit",
         "custom_desc": "Maximum battery charge percentage"
       },
+      "cpu_freq": {
+        "title": "CPU frequency limit",
+        "desc": "Cap maximum core frequency for power saving mode"
+      },
+      "auto_brightness": {
+        "title": "Auto brightness reduction",
+        "desc": "Dim screen brightness when entering power saver mode"
+      },
+      "saver_brightness": {
+        "title": "Target brightness level",
+        "desc": "Screen brightness level in power saving mode"
+      },
       "time_remaining": "~%1 remaining",
       "time_until_full": "~%1 until full",
       "hours_short": "h",
