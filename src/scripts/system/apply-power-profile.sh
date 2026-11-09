@@ -69,6 +69,7 @@ case "$PROFILE" in
         for pb in /sys/devices/system/cpu/cpufreq/policy*/boost; do
             [ -w "$pb" ] && echo 0 > "$pb" 2>/dev/null
         done
+        [ -w /sys/devices/system/cpu/intel_pstate/no_turbo ] && echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
         ;;
     balanced|performance)
         if [ -e /sys/devices/system/cpu/cpufreq/boost ]; then
@@ -81,6 +82,7 @@ case "$PROFILE" in
         for pb in /sys/devices/system/cpu/cpufreq/policy*/boost; do
             [ -w "$pb" ] && echo 1 > "$pb" 2>/dev/null
         done
+        [ -w /sys/devices/system/cpu/intel_pstate/no_turbo ] && echo 0 > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
         # Reset CPU max frequency limit back to base/max clock
         for p in /sys/devices/system/cpu/cpufreq/policy*; do
             if [ -f "$p/cpuinfo_max_freq" ]; then

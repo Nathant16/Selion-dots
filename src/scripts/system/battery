@@ -462,9 +462,15 @@ def get_cpu_freq_info():
     except ValueError:
         cur_max = base_khz
 
-    # Range: from base_khz down to (base_khz - 1.0 GHz) with step 0.2 GHz (200,000 kHz)
-    # Only parameter itself in labels (e.g. "1.7 GHz", "1.5 GHz"), no text!
-    min_khz = max(200_000, base_khz - 1_000_000)
+    # Range: from base_khz down towards hardware min, safely bounded by cpuinfo_min_freq and 1.0 GHz
+    hw_min = 0
+    try:
+        hw_min = int(read_val(os.path.join(p0, "cpuinfo_min_freq"), "0"))
+    except ValueError:
+        hw_min = 0
+
+    min_floor = max(hw_min, 1_000_000)
+    min_khz = max(min_floor, base_khz - 1_000_000)
     opts = []
     current = base_khz
     while current >= min_khz - 1000:
@@ -474,6 +480,12 @@ def get_cpu_freq_info():
         else:
             lbl = f"{ghz:.2f} GHz"
         opts.append({"khz": current, "label": lbl})
+        if current - 200_000 < min_khz and current > min_khz:
+            # Add exact min floor if not aligned on 200 MHz step
+            current = min_khz
+            ghz = current / 1e6
+            opts.append({"khz": current, "label": f"{ghz:.1f} GHz"})
+            break
         current -= 200_000
 
     saved_cfg = load_opts_config()
@@ -591,9 +603,14 @@ def save_opts_config(cfg):
 
 def get_hw_opt_state(opt_id, saved_val):
     if opt_id == "cpu_boost":
+        # AMD boost
         v = read_val("/sys/devices/system/cpu/cpufreq/boost", "")
         if v:
             return v != "0"
+        # Intel pstate no_turbo (0 = boost enabled, 1 = boost disabled)
+        v_intel = read_val("/sys/devices/system/cpu/intel_pstate/no_turbo", "")
+        if v_intel:
+            return v_intel == "0"
         return saved_val
     elif opt_id == "wifi_powersave":
         for w in glob.glob("/sys/class/net/*/wireless"):
@@ -647,6 +664,8 @@ def apply_single_opt(opt_id, enabled):
             write_val("/sys/devices/system/cpu/cpufreq/boost", val)
         for pb in glob.glob("/sys/devices/system/cpu/cpufreq/policy*/boost"):
             write_val(pb, val)
+        if os.path.exists("/sys/devices/system/cpu/intel_pstate/no_turbo"):
+            write_val("/sys/devices/system/cpu/intel_pstate/no_turbo", "0" if enabled else "1")
     elif opt_id == "wifi_powersave":
         mode = "on" if enabled else "off"
         for w in glob.glob("/sys/class/net/*/wireless"):
