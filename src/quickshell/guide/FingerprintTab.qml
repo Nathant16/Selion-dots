@@ -228,7 +228,7 @@ GuideTab {
                 if (!line) return;
                 try {
                     let msg = JSON.parse(line);
-                    if (msg.type === "started") {
+                    if (msg.type === "started" || msg.type === "ready") {
                         fingerprintTabRoot.currentStage = 0;
                         fingerprintTabRoot.currentPercent = 0;
                         fingerprintTabRoot.enrollStatus = "ready";
@@ -348,7 +348,9 @@ GuideTab {
             iconAccentColor: ThemeBackend.surface0
             iconTextColor: "#ffffff"
 
-            baseColor: Qt.alpha(ThemeBackend.surface0, 0.4)
+            baseColor: ThemeBackend.glassActive
+                ? Qt.alpha(ThemeBackend.surface0, ThemeBackend.elementOpacity * 0.6)
+                : Qt.alpha(ThemeBackend.surface0, 0.4)
             borderColor: Qt.alpha(ThemeBackend.surface1, 0.4)
             borderWidth: 1
             horizontalPadding: rootObj.s(12)
@@ -432,7 +434,11 @@ GuideTab {
                     anchors.right: parent.right
                     implicitHeight: objectsBoxCol.implicitHeight + rootObj.s(24)
                     radius: ThemeBackend.borderRadius
-                    color: gf1.active ? "transparent" : Qt.alpha(ThemeBackend.surface0, 0.4)
+                    color: gf1.active
+                        ? "transparent"
+                        : (ThemeBackend.glassActive
+                            ? Qt.alpha(ThemeBackend.surface0, ThemeBackend.elementOpacity * 0.7)
+                            : Qt.alpha(ThemeBackend.surface0, 0.4))
                     clip: true
 
                     GlassFill {

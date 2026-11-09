@@ -143,6 +143,8 @@ def cmd_enroll(finger):
 
     total_stages = 10
     current_stage = 0
+    start_time = time.time()
+    calibration_skipped = False
 
     print(json.dumps({
         "type": "started",
@@ -171,6 +173,19 @@ def cmd_enroll(finger):
                 continue
 
             if "enroll-stage-passed" in line:
+                # Detect driver baseline calibration event (< 0.6s after start with empty sensor)
+                if not calibration_skipped and (time.time() - start_time) < 0.6:
+                    calibration_skipped = True
+                    print(json.dumps({
+                        "type": "ready",
+                        "stage": 0,
+                        "total": total_stages,
+                        "percent": 0,
+                        "status": "ready",
+                        "message": "Place your finger on the sensor"
+                    }), flush=True)
+                    continue
+
                 current_stage += 1
                 percent = min(100, int((current_stage / total_stages) * 100))
                 print(json.dumps({

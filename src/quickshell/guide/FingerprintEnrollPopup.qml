@@ -6,6 +6,7 @@ import "../"
 import "../reusables"
 import "../reusables/buttons"
 import "../reusables/inputs"
+import "../reusables/display"
 
 Popup {
     id: enrollPopup
@@ -24,6 +25,25 @@ Popup {
     readonly property bool canClose: !isEnrolling && !isCompleted
 
     closePolicy: canClose ? (Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent) : Popup.NoAutoClose
+
+    enter: Transition {
+        ParallelAnimation {
+            NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 220; easing.type: Easing.OutCubic }
+            NumberAnimation { property: "scale"; from: 0.92; to: 1.0; duration: 240; easing.type: Easing.OutBack }
+        }
+    }
+
+    exit: Transition {
+        ParallelAnimation {
+            NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 180; easing.type: Easing.InCubic }
+            NumberAnimation { property: "scale"; from: 1.0; to: 0.94; duration: 180; easing.type: Easing.InQuad }
+        }
+    }
+
+    Overlay.modal: Rectangle {
+        color: Qt.rgba(0, 0, 0, 0.45)
+        Behavior on opacity { NumberAnimation { duration: 200 } }
+    }
 
     function openPopup() {
         if (!tab || tab.availableFingers.length === 0) return;
@@ -58,9 +78,22 @@ Popup {
 
     background: Rectangle {
         radius: ThemeBackend.clampedBorderRadius
-        color: popupGlass.active ? "transparent" : ThemeBackend.base
-        border.color: Qt.alpha(ThemeBackend.surface1, 0.5)
+        color: popupGlass.active
+            ? "transparent"
+            : (ThemeBackend.glassActive
+                ? Qt.alpha(ThemeBackend.base, ThemeBackend.elementOpacity)
+                : ThemeBackend.base)
+        border.color: Qt.alpha(ThemeBackend.surface1, 0.4)
         border.width: 1
+
+        WallpaperBlur {
+            id: popupBlur
+            z: -1
+            anchors.fill: parent
+            radius: parent.radius
+            standalone: true
+            surfaceEnabled: ThemeBackend.glassActive
+        }
 
         GlassFill {
             id: popupGlass
@@ -134,22 +167,34 @@ Popup {
             Rectangle {
                 id: stageCircle
                 anchors.centerIn: parent
-                width: rootObj ? rootObj.s(92) : 92
+                width: rootObj ? rootObj.s(96) : 96
                 height: width
                 radius: width / 2
-                color: ThemeBackend.glassActive ? Qt.alpha(ThemeBackend.surface0, 0.6) : ThemeBackend.surface0
+                color: circleGlass.active
+                    ? "transparent"
+                    : (ThemeBackend.glassActive
+                        ? Qt.alpha(ThemeBackend.surface0, ThemeBackend.elementOpacity * 0.75)
+                        : ThemeBackend.surface0)
                 border.color: Qt.alpha(tab ? tab.iconCurrentColor : ThemeBackend.mauve, 0.35)
                 border.width: 2
                 clip: true
                 Behavior on border.color { ColorAnimation { duration: 200 } }
 
+                GlassFill {
+                    id: circleGlass
+                    anchors.fill: parent
+                    radius: parent.radius
+                    tintColor: ThemeBackend.surface0
+                    tintAmount: 0.25
+                }
+
                 // 1. Base muted glyph (unfilled outline)
                 Text {
                     id: baseGlyph
                     anchors.centerIn: parent
-                    text: (tab && tab.enrollStatus === "completed") ? "󰄲" : "󰈷"
+                    text: "󰈷"
                     font.family: ThemeBackend.iconFont
-                    font.pixelSize: rootObj ? rootObj.s(48) : 48
+                    font.pixelSize: rootObj ? rootObj.s(52) : 52
                     scale: tab ? tab.iconPulseScale : 1.0
                     color: Qt.alpha(ThemeBackend.text, 0.22)
                     transform: Translate { x: tab ? tab.iconShakeX : 0.0 }
@@ -160,14 +205,15 @@ Popup {
                     id: filledSource
                     anchors.fill: parent
                     visible: false
+                    layer.enabled: true
 
                     Text {
                         anchors.centerIn: parent
-                        text: (tab && tab.enrollStatus === "completed") ? "󰄲" : "󰈷"
+                        text: "󰈷"
                         font.family: ThemeBackend.iconFont
-                        font.pixelSize: rootObj ? rootObj.s(48) : 48
+                        font.pixelSize: rootObj ? rootObj.s(52) : 52
                         scale: tab ? tab.iconPulseScale : 1.0
-                        color: tab ? tab.iconCurrentColor : ThemeBackend.mauve
+                        color: (tab && tab.enrollStatus === "completed") ? ThemeBackend.green : (tab ? tab.iconCurrentColor : ThemeBackend.mauve)
                         transform: Translate { x: tab ? tab.iconShakeX : 0.0 }
                         Behavior on color { ColorAnimation { duration: 200 } }
                     }
@@ -178,22 +224,25 @@ Popup {
                     id: maskSourceItem
                     anchors.fill: parent
                     visible: false
+                    layer.enabled: true
 
                     Rectangle {
                         id: maskCircle
                         anchors.centerIn: parent
-                        property real targetSize: {
+                        property real maxRadius: (rootObj ? rootObj.s(42) : 42)
+                        property real targetRadius: {
                             if (!tab) return 0;
-                            if (tab.enrollStatus === "completed") return stageCircle.width * 1.5;
-                            return stageCircle.width * (tab.currentPercent / 100.0);
+                            if (tab.enrollStatus === "completed") return stageCircle.width;
+                            if (tab.currentPercent <= 0) return 0;
+                            return maxRadius * Math.sqrt(tab.currentPercent / 100.0);
                         }
-                        width: targetSize
-                        height: targetSize
-                        radius: targetSize / 2
+                        width: Math.max(0, targetRadius * 2)
+                        height: width
+                        radius: targetRadius
                         color: "black"
 
-                        Behavior on targetSize {
-                            NumberAnimation { duration: 350; easing.type: Easing.OutCubic }
+                        Behavior on targetRadius {
+                            NumberAnimation { duration: 320; easing.type: Easing.OutCubic }
                         }
                     }
                 }
@@ -205,6 +254,39 @@ Popup {
                     maskEnabled: true
                     maskSource: maskSourceItem
                     visible: (tab && (tab.currentPercent > 0 || tab.enrollStatus === "completed"))
+                }
+
+                // 5. Success floating badge (clean, elegant checkmark, replaces the awkward checkbox)
+                Rectangle {
+                    id: successBadge
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.margins: rootObj ? rootObj.s(6) : 6
+                    width: rootObj ? rootObj.s(24) : 24
+                    height: width
+                    radius: width / 2
+                    color: ThemeBackend.green
+                    border.color: ThemeBackend.base
+                    border.width: 2
+                    visible: tab && tab.enrollStatus === "completed"
+                    scale: visible ? 1.0 : 0.0
+                    opacity: visible ? 1.0 : 0.0
+
+                    Behavior on scale {
+                        NumberAnimation { duration: 320; easing.type: Easing.OutBack }
+                    }
+                    Behavior on opacity {
+                        NumberAnimation { duration: 220 }
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "󰄬"
+                        font.family: ThemeBackend.iconFont
+                        font.pixelSize: rootObj ? rootObj.s(13) : 13
+                        font.weight: Font.Bold
+                        color: ThemeBackend.crust
+                    }
                 }
             }
         }
@@ -340,7 +422,7 @@ Popup {
                 buttonText: (tab && tab.enrollStatus === "completed")
                     ? I18n.t("guide.fingerprint.modal.done", "Done")
                     : I18n.t("guide.fingerprint.modal.cancel", "Cancel")
-                buttonIcon: (tab && tab.enrollStatus === "completed") ? "󰄲" : "󰅖"
+                buttonIcon: (tab && tab.enrollStatus === "completed") ? "󰄬" : "󰅖"
                 accentColor: (tab && tab.enrollStatus === "completed") ? ThemeBackend.green : ThemeBackend.surface0
                 textColor: (tab && tab.enrollStatus === "completed") ? ThemeBackend.crust : ThemeBackend.text
                 cornerRadius: ThemeBackend.borderRadius
