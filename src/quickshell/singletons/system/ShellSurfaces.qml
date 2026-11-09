@@ -6,6 +6,7 @@ QtObject {
 
     property var bars: ({})
     property var docks: ({})
+    property bool isLocked: false
 
     function register(kind, screenName, window) {
         if (!screenName || !window) return;

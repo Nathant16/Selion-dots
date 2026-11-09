@@ -97,7 +97,46 @@ Item {
     property bool isIdleSystemActive: idleEnabled && !manualInhibit
     property bool lockOnSleep: idleSettings && idleSettings.lockOnSleep !== undefined ? idleSettings.lockOnSleep : true
     property bool isDimmed: false
-    property bool isLocked: false
+    readonly property bool isLocked: ShellSurfaces.isLocked
+
+    property bool unidlePulse: false
+
+    Timer {
+        id: unidlePulseTimer
+        interval: 100
+        repeat: false
+        onTriggered: {
+            idleRoot.unidlePulse = false;
+        }
+    }
+
+    function resetCompositorIdle() {
+        idleRoot.unidlePulse = true;
+        unidlePulseTimer.restart();
+
+        if (Compositor.name === "hyprland") {
+            Quickshell.execDetached(["sh", "-c", "hyprctl repl 'return hl.dispatch(hl.dsp.cursor.move({ dx = 0, dy = 0 }))' >/dev/null 2>&1"]);
+        } else if (Compositor.name === "sway") {
+            Quickshell.execDetached(["sh", "-c", "swaymsg seat - cursor move 0 0 >/dev/null 2>&1 || true"]);
+        }
+    }
+
+    function onSessionUnlocked() {
+        frameSettleTimer.stop();
+        suspendTimer.stop();
+        idleRoot.isDimmed = false;
+        idleRoot.teardownVisualStates();
+        idleRoot.resetCompositorIdle();
+    }
+
+    Connections {
+        target: ShellSurfaces
+        function onIsLockedChanged() {
+            if (!ShellSurfaces.isLocked) {
+                idleRoot.onSessionUnlocked();
+            }
+        }
+    }
 
     property bool isMediaPlaying: {
         try {
@@ -234,7 +273,6 @@ Item {
     }
 
     function performLock() {
-        idleRoot.isLocked = true;
         idleRoot.lockSession();
     }
 
@@ -300,6 +338,7 @@ Item {
         idleRoot.teardownVisualStates();
 
         if (id === "lock") {
+            if (idleRoot.isLocked) return;
             if (actionObj.beforeCommand && actionObj.beforeCommand.trim().length > 0) {
                 idleRoot.runCmd(actionObj.beforeCommand);
             }
@@ -351,7 +390,6 @@ Item {
             idleRoot.isDimmed = false;
         } else if (id === "lock") {
             frameSettleTimer.stop();
-            idleRoot.isLocked = false;
         } else if (id === "dpms") {
             if (actionObj.resumeCommand && actionObj.resumeCommand.trim().length > 0) {
                 idleRoot.runCmd(actionObj.resumeCommand);
@@ -383,6 +421,7 @@ Item {
         function trigger(name: string): void { idleRoot.executeAction(name); }
         function execute(name: string): void { idleRoot.executeAction(name); }
         function run(name: string): void { idleRoot.executeAction(name); }
+        function unlock(): void { idleRoot.onSessionUnlocked(); }
         function status(): string { return idleRoot.statusJson(); }
     }
 
@@ -465,7 +504,7 @@ Item {
     }
 
     Loader {
-        active: idleRoot.manualInhibit
+        active: idleRoot.manualInhibit || idleRoot.unidlePulse
         sourceComponent: PanelWindow {
             id: inhibitWindow
             color: "transparent"

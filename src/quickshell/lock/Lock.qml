@@ -57,6 +57,7 @@ Scope {
     Component.onCompleted: {
         SystemInfo.fetch();
         root.updateScreenCount();
+        ShellSurfaces.isLocked = false;
         Quickshell.execDetached(["rm", "-f", Caching.getRunDir("lock") + "/locked"]);
         root.defaultPamDir = pam.configDirectory;
         root.defaultPamConfig = pam.config;
@@ -422,6 +423,7 @@ Scope {
     function completeUnlock() {
         if (!rootLock.locked) return;
         rootLock.locked = false;
+        ShellSurfaces.isLocked = false;
         root.isUnlocking = false;
         passwordLockoutTimer.stop();
         root.stopAuth();
@@ -541,6 +543,7 @@ Scope {
         id: rootLock
         locked: false
         onLockedChanged: {
+            ShellSurfaces.isLocked = locked;
             let lockFile = Caching.getRunDir("lock") + "/locked";
             if (locked) {
                 Quickshell.execDetached(["touch", lockFile]);
