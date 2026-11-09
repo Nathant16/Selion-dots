@@ -731,7 +731,7 @@ def get_optimizations_list():
             "id": "disk_writeback",
             "title": "Delayed Disk Writeback",
             "desc": "Flush dirty buffers every 60s to let drive sleep",
-            "icon": "󰋊",
+            "icon": "\uf0a0",
         },
         {
             "id": "nmi_watchdog",
