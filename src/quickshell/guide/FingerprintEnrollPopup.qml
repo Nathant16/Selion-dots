@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Effects
 import "../"
 import "../reusables"
 import "../reusables/buttons"
@@ -58,6 +59,8 @@ Popup {
     background: Rectangle {
         radius: ThemeBackend.clampedBorderRadius
         color: popupGlass.active ? "transparent" : ThemeBackend.base
+        border.color: Qt.alpha(ThemeBackend.surface1, 0.5)
+        border.width: 1
 
         GlassFill {
             id: popupGlass
@@ -90,11 +93,11 @@ Popup {
                     elide: Text.ElideRight
                 }
 
+                // Subtitle: only shown while enrolling to display finger name, removed "Select a finger..."
                 Text {
                     Layout.fillWidth: true
-                    text: (tab && tab.isEnrolling)
-                        ? tab.getFingerLabel(tab.selectedFingerName)
-                        : I18n.t("guide.fingerprint.modal.select_desc", "Select a finger to register")
+                    visible: tab && tab.isEnrolling
+                    text: (tab && tab.isEnrolling) ? tab.getFingerLabel(tab.selectedFingerName) : ""
                     font.family: ThemeBackend.fontFamily
                     font.pixelSize: rootObj ? rootObj.s(11) : 11
                     color: ThemeBackend.subtext0
@@ -111,40 +114,97 @@ Popup {
             }
         }
 
-        // Central Fingerprint Icon with reactive touch animations
+        // Central Fingerprint Icon with radial fill from center
         Item {
             Layout.alignment: Qt.AlignHCenter
             implicitWidth: rootObj ? rootObj.s(110) : 110
             implicitHeight: rootObj ? rootObj.s(110) : 110
 
+            // Outer reactive pulse glow ring
             Rectangle {
                 anchors.centerIn: parent
                 width: parent.width * (tab ? tab.iconPulseScale : 1.0)
-                height: parent.height * (tab ? tab.iconPulseScale : 1.0)
+                height: width
                 radius: width / 2
                 color: Qt.alpha(tab ? tab.iconCurrentColor : ThemeBackend.mauve, 0.12)
                 Behavior on color { ColorAnimation { duration: 250 } }
             }
 
+            // Central circle container (supports transparent and solid themes)
             Rectangle {
+                id: stageCircle
                 anchors.centerIn: parent
-                width: rootObj ? rootObj.s(86) : 86
-                height: rootObj ? rootObj.s(86) : 86
+                width: rootObj ? rootObj.s(92) : 92
+                height: width
                 radius: width / 2
-                color: ThemeBackend.surface0
-                border.color: Qt.alpha(tab ? tab.iconCurrentColor : ThemeBackend.mauve, 0.5)
+                color: ThemeBackend.glassActive ? Qt.alpha(ThemeBackend.surface0, 0.6) : ThemeBackend.surface0
+                border.color: Qt.alpha(tab ? tab.iconCurrentColor : ThemeBackend.mauve, 0.35)
                 border.width: 2
+                clip: true
                 Behavior on border.color { ColorAnimation { duration: 200 } }
 
+                // 1. Base muted glyph (unfilled outline)
                 Text {
+                    id: baseGlyph
                     anchors.centerIn: parent
                     text: (tab && tab.enrollStatus === "completed") ? "󰄲" : "󰈷"
-                    font.family: ThemeBackend.fontFamily
-                    font.pixelSize: rootObj ? rootObj.s(44) : 44
+                    font.family: ThemeBackend.iconFont
+                    font.pixelSize: rootObj ? rootObj.s(48) : 48
                     scale: tab ? tab.iconPulseScale : 1.0
-                    color: tab ? tab.iconCurrentColor : ThemeBackend.mauve
+                    color: Qt.alpha(ThemeBackend.text, 0.22)
                     transform: Translate { x: tab ? tab.iconShakeX : 0.0 }
-                    Behavior on color { ColorAnimation { duration: 200 } }
+                }
+
+                // 2. Active colored glyph (source for radial fill mask)
+                Item {
+                    id: filledSource
+                    anchors.fill: parent
+                    visible: false
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: (tab && tab.enrollStatus === "completed") ? "󰄲" : "󰈷"
+                        font.family: ThemeBackend.iconFont
+                        font.pixelSize: rootObj ? rootObj.s(48) : 48
+                        scale: tab ? tab.iconPulseScale : 1.0
+                        color: tab ? tab.iconCurrentColor : ThemeBackend.mauve
+                        transform: Translate { x: tab ? tab.iconShakeX : 0.0 }
+                        Behavior on color { ColorAnimation { duration: 200 } }
+                    }
+                }
+
+                // 3. Mask circle expanding from center
+                Item {
+                    id: maskSourceItem
+                    anchors.fill: parent
+                    visible: false
+
+                    Rectangle {
+                        id: maskCircle
+                        anchors.centerIn: parent
+                        property real targetSize: {
+                            if (!tab) return 0;
+                            if (tab.enrollStatus === "completed") return stageCircle.width * 1.5;
+                            return stageCircle.width * (tab.currentPercent / 100.0);
+                        }
+                        width: targetSize
+                        height: targetSize
+                        radius: targetSize / 2
+                        color: "black"
+
+                        Behavior on targetSize {
+                            NumberAnimation { duration: 350; easing.type: Easing.OutCubic }
+                        }
+                    }
+                }
+
+                // 4. MultiEffect rendering the colored glyph filled from center outwards
+                MultiEffect {
+                    anchors.fill: parent
+                    source: filledSource
+                    maskEnabled: true
+                    maskSource: maskSourceItem
+                    visible: (tab && (tab.currentPercent > 0 || tab.enrollStatus === "completed"))
                 }
             }
         }
@@ -166,7 +226,7 @@ Popup {
             Behavior on color { ColorAnimation { duration: 200 } }
         }
 
-        // Progress bar & Stage indicator
+        // Progress bar & Stage indicator (10 stages)
         ColumnLayout {
             Layout.fillWidth: true
             visible: tab && (tab.isEnrolling || tab.enrollStatus === "completed")
@@ -177,7 +237,7 @@ Popup {
                 horizontalAlignment: Text.AlignHCenter
                 text: I18n.t("guide.fingerprint.modal.stage_info", "Stage %1 of %2 (%3%)")
                     .arg(tab ? tab.currentStage : 0)
-                    .arg(tab ? tab.enrollStages : 9)
+                    .arg(tab ? tab.enrollStages : 10)
                     .arg(tab ? tab.currentPercent : 0)
                 font.family: ThemeBackend.fontFamily
                 font.pixelSize: rootObj ? rootObj.s(11) : 11
@@ -196,7 +256,7 @@ Popup {
                     width: parent.width * ((tab ? tab.currentPercent : 0) / 100.0)
                     radius: rootObj ? rootObj.s(3) : 3
                     color: (tab && tab.enrollStatus === "completed") ? ThemeBackend.green : ThemeBackend.mauve
-                    Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on width { NumberAnimation { duration: 320; easing.type: Easing.OutCubic } }
                     Behavior on color { ColorAnimation { duration: 200 } }
                 }
             }
@@ -240,6 +300,7 @@ Popup {
                 Layout.fillWidth: true
                 spacing: rootObj ? rootObj.s(8) : 8
 
+                // Cancel button without icon (standard across Serpantinum dialogs)
                 ClickButton {
                     Layout.fillWidth: true
                     implicitHeight: rootObj ? rootObj.s(34) : 34
@@ -250,6 +311,7 @@ Popup {
                     onTriggered: enrollPopup.close()
                 }
 
+                // Start scan action button
                 ClickButton {
                     Layout.fillWidth: true
                     implicitHeight: rootObj ? rootObj.s(34) : 34
@@ -278,7 +340,7 @@ Popup {
                 buttonText: (tab && tab.enrollStatus === "completed")
                     ? I18n.t("guide.fingerprint.modal.done", "Done")
                     : I18n.t("guide.fingerprint.modal.cancel", "Cancel")
-                buttonIcon: (tab && tab.enrollStatus === "completed") ? "󰄲" : "󰜺"
+                buttonIcon: (tab && tab.enrollStatus === "completed") ? "󰄲" : "󰅖"
                 accentColor: (tab && tab.enrollStatus === "completed") ? ThemeBackend.green : ThemeBackend.surface0
                 textColor: (tab && tab.enrollStatus === "completed") ? ThemeBackend.crust : ThemeBackend.text
                 cornerRadius: ThemeBackend.borderRadius

@@ -68,7 +68,7 @@ def get_device_info():
 
         name = get_dbus_property(dev_path, "name") or "Fingerprint Reader"
         scan_type = get_dbus_property(dev_path, "scan-type") or "press"
-        stages = get_dbus_property(dev_path, "num-enroll-stages") or 5
+        stages = 10
 
         # Parse fingers
         fingers = []
@@ -141,7 +141,7 @@ def cmd_enroll(finger):
         print(json.dumps({"type": "failed", "status": "no_device", "message": "No fingerprint device found"}), flush=True)
         return
 
-    total_stages = info["stages"] or 5
+    total_stages = 10
     current_stage = 0
 
     print(json.dumps({

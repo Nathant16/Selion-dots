@@ -35,7 +35,7 @@ GuideTab {
     property bool hardwareAvailable: false
     property string deviceName: ""
     property string scanType: "press"
-    property int enrollStages: 9
+    property int enrollStages: 10
     property var enrolledFingers: []
 
     readonly property var allFingers: [
@@ -189,7 +189,7 @@ GuideTab {
                     fingerprintTabRoot.hardwareAvailable = Boolean(data.available);
                     if (data.device) fingerprintTabRoot.deviceName = data.device;
                     if (data.scan_type) fingerprintTabRoot.scanType = data.scan_type;
-                    if (data.stages) fingerprintTabRoot.enrollStages = Number(data.stages) || 9;
+                    if (data.stages) fingerprintTabRoot.enrollStages = Number(data.stages) || 10;
                 } catch(e) {}
             }
         }
@@ -401,7 +401,7 @@ GuideTab {
                     settingId: "fingerprint_master"
                     searchKeywords: "fingerprint biometrics unlock enable fprintd auth"
                     rootObj: fingerprintTabRoot.rootObj
-                    icon: "󰈷"
+                    icon: "󰌾"
                     title: I18n.t("guide.fingerprint.master.title", "Fingerprint authentication")
                     description: I18n.t("guide.fingerprint.master.desc", "Allow unlocking the screen and authenticating with fingerprint")
 
@@ -420,35 +420,9 @@ GuideTab {
                 }
             }
 
-            // 2. Hardware Status Section (Smoothly collapses when master toggle is off)
+            // 2. Registered Fingerprints Objects Section (Matches Idle Timeout Objects composition)
             CollapsibleSection {
                 open: fingerprintTabRoot.currentFingerprintEnabled
-                row: hardwareBlob
-
-                SettingsBlob {
-                    id: hardwareBlob
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    SettingsRow {
-                        settingId: "fingerprint_hardware"
-                        searchKeywords: "fingerprint scanner sensor reader device hardware"
-                        rootObj: fingerprintTabRoot.rootObj
-                        icon: fingerprintTabRoot.hardwareAvailable ? "󰍹" : "󱏙"
-                        title: fingerprintTabRoot.hardwareAvailable
-                            ? (fingerprintTabRoot.deviceName || I18n.t("guide.fingerprint.header.title", "Fingerprint Reader"))
-                            : I18n.t("guide.fingerprint.header.not_found", "No scanner detected")
-                        description: fingerprintTabRoot.hardwareAvailable
-                            ? (fingerprintTabRoot.enrolledFingers.length + " " + I18n.t("guide.fingerprint.enrolled_count", "fingerprints registered") + " • " + (fingerprintTabRoot.scanType === "swipe" ? I18n.t("guide.fingerprint.header.swipe_type", "Swipe") : I18n.t("guide.fingerprint.header.touch_type", "Touch")))
-                            : I18n.t("guide.fingerprint.header.not_found_desc", "Biometric reader not found on this system")
-                    }
-                }
-            }
-
-            // 3. Registered Fingerprints Objects Section (Matches Idle Timeout Objects composition)
-            CollapsibleSection {
-                open: fingerprintTabRoot.currentFingerprintEnabled && fingerprintTabRoot.hardwareAvailable
                 row: objectsCard
 
                 Rectangle {
@@ -537,33 +511,15 @@ GuideTab {
                             }
                         }
 
-                        // List of Fingerprint Cards
+                        // List of Fingerprint Cards (Only visible when fingerprints exist)
                         ColumnLayout {
                             Layout.fillWidth: true
                             spacing: rootObj.s(8)
+                            visible: fingerprintTabRoot.enrolledFingers.length > 0
 
                             Repeater {
                                 model: fingerprintTabRoot.enrolledFingers
                                 delegate: fingerCardDelegate
-                            }
-
-                            SettingsRow {
-                                visible: fingerprintTabRoot.enrolledFingers.length === 0
-                                rootObj: fingerprintTabRoot.rootObj
-                                settingId: "fingerprint_none"
-                                title: I18n.t("guide.fingerprint.enrolled.empty_title", "No fingerprints saved")
-                                description: I18n.t("guide.fingerprint.enrolled.empty_desc", "Click + to register a finger for quick login and unlocking")
-                                icon: "󰋗"
-                                iconSize: 32
-                                iconFontSize: 16
-                                iconAccentColor: ThemeBackend.surface0
-                                iconTextColor: "#ffffff"
-                                baseColor: Qt.alpha(ThemeBackend.surface0, 0.4)
-                                borderColor: Qt.alpha(ThemeBackend.surface1, 0.4)
-                                borderWidth: 1
-                                horizontalPadding: rootObj.s(12)
-                                verticalPadding: rootObj.s(10)
-                                spacing: rootObj.s(12)
                             }
                         }
                     }
