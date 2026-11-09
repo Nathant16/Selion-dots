@@ -318,7 +318,7 @@ GuideTab {
                             SettingsRow {
                                 id: cpuFreqSubRow
                                 rootObj: powerTabRoot.rootObj
-                                baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
+                                baseColor: "transparent"
                                 icon: "󰍜"
                                 title: I18n.t("guide.power.cpu_freq_value.title", "Максимальная частота")
                                 description: I18n.t("guide.power.cpu_freq_value.desc", "Выбранный предел частоты для энергосбережения")
@@ -349,14 +349,16 @@ GuideTab {
                         ]
                     }
 
-                    // Auto-reduce brightness toggle
-                    SettingsRow {
+                    // Auto-reduce brightness (SettingsGroup with Toggle and NumberSelector subSetting)
+                    SettingsGroup {
+                        id: autoBrightnessGroup
                         settingId: "power_auto_brightness"
                         searchKeywords: "auto brightness reduce drop dim battery saver"
                         rootObj: powerTabRoot.rootObj
                         icon: "󰃟"
                         title: I18n.t("guide.power.auto_brightness.title", "Автопонижение яркости")
                         description: I18n.t("guide.power.auto_brightness.desc", "Снижать яркость экрана при переходе в режим энергосбережения")
+                        expanded: powerTabRoot.autoBrightnessEnabled
 
                         Toggle {
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
@@ -369,60 +371,51 @@ GuideTab {
                                 powerTabRoot.setAutoBrightness(val);
                             }
                         }
-                    }
 
-                    // Target brightness level (expands when Auto-brightness toggle is enabled)
-                    CollapsibleSection {
-                        open: powerTabRoot.autoBrightnessEnabled
-                        row: targetBriRow
+                        subSettings: [
+                            SettingsRow {
+                                id: targetBriRow
+                                rootObj: powerTabRoot.rootObj
+                                baseColor: "transparent"
+                                icon: "󰍜"
+                                title: I18n.t("guide.power.saver_brightness.title", "Целевой уровень яркости")
+                                description: I18n.t("guide.power.saver_brightness.desc", "Уровень яркости экрана в режиме энергосбережения")
 
-                        SettingsRow {
-                            id: targetBriRow
-                            anchors.top: parent.top
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            baseColor: Qt.alpha(ThemeBackend.surface1, 0.25)
-                            settingId: "power_saver_brightness_target"
-                            searchKeywords: "target brightness percentage level saver"
-                            rootObj: powerTabRoot.rootObj
-                            icon: "󰃠"
-                            title: I18n.t("guide.power.saver_brightness.title", "Целевой уровень яркости")
-                            description: I18n.t("guide.power.saver_brightness.desc", "Уровень яркости экрана в режиме энергосбережения")
-
-                            NumberSelector {
-                                id: saverBriSelector
-                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                implicitWidth: rootObj.s(150)
-                                implicitHeight: rootObj.s(32)
-                                from: 50
-                                to: 95
-                                stepSize: 5
-                                decimals: 0
-                                suffix: "%"
-                                value: Math.max(50, Math.min(95, powerTabRoot.powerSaverBrightness))
-                                baseColor: ThemeBackend.surface0
-                                accentColor: ThemeBackend.mauve
-                                buttonColor: ThemeBackend.surface1
-                                buttonTextColor: ThemeBackend.text
-                                textColor: ThemeBackend.text
-                                subTextColor: ThemeBackend.subtext0
-                                borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
-                                cornerRadius: ThemeBackend.borderRadius
-                                fontFamily: ThemeBackend.fontFamily
-                                fontPixelSize: rootObj.s(11)
-                                onValueChanged: function(val) {
-                                    let num = (typeof val === "number" && !isNaN(val)) ? val : value;
-                                    let rounded = Math.round(num / 5) * 5;
-                                    if (!isNaN(rounded) && rounded >= 50 && rounded <= 95 && powerTabRoot.powerSaverBrightness !== rounded) {
+                                NumberSelector {
+                                    id: saverBriSelector
+                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                    implicitWidth: rootObj.s(150)
+                                    implicitHeight: rootObj.s(32)
+                                    from: 50
+                                    to: 95
+                                    stepSize: 5
+                                    decimals: 0
+                                    suffix: "%"
+                                    value: Math.max(50, Math.min(95, powerTabRoot.powerSaverBrightness))
+                                    baseColor: ThemeBackend.surface0
+                                    accentColor: ThemeBackend.mauve
+                                    buttonColor: ThemeBackend.surface1
+                                    buttonTextColor: ThemeBackend.text
+                                    textColor: ThemeBackend.text
+                                    subTextColor: ThemeBackend.subtext0
+                                    borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
+                                    cornerRadius: ThemeBackend.borderRadius
+                                    fontFamily: ThemeBackend.fontFamily
+                                    fontPixelSize: rootObj.s(11)
+                                    onValueChanged: function(val) {
+                                        let num = (typeof val === "number" && !isNaN(val)) ? val : value;
+                                        let rounded = Math.round(num / 5) * 5;
+                                        if (!isNaN(rounded) && rounded >= 50 && rounded <= 95 && powerTabRoot.powerSaverBrightness !== rounded) {
+                                            powerTabRoot.setSaverBrightness(rounded);
+                                        }
+                                    }
+                                    onTriggered: {
+                                        let rounded = Math.round(saverBriSelector.value / 5) * 5;
                                         powerTabRoot.setSaverBrightness(rounded);
                                     }
                                 }
-                                onTriggered: {
-                                    let rounded = Math.round(saverBriSelector.value / 5) * 5;
-                                    powerTabRoot.setSaverBrightness(rounded);
-                                }
                             }
-                        }
+                        ]
                     }
 
                     // Power saving optimizations repeater
@@ -457,17 +450,19 @@ GuideTab {
                 }
             }
 
-            // 3. Battery Conservation Mode
+            // 3. Battery Conservation Mode & Charge Limit
             SettingsBlob {
                 visible: powerTabRoot.hasBattery
 
-                SettingsRow {
+                SettingsGroup {
+                    id: conservationGroup
                     settingId: "power_conservation"
                     searchKeywords: "battery conservation protection limit 80 health prolong"
                     rootObj: powerTabRoot.rootObj
                     icon: "󰂄"
                     title: I18n.t("guide.power.threshold.conservation_title", "Conservation mode")
                     description: I18n.t("guide.power.threshold.conservation_desc", "Limit charging to 80% to prolong battery lifespan")
+                    expanded: powerTabRoot.conservationMode && powerTabRoot.hasThresholdSupport
 
                     Toggle {
                         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
@@ -480,62 +475,51 @@ GuideTab {
                             powerTabRoot.toggleConservation();
                         }
                     }
-                }
-            }
 
-            // 4. Charge limit (NumberSelector) - smoothly expands ONLY when Conservation mode is enabled
-            CollapsibleSection {
-                open: powerTabRoot.hasBattery && powerTabRoot.conservationMode && powerTabRoot.hasThresholdSupport
-                row: limitBlob
+                    subSettings: [
+                        SettingsRow {
+                            id: limitRow
+                            rootObj: powerTabRoot.rootObj
+                            baseColor: "transparent"
+                            icon: "󰍜"
+                            title: I18n.t("guide.power.threshold.custom_label", "Charge limit")
+                            description: I18n.t("guide.power.threshold.custom_desc", "Maximum battery charge percentage")
 
-                SettingsBlob {
-                    id: limitBlob
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    SettingsRow {
-                        settingId: "power_threshold_limit"
-                        searchKeywords: "charge limit threshold percentage stop charging"
-                        rootObj: powerTabRoot.rootObj
-                        icon: "󰚥"
-                        title: I18n.t("guide.power.threshold.custom_label", "Charge limit")
-                        description: I18n.t("guide.power.threshold.custom_desc", "Maximum battery charge percentage")
-
-                        NumberSelector {
-                            id: limitSelector
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            implicitWidth: rootObj.s(150)
-                            implicitHeight: rootObj.s(32)
-                            from: 70
-                            to: 95
-                            stepSize: 5
-                            decimals: 0
-                            suffix: "%"
-                            value: Math.max(70, Math.min(95, powerTabRoot.thresholdEnd))
-                            baseColor: ThemeBackend.surface0
-                            accentColor: ThemeBackend.mauve
-                            buttonColor: ThemeBackend.surface1
-                            buttonTextColor: ThemeBackend.text
-                            textColor: ThemeBackend.text
-                            subTextColor: ThemeBackend.subtext0
-                            borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
-                            cornerRadius: ThemeBackend.borderRadius
-                            fontFamily: ThemeBackend.fontFamily
-                            fontPixelSize: rootObj.s(11)
-                            onValueChanged: function(val) {
-                                let num = (typeof val === "number" && !isNaN(val)) ? val : value;
-                                let rounded = Math.round(num / 5) * 5;
-                                if (!isNaN(rounded) && rounded >= 70 && rounded <= 95 && powerTabRoot.thresholdEnd !== rounded) {
+                            NumberSelector {
+                                id: limitSelector
+                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                implicitWidth: rootObj.s(150)
+                                implicitHeight: rootObj.s(32)
+                                from: 70
+                                to: 95
+                                stepSize: 5
+                                decimals: 0
+                                suffix: "%"
+                                value: Math.max(70, Math.min(95, powerTabRoot.thresholdEnd))
+                                baseColor: ThemeBackend.surface0
+                                accentColor: ThemeBackend.mauve
+                                buttonColor: ThemeBackend.surface1
+                                buttonTextColor: ThemeBackend.text
+                                textColor: ThemeBackend.text
+                                subTextColor: ThemeBackend.subtext0
+                                borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
+                                cornerRadius: ThemeBackend.borderRadius
+                                fontFamily: ThemeBackend.fontFamily
+                                fontPixelSize: rootObj.s(11)
+                                onValueChanged: function(val) {
+                                    let num = (typeof val === "number" && !isNaN(val)) ? val : value;
+                                    let rounded = Math.round(num / 5) * 5;
+                                    if (!isNaN(rounded) && rounded >= 70 && rounded <= 95 && powerTabRoot.thresholdEnd !== rounded) {
+                                        powerTabRoot.setLimit(rounded);
+                                    }
+                                }
+                                onTriggered: {
+                                    let rounded = Math.round(limitSelector.value / 5) * 5;
                                     powerTabRoot.setLimit(rounded);
                                 }
                             }
-                            onTriggered: {
-                                let rounded = Math.round(limitSelector.value / 5) * 5;
-                                powerTabRoot.setLimit(rounded);
-                            }
                         }
-                    }
+                    ]
                 }
             }
         }
