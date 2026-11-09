@@ -345,10 +345,21 @@ def apply_profile_optimizations(prof):
     elif prof in ("perf", "max"):
         prof = "performance"
 
+    # 1. Run apply-power-profile.sh via sudo -n for base deep hardware tuning (governor, boost, gpu)
+    candidates = [
+        "/usr/local/bin/apply-power-profile.sh",
+        os.path.expanduser("~/.local/share/serpantinum/src/scripts/system/apply-power-profile.sh"),
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), "apply-power-profile.sh")
+    ]
+    for script in candidates:
+        if os.path.exists(script):
+            subprocess.run(["sudo", "-n", script, prof], capture_output=True)
+            break
+
     saved = load_opts_config()
 
     if prof in ("balanced", "performance"):
-        # 1. Reset CPU max freq back to base/max clock
+        # Reset CPU max freq back to base/max clock
         policies = sorted(glob.glob("/sys/devices/system/cpu/cpufreq/policy*"))
         if not policies:
             policies = sorted(glob.glob("/sys/devices/system/cpu/cpu*/cpufreq"))
@@ -360,7 +371,7 @@ def apply_profile_optimizations(prof):
             except Exception:
                 pass
 
-        # 2. Revert VM laptop mode & dirty buffers & watchdog
+        # Revert VM laptop mode & dirty buffers & watchdog
         write_val("/proc/sys/vm/laptop_mode", "0")
         subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", "vm.laptop_mode=0"], capture_output=True)
         subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", "vm.dirty_expire_centisecs=3000"], capture_output=True)
@@ -368,12 +379,12 @@ def apply_profile_optimizations(prof):
         write_val("/proc/sys/kernel/nmi_watchdog", "1")
         subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", "kernel.nmi_watchdog=1"], capture_output=True)
 
-        # 3. Revert Ryzen TDP
+        # Revert Ryzen TDP
         ryzenadj_bin = shutil.which("ryzenadj") or ("/usr/local/bin/ryzenadj" if os.path.exists("/usr/local/bin/ryzenadj") else None)
         if ryzenadj_bin:
             subprocess.run(["sudo", "-n", ryzenadj_bin, "--stapm-limit=25000", "--fast-limit=25000", "--slow-limit=20000"], capture_output=True)
 
-        # 4. Smoothly restore brightness if pre_saver_brightness was stored
+        # Smoothly restore brightness if pre_saver_brightness was stored
         pre_b = saved.get("pre_saver_brightness")
         if pre_b is not None and int(pre_b) > 0:
             restore_val = int(pre_b)
@@ -403,17 +414,6 @@ def apply_profile_optimizations(prof):
             if opt_id not in ("cpu_max_freq", "cpu_freq_mode", "auto_brightness", "power_saver_brightness", "pre_saver_brightness"):
                 apply_single_opt(opt_id, bool(val))
 
-    # Also run apply-power-profile.sh via sudo -n for deep hardware tuning (governor, boost, gpu)
-    candidates = [
-        "/usr/local/bin/apply-power-profile.sh",
-        os.path.expanduser("~/.local/share/serpantinum/src/scripts/system/apply-power-profile.sh"),
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), "apply-power-profile.sh")
-    ]
-    for script in candidates:
-        if os.path.exists(script):
-            subprocess.run(["sudo", "-n", script, prof], capture_output=True)
-            break
-
 def set_profile(prof, set_dbus=True):
     if prof in ("save", "eco", "low-power"):
         prof = "power-saver"
@@ -422,9 +422,17 @@ def set_profile(prof, set_dbus=True):
     elif prof in ("perf", "max"):
         prof = "performance"
 
+    # Mark hook stamp to avoid redundant loop from Quickshell D-Bus listener
+    try:
+        with open(HOOK_STAMP_FILE, "w") as f:
+            f.write(f"{prof} {time.time()}")
+    except Exception:
+        pass
+
     if set_dbus:
         try:
             subprocess.run(["powerprofilesctl", "set", prof], capture_output=True, text=True, timeout=2)
+            time.sleep(0.2)
         except Exception:
             pass
 
