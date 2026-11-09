@@ -5,6 +5,7 @@ import json
 import subprocess
 import re
 import getpass
+import time
 
 VALID_FINGERS = [
     "right-thumb",

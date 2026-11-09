@@ -345,6 +345,7 @@ GuideTab {
     FileView {
         id: liveFileReader
         path: tabRoot.stateFilePath
+        printErrors: false
         onLoaded: {
             if (!tabRoot.liveReadPending) return;
             tabRoot.liveReadPending = false;

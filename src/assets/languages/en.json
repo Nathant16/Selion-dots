@@ -1202,6 +1202,7 @@
         "desc": "Manage enrolled fingerprints and add new fingers"
       },
       "finger_registered": "Registered on %1",
+      "registered_desc": "Saved biometric fingerprint",
       "modal": {
         "title": "Enroll Fingerprint",
         "select_desc": "Select a finger to register",

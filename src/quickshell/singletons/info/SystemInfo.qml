@@ -121,7 +121,8 @@ Item {
 
     FileView {
         id: hostnameFile
-        path: "/etc/hostname"
+        path: "/proc/sys/kernel/hostname"
+        printErrors: false
         onLoaded: {
             let txt = text();
             if (txt) root.hostname = txt.trim();

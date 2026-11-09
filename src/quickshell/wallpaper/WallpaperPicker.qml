@@ -212,6 +212,7 @@ Item {
     FileView {
         id: favoritesStore
         path: Caching.getCacheDir("wallpaper") + "/favorites.txt"
+        printErrors: false
         onLoaded: {
             let raw = typeof text === "function" ? text() : text;
             window.setFavorites((raw || "").trim().split("\n").map(s => s.trim()).filter(s => s.length > 0), false);
