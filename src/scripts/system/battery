@@ -797,7 +797,7 @@ def get_optimizations_list():
             "id": "ryzen_tdp",
             "title": "Hardware APU TDP Limit",
             "desc": "Cap processor package to 10W via RyzenAdj SMU",
-            "icon": "󰢮",
+            "icon": "󰍛",
         })
     result = []
     for m in meta:

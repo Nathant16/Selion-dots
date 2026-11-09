@@ -235,7 +235,7 @@ GuideTab {
                     settingId: "power_profile"
                     searchKeywords: "power profile battery saver balanced performance governor mode"
                     rootObj: powerTabRoot.rootObj
-                    icon: "󰓅"
+                    icon: (powerTabRoot.activeProfile === "power-saver" || powerTabRoot.activeProfile === "low-power") ? "󰌪" : (powerTabRoot.activeProfile === "performance" ? "󰓅" : "󰗑")
                     title: I18n.t("guide.power.profile.title", "Power profile")
                     description: I18n.t("guide.power.profile.desc", "Adjust performance and energy consumption")
 
@@ -291,7 +291,7 @@ GuideTab {
                         settingId: "power_cpu_freq"
                         searchKeywords: "cpu frequency limit clock speed underclock downclock eco max freq"
                         rootObj: powerTabRoot.rootObj
-                        icon: "󰻠"
+                        icon: "󰍛"
                         title: I18n.t("guide.power.cpu_freq.title", "Лимит частоты процессора")
                         description: I18n.t("guide.power.cpu_freq.desc", "Ограничение максимальной частоты ядер для режима энергосбережения")
                         expanded: powerTabRoot.cpuFreqMode === "manual"
@@ -319,7 +319,7 @@ GuideTab {
                                 id: cpuFreqSubRow
                                 rootObj: powerTabRoot.rootObj
                                 baseColor: "transparent"
-                                icon: "󰍜"
+                                showIcon: false
                                 title: I18n.t("guide.power.cpu_freq_value.title", "Максимальная частота")
                                 description: I18n.t("guide.power.cpu_freq_value.desc", "Выбранный предел частоты для энергосбережения")
 
@@ -377,7 +377,7 @@ GuideTab {
                                 id: targetBriRow
                                 rootObj: powerTabRoot.rootObj
                                 baseColor: "transparent"
-                                icon: "󰍜"
+                                showIcon: false
                                 title: I18n.t("guide.power.saver_brightness.title", "Целевой уровень яркости")
                                 description: I18n.t("guide.power.saver_brightness.desc", "Уровень яркости экрана в режиме энергосбережения")
 
@@ -481,7 +481,7 @@ GuideTab {
                             id: limitRow
                             rootObj: powerTabRoot.rootObj
                             baseColor: "transparent"
-                            icon: "󰍜"
+                            showIcon: false
                             title: I18n.t("guide.power.threshold.custom_label", "Charge limit")
                             description: I18n.t("guide.power.threshold.custom_desc", "Maximum battery charge percentage")
 
