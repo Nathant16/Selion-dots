@@ -85,10 +85,6 @@ run_installer_ui
 TARGET_VERSION=$(get_target_version "$PROJECT_ROOT" "$REPO_SLUG")
 TARGET_COMMIT=$(get_target_commit "$PROJECT_ROOT" "$REPO_SLUG")
 
-if [ "$ENABLE_TELEMETRY" = true ] && [ -f "$MODULES_DIR/telemetry.sh" ]; then
-    bash "$MODULES_DIR/telemetry.sh" --mode init --version "$TARGET_VERSION" --id "$TELEMETRY_ID" --enabled "$ENABLE_TELEMETRY"
-fi
-
 if [[ "$INSTALL_STATE" == "legacy" ]]; then
     migrate_legacy "${SELECTED_COMPOSITORS[@]}"
 elif [[ "$INSTALL_STATE" == "fresh" || "$IS_REINSTALL" == true ]]; then
@@ -115,10 +111,6 @@ write_version_state "$TARGET_VERSION" "$TARGET_COMMIT" "$TELEMETRY_ID" "$ENABLE_
 
 if [[ "$INSTALL_STATE" == "legacy" || "$INSTALL_STATE" == "fresh" || "$IS_REINSTALL" == true ]]; then
     rm -f "$HOME/.local/state/serpantinum/first_launch.done" "$HOME/.local/state/quickshell/first_launch.done"
-fi
-
-if [ -f "$MODULES_DIR/telemetry.sh" ]; then
-    bash "$MODULES_DIR/telemetry.sh" --mode done --version "$TARGET_VERSION" --old-version "$OLD_VERSION" --install-state "$INSTALL_STATE" --compositor "${SELECTED_COMPOSITORS[*]}" --id "$TELEMETRY_ID" --enabled "$ENABLE_TELEMETRY" --failed "${FAILED_PKGS[*]}"
 fi
 
 draw_completion_screen "$TARGET_VERSION" "$TARGET_COMMIT"
