@@ -266,6 +266,12 @@ def set_profile(prof):
                     write_val(os.path.join(p, "scaling_max_freq"), max_f)
             except Exception:
                 pass
+        write_val("/proc/sys/vm/laptop_mode", "0")
+        subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", "vm.laptop_mode=0"], capture_output=True)
+        subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", "vm.dirty_expire_centisecs=3000"], capture_output=True)
+        ryzenadj_bin = shutil.which("ryzenadj") or ("/usr/local/bin/ryzenadj" if os.path.exists("/usr/local/bin/ryzenadj") else None)
+        if ryzenadj_bin:
+            subprocess.run(["sudo", "-n", ryzenadj_bin, "--stapm-limit=25000", "--fast-limit=25000", "--slow-limit=20000"], capture_output=True)
     elif prof in ("power-saver", "low-power"):
         saved = load_opts_config()
         target_khz = int(saved.get("cpu_max_freq", 0))
@@ -699,6 +705,20 @@ def apply_single_opt(opt_id, enabled):
                 subprocess.run(["bluetoothctl", "power", "on"], capture_output=True, timeout=1)
             except Exception:
                 pass
+    elif opt_id == "laptop_mode":
+        val = "5" if enabled else "0"
+        expire = "6000" if enabled else "3000"
+        if not write_val("/proc/sys/vm/laptop_mode", val):
+            subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", f"vm.laptop_mode={val}"], capture_output=True)
+        if not write_val("/proc/sys/vm/dirty_expire_centisecs", expire):
+            subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", f"vm.dirty_expire_centisecs={expire}"], capture_output=True)
+    elif opt_id == "ryzen_tdp":
+        ryzenadj_bin = shutil.which("ryzenadj") or ("/usr/local/bin/ryzenadj" if os.path.exists("/usr/local/bin/ryzenadj") else None)
+        if ryzenadj_bin:
+            if enabled:
+                subprocess.run(["sudo", "-n", ryzenadj_bin, "--stapm-limit=10000", "--fast-limit=10000", "--slow-limit=10000"], capture_output=True)
+            else:
+                subprocess.run(["sudo", "-n", ryzenadj_bin, "--stapm-limit=25000", "--fast-limit=25000", "--slow-limit=20000"], capture_output=True)
 
 def get_optimizations_list():
     saved = load_opts_config()
@@ -740,12 +760,25 @@ def get_optimizations_list():
             "icon": "󰒲",
         },
         {
+            "id": "laptop_mode",
+            "title": "VM Laptop Mode",
+            "desc": "Coalesce disk writes with reads to let drive sleep",
+            "icon": "󰌢",
+        },
+        {
             "id": "bluetooth_sleep",
             "title": "Bluetooth Auto Power-Off",
             "desc": "Turn off Bluetooth radio when no devices connected",
             "icon": "󰂯",
         }
     ]
+    if os.path.exists("/usr/local/bin/ryzenadj") or shutil.which("ryzenadj"):
+        meta.append({
+            "id": "ryzen_tdp",
+            "title": "Hardware APU TDP Limit",
+            "desc": "Cap processor package to 10W via RyzenAdj SMU",
+            "icon": "󰢮",
+        })
     result = []
     for m in meta:
         opt_id = m["id"]

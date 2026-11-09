@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+[ -f /usr/local/bin/ryzenadj ] && [ ! -x /usr/local/bin/ryzenadj ] && chmod 755 /usr/local/bin/ryzenadj 2>/dev/null || true
 # ==============================================================================
 # Universal Battery & Power Optimizer (Adapted from SelionOS + ThinkPad T14)
 # ==============================================================================
@@ -116,7 +117,7 @@ case "$PROFILE" in
         AMD_PROF_MODE=1 # 3D_FULL_SCREEN
         ;;
     power-saver)
-        AMD_DPM="low"
+        AMD_DPM="auto"
         AMD_PROF_MODE=2 # POWER_SAVING
         ;;
     balanced|*)
@@ -216,7 +217,7 @@ case "$PROFILE" in
 esac
 
 # ------------------------------------------------------------------------------
-# 10. DISK WRITEBACK CENTISECS
+# 10. DISK WRITEBACK CENTISECS & LAPTOP MODE
 # ------------------------------------------------------------------------------
 DIRTY_PARAM="/proc/sys/vm/dirty_writeback_centisecs"
 if [ -w "$DIRTY_PARAM" ]; then
@@ -228,6 +229,15 @@ if [ -w "$DIRTY_PARAM" ]; then
 elif command -v sysctl >/dev/null 2>&1; then
     VAL=$([ "$PROFILE" = "power-saver" ] && echo 6000 || echo 500)
     sudo -n sysctl -q -w "vm.dirty_writeback_centisecs=$VAL" 2>/dev/null || true
+fi
+
+# VM Laptop Mode & Dirty Expire
+if [ "$PROFILE" = "power-saver" ]; then
+    [ -w /proc/sys/vm/laptop_mode ] && echo 5 > /proc/sys/vm/laptop_mode 2>/dev/null || sudo -n sysctl -q -w "vm.laptop_mode=5" 2>/dev/null || true
+    [ -w /proc/sys/vm/dirty_expire_centisecs ] && echo 6000 > /proc/sys/vm/dirty_expire_centisecs 2>/dev/null || sudo -n sysctl -q -w "vm.dirty_expire_centisecs=6000" 2>/dev/null || true
+else
+    [ -w /proc/sys/vm/laptop_mode ] && echo 0 > /proc/sys/vm/laptop_mode 2>/dev/null || sudo -n sysctl -q -w "vm.laptop_mode=0" 2>/dev/null || true
+    [ -w /proc/sys/vm/dirty_expire_centisecs ] && echo 3000 > /proc/sys/vm/dirty_expire_centisecs 2>/dev/null || sudo -n sysctl -q -w "vm.dirty_expire_centisecs=3000" 2>/dev/null || true
 fi
 
 # ------------------------------------------------------------------------------
@@ -275,6 +285,18 @@ if [ "$PROFILE" = "power-saver" ]; then
         elif command -v battery >/dev/null 2>&1; then
             battery apply-opts >/dev/null 2>&1 || true
         fi
+    fi
+fi
+
+# ------------------------------------------------------------------------------
+# 14. RYZENADJ TDP LIMIT (AMD Ryzen Mobile)
+# ------------------------------------------------------------------------------
+RYZENADJ_BIN=$(command -v ryzenadj 2>/dev/null || ([ -x /usr/local/bin/ryzenadj ] && echo "/usr/local/bin/ryzenadj"))
+if [ -n "$RYZENADJ_BIN" ] && [ -x "$RYZENADJ_BIN" ]; then
+    if [ "$PROFILE" = "power-saver" ]; then
+        "$RYZENADJ_BIN" --stapm-limit=10000 --fast-limit=10000 --slow-limit=10000 >/dev/null 2>&1 || true
+    else
+        "$RYZENADJ_BIN" --stapm-limit=25000 --fast-limit=25000 --slow-limit=20000 >/dev/null 2>&1 || true
     fi
 fi
 
