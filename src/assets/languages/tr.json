@@ -339,6 +339,12 @@
           "desc": "Kilit ekranını parmak iziyle açmaya izin ver",
           "manage": "Yapılandır..."
         },
+        "prompt_backdrop": {
+          "title": "Parola isteminin arka planı",
+          "desc": "Parola isteminin arkasında masaüstünü veya duvar kağıdını göster",
+          "desktop": "Masaüstü",
+          "wallpaper": "Duvar kağıdı"
+        },
         "background": {
           "select": "Arka plan seç",
           "follow": "Duvar kâğıdını izle",

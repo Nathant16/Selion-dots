@@ -5,6 +5,7 @@ import "../../"
 
 WallpaperTabState {
     id: wallpaperTabRoot
+    deferredStages: 2
 
     property alias wpDirDropdown: wallpaperDirRow.wpDirDropdown
 
@@ -45,9 +46,17 @@ WallpaperTabState {
 
             ShowSelionRow { tab: wallpaperTabRoot }
 
-            TransitionModeRow { tab: wallpaperTabRoot }
+            Loader {
+                Layout.fillWidth: true
+                active: wallpaperTabRoot.deferredStage >= 1
+                sourceComponent: TransitionModeRow { tab: wallpaperTabRoot }
+            }
 
-            TransitionEffectsSection { tab: wallpaperTabRoot }
+            Loader {
+                Layout.fillWidth: true
+                active: wallpaperTabRoot.deferredStage >= 2
+                sourceComponent: TransitionEffectsSection { tab: wallpaperTabRoot }
+            }
         }
     }
 }

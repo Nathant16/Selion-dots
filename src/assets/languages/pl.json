@@ -339,6 +339,12 @@
           "desc": "Zezwalaj na odblokowanie ekranu blokady odciskiem palca",
           "manage": "Konfiguruj..."
         },
+        "prompt_backdrop": {
+          "title": "Tło monitu o hasło",
+          "desc": "Pokaż pulpit lub tapetę za monitem o hasło",
+          "desktop": "Pulpit",
+          "wallpaper": "Tapeta"
+        },
         "background": {
           "select": "Wybierz tło",
           "follow": "Podążaj za tapetą",

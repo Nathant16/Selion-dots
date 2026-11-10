@@ -339,6 +339,12 @@
           "desc": "Allow unlocking the lock screen with a fingerprint",
           "manage": "Configure..."
         },
+        "prompt_backdrop": {
+          "title": "Prompt background",
+          "desc": "Show the desktop or wallpaper behind the password prompt",
+          "desktop": "Desktop",
+          "wallpaper": "Wallpaper"
+        },
         "background": {
           "select": "Select background",
           "follow": "Follow wallpaper",

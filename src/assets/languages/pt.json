@@ -339,6 +339,12 @@
           "desc": "Permitir desbloquear a tela de bloqueio com uma impressão digital",
           "manage": "Configurar..."
         },
+        "prompt_backdrop": {
+          "title": "Fundo do pedido de senha",
+          "desc": "Mostrar a área de trabalho ou o papel de parede atrás do pedido de senha",
+          "desktop": "Área de trabalho",
+          "wallpaper": "Papel de parede"
+        },
         "background": {
           "select": "Selecionar plano de fundo",
           "follow": "Seguir papel de parede",

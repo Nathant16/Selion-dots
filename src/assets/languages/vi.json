@@ -339,6 +339,12 @@
           "desc": "Cho phép mở khóa màn hình khóa bằng vân tay",
           "manage": "Cấu hình..."
         },
+        "prompt_backdrop": {
+          "title": "Nền của ô nhập mật khẩu",
+          "desc": "Hiển thị màn hình nền hoặc hình nền phía sau ô nhập mật khẩu",
+          "desktop": "Màn hình nền",
+          "wallpaper": "Hình nền"
+        },
         "background": {
           "select": "Chọn nền",
           "follow": "Theo hình nền",

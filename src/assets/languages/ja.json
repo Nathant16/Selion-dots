@@ -339,6 +339,12 @@
           "desc": "指紋でロック画面を解除できるようにします",
           "manage": "設定..."
         },
+        "prompt_backdrop": {
+          "title": "パスワード入力の背景",
+          "desc": "パスワード入力の背景にデスクトップまたは壁紙を表示します",
+          "desktop": "デスクトップ",
+          "wallpaper": "壁紙"
+        },
         "background": {
           "select": "背景を選択",
           "follow": "壁紙に従う",

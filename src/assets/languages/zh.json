@@ -339,6 +339,12 @@
           "desc": "允许使用指纹解锁锁屏",
           "manage": "配置..."
         },
+        "prompt_backdrop": {
+          "title": "密码输入框背景",
+          "desc": "在密码输入框后显示桌面或壁纸",
+          "desktop": "桌面",
+          "wallpaper": "壁纸"
+        },
         "background": {
           "select": "选择背景",
           "follow": "跟随壁纸",

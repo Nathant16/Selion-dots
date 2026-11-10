@@ -13,7 +13,8 @@ GuideTab {
     })
 
     property var displaySettings: JSON.parse(JSON.stringify(Config.getSetting("display", defaultDisplaySettings)))
-    property var monitorsList: []
+    property var monitorsList: DisplayCache.monitors
+    property bool animateCards: false
 
     readonly property string compositor: Compositor.name
 
@@ -341,8 +342,12 @@ GuideTab {
                 } catch (e) {
                 }
                 if (mList.length > 0) {
-                    displayTabRoot.monitorsList = mList;
+                    if (JSON.stringify(mList) !== JSON.stringify(displayTabRoot.monitorsList)) {
+                        displayTabRoot.monitorsList = mList;
+                        DisplayCache.monitors = mList;
+                    }
                     displayTabRoot.refreshDisplaySettings();
+                    Qt.callLater(function() { displayTabRoot.animateCards = true; });
                 } else {
                     displayTabRoot.loadFallbackScreens();
                 }
@@ -378,7 +383,7 @@ GuideTab {
 
     function reloadMonitors() {
         if (displayTabRoot.compositor === "niri" || displayTabRoot.compositor === "sway" || displayTabRoot.compositor === "mango" || displayTabRoot.compositor === "hyprland") {
-            monitorDetector.running = false;
+            if (monitorDetector.running) return;
             monitorDetector.running = true;
         } else {
             loadFallbackScreens();
@@ -512,16 +517,20 @@ GuideTab {
 
     Component.onCompleted: {
         displayTabRoot.refreshDisplaySettings();
-        displayTabRoot.loadFallbackScreens();
+        if (DisplayCache.monitors.length > 0) {
+            Qt.callLater(function() { displayTabRoot.animateCards = true; });
+        } else {
+            displayTabRoot.loadFallbackScreens();
+        }
         if (visible) {
-            reloadMonitorsDebounceTimer.restart();
+            displayTabRoot.reloadMonitors();
         }
     }
 
     onVisibleChanged: {
         if (visible) {
             displayTabRoot.refreshDisplaySettings();
-            reloadMonitorsDebounceTimer.restart();
+            displayTabRoot.reloadMonitors();
         } else {
             reloadMonitorsDebounceTimer.stop();
         }
@@ -535,19 +544,13 @@ GuideTab {
                 displayTabRoot.reloadMonitors();
             }
         }
-        function onCurrentTabChanged() {
-            if (rootObj && rootObj.currentTab === displayTabRoot.tabIndex) {
-                displayTabRoot.refreshDisplaySettings();
-                displayTabRoot.reloadMonitors();
-            }
-        }
     }
 
     Connections {
         target: Quickshell
         function onScreensChanged() {
             displayTabRoot.refreshDisplaySettings();
-            displayTabRoot.reloadMonitors();
+            reloadMonitorsDebounceTimer.restart();
         }
     }
 
