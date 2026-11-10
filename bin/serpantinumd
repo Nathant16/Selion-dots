@@ -272,7 +272,7 @@ if [ "$COMMAND" == "start" ]; then
     fi
 
     # Ensure state compatibility symlinks for focustime across quickshell, serpantinum, and share
-    mkdir -p "$HOME/.local/state/quickshell" "$HOME/.local/state/serpantinum" "$HOME/.local/share" 2>/dev/null || true
+    mkdir -p "$HOME/.local/state/quickshell/focustime" "$HOME/.local/state/serpantinum" "$HOME/.local/share" 2>/dev/null || true
     if [ -f "$HOME/.local/state/serpantinum/focustime/focustime.db" ] && [ ! -s "$HOME/.local/state/quickshell/focustime/focustime.db" ]; then
         mkdir -p "$HOME/.local/state/quickshell/focustime" 2>/dev/null || true
         cp -a "$HOME/.local/state/serpantinum/focustime"/* "$HOME/.local/state/quickshell/focustime/" 2>/dev/null || true

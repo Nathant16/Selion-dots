@@ -682,6 +682,21 @@ deploy_package() {
         sudo udevadm trigger --subsystem-match=usb 2>/dev/null || true
     fi
 
+    # Deploy battery threshold rules for laptops
+    if [ -f "$TARGET_BASE/src/assets/udev/51-battery-threshold.rules" ]; then
+        sudo mkdir -p /etc/udev/rules.d 2>/dev/null || true
+        sudo cp "$TARGET_BASE/src/assets/udev/51-battery-threshold.rules" /etc/udev/rules.d/51-battery-threshold.rules 2>/dev/null || true
+        sudo udevadm control --reload-rules 2>/dev/null || true
+        sudo udevadm trigger --subsystem-match=power_supply 2>/dev/null || true
+    fi
+
+    # Deploy power & sysfs sudoers rules for battery thresholds and performance tuning
+    if [ -f "$TARGET_BASE/src/assets/sudoers/99-serpantinum-power" ]; then
+        sudo mkdir -p /etc/sudoers.d 2>/dev/null || true
+        sudo cp "$TARGET_BASE/src/assets/sudoers/99-serpantinum-power" /etc/sudoers.d/99-serpantinum-power 2>/dev/null || true
+        sudo chmod 440 /etc/sudoers.d/99-serpantinum-power 2>/dev/null || true
+    fi
+
     # Deploy polkit rules for powerprofilesctl and fprintd passwordless management
     if [ -f "$TARGET_BASE/src/assets/polkit/49-power-profiles.rules" ]; then
         sudo mkdir -p /etc/polkit-1/rules.d 2>/dev/null || true

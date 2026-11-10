@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys, json, urllib.request
+from datetime import datetime
 
 lat = sys.argv[1] if len(sys.argv) > 1 else '55.04'
 lon = sys.argv[2] if len(sys.argv) > 2 else '82.93'
@@ -40,8 +41,11 @@ for day in data.get('weather', []):
         hums.append(int(h.get('humidity', 0)))
         winds.append(float(h.get('windspeedKmph', 0)))
 
+curr_time = times[0] if times else datetime.now().strftime('%Y-%m-%dT%H:00')
+
 om_data = {
     'current': {
+        'time': curr_time,
         'temperature_2m': float(curr.get('temp_C', 0)),
         'weather_code': wwo_to_wmo(curr.get('weatherCode', 113)),
         'is_day': 1

@@ -26,7 +26,10 @@ qs_ensure_cache() {
     local WIDGET_STATE="$QS_STATE_DIR/$WIDGET_NAME"
     local WIDGET_RUN="$QS_RUN_DIR/$WIDGET_NAME"
     
-    [[ -d "$WIDGET_RUN" && -d "$WIDGET_STATE" && -d "$WIDGET_CACHE" ]] || mkdir -p "$WIDGET_CACHE" "$WIDGET_STATE" "$WIDGET_RUN"
+    if [ -L "$WIDGET_STATE" ] && [ ! -e "$WIDGET_STATE" ]; then
+        rm -f "$WIDGET_STATE" 2>/dev/null || true
+    fi
+    [[ -d "$WIDGET_RUN" && -d "$WIDGET_STATE" && -d "$WIDGET_CACHE" ]] || mkdir -p "$WIDGET_CACHE" "$WIDGET_STATE" "$WIDGET_RUN" 2>/dev/null || true
     
     export "QS_CACHE_${WIDGET_UPPER}=$WIDGET_CACHE"
     export "QS_STATE_${WIDGET_UPPER}=$WIDGET_STATE"

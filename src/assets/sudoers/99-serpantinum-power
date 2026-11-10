@@ -1,0 +1,6 @@
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/class/power_supply/*/*
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/devices/system/cpu/*/*
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/devices/system/cpu/*/*/*
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /proc/sys/vm/*
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /proc/sys/kernel/*
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/module/*/*

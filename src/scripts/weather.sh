@@ -154,7 +154,7 @@ mark_offline_if_stale() {
 fetch_air_quality() {
     local aqi_url aqi_api
     aqi_url="https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${1}&longitude=${2}&timezone=${3}&current=us_aqi&hourly=us_aqi"
-    aqi_api=$(curl -sf --max-time 15 "$aqi_url")
+    aqi_api=$(curl -sf --connect-timeout 2 --max-time 4 "$aqi_url")
     if [ -n "$aqi_api" ] && echo "$aqi_api" | jq -e '.hourly.us_aqi' >/dev/null 2>&1; then
         echo "$aqi_api" > "$aqi_file"
     else
@@ -194,7 +194,7 @@ get_data() {
 
     if [[ "$VERBOSE" == "true" ]]; then
         log_debug "Executing curl payload fetch..."
-        raw_api=$(curl -sS --max-time 3 "$forecast_url" 2>&1)
+        raw_api=$(curl -sS --connect-timeout 2 --max-time 4 "$forecast_url" 2>&1)
         curl_status=$?
         log_debug "Curl exit status code: $curl_status"
         if [ $curl_status -ne 0 ]; then
@@ -207,7 +207,7 @@ get_data() {
             log_debug "Successfully downloaded API payload. Payload size: ${#raw_api} bytes."
         fi
     else
-        raw_api=$(curl -sf --max-time 3 "$forecast_url")
+        raw_api=$(curl -sf --connect-timeout 2 --max-time 4 "$forecast_url")
     fi
     
     if [ -z "$raw_api" ]; then
@@ -262,12 +262,12 @@ process_forecast() {
       ($root.current.is_day) as $c_day |
       wmo_map($c_code; $c_day) as $c_map |
 
-      ($root.current.time | split("T")[0]) as $today |
+      ((($root.current.time // $root.hourly.time[0] // "") | split("T")[0]) // "") as $today |
 
       (
         [
           range(0; $root.hourly.time | length) as $idx |
-          select(($root.hourly.time[$idx] | split("T")[0]) >= $today) | {
+          select($today == "" or ($root.hourly.time[$idx] | split("T")[0]) >= $today) | {
             time_raw: $root.hourly.time[$idx],
             temp: $root.hourly.temperature_2m[$idx],
             feels_like: $root.hourly.apparent_temperature[$idx],
@@ -369,8 +369,11 @@ if [[ "$ACTION" == "--getdata" ]]; then
     get_data
 
 elif [[ "$ACTION" == "--json" ]]; then
-    CACHE_LIMIT=900
-    PENDING_RETRY_LIMIT=3600
+    local interval_mins
+    interval_mins=$(get_setting general.weatherInterval 15 2>/dev/null)
+    [[ -z "$interval_mins" || "$interval_mins" == "null" || "$interval_mins" -lt 1 ]] && interval_mins=15
+    CACHE_LIMIT=$((interval_mins * 60))
+    PENDING_RETRY_LIMIT=60
 
     loc_json=$(get_location)
     cur_lat=$(echo "$loc_json" | jq -r '.latitude // empty' 2>/dev/null)
@@ -417,7 +420,8 @@ elif [[ "$ACTION" == "--json" ]]; then
         diff=$((current_time - file_time))
         log_debug "JSON cache file age: $diff seconds (Limit: $CACHE_LIMIT)"
         offline_desc="$(t "weather.desc.offline")"
-        if grep -q "\"desc\": \"${offline_desc}\"" "$json_file"; then
+        is_offline=$(jq -r '.offline // false' "$json_file" 2>/dev/null)
+        if [[ "$is_offline" == "true" ]] || grep -q "\"desc\": \"${offline_desc}\"" "$json_file"; then
             log_debug "Cache contains offline dummy data. Retry limit check: $diff vs $PENDING_RETRY_LIMIT"
             if [ $diff -gt $PENDING_RETRY_LIMIT ]; then
                 log_debug "Wiping and updating background cache due to stale offline marker."

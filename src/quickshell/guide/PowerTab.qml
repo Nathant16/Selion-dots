@@ -151,7 +151,7 @@ GuideTab {
 
                     powerTabRoot.thresholdEnd = Number(d.threshold_end) || 100;
                     powerTabRoot.hasThresholdSupport = Boolean(d.has_threshold_support);
-                    powerTabRoot.conservationMode = Boolean(d.is_conservation_mode || powerTabRoot.thresholdEnd <= 80);
+                    powerTabRoot.conservationMode = Boolean(d.is_conservation_mode || powerTabRoot.thresholdEnd < 100);
                     powerTabRoot.healthPct = Number(d.health_pct) || 100.0;
                     powerTabRoot.optimizationsModel = d.optimizations || [];
 
@@ -502,7 +502,7 @@ GuideTab {
                                 stepSize: 5
                                 decimals: 0
                                 suffix: "%"
-                                value: Math.max(70, Math.min(95, powerTabRoot.thresholdEnd))
+                                value: Math.max(70, Math.min(95, powerTabRoot.thresholdEnd < 100 ? powerTabRoot.thresholdEnd : 80))
                                 baseColor: ThemeBackend.surface0
                                 accentColor: ThemeBackend.mauve
                                 buttonColor: ThemeBackend.surface1
@@ -514,15 +514,18 @@ GuideTab {
                                 fontFamily: ThemeBackend.fontFamily
                                 fontPixelSize: rootObj.s(11)
                                 onValueChanged: function(val) {
+                                    if (!powerTabRoot.conservationMode) return;
                                     let num = (typeof val === "number" && !isNaN(val)) ? val : value;
                                     let rounded = Math.round(num / 5) * 5;
-                                    if (!isNaN(rounded) && rounded >= 70 && rounded <= 95 && powerTabRoot.thresholdEnd !== rounded) {
+                                    if (!isNaN(rounded) && rounded >= 70 && rounded <= 95 && powerTabRoot.thresholdEnd !== rounded && powerTabRoot.thresholdEnd < 100) {
                                         powerTabRoot.setLimit(rounded);
                                     }
                                 }
                                 onTriggered: {
-                                    let rounded = Math.round(limitSelector.value / 5) * 5;
-                                    powerTabRoot.setLimit(rounded);
+                                    if (powerTabRoot.conservationMode) {
+                                        let rounded = Math.round(limitSelector.value / 5) * 5;
+                                        powerTabRoot.setLimit(rounded);
+                                    }
                                 }
                             }
                         }

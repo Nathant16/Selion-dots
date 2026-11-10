@@ -96,7 +96,7 @@ def get_json_data():
         th_end = int(read_val(end_file, "100")) if has_threshold_support else 100
     except ValueError:
         th_end = 100
-    is_conservation = (th_end <= 80)
+    is_conservation = (th_end < 100)
 
     if not has_bat:
         return {
@@ -479,12 +479,17 @@ def set_limit(limit_val):
             print("\033[1;31mНеверное значение. Примеры: battery limit 80  или  battery limit 100\033[0m")
             return False
 
+    has_start = os.path.exists(start_path)
+
     # Write in safe order to avoid kernel rejecting threshold if end < start
-    if target_end > current_end:
-        write_val(end_path, target_end)
-        write_val(start_path, target_start)
+    if has_start:
+        if target_end > current_end:
+            write_val(end_path, target_end)
+            write_val(start_path, target_start)
+        else:
+            write_val(start_path, target_start)
+            write_val(end_path, target_end)
     else:
-        write_val(start_path, target_start)
         write_val(end_path, target_end)
 
     print(f"\033[1;32m✔ Режим защиты аккумулятора:\033[0m {desc}")
