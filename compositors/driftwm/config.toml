@@ -69,7 +69,7 @@ app_id = "kitty"
 size = [960, 600]
 
 [[window_rules]]
-app_id = "nemo"
+app_id = "ski"
 decoration = "minimal"
 
 [keybindings]
@@ -79,7 +79,7 @@ decoration = "minimal"
 
 # Терминал, файловый менеджер и монитор процессов
 "mod+return" = "exec kitty"
-"mod+e" = "exec nemo"
+"mod+e" = "exec ski"
 "ctrl+shift+escape" = "exec kitty -e btop"
 
 # Управление окнами

@@ -2,7 +2,7 @@
 
 # Terminal, File Manager & Task Manager
 bindsym $mod+Return exec $terminal
-bindsym $mod+E exec nemo
+bindsym $mod+E exec ski
 bindsym Ctrl+Shift+Escape exec $terminal -e btop
 
 # App Shortcuts (Synchronized with PC)

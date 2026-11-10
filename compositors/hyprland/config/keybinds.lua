@@ -10,7 +10,7 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- ==> Terminal, File Manager & Task Manager
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal), { description = "Open terminal" })
-hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("nemo"), { description = "Open file manager" })
+hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("ski"), { description = "Open file manager" })
 hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd(terminal .. " -e btop"), { description = "Open system monitor" })
 
 -- ==> App Launchers (Synchronized with PC userprefs.lua)
