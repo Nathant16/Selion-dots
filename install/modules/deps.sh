@@ -236,6 +236,9 @@ install_dependencies() {
 
     local target_list=("${REQUIRED_PKGS[@]}")
     for comp in "${compositors[@]}"; do
+        if [[ "$comp" == "driftwm" ]] && command -v driftwm &>/dev/null; then
+            continue
+        fi
         target_list+=("$(compositor_package_name "$comp")")
     done
 

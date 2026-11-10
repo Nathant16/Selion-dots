@@ -530,6 +530,7 @@ deploy_package() {
                                 local target_config_name
                                 case "$comp" in
                                     hyprland) target_config_name="hypr" ;;
+                                    driftwm) target_config_name="driftwm" ;;
                                     niri) target_config_name="niri" ;;
                                     sway) target_config_name="sway" ;;
                                     *) target_config_name="$comp" ;;
@@ -576,6 +577,7 @@ deploy_package() {
                                 local target_config_name
                                 case "$comp" in
                                     hyprland) target_config_name="hypr" ;;
+                                    driftwm) target_config_name="driftwm" ;;
                                     niri) target_config_name="niri" ;;
                                     sway) target_config_name="sway" ;;
                                     *) target_config_name="$comp" ;;

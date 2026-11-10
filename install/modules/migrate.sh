@@ -4,6 +4,7 @@ get_compositor_config_dir_name() {
     local comp="$1"
     case "$comp" in
         hyprland) echo "hypr" ;;
+        driftwm) echo "driftwm" ;;
         niri) echo "niri" ;;
         sway) echo "sway" ;;
         *) echo "$comp" ;;
