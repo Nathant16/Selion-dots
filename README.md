@@ -1,14 +1,26 @@
 <div align="center">
-  <img src="docs/assets/banner.png" alt="Selion" width="850" />
+  <img src="docs/assets/banner.png" alt="Selion Shell" width="850" />
+
+  <p align="center">
+    A modern, highly customizable, and fluid desktop shell for Wayland.
+  </p>
+
+  <p align="center">
+    <a href="https://github.com/Nathant16/Selion-dots/releases">
+      <img src="https://img.shields.io/badge/version-2.6.1-blue.svg?style=for-the-badge" alt="Version 2.6.1" />
+    </a>
+    <a href="https://t.me/Nathant16">
+      <img src="https://img.shields.io/badge/Telegram-@Nathant16-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram" />
+    </a>
+    <a href="LICENSE.md">
+      <img src="https://img.shields.io/badge/License-AGPL--3.0-green.svg?style=for-the-badge" alt="License" />
+    </a>
+  </p>
 </div>
 
-<div align="center">
-  <a href="https://t.me/Nathant16">
-    <img src="https://img.shields.io/badge/Telegram-@Nathant16-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram" />
-  </a>
-</div>
+---
 
-## Previews
+## 📸 Previews
 
 | | |
 |---|---|
@@ -17,89 +29,72 @@
 
 ---
 
-## Installation
+## 🚀 Installation
 
-### Arch Linux, Fedora, Void Linux and their derivatives
-
-For Arch-based distributions (including systemd, OpenRC, and other init systems), for Fedora-based distributions such as Nobara and Ultramarine, and for Void Linux (glibc and musl), run the automated installation script. It detects your distribution and uses `pacman`, `dnf` or `xbps`.
-
-Use this installer:
+Run the automated installer on any supported distribution (**Arch Linux**, **Fedora**, **Void Linux** and their derivatives):
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Nathant16/Selion-dots/master/install/install.sh)"
 ```
 
-> [!NOTE]
-> To update, run the script again and choose "update".
+> [!TIP]
+> **To update:** Either run the command above and choose **`6. Update`**, or click the **Update** button inside the **Settings → About** tab. Your custom configurations, keybindings, and preferences will be preserved.
 
 ---
 
-### NixOS
+## ✨ Features
 
-See the [NixOS installation guide](https://serpantinum.dev/installation/nixos) for flake setup, the NixOS and Home Manager modules, and updating.
-
----
-
-## Audio engine
-
-The equalizer, balance, mono, channel swap, dynamic range modes and the dynamic EQ run on [serpantinum-audio](https://github.com/ilyamiro/serpantinum-audio), a small PipeWire processor that replaces EasyEffects. The installer and the packages install it, and on the first start after updating, Serpantinum hands your audio over from EasyEffects. See the [audio engine guide](https://serpantinum.dev/audio).
-
----
-
-## Blue light filter
-
-The blue light filter and its day and night schedule run on [serpantinum-gamma](https://github.com/ilyamiro/serpantinum-gamma), a small Wayland daemon that replaces wl-gammarelay-rs. The installer and the packages install it. Serpantinum starts it the first time a filter is turned on and stops it on exit.
-
----
-
-## Supported compositors
-
-Hyprland, Niri, Sway and Mango. The installer detects the running compositor and deploys its configuration. On Fedora, Mango is installed from the Terra repository. On Void Linux, Hyprland is installed from the third-party black-hole.dev repository.
+- **Supported Compositors:** Full integration with **Hyprland**, **Sway**, **DriftWM**, and **Niri**.
+- **Dynamic Theming:** Powered by **Material You** (`matugen`) — automatically derives accent colors from your wallpaper or lets you choose manual presets, dynamically theming GTK, Qt, Kitty, Fish, and Fastfetch.
+- **Terminal & Shell Out-of-the-Box:**
+  - **Fish Shell** with a custom two-line prompt, theme synchronization on the fly, and handy aliases (`eza`, `bat`, `zoxide`).
+  - **Fastfetch** with a 7-step vertical color gradient matching the active theme palette.
+  - **Kitty** terminal preconfigured with `JetBrainsMono Nerd Font` and Fish.
+  - **Starship** prompt support (`starship.toml`).
+- **Complete Desktop Suite:**
+  - Modular **Top Bar** with system monitors, workspaces, media player, and weather cards.
+  - Smart **Dock** with app pinning, running indicators, and context menus.
+  - Fullscreen/windowed **App Launcher** with instant fuzzy search.
+  - **Control Center / Quick Actions** for volume, brightness, Bluetooth, Wi-Fi, night light, and power profiles.
+  - **Lockscreen** with modern clock styles, pam fprintd fingerprint support, and media controls.
+- **Laptop & Power Management:**
+  - Battery charge threshold support (Conservation mode: 80% / custom limit).
+  - Power profiles (Power Saver, Balanced, Performance) with automated CPU frequency controls and boost management.
+- **Curated Wallpapers:** Includes a built-in collection of 130+ UHD/QHD wallpapers with recursive indexing and live preview.
 
 ---
 
-## Running
+## ⌨️ Quick Controls
 
-To run the shell, launch `serpantinumd start`
-
-For configuration, see the [configuration guide](https://serpantinum.dev/configure).
-
-<br><br><br>
-
-<div align="center">
-  <h3>Thanks to all contributors</h3>
-  <br>
-
-  <a href="https://github.com/TheRinder2"><img src="https://avatars.githubusercontent.com/u/48689803?v=4&s=48" width="48" height="48" alt="TheRinder2"></a>
-  <a href="https://github.com/bizneskind-droid"><img src="https://avatars.githubusercontent.com/u/245046997?v=4&s=48" width="48" height="48" alt="bizneskind-droid"></a>
-  <a href="https://github.com/Pigeon78"><img src="https://avatars.githubusercontent.com/u/151051379?v=4&s=48" width="48" height="48" alt="Pigeon78"></a>
-  <a href="https://github.com/Eduarduar"><img src="https://avatars.githubusercontent.com/u/104547727?v=4&s=48" width="48" height="48" alt="Eduarduar"></a>
-  <a href="https://github.com/Spinty-dev"><img src="https://avatars.githubusercontent.com/u/123001216?v=4&s=48" width="48" height="48" alt="Spinty-dev"></a>
-  <a href="https://github.com/MrDexstor"><img src="https://avatars.githubusercontent.com/u/97257847?v=4&s=48" width="48" height="48" alt="MrDexstor"></a>
-  <a href="https://github.com/coloramamoe"><img src="https://avatars.githubusercontent.com/u/117035740?v=4&s=48" width="48" height="48" alt="coloramamoe"></a>
-  <a href="https://github.com/Zyxilon"><img src="https://avatars.githubusercontent.com/u/234867627?v=4&s=48" width="48" height="48" alt="Zyxilon"></a>
-  <a href="https://github.com/gouthamkrishnap"><img src="https://avatars.githubusercontent.com/u/224089015?v=4&s=48" width="48" height="48" alt="gouthamkrishnap"></a>
-  <a href="https://github.com/Stoltembergg"><img src="https://avatars.githubusercontent.com/u/312632452?v=4&s=48" width="48" height="48" alt="Stoltembergg"></a>
-  <a href="https://github.com/andckadir"><img src="https://avatars.githubusercontent.com/u/175446585?v=4&s=48" width="48" height="48" alt="andckadir"></a>
-  <a href="https://github.com/ArseniiTkachuk"><img src="https://avatars.githubusercontent.com/u/257102547?v=4&s=48" width="48" height="48" alt="ArseniiTkachuk"></a>
-  <a href="https://github.com/MCUxDaredevil"><img src="https://avatars.githubusercontent.com/u/59441946?v=4&s=48" width="48" height="48" alt="MCUxDaredevil"></a>
-  <a href="https://github.com/MILKv2"><img src="https://avatars.githubusercontent.com/u/142674287?v=4&s=48" width="48" height="48" alt="MILKv2"></a>
-  <a href="https://github.com/pedrolourencosilva"><img src="https://avatars.githubusercontent.com/u/184855780?v=4&s=48" width="48" height="48" alt="pedrolourencosilva"></a>
-  <a href="https://github.com/Vaspyyy"><img src="https://avatars.githubusercontent.com/u/197029450?v=4&s=48" width="48" height="48" alt="Vaspyyy"></a>
-  <a href="https://github.com/Sergi122"><img src="https://avatars.githubusercontent.com/u/171693999?v=4&s=48" width="48" height="48" alt="Sergi122"></a>
-  <a href="https://github.com/Syrup5845"><img src="https://avatars.githubusercontent.com/u/310795939?v=4&s=48" width="48" height="48" alt="Syrup5845"></a>
-  <a href="https://github.com/forteleaf"><img src="https://avatars.githubusercontent.com/u/14119264?v=4&s=48" width="48" height="48" alt="forteleaf"></a>
-  <a href="https://github.com/kranks-uga"><img src="https://avatars.githubusercontent.com/u/179175113?v=4&s=48" width="48" height="48" alt="kranks-uga"></a>
-  <a href="https://github.com/zynx-real"><img src="https://avatars.githubusercontent.com/u/320626542?v=4&s=48" width="48" height="48" alt="zynx-real"></a>
-</div>
-
-<br><br>
+| Keybinding | Action |
+|---|---|
+| <kbd>Super</kbd> | Toggle App Launcher |
+| <kbd>Super</kbd> + <kbd>Return</kbd> | Open Kitty Terminal |
+| <kbd>Super</kbd> + <kbd>I</kbd> | Open Settings / Guide |
+| <kbd>Super</kbd> + <kbd>E</kbd> | Open File Manager |
+| <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> | Screenshot tool (Satty / Grim) |
+| <kbd>Super</kbd> + <kbd>L</kbd> | Lock Screen |
+| <kbd>Super</kbd> + <kbd>Q</kbd> | Close focused window |
 
 ---
 
-## License
+## 🛠️ Service Management
 
-Copyright (C) 2026 Illia Miroshnichenko
+To start or restart the shell manually:
 
-This project is licensed under the GNU Affero General Public License version 3, or (at your option) any later version. See the [LICENSE.md](LICENSE.md) file for the full license text.
+```bash
+# Start shell daemon
+serpantinumd start
 
+# Restart shell
+serpantinumd restart
+
+# Stop shell
+serpantinumd stop
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the [GNU Affero General Public License v3.0](LICENSE.md).
