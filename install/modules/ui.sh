@@ -29,7 +29,7 @@ CPU_INFO=$(grep -m 1 'model name' /proc/cpuinfo 2>/dev/null | cut -d: -f2 | xarg
 [[ -z "$CPU_INFO" ]] && CPU_INFO="$(t "installer.os.unknown_cpu")"
 
 GPU_RAW=$(lspci -nn 2>/dev/null | grep -iE 'vga|3d|display' || true)
-GPU_INFO=$(echo "$GPU_RAW" | cut -d: -f3 | sed -E 's/ \(rev [0-9a-f]+\)//g' | xargs)
+GPU_INFO=$(echo "$GPU_RAW" | sed -E 's/^[^:]+:[^:]+: //; s/ \[[0-9a-f]{4}:[0-9a-f]{4}\]//g; s/ \(rev [0-9a-f]+\)//g' | paste -sd ', ' - | xargs)
 [[ -z "$GPU_INFO" ]] && GPU_INFO="$(t "installer.os.unknown_gpu")"
 
 cleanup_terminal() {
@@ -130,6 +130,14 @@ init_compositor_detection() {
     fi
 }
 
+_pad_label() {
+    local text="$1"
+    local width="${2:-18}"
+    local pad=$(( width - ${#text} ))
+    (( pad < 1 )) && pad=1
+    printf "%s%*s" "$text" "$pad" ""
+}
+
 draw_banner() {
     clear
     printf "%s%s" "$BOLD" "$C_CYAN"
@@ -147,14 +155,31 @@ EOF
     local OSC8_TG=$'\e]8;;https://t.me/Nathant16\a'
     local OSC8_END=$'\e]8;;\a'
 
+    local lbl_gh="$(t "installer.ui.github")"
+    local lbl_tg="$(t "installer.ui.telegram")"
+    local lbl_user="$(t "installer.ui.user")"
+    local lbl_os="$(t "installer.ui.os")"
+    local lbl_cpu="$(t "installer.ui.cpu")"
+    local lbl_gpu="$(t "installer.ui.gpu")"
+    local lbl_ver="$(t "installer.ui.target_version")"
+    local lbl_mode="$(t "installer.ui.install_mode")"
+
+    local col_w=18
+    for lbl in "$lbl_gh" "$lbl_tg" "$lbl_user" "$lbl_os" "$lbl_cpu" "$lbl_gpu" "$lbl_ver" "$lbl_mode"; do
+        (( ${#lbl} + 2 > col_w )) && col_w=$(( ${#lbl} + 2 ))
+    done
+
     printf "\033[K%s--------------------------------------------------------------------------------%s\n" "$C_BLUE" "$RESET"
-    printf "\033[K%s%s $(t "installer.ui.github")%s   %shttps://github.com/%s%s\n" "$BOLD" "$C_GREEN" "$RESET" "$OSC8_GH" "$REPO_SLUG" "$OSC8_END"
-    printf "\033[K%s%s $(t "installer.ui.telegram")%s %shttps://t.me/Nathant16%s\n" "$BOLD" "$C_CYAN" "$RESET" "$OSC8_TG" "$OSC8_END"
+    printf "\033[K%s%s %s%s%shttps://github.com/%s%s\n" "$BOLD" "$C_GREEN" "$(_pad_label "$lbl_gh" "$col_w")" "$RESET" "$OSC8_GH" "$REPO_SLUG" "$OSC8_END"
+    printf "\033[K%s%s %s%s%shttps://t.me/Nathant16%s\n" "$BOLD" "$C_CYAN" "$(_pad_label "$lbl_tg" "$col_w")" "$RESET" "$OSC8_TG" "$OSC8_END"
     printf "\033[K%s--------------------------------------------------------------------------------%s\n" "$C_BLUE" "$RESET"
-    printf "\033[K%s $(t "installer.ui.user")%s %-25s | %s$(t "installer.ui.os")%s %s\n" "$BOLD" "$RESET" "$USER_NAME" "$BOLD" "$RESET" "$OS_NAME"
-    printf "\033[K%s $(t "installer.ui.cpu")%s  %-25s | %s$(t "installer.ui.gpu")%s %s\n" "$BOLD" "$RESET" "$CPU_INFO" "$BOLD" "$RESET" "$GPU_INFO"
+    printf "\033[K%s %s%s%s\n" "$BOLD" "$(_pad_label "$lbl_user" "$col_w")" "$RESET" "$USER_NAME"
+    printf "\033[K%s %s%s%s\n" "$BOLD" "$(_pad_label "$lbl_os" "$col_w")" "$RESET" "$OS_NAME"
+    printf "\033[K%s %s%s%s\n" "$BOLD" "$(_pad_label "$lbl_cpu" "$col_w")" "$RESET" "$CPU_INFO"
+    printf "\033[K%s %s%s%s\n" "$BOLD" "$(_pad_label "$lbl_gpu" "$col_w")" "$RESET" "$GPU_INFO"
     printf "\033[K%s--------------------------------------------------------------------------------%s\n" "$C_BLUE" "$RESET"
-    printf "\033[K%s $(t "installer.ui.target_version")%s %-10s (%-7s) | %s$(t "installer.ui.install_mode")%s %s\n" "$BOLD" "$RESET" "$TARGET_VERSION" "$TARGET_COMMIT" "$BOLD" "$RESET" "$INSTALL_STATE"
+    printf "\033[K%s %s%s%s (%s)\n" "$BOLD" "$(_pad_label "$lbl_ver" "$col_w")" "$RESET" "$TARGET_VERSION" "$TARGET_COMMIT"
+    printf "\033[K%s %s%s%s\n" "$BOLD" "$(_pad_label "$lbl_mode" "$col_w")" "$RESET" "$INSTALL_STATE"
     printf "\033[K%s================================================================================%s\n\n" "$C_BLUE" "$RESET"
 }
 
