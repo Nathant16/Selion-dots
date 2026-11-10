@@ -13,7 +13,8 @@
 
 A modern, highly customizable and fluid desktop shell for Wayland.
 
-A fork of [Serpantinum](https://github.com/ilyamiro/serpantinum).
+A fork of [Serpantinum](https://github.com/ilyamiro/serpantinum).  
+A big thank you to [@ilyamiro](https://github.com/ilyamiro) for gifting us this creation.
 
 [Telegram](https://t.me/Nathant16) • [Releases](https://github.com/Nathant16/Selion-dots/releases) • [License](LICENSE.md)
 
