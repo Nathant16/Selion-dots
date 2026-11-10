@@ -55,6 +55,7 @@ REQUIRED_PKGS=(
     "ffmpeg" "fastfetch" "quickshell"
     "grim" "playerctl" "satty" "xdg-desktop-portal-gtk" "power-profiles-daemon" "qt6-wayland"
     "qt6ct" "adwaita-icon-theme" "gpu-screen-recorder" "wf-recorder" "adw-gtk-theme"
+    "fish" "starship" "bat" "eza" "zoxide" "ttf-jetbrains-mono-nerd"
 )
 
 FAILED_PKGS=()

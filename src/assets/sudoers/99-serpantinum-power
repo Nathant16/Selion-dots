@@ -4,3 +4,4 @@
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /proc/sys/vm/*
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /proc/sys/kernel/*
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/module/*/*
+

@@ -2,6 +2,9 @@
 
 EXTRA_CONFIGS=(
     "kitty"
+    "fastfetch"
+    "fish"
+    "starship.toml"
 )
 
 render_wallpaper_progress() {
@@ -486,10 +489,10 @@ deploy_package() {
             find "$TARGET_BASE/src/scripts" -type f -name "*.sh" -exec chmod +x {} + 2>/dev/null || true
         fi
 
-        if [ "$is_update" != "true" ]; then
-            for cfg in "${EXTRA_CONFIGS[@]}"; do
-                local src_cfg="$REPO_ROOT/config/$cfg"
-                local dest_cfg="$HOME/.config/$cfg"
+        for cfg in "${EXTRA_CONFIGS[@]}"; do
+            local src_cfg="$REPO_ROOT/config/$cfg"
+            local dest_cfg="$HOME/.config/$cfg"
+            if [ "$is_update" != "true" ] || [ ! -e "$dest_cfg" ]; then
                 if [ -d "$src_cfg" ]; then
                     mkdir -p "$dest_cfg"
                     cp -r "$src_cfg/." "$dest_cfg/"
@@ -497,8 +500,8 @@ deploy_package() {
                     mkdir -p "$(dirname "$dest_cfg")"
                     cp "$src_cfg" "$dest_cfg"
                 fi
-            done
-        fi
+            fi
+        done
 
         if [ "$is_update" != "true" ]; then
             for comp in "${COMPOSITORS[@]}"; do
@@ -607,16 +610,17 @@ deploy_package() {
                         chmod +x "$TARGET_BASE/$file" 2>/dev/null || true
                     fi
                 elif [[ "$file" == config/* ]]; then
-                    if [ "$is_update" != "true" ]; then
-                        local rel_cfg="${file#config/}"
-                        local cfg_name="${rel_cfg%%/*}"
-                        for cfg in "${EXTRA_CONFIGS[@]}"; do
-                            if [[ "$cfg" == "$cfg_name" ]]; then
-                                mkdir -p "$(dirname "$HOME/.config/$rel_cfg")"
-                                cp "$REPO_ROOT/$file" "$HOME/.config/$rel_cfg"
+                    local rel_cfg="${file#config/}"
+                    local cfg_name="${rel_cfg%%/*}"
+                    for cfg in "${EXTRA_CONFIGS[@]}"; do
+                        if [[ "$cfg" == "$cfg_name" ]]; then
+                            local dest_file="$HOME/.config/$rel_cfg"
+                            if [ "$is_update" != "true" ] || [ ! -e "$dest_file" ]; then
+                                mkdir -p "$(dirname "$dest_file")"
+                                cp "$REPO_ROOT/$file" "$dest_file"
                             fi
-                        done
-                    fi
+                        fi
+                    done
                 elif [[ "$file" == compositors/* || "$file" == compositor/* ]]; then
                     if [ "$is_update" != "true" ]; then
                         local comp_part="${file#compositor*/}"
@@ -655,6 +659,34 @@ deploy_package() {
     if [ -f "$TARGET_BASE/bin/serpantinumd" ]; then
         ln -sf "$TARGET_BASE/bin/serpantinumd" "$BIN_DIR/serpantinumd"
         sudo ln -sf "$TARGET_BASE/bin/serpantinumd" /usr/local/bin/serpantinumd 2>/dev/null || true
+    fi
+
+    if [ -f "$TARGET_BASE/bin/serpantinum_theme_sync.py" ]; then
+        ln -sf "$TARGET_BASE/bin/serpantinum_theme_sync.py" "$BIN_DIR/serpantinum_theme_sync.py"
+        sudo ln -sf "$TARGET_BASE/bin/serpantinum_theme_sync.py" /usr/local/bin/serpantinum_theme_sync.py 2>/dev/null || true
+        chmod +x "$TARGET_BASE/bin/serpantinum_theme_sync.py" "$BIN_DIR/serpantinum_theme_sync.py" 2>/dev/null || true
+        python3 "$TARGET_BASE/bin/serpantinum_theme_sync.py" 2>/dev/null || true
+    fi
+
+    # Update kitty.conf font and fish shell if needed
+    if [ -f "$HOME/.config/kitty/kitty.conf" ]; then
+        if ! grep -q "JetBrainsMono Nerd Font" "$HOME/.config/kitty/kitty.conf"; then
+            sed -i 's/font_family[[:space:]]\+JetBrains Mono/font_family      JetBrainsMono Nerd Font/' "$HOME/.config/kitty/kitty.conf" 2>/dev/null || true
+        fi
+        if ! grep -q "shell.*fish" "$HOME/.config/kitty/kitty.conf" && command -v fish >/dev/null 2>&1; then
+            echo -e "\nshell $(command -v fish)" >> "$HOME/.config/kitty/kitty.conf"
+        fi
+    fi
+
+    # Set default user shell to fish if installed
+    if command -v fish >/dev/null 2>&1; then
+        local fish_bin
+        fish_bin="$(command -v fish)"
+        if [ "$SHELL" != "$fish_bin" ]; then
+            if grep -Fxq "$fish_bin" /etc/shells 2>/dev/null; then
+                sudo chsh -s "$fish_bin" "$USER" 2>/dev/null || chsh -s "$fish_bin" 2>/dev/null || true
+            fi
+        fi
     fi
 
     # Deploy battery & power optimization tools

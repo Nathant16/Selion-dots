@@ -1,0 +1,61 @@
+# Starship Prompt - Styled for Serpantinum Rice
+add_newline = false
+
+format = """
+
+"""
+
+[os]
+disabled = false
+style = "bold #e0c56d"
+symbols.Arch = "󰣇 "
+
+[directory]
+style = "bold #e0c56d"
+truncation_length = 3
+truncate_to_repo = true
+read_only = " 󰌾"
+home_symbol = "~"
+
+[git_branch]
+style = "bold #abcfb0"
+symbol = " "
+format = "on []() "
+
+[git_status]
+style = "bold #ffb4ab"
+format = "([]() )"
+conflicted = "=${count}"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+[cmd_duration]
+min_time = 2000
+style = "bold #d3c6a1"
+format = "took []() "
+
+[python]
+symbol = " "
+style = "bold #d3c6a1"
+format = "via []() "
+
+[rust]
+symbol = "󱘗 "
+style = "bold #ffb4ab"
+format = "via []() "
+
+[nodejs]
+symbol = "󰎙 "
+style = "bold #abcfb0"
+format = "via []() "
+
+[character]
+success_symbol = "[❯](#e0c56d)"
+error_symbol = "[❯](#ffb4ab)"
+vicmd_symbol = "[❮](#abcfb0)"

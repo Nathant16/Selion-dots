@@ -1,3 +1,12 @@
+### 2.6.1
+
+- feat(shell): default to customized Fish shell with dynamic Selion prompt, color sync and session logout helper
+- feat(fastfetch): add customized Fastfetch theme with 7-level smooth gradient Arch logo and Serpantinum palette sync
+- feat(terminal): update Kitty config to use JetBrainsMono Nerd Font and launch Fish shell by default
+- feat(prompt): add Serpantinum-styled Starship prompt configuration (`starship.toml`)
+- feat(theming): add `serpantinum_theme_sync.py` to synchronize Fish syntax and Fastfetch colors dynamically on theme changes
+- feat(installer): add fish, starship, bat, eza, zoxide and nerd font to dependencies and deploy missing configs on update
+
 ### 2.6.0
 
 - feat(wallpapers): switch wallpaper pack to Selion `wallpapers` branch (130 curated UHD/QHD/FHD wallpapers, 508M) synced inside `~/Pictures/Wallpapers/Selion`
