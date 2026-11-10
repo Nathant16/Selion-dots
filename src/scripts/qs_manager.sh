@@ -126,8 +126,8 @@ NETWORK_MODE_FILE="$QS_NETWORK_CACHE/mode"
 MANIFEST="$THUMB_DIR/.manifest"
 
 build_manifest() {
-    find "$THUMB_DIR" -maxdepth 1 -type f ! -name '.source_dir' ! -name '.manifest' \
-        -printf "%f\n" | sort > "$MANIFEST"
+    find "$THUMB_DIR" -type f ! -name '.source_dir' ! -name '.manifest' \
+        -printf "%P\n" | sort > "$MANIFEST"
 }
 
 handle_wallpaper_prep() {
@@ -147,8 +147,7 @@ handle_wallpaper_prep() {
         if [[ -f "$THUMB_SOURCE_FILE" ]]; then
             read -r CACHED_SRC < "$THUMB_SOURCE_FILE"
             if [[ "$CACHED_SRC" != "$SRC_DIR" ]]; then
-                find "$THUMB_DIR" -maxdepth 1 -type f \
-                    ! -name '.source_dir' ! -name '.manifest' -delete
+                find "$THUMB_DIR" -mindepth 1 ! -name '.source_dir' ! -name '.manifest' -delete 2>/dev/null || true
                 echo "$SRC_DIR" > "$THUMB_SOURCE_FILE"
                 > "$MANIFEST"
             fi
@@ -159,16 +158,48 @@ handle_wallpaper_prep() {
 
         [[ ! -f "$MANIFEST" ]] && build_manifest
 
-        SRC_LIST=$(mktemp)
-        find "$SRC_DIR" -maxdepth 1 -type f \
-            \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \
-               -o -iname "*.gif" -o -iname "*.mp4" -o -iname "*.mkv" \
-               -o -iname "*.mov" -o -iname "*.webm" \) \
-            -printf "%f\n" | sort > "$SRC_LIST"
+        SHOW_SELION="true"
+        SETTINGS_JSON="${QS_SETTINGS:-$HOME/.config/serpantinum/settings.json}"
+        if [[ -f "$SETTINGS_JSON" ]] && command -v jq >/dev/null 2>&1; then
+            val="$(jq -r 'if has("showSelionWallpapers") then .showSelionWallpapers else true end' "$SETTINGS_JSON" 2>/dev/null || echo "true")"
+            [[ "$val" == "false" ]] && SHOW_SELION="false"
+        fi
 
-        comm -23 <(sed 's/^000_//' "$MANIFEST" | sort) "$SRC_LIST" | while read -r orphan; do
-            rm -f "$THUMB_DIR/$orphan" "$THUMB_DIR/000_$orphan"
-            sed -i "/^${orphan}$/d;/^000_${orphan}$/d" "$MANIFEST"
+        SRC_LIST=$(mktemp)
+        if [[ "$SHOW_SELION" == "false" ]]; then
+            if [[ "$(basename "$SRC_DIR")" == "Selion" ]]; then
+                > "$SRC_LIST"
+            else
+                find -L "$SRC_DIR" -type f ! -path '*/.*' ! -path "${SRC_DIR%/}/Selion" ! -path "${SRC_DIR%/}/Selion/*" \
+                    \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \
+                       -o -iname "*.gif" -o -iname "*.mp4" -o -iname "*.mkv" \
+                       -o -iname "*.mov" -o -iname "*.webm" \) \
+                    -printf "%P\n" 2>/dev/null | sort > "$SRC_LIST"
+            fi
+        else
+            find -L "$SRC_DIR" -type f ! -path '*/.*' \
+                \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \
+                   -o -iname "*.gif" -o -iname "*.mp4" -o -iname "*.mkv" \
+                   -o -iname "*.mov" -o -iname "*.webm" \) \
+                -printf "%P\n" 2>/dev/null | sort > "$SRC_LIST"
+        fi
+
+        comm -23 <(sed 's|\(^\|/\)000_|\1|' "$MANIFEST" | sort) "$SRC_LIST" | while IFS= read -r orphan; do
+            [[ -z "$orphan" ]] && continue
+            orphan_dir="$(dirname "$orphan")"
+            orphan_base="$(basename "$orphan")"
+            if [[ "$orphan_dir" == "." ]]; then
+                rm -f "$THUMB_DIR/$orphan_base" "$THUMB_DIR/000_$orphan_base"
+                v_entry="000_$orphan_base"
+            else
+                rm -f "$THUMB_DIR/$orphan" "$THUMB_DIR/$orphan_dir/000_$orphan_base"
+                v_entry="$orphan_dir/000_$orphan_base"
+            fi
+            if [[ -f "$MANIFEST" ]]; then
+                tmp_m="$(mktemp)"
+                grep -vxF -e "$orphan" -e "$v_entry" "$MANIFEST" > "$tmp_m" 2>/dev/null || true
+                mv -f "$tmp_m" "$MANIFEST"
+            fi
         done
 
         while IFS= read -r filename; do
@@ -176,31 +207,42 @@ handle_wallpaper_prep() {
             [[ -f "$img" ]] || continue
 
             extension="${filename##*.}"
+            file_dir="$(dirname "$filename")"
+            file_base="$(basename "$filename")"
 
             if [[ "${extension,,}" == "webp" ]]; then
                 new_img="${img%.*}.jpg"
                 magick "$img" "$new_img" && rm -f "$img"
                 img="$new_img"
-                filename="$(basename "$img")"
+                filename="${filename%.*}.jpg"
+                file_base="$(basename "$filename")"
                 extension="jpg"
             fi
 
             if [[ "${extension,,}" =~ ^(mp4|mkv|mov|webm)$ ]]; then
-                thumb="$THUMB_DIR/000_$filename"
+                if [[ "$file_dir" == "." ]]; then
+                    thumb="$THUMB_DIR/000_$file_base"
+                    v_rel="000_$file_base"
+                else
+                    thumb="$THUMB_DIR/$file_dir/000_$file_base"
+                    v_rel="$file_dir/000_$file_base"
+                fi
+                mkdir -p "$(dirname "$thumb")"
                 [[ -f "$THUMB_DIR/$filename" ]] && rm -f "$THUMB_DIR/$filename"
                 if [[ ! -f "$thumb" ]]; then
                     ffmpeg -y -ss 00:00:05 -i "$img" -vframes 1 \
                         -threads 1 -f image2 -q:v 2 "$thumb" >/dev/null 2>&1 || rm -f "$thumb"
-                    [[ -f "$thumb" ]] && echo "000_$filename" >> "$MANIFEST"
+                    [[ -f "$thumb" ]] && echo "$v_rel" >> "$MANIFEST"
                 fi
             else
                 thumb="$THUMB_DIR/$filename"
+                mkdir -p "$(dirname "$thumb")"
                 if [[ ! -f "$thumb" ]]; then
                     magick "$img" -resize x420 -quality 70 "$thumb" >/dev/null 2>&1 || rm -f "$thumb"
                     [[ -f "$thumb" ]] && echo "$filename" >> "$MANIFEST"
                 fi
             fi
-        done < <(comm -23 "$SRC_LIST" <(sed 's/^000_//' "$MANIFEST" | sort))
+        done < <(comm -23 "$SRC_LIST" <(sed 's|\(^\|/\)000_|\1|' "$MANIFEST" | sort))
 
         rm -f "$SRC_LIST" "$PREP_LOCK"
     ) </dev/null >/dev/null 2>&1 &

@@ -53,6 +53,7 @@
     "activePreset": "Matugen",
     "matugen": true
   },
+  "showSelionWallpapers": true,
   "idle": {
     "enabled": true,
     "actions": {

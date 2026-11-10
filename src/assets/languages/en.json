@@ -358,7 +358,10 @@
               "pills": "Pills",
               "numbers": "Numbers",
               "pacman": "Pacman"
-            }
+            },
+            "pills": "Minimal pill indicators",
+            "numbers": "Numbered indices",
+            "pacman": "Animated arcade dots"
           },
           "name": "Workspaces"
         },
@@ -378,7 +381,10 @@
               "classic": "Classic",
               "material": "Material",
               "badge": "Dot Matrix"
-            }
+            },
+            "classic": "Clean stacked time and date",
+            "material": "Diagonal bold accent numbers",
+            "badge": "Pill-capsule segmented cards"
           }
         },
         "info": "Recording/timer",
@@ -661,6 +667,10 @@
           "button": "Interactive icon buttons with background",
           "icon": "Clean icons without background"
         }
+      },
+      "height": {
+        "title": "Bar height",
+        "desc": "Set the height of the bar as a percentage"
       }
     },
     "theme": {
@@ -752,6 +762,10 @@
             "bottom_left": "From bottom left",
             "bottom_right": "From bottom right"
           }
+        },
+        "show_selion": {
+          "title": "Show Selion wallpapers",
+          "desc": "Include the built-in Selion wallpaper pack alongside your custom wallpapers"
         }
       },
       "apps": {
@@ -1024,7 +1038,8 @@
         "shuffle": "Shuffle Apps",
         "empty": "No applications configured for the dock",
         "enter_edit": "Edit",
-        "exit_edit": "Exit edit mode"
+        "exit_edit": "Exit edit mode",
+        "desc": "Configure and organize applications displayed on the dock"
       },
       "picker": {
         "search": "Search apps...",
@@ -1418,7 +1433,11 @@
     "tab_emojis": "Emojis",
     "placeholder_emojis": "Search emojis by name or keyword...",
     "search_run": "Search {provider}",
-    "search_hint": "Type to search with {provider}"
+    "search_hint": "Type to search with {provider}",
+    "command_run": "Execute command: {cmd}",
+    "command_hint": "Type a command to execute",
+    "calc_result": "Calculation result (Enter to copy)",
+    "no_emojis_found": "No emojis found"
   },
   "calendar": {
     "loading": "Loading...",
@@ -1854,7 +1873,8 @@
       "blue": "Blue",
       "purple": "Purple",
       "pink": "Pink",
-      "monochrome": "Monochrome"
+      "monochrome": "Monochrome",
+      "history": "Recent"
     }
   },
   "weather": {

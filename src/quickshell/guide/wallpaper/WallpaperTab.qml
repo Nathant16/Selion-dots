@@ -43,6 +43,8 @@ WallpaperTabState {
 
             WallpaperDirRow { id: wallpaperDirRow; tab: wallpaperTabRoot }
 
+            ShowSelionRow { tab: wallpaperTabRoot }
+
             TransitionModeRow { tab: wallpaperTabRoot }
 
             TransitionEffectsSection { tab: wallpaperTabRoot }

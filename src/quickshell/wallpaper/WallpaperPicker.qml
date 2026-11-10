@@ -59,9 +59,26 @@ Item {
         let dummy = configSettings;
         return Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || (Quickshell.env("HOME") + "/Pictures/Wallpapers");
     }
+    property bool showSelionWallpapers: {
+        let dummy = configSettings;
+        return Config.getSetting("showSelionWallpapers", true) !== false;
+    }
 
     onSrcDirChanged: {
         window.initialFocusSet = false;
+        window.syncFromSrcModel();
+        window.triggerIndexer();
+    }
+
+    onShowSelionWallpapersChanged: {
+        window.initialFocusSet = false;
+        localProxyModel.clear();
+        videoProxyModel.clear();
+        window.thumbLookup = ({});
+        window.srcNameLookup = ({});
+        window.colorMap = ({});
+        window.bucketMap = ({});
+        window.cacheVersion++;
         window.syncFromSrcModel();
         window.triggerIndexer();
     }
@@ -908,17 +925,32 @@ Item {
 
     function getRecentlyAddedItems() {
         let entries = [];
-        for (let i = 0; i < srcModel.count; i++) {
-            let fn = srcModel.get(i, "fileName");
-            if (fn) entries.push({ "name": String(fn), "time": +srcModel.get(i, "fileModified") });
+        let collectFrom = function(mdl) {
+            for (let i = 0; i < mdl.count; i++) {
+                let it = mdl.get(i);
+                if (it && it.fileName) {
+                    entries.push({ "item": it, "name": String(it.fileName), "time": Number(it.mtime || 0) });
+                }
+            }
+        };
+        collectFrom(localProxyModel);
+        collectFrom(videoProxyModel);
+        if (entries.length === 0) {
+            for (let i = 0; i < srcModel.count; i++) {
+                let fn = srcModel.get(i, "fileName");
+                if (fn) {
+                    let name = String(fn);
+                    let lookup = window.thumbLookup[name] || window.thumbLookup[window.getCleanBaseName(name)];
+                    if (lookup) entries.push({ "item": lookup, "name": name, "time": +srcModel.get(i, "fileModified") });
+                }
+            }
         }
         entries.sort((a, b) => b.time - a.time);
 
         let items = [];
         let seen = {};
         for (let i = 0; i < entries.length; i++) {
-            let name = entries[i].name;
-            let lookup = window.thumbLookup[name] || window.thumbLookup[window.getCleanBaseName(name)];
+            let lookup = entries[i].item;
             if (!lookup || !lookup.fileName || seen[lookup.fileName]) continue;
             seen[lookup.fileName] = true;
             items.push({
@@ -1101,7 +1133,8 @@ Item {
             if (trimmed.length === 0) return;
             try {
                 let data = JSON.parse(trimmed);
-                if (data && data.srcDir === window.srcDir) {
+                if (data && data.srcDir === window.srcDir &&
+                    (data.showSelion === undefined || Boolean(data.showSelion) === window.showSelionWallpapers)) {
                     window.loadIndexData(data);
                 }
             } catch(e) {}
@@ -1112,12 +1145,12 @@ Item {
         id: indexProcess
         running: false
         command: [
-            "serpantinum-core",
-            "wallpaper",
-            "index",
+            "python3",
+            window.scriptDir + "/recursive_index.py",
             window.srcDir,
             Caching.getCacheDir("wallpaper"),
-            Caching.getRunDir("wallpaper")
+            Caching.getRunDir("wallpaper"),
+            window.showSelionWallpapers ? "1" : "0"
         ]
         stdout: StdioCollector {
             onStreamFinished: {
@@ -1174,14 +1207,16 @@ Item {
 
             let clean = window.getCleanName(fname);
             let base = window.getCleanBaseName(fname);
+            let isRootFile = fname.indexOf("/") === -1;
 
             newSrcLookup[fname] = fname;
-            newSrcLookup[clean] = fname;
-            newSrcLookup[base] = fname;
+            if (!newSrcLookup[clean] || isRootFile) newSrcLookup[clean] = fname;
+            if (!newSrcLookup[base] || isRootFile) newSrcLookup[base] = fname;
 
+            item.mtime = Number(item.mtime || 0);
             newThumbLookup[fname] = item;
-            newThumbLookup[clean] = item;
-            newThumbLookup[base] = item;
+            if (!newThumbLookup[clean] || isRootFile) newThumbLookup[clean] = item;
+            if (!newThumbLookup[base] || isRootFile) newThumbLookup[base] = item;
 
             newColorMap[fname] = item.hex || "#808080";
             newBucketMap[fname] = item.bucket || "Monochrome";

@@ -50,27 +50,63 @@ install_wallpapers() {
     local full_pack="${1:-true}"
     local wallpaper_dir
     wallpaper_dir=$(get_wallpaper_dir)
-    local wallpaper_repo="https://github.com/ilyamiro/shell-wallpapers.git"
+    local selion_dir="$wallpaper_dir/Selion"
+    local wallpaper_repo="https://github.com/Nathant16/Selion-dots.git"
+    local wallpaper_branch="wallpapers"
     local clone_dir="${XDG_CACHE_HOME:-"$HOME/.cache"}/serpantinum-wallpapers"
 
-    mkdir -p "$wallpaper_dir"
+    mkdir -p "$wallpaper_dir" "$selion_dir"
 
     local sync_success=false
+    local legacy_marker="${XDG_STATE_HOME:-"$HOME/.local/state"}/serpantinum/legacy_wallpapers_cleaned"
+    mkdir -p "$(dirname "$legacy_marker")"
+
     if [ -d "$clone_dir/.git" ]; then
-        if git -C "$clone_dir" fetch --depth 1 origin 2>/dev/null; then
+        local current_origin current_branch
+        current_origin=$(git -C "$clone_dir" remote get-url origin 2>/dev/null || true)
+        current_branch=$(git -C "$clone_dir" rev-parse --abbrev-ref HEAD 2>/dev/null || true)
+
+        if [[ "$current_origin" != "$wallpaper_repo" || "$current_branch" != "$wallpaper_branch" ]]; then
+            # Clean up only files copied from the legacy upstream wallpaper repo, leaving user files untouched
+            if [[ "$current_origin" == *"shell-wallpapers"* ]]; then
+                while IFS= read -r -d '' old_file; do
+                    local old_name="${old_file##*/}"
+                    if [ -f "$wallpaper_dir/$old_name" ]; then
+                        rm -f "$wallpaper_dir/$old_name"
+                    fi
+                done < <(find "$clone_dir" -type f ! -path '*/.git/*' \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) -print0 2>/dev/null)
+                touch "$legacy_marker"
+            fi
+            rm -rf "$clone_dir"
+        elif git -C "$clone_dir" fetch --depth 1 origin "$wallpaper_branch" 2>/dev/null; then
             if git -C "$clone_dir" reset --hard FETCH_HEAD 2>/dev/null || \
-               git -C "$clone_dir" reset --hard origin/HEAD 2>/dev/null || \
-               git -C "$clone_dir" reset --hard origin/main 2>/dev/null || \
-               git -C "$clone_dir" reset --hard origin/master 2>/dev/null; then
+               git -C "$clone_dir" reset --hard "origin/$wallpaper_branch" 2>/dev/null; then
                 sync_success=true
             fi
         fi
     fi
 
+    if [ ! -f "$legacy_marker" ]; then
+        if [ -n "$(find "$wallpaper_dir" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) -print -quit 2>/dev/null)" ]; then
+            if command -v curl >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
+                local legacy_tree
+                legacy_tree="$(curl -fsSL --connect-timeout 5 "https://api.github.com/repos/ilyamiro/shell-wallpapers/git/trees/HEAD?recursive=1" 2>/dev/null || true)"
+                if [ -n "$legacy_tree" ]; then
+                    while IFS= read -r legacy_rel; do
+                        [[ -z "$legacy_rel" ]] && continue
+                        local legacy_name="${legacy_rel##*/}"
+                        [ -f "$wallpaper_dir/$legacy_name" ] && rm -f "$wallpaper_dir/$legacy_name"
+                    done < <(printf '%s' "$legacy_tree" | jq -r '.tree[]? | select(.type=="blob") | .path | select(test("\\.(jpg|jpeg|png|gif|webp)$"; "i"))' 2>/dev/null || true)
+                fi
+            fi
+        fi
+        touch "$legacy_marker"
+    fi
+
     if [ "$sync_success" != true ]; then
         rm -rf "$clone_dir"
         echo -e "\n\e[36m[ INFO ]\e[0m Cloning wallpapers repository..."
-        git clone --depth 1 "$wallpaper_repo" "$clone_dir" 2>/dev/null || true
+        git clone --depth 1 --branch "$wallpaper_branch" --single-branch "$wallpaper_repo" "$clone_dir" 2>/dev/null || true
     fi
 
     local src_dir="$clone_dir"
@@ -84,36 +120,48 @@ install_wallpapers() {
 
     if [ "$full_pack" = true ]; then
         local files=()
-        while IFS= read -r f; do
-            [[ -n "$f" ]] && files+=("$f")
-        done < <(find "$src_dir" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) 2>/dev/null)
+        declare -A expected_names=()
+        while IFS= read -r -d '' f; do
+            [[ -n "$f" ]] || continue
+            files+=("$f")
+            expected_names["${f##*/}"]=1
+        done < <(find "$src_dir" -type f ! -path '*/.git/*' \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) -print0 2>/dev/null)
 
         local total=${#files[@]}
         local count=0
 
         if [ "$total" -gt 0 ]; then
+            # Remove stale wallpapers inside Selion/ that are no longer in the upstream wallpapers branch
+            while IFS= read -r -d '' existing; do
+                local ex_name="${existing##*/}"
+                if [[ -z "${expected_names[$ex_name]:-}" ]]; then
+                    rm -f "$existing"
+                fi
+            done < <(find "$selion_dir" -maxdepth 1 -type f -print0 2>/dev/null)
+
             for file in "${files[@]}"; do
-                cp "$file" "$wallpaper_dir/" 2>/dev/null || true
+                local dest_file="$selion_dir/${file##*/}"
+                if [ ! -f "$dest_file" ] || ! cmp -s "$file" "$dest_file" 2>/dev/null; then
+                    cp -f "$file" "$dest_file" 2>/dev/null || true
+                fi
                 count=$((count + 1))
                 render_wallpaper_progress "$count" "$total" "Installing wallpapers"
             done
             echo ""
-        else
-            find "$src_dir" -type f ! -name "README.md" ! -name "LICENSE" ! -path "*/.git/*" -exec cp {} "$wallpaper_dir/" \; 2>/dev/null || true
         fi
     else
-        if [ -z "$(ls -A "$wallpaper_dir" 2>/dev/null | grep -iE '\.(jpg|jpeg|png|gif|webp)$')" ]; then
+        if [ -z "$(ls -A "$selion_dir" 2>/dev/null | grep -iE '\.(jpg|jpeg|png|gif|webp)$')" ]; then
             local random_pics=()
             while IFS= read -r pic; do
                 [[ -n "$pic" ]] && random_pics+=("$pic")
-            done < <(find "$src_dir" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) 2>/dev/null | shuf -n 3)
+            done < <(find "$src_dir" -type f ! -path '*/.git/*' \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) 2>/dev/null | shuf -n 3)
 
             local total=${#random_pics[@]}
             local count=0
 
             if [ "$total" -gt 0 ]; then
                 for pic in "${random_pics[@]}"; do
-                    cp "$pic" "$wallpaper_dir/" 2>/dev/null || true
+                    cp -f "$pic" "$selion_dir/" 2>/dev/null || true
                     count=$((count + 1))
                     render_wallpaper_progress "$count" "$total" "Installing wallpapers"
                 done
@@ -121,6 +169,8 @@ install_wallpapers() {
             fi
         fi
     fi
+
+    rm -f "${XDG_CACHE_HOME:-"$HOME/.cache"}/serpantinum/wallpaper/current_index.json" 2>/dev/null || true
 }
 
 resolve_sddm_backend() {

@@ -28,15 +28,14 @@
       "general": "Allgemein",
       "display": "Bildschirm",
       "bar": "Leiste",
-      "launcher": "Launcher",
+      "launcher": "Starter",
       "theme": "Design",
       "notifications": "Benachrichtigungen",
       "idle": "Inaktivität",
       "wellbeing": "Wohlbefinden",
-      "tutorial": "Tutorial",
-      "update": "Update",
+      "tutorial": "Einführung",
+      "update": "Aktualisierung",
       "about": "Über",
-      "autostart": "Autostart",
       "display_widgets": "Widgets",
       "display_general": "Allgemein",
       "osd": "OSD",
@@ -45,7 +44,7 @@
       "bar_modules": "Module",
       "bar_side_modules": "Seitenmodule",
       "display_lockscreen": "Sperrbildschirm",
-      "screenshot": "Screenshot",
+      "screenshot": "Bildschirmfoto",
       "theme_appearance": "Darstellung",
       "theme_apps": "App-Design",
       "theme_wallpapers": "Hintergründe",
@@ -351,7 +350,7 @@
     },
     "bar": {
       "modules": {
-        "vis": "Visualizer",
+        "vis": "Visualisierer",
         "actions": "Aktionen",
         "workspaces": {
           "style": {
@@ -359,7 +358,10 @@
               "pills": "Pillen",
               "numbers": "Zahlen",
               "pacman": "Pacman"
-            }
+            },
+            "pills": "Minimale Pillen-Indikatoren",
+            "numbers": "Nummerierte Indizes",
+            "pacman": "Animierte Arcade-Punkte"
           },
           "name": "Arbeitsbereiche"
         },
@@ -379,11 +381,17 @@
               "classic": "Klassisch",
               "material": "Material",
               "badge": "Punktmatrix"
-            }
+            },
+            "classic": "Übersichtlich gestapelte Zeit und Datum",
+            "material": "Diagonale fette Akzentzahlen",
+            "badge": "Segmentierte Kapselkarten"
           }
         },
         "info": "Aufnahme/Timer",
-        "weather": "Wetter"
+        "weather": "Wetter",
+        "notifications": "Benachrichtigungen",
+        "usage": "Systemauslastung",
+        "clock": "Uhr"
       },
       "position": {
         "title": "Leistenposition",
@@ -409,6 +417,14 @@
         "hide_empty": {
           "title": "Leere Arbeitsbereiche ausblenden",
           "desc": "Nur belegte und den aktiven Arbeitsbereich anzeigen"
+        },
+        "per_monitor": {
+          "title": "Nummerierung pro Monitor",
+          "desc": "Nur Hyprland. Arbeitsbereiche auf jedem Monitor ab 1 nummerieren und festlegen, wie viele Arbeitsbereiche jeder Monitor besitzt",
+          "unavailable": "Nur unter Hyprland verfügbar"
+        },
+        "monitor_count": {
+          "desc": "Arbeitsbereiche dieses Monitors"
         },
         "style": {
           "title": "Stil",
@@ -514,11 +530,13 @@
           "name": {
             "classic": "Klassisch",
             "minimal": "Minimal",
-            "text": "Text"
+            "text": "Text",
+            "button": "Schaltfläche"
           },
           "classic": "Pille mit Farbverlaufswelle",
           "minimal": "iOS/Android-Kapsel mit Kappe",
-          "text": "Kompakter Text und Symbol ohne Hintergrund"
+          "text": "Kompakter Text und Symbol ohne Hintergrund",
+          "button": "Interaktive Pillen-Schaltfläche mit Hintergrund"
         }
       },
       "wifi": {
@@ -599,14 +617,14 @@
       },
       "media": {
         "info_mode": {
-          "title": "Secondary info",
-          "desc": "Choose whether to show the song duration or its author",
-          "duration": "Duration",
-          "author": "Author"
+          "title": "Zusatzinfo",
+          "desc": "Festlegen, ob die Songdauer oder der Interpret angezeigt wird",
+          "duration": "Dauer",
+          "author": "Interpret"
         },
         "width": {
-          "title": "Width",
-          "desc": "Width of the song title area"
+          "title": "Breite",
+          "desc": "Breite des Songtitel-Bereichs"
         },
         "show_icon": {
           "title": "Symbol anzeigen",
@@ -622,7 +640,7 @@
         },
         "preview": {
           "title": "Songtitel",
-          "author": "Song author"
+          "author": "Interpret"
         }
       },
       "thickness": {
@@ -649,6 +667,10 @@
           "button": "Interaktive Symbolschaltflächen mit Hintergrund",
           "icon": "Saubere Symbole ohne Hintergrund"
         }
+      },
+      "height": {
+        "title": "Leistenhöhe",
+        "desc": "Höhe der Leiste in Prozent festlegen"
       }
     },
     "theme": {
@@ -660,6 +682,18 @@
       "radius": {
         "title": "Eckenradius",
         "desc": "Eckenradius für UI-Elemente"
+      },
+      "element_opacity": {
+        "title": "Elementdeckkraft",
+        "desc": "Deckkraft von Leiste, Dock, Widgets und allen anderen Shell-Elementen"
+      },
+      "blur_background": {
+        "title": "Unscharfen Hintergrundbild-Hintergrund hinzufügen",
+        "desc": "Weichzeichnet das Hintergrundbild hinter jedem Element mit Transparenz",
+        "style": {
+          "blur": "Weichzeichnen",
+          "liquid": "Liquid Glass"
+        }
       },
       "colors": {
         "title": "Farbdesigns",
@@ -728,18 +762,10 @@
             "bottom_left": "Von unten links",
             "bottom_right": "Von unten rechts"
           }
-        }
-      },
-      "element_opacity": {
-        "title": "Elementdeckkraft",
-        "desc": "Deckkraft von Leiste, Dock, Widgets und allen anderen Shell-Elementen"
-      },
-      "blur_background": {
-        "title": "Unscharfen Hintergrundbild-Hintergrund hinzufügen",
-        "desc": "Weichzeichnet das Hintergrundbild hinter jedem Element mit Transparenz",
-        "style": {
-          "blur": "Weichzeichnen",
-          "liquid": "Liquid Glass"
+        },
+        "show_selion": {
+          "title": "Selion-Hintergründe anzeigen",
+          "desc": "Integriertes Selion-Hintergrundbild-Paket zusammen mit eigenen Hintergründen einbeziehen"
         }
       },
       "apps": {
@@ -894,6 +920,7 @@
         "excluded_apps": "Ausgenommene Apps",
         "excluded_apps_desc": "Apps künftig von der Gesamterfassung ausschließen",
         "overall_limit_desc": "Benachrichtige mich, wenn die gesamte Bildschirmzeit diesen Wert erreicht",
+        "add_app": "App hinzufügen",
         "no_limits": "Keine App-Limits festgelegt",
         "no_excluded": "Keine ausgeschlossenen Apps",
         "picker_search": "Apps suchen...",
@@ -901,6 +928,18 @@
         "picker_apply": "Anwenden",
         "picker_cancel": "Abbrechen"
       },
+      "day": "Tag",
+      "week": "Woche",
+      "screen_time": "Bildschirmzeit",
+      "less_than_prev": "{time} weniger als am Vortag",
+      "more_than_prev": "{time} mehr als am Vortag",
+      "same_as_prev": "Genauso viel wie am Vortag",
+      "limit_progress": "{used} von {limit} Tageslimit",
+      "limit_reached": "Tageslimit von {limit} erreicht",
+      "peak_hour": "Spitzenstunde",
+      "week_total": "Wochensumme",
+      "less": "Weniger",
+      "more": "Mehr",
       "notify": {
         "title": "Digitales Wohlbefinden",
         "overall_reached": "Dein gesamtes Tageslimit ist erreicht",
@@ -912,49 +951,6 @@
       }
     },
     "update_available": "Update verfügbar",
-    "autostart": {
-      "title": "Autostart",
-      "desc": "Verwalten Sie Programme, Binärdateien und Skripte, die beim Sitzungsstart automatisch ausgeführt werden",
-      "master_switch": {
-        "title": "Autostart aktivieren",
-        "desc": "Konfigurierte Autostart-Anwendungsliste bei der Anmeldung global ausführen"
-      },
-      "add_button": "Anwendung hinzufügen",
-      "empty_title": "Keine Autostart-Anwendungen",
-      "empty_desc": "Klicken Sie auf 'Anwendung hinzufügen', um Befehle, Binärdateien, Verzögerungen und Wiederholungen festzulegen.",
-      "name_label": "Name",
-      "name_placeholder": "z. B. Discord, Telegram, Skript",
-      "exec_label": "Ausführungsbefehl",
-      "exec_placeholder": "Binärpfad oder Name mit Flags (z. B. discord --start-minimized)",
-      "browse_file": "Datei durchsuchen",
-      "delay_label": "Startverzögerung",
-      "delay_desc": "Wartezeit in Sekunden vor dem Start",
-      "delay_unit": "s",
-      "count_label": "Startanzahl",
-      "count_desc": "Anzahl der beim Start auszuführenden Instanzen",
-      "repeat_delay_label": "Wiederholungsintervall",
-      "repeat_delay_desc": "Verzögerung zwischen wiederholten Starts",
-      "workspace_label": "Arbeitsbereich",
-      "workspace_default": "Standard",
-      "silent_label": "Lautloser Start",
-      "silent_desc": "Fenster im Hintergrund ohne Fokus öffnen",
-      "condition_label": "Startbedingung",
-      "condition_always": "Immer",
-      "condition_ac_only": "Nur Netzbetrieb",
-      "condition_battery_only": "Nur Akkubetrieb",
-      "condition_multi_monitor": "Nur bei Multi-Monitor",
-      "restart_crash_label": "Neustart bei Absturz",
-      "restart_crash_desc": "Dienst bei Absturz automatisch neu starten",
-      "status_running": "Läuft",
-      "status_success": "Erfolgreich",
-      "status_failed": "Fehlgeschlagen",
-      "status_idle": "Inaktiv",
-      "view_log": "Protokoll",
-      "no_log": "Protokoll ist derzeit leer",
-      "run_now": "Jetzt starten",
-      "delete": "Löschen",
-      "toggle": "Aktivieren / deaktivieren"
-    },
     "osd": {
       "capslock": {
         "title": "Bei Feststelltaste anzeigen"
@@ -1027,6 +1023,10 @@
         "title": "Schwebendes Dock",
         "desc": "Dock mit abgerundeten Ecken vom Bildschirmrand lösen"
       },
+      "background": {
+        "title": "Hintergrund hinter Apps zeichnen",
+        "desc": "Dock-Leiste hinter den App-Symbolen anzeigen"
+      },
       "transparency": {
         "title": "Dock-Transparenz",
         "desc": "Deckkraft des Dock-Hintergrunds anpassen"
@@ -1038,7 +1038,8 @@
         "shuffle": "Apps mischen",
         "empty": "Keine Anwendungen für das Dock konfiguriert",
         "enter_edit": "Bearbeitungsmodus aktivieren",
-        "exit_edit": "Bearbeitungsmodus beenden"
+        "exit_edit": "Bearbeitungsmodus beenden",
+        "desc": "Im Dock angezeigte Anwendungen konfigurieren und anordnen"
       },
       "picker": {
         "search": "Apps durchsuchen...",
@@ -1098,11 +1099,10 @@
         "workspace": "Nur aktive Arbeitsfläche"
       },
       "window_menu": {
-        "untitled": "Untitled"
-      },
-      "background": {
-        "title": "Hintergrund hinter Apps zeichnen",
-        "desc": "Dock-Leiste hinter den App-Symbolen anzeigen"
+        "new_window": "Neues Fenster",
+        "pin": "An Dock anheften",
+        "unpin": "Vom Dock lösen",
+        "untitled": "Unbenannt"
       }
     },
     "lyrics_picker": {
@@ -1113,7 +1113,8 @@
     "search": {
       "placeholder": "Einstellungen suchen...",
       "prompt": "Tippen, um Einstellungen zu suchen...",
-      "no_results": "Keine Einstellungen gefunden"
+      "no_results": "Keine Einstellungen gefunden",
+      "results": "Suchergebnisse"
     },
     "screenshot": {
       "ocr": {
@@ -1217,6 +1218,7 @@
         "desc": "Gespeicherte Fingerabdrücke verwalten und neue hinzufügen"
       },
       "finger_registered": "Registriert auf %1",
+      "registered_desc": "Gespeicherter biometrischer Fingerabdruck",
       "modal": {
         "title": "Fingerabdruck hinzufügen",
         "select_desc": "Wählen Sie einen Finger zur Registrierung",
@@ -1262,10 +1264,46 @@
         "custom_label": "Ladelimit",
         "custom_desc": "Maximaler Ladeprozentsatz des Akkus"
       },
+      "cpu_freq": {
+        "title": "CPU-Frequenzlimit",
+        "desc": "Maximale Kernfrequenz im Energiesparmodus begrenzen"
+      },
+      "cpu_mode_auto": "Automatisch",
+      "cpu_mode_manual": "Manuell",
+      "cpu_freq_value": {
+        "title": "Maximale Frequenz",
+        "desc": "Ausgewähltes Frequenzlimit für den Energiesparmodus"
+      },
+      "auto_brightness": {
+        "title": "Automatische Helligkeitsreduzierung",
+        "desc": "Bildschirmhelligkeit beim Wechsel in den Energiesparmodus verringern"
+      },
+      "saver_brightness": {
+        "title": "Zielhelligkeitsstufe",
+        "desc": "Bildschirmhelligkeit im Energiesparmodus"
+      },
       "time_remaining": "~%1 verbleibend",
       "time_until_full": "~%1 bis voll",
       "hours_short": "Std.",
-      "minutes_short": "Min."
+      "minutes_short": "Min.",
+      "optimizations": {
+        "title": "Energiespar-Optimierungen",
+        "desc": "Hardware-Energieverwaltung und Akkuspar-Anpassungen umschalten",
+        "cpu_boost_title": "CPU Turbo Boost",
+        "cpu_boost_desc": "Prozessorkernen erlauben, über den Basistakt zu takten",
+        "wifi_powersave_title": "Wi-Fi-Energiesparmodus",
+        "wifi_powersave_desc": "Wi-Fi-Stromverbrauch im Leerlauf reduzieren",
+        "device_pm_title": "Geräte-Laufzeit-PM",
+        "device_pm_desc": "Inaktive Bus-Controller und USB-Geräte automatisch in den Ruhemodus versetzen",
+        "audio_powersave_title": "Audio-Energiesparmodus",
+        "audio_powersave_desc": "Audio-Codec bei Stille abschalten",
+        "disk_writeback_title": "Verzögertes Festplatten-Writeback",
+        "disk_writeback_desc": "Geänderte Puffer alle 60 s leeren, damit das Laufwerk schlafen kann",
+        "nmi_watchdog_title": "NMI Watchdog deaktivieren",
+        "nmi_watchdog_desc": "Periodische Timer-Interrupts für tiefere C-States stoppen",
+        "bluetooth_sleep_title": "Bluetooth-Auto-Abschaltung",
+        "bluetooth_sleep_desc": "Bluetooth-Funkmodul ausschalten, wenn keine Geräte verbunden sind"
+      }
     },
     "weather": {
       "enabled": {
@@ -1279,7 +1317,6 @@
       "government": {
         "title": "Amtliche Warnungen",
         "desc": "Amtliche Unwetterwarnungen für deinen Standort senden",
-        "note": "Dein Standort wird an amtliche Warnquellen übermittelt. Dies ersetzt keine offiziellen Notfallwarnungen.",
         "never": "Nie",
         "last_success": "Letzte Abfrage erfolgreich",
         "sources": "Erreichbare Quellen",
@@ -1295,13 +1332,9 @@
       "quiet": {
         "title": "Ruhezeiten",
         "desc": "Nicht dringende Warnungen in diesen Zeiten zurückhalten. Schwere amtliche Warnungen, Gewitter und Glätte kommen trotzdem an",
-        "start": {
-          "title": "Beginn der Ruhezeit",
-          "desc": "Lokale Stunde, von 0 bis 23"
-        },
-        "end": {
-          "title": "Ende der Ruhezeit",
-          "desc": "Lokale Stunde, von 0 bis 23"
+        "range": {
+          "title": "Ruhezeitraum",
+          "desc": "Regler ziehen, um festzulegen, wann Warnungen zurückgehalten werden"
         }
       },
       "kinds": {
@@ -1377,7 +1410,7 @@
   },
   "updater": {
     "notification": {
-      "app_name": "Update",
+      "app_name": "Aktualisierung",
       "action_open_guide": "Anleitung öffnen",
       "update_available_title": "Update verfügbar: v{remote}",
       "update_available_body": "Aktuelle Version: v{local}. Klicken für Änderungsprotokoll und Update."
@@ -1388,6 +1421,7 @@
     "default_message": "Eine Anwendung fordert Administratorrechte an.",
     "default_description": "Zur Ausführung als Superuser ist eine Authentifizierung erforderlich.",
     "password_placeholder": "Passwort",
+    "fingerprint_waiting": "Fingerabdruck scannen oder auf Passwort warten...",
     "error_failed": "Authentifizierung fehlgeschlagen. Bitte erneut versuchen."
   },
   "applauncher": {
@@ -1399,7 +1433,11 @@
     "tab_emojis": "Emojis",
     "placeholder_emojis": "Emojis suchen oder Stichwort eingeben...",
     "search_run": "{provider} durchsuchen",
-    "search_hint": "Tippen, um mit {provider} zu suchen"
+    "search_hint": "Tippen, um mit {provider} zu suchen",
+    "command_run": "Befehl ausführen: {cmd}",
+    "command_hint": "Befehl zum Ausführen eingeben",
+    "calc_result": "Berechnungsergebnis (Enter zum Kopieren)",
+    "no_emojis_found": "Keine Emojis gefunden"
   },
   "calendar": {
     "loading": "Laden...",
@@ -1435,12 +1473,14 @@
       "locked": "Gesperrt",
       "access_denied": "Zugriff verweigert",
       "authenticating": "Authentifizierung läuft...",
-      "enter_pin": "PIN eingeben"
+      "enter_pin": "PIN eingeben",
+      "too_many_attempts": "Zu viele Versuche"
     },
     "fingerprint": {
       "ready": "Sensor berühren",
       "not_recognized": "Fingerabdruck nicht erkannt",
-      "recognized": "Fingerabdruck erkannt"
+      "recognized": "Fingerabdruck erkannt",
+      "blocked": "Fingerabdruck deaktiviert"
     },
     "power": {
       "suspend": "Standby",
@@ -1508,7 +1548,7 @@
     "speaker": "Lautsprecher",
     "via_source": "Über {source}",
     "offline": "Offline",
-    "equalizer": "Equalizer",
+    "equalizer": "Klangregler",
     "eq": {
       "apply": "Anwenden",
       "saved": "Gespeichert",
@@ -1592,9 +1632,12 @@
         "title": "Wetter"
       },
       "screenshot": {
-        "badge": "Screenshot",
+        "badge": "Bildschirmfoto",
         "fallback_summary": "Screenshot aufgenommen",
         "click_to_open": "Klicken, um den Screenshot-Ordner zu öffnen"
+      },
+      "battery": {
+        "title": "Akku"
       }
     }
   },
@@ -1719,7 +1762,7 @@
       "timer": "Timer",
       "notes": "Notizen",
       "calculator": "Taschenrechner",
-      "tab": "Tab"
+      "tab": "Reiter"
     }
   },
   "screenshot": {
@@ -1729,7 +1772,7 @@
     "qr_timeout": "Scan abgelaufen oder fehlgeschlagen.",
     "qr_not_found": "Kein QR-Code gefunden.",
     "notifications": {
-      "screenshot_app_name": "Screenshot",
+      "screenshot_app_name": "Bildschirmfoto",
       "recorder_app_name": "Bildschirmaufnahme",
       "system_app_name": "Screenshot-System",
       "missing_deps_title": "Fehlende Abhängigkeiten",
@@ -1803,7 +1846,7 @@
     "tabs": {
       "outputs": "Ausgänge",
       "inputs": "Eingänge",
-      "streams": "Streams"
+      "streams": "Audioströme"
     }
   },
   "wallpaper": {
@@ -1830,7 +1873,8 @@
       "blue": "Blau",
       "purple": "Violett",
       "pink": "Pink",
-      "monochrome": "Monochrom"
+      "monochrome": "Monochrom",
+      "history": "Zuletzt"
     }
   },
   "weather": {
@@ -1945,9 +1989,9 @@
       "digital": "Digital",
       "analog": "Analog",
       "full": "Vollständig",
+      "minimal": "Minimalistisch",
       "round": "Rund",
       "compact": "Kompakt",
-      "minimal": "Minimalistisch",
       "rect": "Rechteckig",
       "rounded": "Abgerundet",
       "bars": "Balken",
@@ -1959,20 +2003,18 @@
       "stretched": "Gestreckt",
       "lumen": "Lumen",
       "lyrics": "Songtext",
-      "simpleLyrics": "Einfacher Songtext"
+      "simpleLyrics": "Einfacher Songtext",
+      "circle": "Kreis"
     },
     "presets": {
       "minimal": {
-        "name": "Minimal",
-        "desc": "Klares und dezentes Layout mit minimaler Digitaluhr und kompaktem Wetter."
+        "name": "Minimal"
       },
       "media_station": {
-        "name": "Medienstation",
-        "desc": "Dediziertes Medien-Setup mit zentriertem Audio-Visualisierer und rundem Musik-Player."
+        "name": "Medienstation"
       },
       "dashboard": {
-        "name": "Dashboard",
-        "desc": "Umfassender Systemmonitor mit Digitaluhr, Hardware-Auslastung und Akkustand."
+        "name": "Dashboard"
       }
     },
     "github": {
@@ -1989,12 +2031,20 @@
     "settings": {
       "lyricsLines": "Zeilen",
       "lyricsAlignment": "Ausrichtung",
+      "usageStyle": "Stil",
+      "lineThickness": "Dicke",
+      "visualizerStyle": "Visualisierer-Stil",
+      "showNoLyrics": "Text „Kein Songtext“ anzeigen",
       "textContent": "Text"
     },
     "align": {
       "left": "Links",
       "center": "Mitte",
       "right": "Rechts"
+    },
+    "style": {
+      "wave": "Welle",
+      "circle": "Kreis"
     },
     "notes": {
       "empty": "Noch keine Notizen"
@@ -2181,12 +2231,35 @@
     },
     "deps": {
       "syncing": "Systempakete werden synchronisiert und aktualisiert (pacman -Syyu)...",
+      "enabling_copr": "COPR-Repository {repo} wird aktiviert...",
+      "enabling_terra": "Terra-Repository wird aktiviert...",
+      "enabling_repo": "Repository {repo} wird aktiviert...",
       "all_installed": "-> Alle Pakete sind bereits installiert! Paket-Download übersprungen.",
       "missing_count": "-> {count} fehlende Pakete zur Installation gefunden.",
       "installing_title": "Systempakete und Abhängigkeiten werden installiert...",
       "installing_pkg": "{pkg} wird installiert...",
       "install_ok": "{pkg} erfolgreich installiert",
-      "install_failed": "Installation von {pkg} fehlgeschlagen"
+      "install_failed": "Installation von {pkg} fehlgeschlagen",
+      "quickshell_outdated": "Quickshell {version} ist zu alt, {minimum} oder neuer wird benötigt. Aktualisierung läuft...",
+      "quickshell_still_old": "Quickshell ist immer noch älter als {minimum}. Bitte manuell aktualisieren, sonst lassen sich die Einstellungen nicht öffnen."
+    },
+    "ski": {
+      "installing": "Dateimanager Ski wird installiert...",
+      "up_to_date": "-> Ski {version} ist bereits installiert.",
+      "installed": "Ski {version} installiert",
+      "install_failed": "Installation von Ski fehlgeschlagen",
+      "download_failed": "Ski konnte nicht heruntergeladen werden, wird übersprungen. Du kannst es später von github.com/ilyamiro/Ski installieren.",
+      "checksum_failed": "Prüfsummenprüfung des Ski-Downloads fehlgeschlagen, wird übersprungen.",
+      "unsupported_arch": "Vorgefertigte Ski-Pakete existieren nur für x86_64, wird übersprungen."
+    },
+    "audio": {
+      "installing": "Serpantinum Audio-Engine wird installiert...",
+      "up_to_date": "-> Serpantinum Audio-Engine {version} ist bereits installiert.",
+      "installed": "Serpantinum Audio-Engine {version} installiert",
+      "building": "Keine vorgefertigte Audio-Engine für dieses System, wird aus dem Quellcode kompiliert...",
+      "install_failed": "Installation der Serpantinum Audio-Engine fehlgeschlagen. Der Klangregler funktioniert nicht, bis sie von github.com/ilyamiro/serpantinum-audio installiert wurde.",
+      "download_failed": "Serpantinum Audio-Engine konnte nicht heruntergeladen werden, wird übersprungen. Du kannst sie später von github.com/ilyamiro/serpantinum-audio installieren.",
+      "checksum_failed": "Prüfsummenprüfung des Audio-Engine-Downloads fehlgeschlagen, wird übersprungen."
     },
     "deploy": {
       "configuring_sddm": "SDDM-Display-Manager wird konfiguriert...",
@@ -2196,6 +2269,24 @@
       "sddm_no_xorg": "Xorg nicht gefunden, SDDM verwendet {compositor}.",
       "sddm_no_backend": "Weder Xorg noch ein unterstützter Wayland-Compositor für den Anmeldebildschirm (kwin_wayland/weston) wurde in /usr/local/bin, /usr/bin oder /bin gefunden.",
       "sddm_skipped": "SDDM-Einrichtung übersprungen: Kein nutzbarer Displayserver oder Anmelde-Compositor gefunden. Der aktuelle Display-Manager bleibt unverändert."
+    },
+    "gamma": {
+      "installing": "Serpantinum Blaulichtfilter wird installiert...",
+      "up_to_date": "-> Serpantinum Blaulichtfilter {version} ist bereits installiert.",
+      "installed": "Serpantinum Blaulichtfilter {version} installiert",
+      "install_failed": "Installation des Serpantinum Blaulichtfilters fehlgeschlagen. Er funktioniert nicht, bis er von github.com/ilyamiro/serpantinum-gamma installiert wurde.",
+      "download_failed": "Serpantinum Blaulichtfilter konnte nicht heruntergeladen werden, wird übersprungen. Du kannst ihn später von github.com/ilyamiro/serpantinum-gamma installieren.",
+      "checksum_failed": "Prüfsummenprüfung des Blaulichtfilter-Downloads fehlgeschlagen, wird übersprungen.",
+      "unsupported_arch": "Vorgefertigte Blaulichtfilter-Pakete existieren nur für x86_64, wird übersprungen."
+    },
+    "core": {
+      "installing": "Serpantinum Kerndienste werden installiert...",
+      "up_to_date": "-> Serpantinum Kerndienste {version} sind bereits installiert.",
+      "installed": "Serpantinum Kerndienste {version} installiert",
+      "install_failed": "Installation der Serpantinum Kerndienste fehlgeschlagen. Systemauslastung, Tastatursperr-Indikatoren und die Zwischenablage funktionieren nicht, bis sie von github.com/ilyamiro/serpantinum-core installiert wurden.",
+      "download_failed": "Serpantinum Kerndienste konnten nicht heruntergeladen werden, wird übersprungen. Du kannst sie später von github.com/ilyamiro/serpantinum-core installieren.",
+      "checksum_failed": "Prüfsummenprüfung des Kerndienste-Downloads fehlgeschlagen, wird übersprungen.",
+      "unsupported_arch": "Vorgefertigte Kerndienste-Pakete existieren nur für x86_64, wird übersprungen."
     }
   },
   "translator": {
@@ -2219,7 +2310,13 @@
     "keep_clipboard_sub": "Wenn deaktiviert — ursprüngliche Zwischenablage wird wiederhergestellt"
   },
   "datetime": {
-    "full_date": "dddd, d. MMMM"
+    "full_date": "dddd, d. MMMM",
+    "just_now": "Gerade eben",
+    "minutes_ago": "vor {mins} Min.",
+    "yesterday": "Gestern {time}"
+  },
+  "common": {
+    "select": "Auswählen..."
   },
   "gov_alerts": {
     "status": {
@@ -2235,7 +2332,7 @@
       "none": "Keine Abdeckung"
     },
     "sources": {
-      "nws": "US National Weather Service",
+      "nws": "Nationaler Wetterdienst der USA",
       "eccc": "Environment Canada",
       "dwd": "Deutscher Wetterdienst",
       "metno": "MET Norway",

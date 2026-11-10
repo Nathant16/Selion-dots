@@ -18,7 +18,7 @@
         "kernel_version": "Kernelversie",
         "desktop": "Bureaublad",
         "shell": "Shell",
-        "uptime": "Uptime",
+        "uptime": "Bedrijfstijd",
         "default_os": "Linux"
       },
       "github_repo": "Nathant16/Selion-dots"
@@ -38,13 +38,13 @@
       "about": "Over",
       "display_widgets": "Widgets",
       "display_general": "Algemeen",
-      "osd": "On-Screen Display",
+      "osd": "Schermmelding (OSD)",
       "dock": "Dock",
       "bar_general": "Algemeen",
       "bar_modules": "Modules",
       "bar_side_modules": "Zijmodules",
       "display_lockscreen": "Vergrendelscherm",
-      "screenshot": "Screenshot",
+      "screenshot": "Schermafbeelding",
       "theme_appearance": "Uiterlijk",
       "theme_apps": "App-thema's",
       "theme_wallpapers": "Achtergronden",
@@ -358,7 +358,10 @@
               "pills": "Capsules",
               "numbers": "Nummers",
               "pacman": "Pacman"
-            }
+            },
+            "pills": "Minimale capsule-indicators",
+            "numbers": "Genummerde indices",
+            "pacman": "Geanimeerde arcadestippen"
           },
           "name": "Werkbladen"
         },
@@ -378,11 +381,17 @@
               "classic": "Klassiek",
               "material": "Material",
               "badge": "Puntmatrix"
-            }
+            },
+            "classic": "Strakke gestapelde tijd en datum",
+            "material": "Diagonale vette accentcijfers",
+            "badge": "Gesegmenteerde capsulekaarten"
           }
         },
         "info": "Opname/timer",
-        "weather": "Weer"
+        "weather": "Weer",
+        "notifications": "Meldingen",
+        "usage": "Systeemgebruik",
+        "clock": "Klok"
       },
       "position": {
         "title": "Positie van balk",
@@ -408,6 +417,14 @@
         "hide_empty": {
           "title": "Lege werkbladen verbergen",
           "desc": "Alleen bezette werkbladen en het actieve werkblad tonen"
+        },
+        "per_monitor": {
+          "title": "Nummering per monitor",
+          "desc": "Alleen Hyprland. Nummer werkbladen vanaf 1 op elke monitor en stel in hoeveel werkbladen elke monitor bezit",
+          "unavailable": "Alleen beschikbaar op Hyprland"
+        },
+        "monitor_count": {
+          "desc": "Werkbladen van deze monitor"
         },
         "style": {
           "title": "Stijl",
@@ -513,11 +530,13 @@
           "name": {
             "classic": "Klassiek",
             "minimal": "Minimaal",
-            "text": "Tekst"
+            "text": "Tekst",
+            "button": "Knop"
           },
           "classic": "Capsule met verloopgolfvulling",
           "minimal": "iOS/Android-capsule met dopje",
-          "text": "Strakke tekst en pictogram zonder achtergrond"
+          "text": "Strakke tekst en pictogram zonder achtergrond",
+          "button": "Interactieve capsuleknop met achtergrond"
         }
       },
       "wifi": {
@@ -598,14 +617,14 @@
       },
       "media": {
         "info_mode": {
-          "title": "Secondary info",
-          "desc": "Choose whether to show the song duration or its author",
-          "duration": "Duration",
-          "author": "Author"
+          "title": "Secundaire info",
+          "desc": "Kies of de duur of de artiest van het nummer wordt weergegeven",
+          "duration": "Duur",
+          "author": "Artiest"
         },
         "width": {
-          "title": "Width",
-          "desc": "Width of the song title area"
+          "title": "Breedte",
+          "desc": "Breedte van het gebied voor de titel van het nummer"
         },
         "show_icon": {
           "title": "Pictogram tonen",
@@ -621,7 +640,7 @@
         },
         "preview": {
           "title": "Titel van het nummer",
-          "author": "Song author"
+          "author": "Artiest van het nummer"
         }
       },
       "thickness": {
@@ -648,6 +667,10 @@
           "button": "Interactieve pictogramknoppen met achtergrond",
           "icon": "Strakke pictogrammen zonder achtergrond"
         }
+      },
+      "height": {
+        "title": "Hoogte van balk",
+        "desc": "Stel de hoogte van de balk in als percentage"
       }
     },
     "theme": {
@@ -659,6 +682,18 @@
       "radius": {
         "title": "Hoekradius",
         "desc": "Hoekradius voor UI-elementen"
+      },
+      "element_opacity": {
+        "title": "Elementdekking",
+        "desc": "Dekking van de balk, dock, widgets en alle andere shell-elementen"
+      },
+      "blur_background": {
+        "title": "Een vervaagde achtergrond van het bureaublad toevoegen",
+        "desc": "Vervaagt de achtergrond achter elk element dat transparantie gebruikt",
+        "style": {
+          "blur": "Vervagen",
+          "liquid": "Vloeibaar glas"
+        }
       },
       "colors": {
         "title": "Kleurthema's",
@@ -727,18 +762,10 @@
             "bottom_left": "Van linksonder",
             "bottom_right": "Van rechtsonder"
           }
-        }
-      },
-      "element_opacity": {
-        "title": "Elementdekking",
-        "desc": "Dekking van de balk, dock, widgets en alle andere shell-elementen"
-      },
-      "blur_background": {
-        "title": "Een vervaagde achtergrond van het bureaublad toevoegen",
-        "desc": "Vervaagt de achtergrond achter elk element dat transparantie gebruikt",
-        "style": {
-          "blur": "Vervagen",
-          "liquid": "Liquid glass"
+        },
+        "show_selion": {
+          "title": "Selion-achtergronden tonen",
+          "desc": "Het ingebouwde Selion-achtergrondpakket opnemen naast je eigen achtergronden"
         }
       },
       "apps": {
@@ -893,6 +920,7 @@
         "excluded_apps": "Uitgesloten apps",
         "excluded_apps_desc": "Sluit apps voortaan uit van algemene registratie",
         "overall_limit_desc": "Waarschuw me wanneer de totale schermtijd deze waarde bereikt",
+        "add_app": "App toevoegen",
         "no_limits": "Geen applimieten ingesteld",
         "no_excluded": "Geen uitgesloten apps",
         "picker_search": "Apps zoeken...",
@@ -900,6 +928,18 @@
         "picker_apply": "Toepassen",
         "picker_cancel": "Annuleren"
       },
+      "day": "Dag",
+      "week": "Week",
+      "screen_time": "Schermtijd",
+      "less_than_prev": "{time} minder dan de dag ervoor",
+      "more_than_prev": "{time} meer dan de dag ervoor",
+      "same_as_prev": "Hetzelfde als de dag ervoor",
+      "limit_progress": "{used} van {limit} dagelijkse limiet",
+      "limit_reached": "Dagelijkse limiet van {limit} bereikt",
+      "peak_hour": "Piekuur",
+      "week_total": "Weektotaal",
+      "less": "Minder",
+      "more": "Meer",
       "notify": {
         "title": "Digitaal welzijn",
         "overall_reached": "Je totale daglimiet is bereikt",
@@ -983,6 +1023,10 @@
         "title": "Zwevend dock",
         "desc": "Maak het dock los van de schermrand met afgeronde hoeken"
       },
+      "background": {
+        "title": "Achtergrond achter apps tekenen",
+        "desc": "Toon het dockpaneel achter de app-pictogrammen"
+      },
       "transparency": {
         "title": "Transparantie van dock",
         "desc": "Achtergronddekking van het dock aanpassen"
@@ -994,7 +1038,8 @@
         "shuffle": "Apps willekeurig rangschikken",
         "empty": "Geen applicaties geconfigureerd voor het dock",
         "enter_edit": "Bewerken",
-        "exit_edit": "Bewerkingsmodus sluiten"
+        "exit_edit": "Bewerkingsmodus sluiten",
+        "desc": "Applicaties op het dock configureren en ordenen"
       },
       "picker": {
         "search": "Apps zoeken...",
@@ -1054,11 +1099,10 @@
         "workspace": "Alleen actief werkblad"
       },
       "window_menu": {
-        "untitled": "Untitled"
-      },
-      "background": {
-        "title": "Achtergrond achter apps tekenen",
-        "desc": "Toon het dockpaneel achter de app-pictogrammen"
+        "new_window": "Nieuw venster",
+        "pin": "Vastzetten aan dock",
+        "unpin": "Losmaken van dock",
+        "untitled": "Naamloos"
       }
     },
     "lyrics_picker": {
@@ -1069,7 +1113,8 @@
     "search": {
       "placeholder": "Instellingen zoeken...",
       "prompt": "Typ om instellingen te zoeken...",
-      "no_results": "Geen instellingen gevonden"
+      "no_results": "Geen instellingen gevonden",
+      "results": "Zoekresultaten"
     },
     "screenshot": {
       "ocr": {
@@ -1173,6 +1218,7 @@
         "desc": "Beheer vingerafdrukken en voeg nieuwe vingers toe"
       },
       "finger_registered": "Geregistreerd op %1",
+      "registered_desc": "Opgeslagen biometrische vingerafdruk",
       "modal": {
         "title": "Vingerafdruk toevoegen",
         "select_desc": "Kies een vinger om te registreren",
@@ -1218,10 +1264,46 @@
         "custom_label": "Oplaadlimiet",
         "custom_desc": "Maximaal oplaadpercentage van de batterij"
       },
+      "cpu_freq": {
+        "title": "CPU-frequentielimiet",
+        "desc": "Maximale kernfrequentie beperken voor energiebesparing"
+      },
+      "cpu_mode_auto": "Automatisch",
+      "cpu_mode_manual": "Handmatig",
+      "cpu_freq_value": {
+        "title": "Maximale frequentie",
+        "desc": "Geselecteerde frequentielimiet voor energiebesparing"
+      },
+      "auto_brightness": {
+        "title": "Automatische helderheidsverlaging",
+        "desc": "Schermhelderheid dimmen bij overschakelen naar energiebesparingsmodus"
+      },
+      "saver_brightness": {
+        "title": "Doelhelderheidsniveau",
+        "desc": "Schermhelderheidsniveau in energiebesparingsmodus"
+      },
       "time_remaining": "~%1 resterend",
       "time_until_full": "~%1 tot volledig opgeladen",
       "hours_short": "u",
-      "minutes_short": "m"
+      "minutes_short": "m",
+      "optimizations": {
+        "title": "Energiebesparingsoptimalisaties",
+        "desc": "Hardware-energiebeheer en batterijbesparende aanpassingen in- of uitschakelen",
+        "cpu_boost_title": "CPU Turbo Boost",
+        "cpu_boost_desc": "Processorkernen toestaan om boven de basisklok te draaien",
+        "wifi_powersave_title": "Wi-Fi-energiebesparing",
+        "wifi_powersave_desc": "Stroomverbruik van Wi-Fi verlagen tijdens inactieve perioden",
+        "device_pm_title": "Apparaat-runtime-PM",
+        "device_pm_desc": "Inactieve buscontrollers en USB-apparaten automatisch in slaapstand zetten",
+        "audio_powersave_title": "Audio-energiebesparing",
+        "audio_powersave_desc": "Audiocodec uitschakelen bij stilte",
+        "disk_writeback_title": "Vertraagd wegschrijven naar schijf",
+        "disk_writeback_desc": "Gewijzigde buffers elke 60s wegschrijven zodat de schijf kan slapen",
+        "nmi_watchdog_title": "NMI Watchdog uitschakelen",
+        "nmi_watchdog_desc": "Periodieke timerinterrupts stoppen voor diepere C-states",
+        "bluetooth_sleep_title": "Bluetooth automatisch uitschakelen",
+        "bluetooth_sleep_desc": "Bluetooth-radio uitschakelen wanneer er geen apparaten verbonden zijn"
+      }
     },
     "weather": {
       "enabled": {
@@ -1235,7 +1317,6 @@
       "government": {
         "title": "Officiële waarschuwingen",
         "desc": "Officiële waarschuwingen voor zwaar weer voor je locatie sturen",
-        "note": "Je locatie wordt naar officiële waarschuwingsbronnen gestuurd. Dit vervangt geen officiële noodwaarschuwingen.",
         "never": "Nooit",
         "last_success": "Laatste succes",
         "sources": "Bereikbare bronnen",
@@ -1251,13 +1332,9 @@
       "quiet": {
         "title": "Stille uren",
         "desc": "Houd niet-dringende waarschuwingen tijdens deze uren tegen. Ernstige officiële waarschuwingen, onweer en ijzel komen nog wel binnen",
-        "start": {
-          "title": "Begin stille uren",
-          "desc": "Lokaal uur, van 0 tot 23"
-        },
-        "end": {
-          "title": "Einde stille uren",
-          "desc": "Lokaal uur, van 0 tot 23"
+        "range": {
+          "title": "Stille periode",
+          "desc": "Sleep de handgrepen om te kiezen wanneer waarschuwingen worden tegengehouden"
         }
       },
       "kinds": {
@@ -1344,6 +1421,7 @@
     "default_message": "Een applicatie vraagt om beheerdersrechten.",
     "default_description": "Authenticatie is vereist om deze actie als superuser uit te voeren.",
     "password_placeholder": "Wachtwoord",
+    "fingerprint_waiting": "Scan vingerafdruk of wacht op wachtwoord...",
     "error_failed": "Authenticatie mislukt. Probeer het opnieuw."
   },
   "applauncher": {
@@ -1355,7 +1433,11 @@
     "tab_emojis": "Emoji's",
     "placeholder_emojis": "Zoek emoji's op naam of trefwoord...",
     "search_run": "Zoeken met {provider}",
-    "search_hint": "Typ om te zoeken met {provider}"
+    "search_hint": "Typ om te zoeken met {provider}",
+    "command_run": "Opdracht uitvoeren: {cmd}",
+    "command_hint": "Typ een opdracht om uit te voeren",
+    "calc_result": "Rekenresultaat (Enter om te kopiëren)",
+    "no_emojis_found": "Geen emoji's gevonden"
   },
   "calendar": {
     "loading": "Laden...",
@@ -1391,12 +1473,14 @@
       "locked": "Vergrendeld",
       "access_denied": "Toegang geweigerd",
       "authenticating": "Verifiëren...",
-      "enter_pin": "Voer pincode in"
+      "enter_pin": "Voer pincode in",
+      "too_many_attempts": "Te veel pogingen"
     },
     "fingerprint": {
       "ready": "Raak de sensor aan",
       "not_recognized": "Vingerafdruk niet herkend",
-      "recognized": "Vingerafdruk herkend"
+      "recognized": "Vingerafdruk herkend",
+      "blocked": "Vingerafdruk uitgeschakeld"
     },
     "power": {
       "suspend": "Stand-by",
@@ -1471,21 +1555,6 @@
       "dynamic": "Dynamisch",
       "dynamic_active": "Past zich aan je geluid aan"
     },
-    "presets": {
-      "flat": "Vlak",
-      "bass": "Bas",
-      "treble": "Hoge tonen",
-      "vocal": "Vocaal",
-      "pop": "Pop",
-      "rock": "Rock",
-      "jazz": "Jazz",
-      "classic": "Klassiek",
-      "custom": "Aangepast"
-    },
-    "searching_lyrics": "Songteksten zoeken...",
-    "no_lyrics": "Geen songtekst gevonden",
-    "select_local_file": "Lokaal bestand selecteren",
-    "lyrics": "Songtekst",
     "audio": {
       "title": "Audio",
       "balance": "Kanaalbalans",
@@ -1505,7 +1574,22 @@
       "off": "Uit",
       "balanced": "Gebalanceerd",
       "night": "Nacht"
-    }
+    },
+    "presets": {
+      "flat": "Vlak",
+      "bass": "Bas",
+      "treble": "Hoge tonen",
+      "vocal": "Vocaal",
+      "pop": "Pop",
+      "rock": "Rock",
+      "jazz": "Jazz",
+      "classic": "Klassiek",
+      "custom": "Aangepast"
+    },
+    "searching_lyrics": "Songteksten zoeken...",
+    "no_lyrics": "Geen songtekst gevonden",
+    "select_local_file": "Lokaal bestand selecteren",
+    "lyrics": "Songtekst"
   },
   "network": {
     "tabs": {
@@ -1551,6 +1635,9 @@
         "badge": "Schermafbeelding",
         "fallback_summary": "Vastgelegd scherm",
         "click_to_open": "Klik om de schermafbeeldingenmap te openen"
+      },
+      "battery": {
+        "title": "Batterij"
       }
     }
   },
@@ -1560,7 +1647,7 @@
       "ram": "RAM",
       "temp": "Temp",
       "disk": "Schijf",
-      "net": "Net"
+      "net": "Netw."
     },
     "timer": {
       "tabs": {
@@ -1585,7 +1672,7 @@
         }
       },
       "notification": {
-        "app_name": "Quickshell timer",
+        "app_name": "Quickshell-timer",
         "timer_finished_title": "Timer afgelopen",
         "timer_finished_body": "Uw timer voor {time} is voltooid.",
         "focus_complete_title": "Focus voltooid",
@@ -1786,7 +1873,8 @@
       "blue": "Blauw",
       "purple": "Paars",
       "pink": "Roze",
-      "monochrome": "Monochroom"
+      "monochrome": "Monochroom",
+      "history": "Recent"
     }
   },
   "weather": {
@@ -1842,7 +1930,7 @@
       "desc": "Beheer wifi, ethernet en netwerkverbindingen"
     },
     "volume": {
-      "name": "Volume & audio",
+      "name": "Volume en audio",
       "desc": "Geluidsapparaten en volumeniveaus beheren"
     },
     "guide": {
@@ -1912,10 +2000,11 @@
       "material": "Material",
       "materialAnalog": "Material Analoog",
       "lockscreen": "Vergrendelscherm",
-      "stretched": "Stretched",
+      "stretched": "Uitgerekt",
       "lumen": "Lumen",
       "lyrics": "Songtekst",
-      "simpleLyrics": "Eenvoudige songtekst"
+      "simpleLyrics": "Eenvoudige songtekst",
+      "circle": "Cirkel"
     },
     "presets": {
       "minimal": {
@@ -1942,12 +2031,20 @@
     "settings": {
       "lyricsLines": "Regels",
       "lyricsAlignment": "Uitlijning",
+      "usageStyle": "Stijl",
+      "lineThickness": "Dikte",
+      "visualizerStyle": "Visualisatorstijl",
+      "showNoLyrics": "Tekst \"geen songtekst\" tonen",
       "textContent": "Tekst"
     },
     "align": {
       "left": "Links",
       "center": "Midden",
       "right": "Rechts"
+    },
+    "style": {
+      "wave": "Golf",
+      "circle": "Cirkel"
     },
     "notes": {
       "empty": "Nog geen notities"
@@ -2134,12 +2231,35 @@
     },
     "deps": {
       "syncing": "Systeempakketten synchroniseren en bijwerken (pacman -syyu)...",
+      "enabling_copr": "COPR-pakketbron {repo} inschakelen...",
+      "enabling_terra": "Terra-pakketbron inschakelen...",
+      "enabling_repo": "Pakketbron {repo} inschakelen...",
       "all_installed": "-> Alle pakketten zijn al geïnstalleerd! Pakketdownloadfase wordt overgeslagen.",
       "missing_count": "-> {count} ontbrekende pakketten gevonden om te installeren.",
       "installing_title": "Systeempakketten en afhankelijkheden installeren...",
       "installing_pkg": "{pkg} installeren...",
       "install_ok": "{pkg} succesvol geïnstalleerd",
-      "install_failed": "Kan {pkg} niet installeren"
+      "install_failed": "Kan {pkg} niet installeren",
+      "quickshell_outdated": "Quickshell {version} is te oud, {minimum} of nieuwer is vereist. Bijwerken...",
+      "quickshell_still_old": "Quickshell is nog steeds ouder dan {minimum}. Werk het handmatig bij, anders worden de instellingen niet geopend."
+    },
+    "ski": {
+      "installing": "Bestandsbeheerder Ski installeren...",
+      "up_to_date": "-> Ski {version} is al geïnstalleerd.",
+      "installed": "Ski {version} geïnstalleerd",
+      "install_failed": "Kan Ski niet installeren",
+      "download_failed": "Kan Ski niet downloaden, wordt overgeslagen. Je kunt het later installeren vanaf github.com/ilyamiro/Ski.",
+      "checksum_failed": "Download van Ski is niet geslaagd voor de controlesomcontrole, wordt overgeslagen.",
+      "unsupported_arch": "Vooraf gebouwde Ski-pakketten bestaan alleen voor x86_64, wordt overgeslagen."
+    },
+    "audio": {
+      "installing": "Serpantinum-audio-engine installeren...",
+      "up_to_date": "-> Serpantinum-audio-engine {version} is al geïnstalleerd.",
+      "installed": "Serpantinum-audio-engine {version} geïnstalleerd",
+      "building": "Geen vooraf gebouwde audio-engine voor dit systeem, wordt vanuit de broncode gebouwd...",
+      "install_failed": "Kan de Serpantinum-audio-engine niet installeren. De equalizer werkt pas als deze is geïnstalleerd vanaf github.com/ilyamiro/serpantinum-audio.",
+      "download_failed": "Kan de Serpantinum-audio-engine niet downloaden, wordt overgeslagen. Je kunt deze later installeren vanaf github.com/ilyamiro/serpantinum-audio.",
+      "checksum_failed": "Download van de audio-engine is niet geslaagd voor de controlesomcontrole, wordt overgeslagen."
     },
     "deploy": {
       "configuring_sddm": "SDDM-inlogbeheerder configureren...",
@@ -2149,6 +2269,24 @@
       "sddm_no_xorg": "Xorg niet gevonden, {compositor} wordt gebruikt voor SDDM.",
       "sddm_no_backend": "Noch Xorg noch een ondersteunde Wayland-compositor voor het inlogscherm (kwin_wayland/weston) is gevonden in /usr/local/bin, /usr/bin of /bin.",
       "sddm_skipped": "SDDM-configuratie overgeslagen: geen bruikbare displayserver of inlogcompositor gevonden. De huidige displaymanager blijft ongewijzigd."
+    },
+    "gamma": {
+      "installing": "Serpantinum-blauwlichtfilter installeren...",
+      "up_to_date": "-> Serpantinum-blauwlichtfilter {version} is al geïnstalleerd.",
+      "installed": "Serpantinum-blauwlichtfilter {version} geïnstalleerd",
+      "install_failed": "Kan het Serpantinum-blauwlichtfilter niet installeren. Het werkt pas als het is geïnstalleerd vanaf github.com/ilyamiro/serpantinum-gamma.",
+      "download_failed": "Kan het Serpantinum-blauwlichtfilter niet downloaden, wordt overgeslagen. Je kunt het later installeren vanaf github.com/ilyamiro/serpantinum-gamma.",
+      "checksum_failed": "Download van het blauwlichtfilter is niet geslaagd voor de controlesomcontrole, wordt overgeslagen.",
+      "unsupported_arch": "Vooraf gebouwde blauwlichtfilter-pakketten bestaan alleen voor x86_64, wordt overgeslagen."
+    },
+    "core": {
+      "installing": "Serpantinum-kerndiensten installeren...",
+      "up_to_date": "-> Serpantinum-kerndiensten {version} zijn al geïnstalleerd.",
+      "installed": "Serpantinum-kerndiensten {version} geïnstalleerd",
+      "install_failed": "Kan de Serpantinum-kerndiensten niet installeren. Systeemgebruik, toetsenbordvergrendelingsindicators en het klembord werken pas als ze zijn geïnstalleerd vanaf github.com/ilyamiro/serpantinum-core.",
+      "download_failed": "Kan de Serpantinum-kerndiensten niet downloaden, wordt overgeslagen. Je kunt ze later installeren vanaf github.com/ilyamiro/serpantinum-core.",
+      "checksum_failed": "Download van de kerndiensten is niet geslaagd voor de controlesomcontrole, wordt overgeslagen.",
+      "unsupported_arch": "Vooraf gebouwde kerndiensten-pakketten bestaan alleen voor x86_64, wordt overgeslagen."
     }
   },
   "translator": {
@@ -2172,7 +2310,13 @@
     "keep_clipboard_sub": "Indien uitgeschakeld — oorspronkelijke klembordinhoud wordt hersteld na plakken"
   },
   "datetime": {
-    "full_date": "dddd, d MMMM"
+    "full_date": "dddd, d MMMM",
+    "just_now": "Zojuist",
+    "minutes_ago": "{mins} min. geleden",
+    "yesterday": "Gisteren {time}"
+  },
+  "common": {
+    "select": "Selecteren..."
   },
   "gov_alerts": {
     "status": {
@@ -2188,7 +2332,7 @@
       "none": "Geen dekking"
     },
     "sources": {
-      "nws": "US National Weather Service",
+      "nws": "Amerikaanse nationale weerdienst",
       "eccc": "Environment Canada",
       "dwd": "Duitse weerdienst",
       "metno": "MET Norway",

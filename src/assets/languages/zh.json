@@ -358,7 +358,10 @@
               "pills": "胶囊",
               "numbers": "数字",
               "pacman": "吃豆人"
-            }
+            },
+            "pills": "极简胶囊指示器",
+            "numbers": "数字索引",
+            "pacman": "动态街机圆点"
           },
           "name": "工作区"
         },
@@ -378,11 +381,17 @@
               "classic": "经典",
               "material": "Material",
               "badge": "点阵"
-            }
+            },
+            "classic": "简洁上下堆叠的时间与日期",
+            "material": "斜角粗体强调数字",
+            "badge": "胶囊分段卡片"
           }
         },
         "info": "录制/计时器",
-        "weather": "天气"
+        "weather": "天气",
+        "notifications": "通知",
+        "usage": "系统占用",
+        "clock": "时钟"
       },
       "position": {
         "title": "顶栏位置",
@@ -408,6 +417,14 @@
         "hide_empty": {
           "title": "隐藏空工作区",
           "desc": "仅显示已有窗口的工作区和当前活动工作区"
+        },
+        "per_monitor": {
+          "title": "按显示器独立编号",
+          "desc": "仅限 Hyprland。在每台显示器上从 1 开始为工作区编号，并设置每台显示器拥有的工作区数量",
+          "unavailable": "仅在 Hyprland 上可用"
+        },
+        "monitor_count": {
+          "desc": "此显示器拥有的工作区数量"
         },
         "style": {
           "title": "样式",
@@ -513,11 +530,13 @@
           "name": {
             "classic": "经典",
             "minimal": "极简",
-            "text": "纯文本"
+            "text": "纯文本",
+            "button": "按钮"
           },
           "classic": "带渐变波浪填充的胶囊",
           "minimal": "带电极端子的 iOS/Android 胶囊",
-          "text": "无背景的简洁文本和图标"
+          "text": "无背景的简洁文本和图标",
+          "button": "带背景的交互式按钮胶囊"
         }
       },
       "wifi": {
@@ -598,14 +617,14 @@
       },
       "media": {
         "info_mode": {
-          "title": "Secondary info",
-          "desc": "Choose whether to show the song duration or its author",
-          "duration": "Duration",
-          "author": "Author"
+          "title": "辅助信息",
+          "desc": "选择显示歌曲时长还是作者",
+          "duration": "时长",
+          "author": "作者"
         },
         "width": {
-          "title": "Width",
-          "desc": "Width of the song title area"
+          "title": "宽度",
+          "desc": "歌曲标题区域的宽度"
         },
         "show_icon": {
           "title": "显示图标",
@@ -621,7 +640,7 @@
         },
         "preview": {
           "title": "歌曲标题",
-          "author": "Song author"
+          "author": "歌曲作者"
         }
       },
       "thickness": {
@@ -648,6 +667,10 @@
           "button": "带背景的交互式图标按钮",
           "icon": "无背景的简洁图标"
         }
+      },
+      "height": {
+        "title": "顶栏高度",
+        "desc": "按百分比设置顶栏高度"
       }
     },
     "theme": {
@@ -659,6 +682,18 @@
       "radius": {
         "title": "圆角半径",
         "desc": "界面元素的圆角大小"
+      },
+      "element_opacity": {
+        "title": "元素不透明度",
+        "desc": "状态栏、程序坞、小组件及所有其他界面元素的不透明度"
+      },
+      "blur_background": {
+        "title": "添加模糊的壁纸背景",
+        "desc": "对所有使用透明度的元素背后的壁纸进行模糊处理",
+        "style": {
+          "blur": "模糊",
+          "liquid": "液态玻璃"
+        }
       },
       "colors": {
         "title": "色彩主题",
@@ -727,18 +762,10 @@
             "bottom_left": "从左下角",
             "bottom_right": "从右下角"
           }
-        }
-      },
-      "element_opacity": {
-        "title": "元素不透明度",
-        "desc": "状态栏、程序坞、小组件及所有其他界面元素的不透明度"
-      },
-      "blur_background": {
-        "title": "添加模糊的壁纸背景",
-        "desc": "对所有使用透明度的元素背后的壁纸进行模糊处理",
-        "style": {
-          "blur": "模糊",
-          "liquid": "液态玻璃"
+        },
+        "show_selion": {
+          "title": "显示 Selion 壁纸",
+          "desc": "在自定义壁纸之外同时包含内置的 Selion 壁纸包"
         }
       },
       "apps": {
@@ -893,6 +920,7 @@
         "excluded_apps": "已排除应用",
         "excluded_apps_desc": "后续将这些应用排除在总体统计之外",
         "overall_limit_desc": "总屏幕使用时间达到此值时通知我",
+        "add_app": "添加应用",
         "no_limits": "未设置应用限制",
         "no_excluded": "没有排除的应用",
         "picker_search": "搜索应用...",
@@ -900,6 +928,18 @@
         "picker_apply": "应用",
         "picker_cancel": "取消"
       },
+      "day": "日",
+      "week": "周",
+      "screen_time": "屏幕使用时间",
+      "less_than_prev": "比前一天少 {time}",
+      "more_than_prev": "比前一天多 {time}",
+      "same_as_prev": "与前一天相同",
+      "limit_progress": "已用 {used} / 每日限额 {limit}",
+      "limit_reached": "已达到每日限额 {limit}",
+      "peak_hour": "高峰时段",
+      "week_total": "本周总计",
+      "less": "较少",
+      "more": "较多",
       "notify": {
         "title": "数字健康",
         "overall_reached": "已达到每日总使用限额",
@@ -983,6 +1023,10 @@
         "title": "悬浮程序坞",
         "desc": "使程序坞带有圆角并与屏幕边缘分离"
       },
+      "background": {
+        "title": "在应用后绘制背景",
+        "desc": "在应用图标后显示程序坞面板"
+      },
       "transparency": {
         "title": "程序坞透明度",
         "desc": "调节程序坞背景不透明度"
@@ -994,7 +1038,8 @@
         "shuffle": "随机排列应用",
         "empty": "未配置程序坞应用",
         "enter_edit": "编辑",
-        "exit_edit": "退出编辑模式"
+        "exit_edit": "退出编辑模式",
+        "desc": "配置和整理显示在程序坞上的应用程序"
       },
       "picker": {
         "search": "搜索应用...",
@@ -1054,11 +1099,10 @@
         "workspace": "仅当前工作区"
       },
       "window_menu": {
-        "untitled": "Untitled"
-      },
-      "background": {
-        "title": "在应用后绘制背景",
-        "desc": "在应用图标后显示程序坞面板"
+        "new_window": "新建窗口",
+        "pin": "固定到程序坞",
+        "unpin": "从程序坞取消固定",
+        "untitled": "无标题"
       }
     },
     "lyrics_picker": {
@@ -1069,7 +1113,8 @@
     "search": {
       "placeholder": "搜索设置...",
       "prompt": "输入以搜索设置...",
-      "no_results": "未找到相关设置"
+      "no_results": "未找到相关设置",
+      "results": "搜索结果"
     },
     "screenshot": {
       "ocr": {
@@ -1173,6 +1218,7 @@
         "desc": "管理已登记的指纹并添加新手指"
       },
       "finger_registered": "已在 %1 登记",
+      "registered_desc": "已保存的生物识别指纹",
       "modal": {
         "title": "录入指纹",
         "select_desc": "选择要录入的手指",
@@ -1218,10 +1264,46 @@
         "custom_label": "充电上限",
         "custom_desc": "允许充入的最高电量百分比"
       },
+      "cpu_freq": {
+        "title": "CPU 频率限制",
+        "desc": "限制节能模式下的最大核心频率"
+      },
+      "cpu_mode_auto": "自动",
+      "cpu_mode_manual": "手动",
+      "cpu_freq_value": {
+        "title": "最大频率",
+        "desc": "为节能模式选定的频率上限"
+      },
+      "auto_brightness": {
+        "title": "自动降低亮度",
+        "desc": "进入节能模式时自动调暗屏幕亮度"
+      },
+      "saver_brightness": {
+        "title": "目标亮度级别",
+        "desc": "节能模式下的屏幕亮度级别"
+      },
       "time_remaining": "剩余约 %1",
       "time_until_full": "距充满约 %1",
       "hours_short": "小时",
-      "minutes_short": "分"
+      "minutes_short": "分",
+      "optimizations": {
+        "title": "节能优化",
+        "desc": "开关硬件电源管理和省电优化项",
+        "cpu_boost_title": "CPU Turbo Boost",
+        "cpu_boost_desc": "允许处理器核心睿频加速至高于基础频率",
+        "wifi_powersave_title": "Wi-Fi 节能",
+        "wifi_powersave_desc": "在空闲期间降低 Wi-Fi 功耗",
+        "device_pm_title": "设备运行时电源管理 (Runtime PM)",
+        "device_pm_desc": "自动挂起空闲的总线控制器和 USB 设备",
+        "audio_powersave_title": "音频节能",
+        "audio_powersave_desc": "静音时关闭音频编解码器电源",
+        "disk_writeback_title": "延迟磁盘回写",
+        "disk_writeback_desc": "每 60 秒刷新一次脏缓冲区以让磁盘休眠",
+        "nmi_watchdog_title": "禁用 NMI Watchdog",
+        "nmi_watchdog_desc": "停止周期性定时器中断以进入更深的 C-states",
+        "bluetooth_sleep_title": "蓝牙自动关闭",
+        "bluetooth_sleep_desc": "没有连接设备时关闭蓝牙射频"
+      }
     },
     "weather": {
       "enabled": {
@@ -1235,7 +1317,6 @@
       "government": {
         "title": "政府预警",
         "desc": "发送您所在位置的官方恶劣天气预警",
-        "note": "您的位置会发送给官方预警来源。这不能替代官方紧急警报。",
         "never": "从未",
         "last_success": "上次成功",
         "sources": "可访问的来源",
@@ -1251,13 +1332,9 @@
       "quiet": {
         "title": "勿扰时段",
         "desc": "在这些时段内暂缓非紧急提醒。严重的政府预警、雷暴和冰冻仍会送达",
-        "start": {
-          "title": "勿扰开始时间",
-          "desc": "本地时间小时，0 到 23"
-        },
-        "end": {
-          "title": "勿扰结束时间",
-          "desc": "本地时间小时，0 到 23"
+        "range": {
+          "title": "勿扰时间段",
+          "desc": "拖动滑块以选择暂缓提醒的时间段"
         }
       },
       "kinds": {
@@ -1344,6 +1421,7 @@
     "default_message": "应用程序正在请求管理员权限。",
     "default_description": "需要进行身份验证才能以超级用户身份运行此操作。",
     "password_placeholder": "密码",
+    "fingerprint_waiting": "请扫描指纹或等待输入密码...",
     "error_failed": "身份验证失败。请重试。"
   },
   "applauncher": {
@@ -1355,7 +1433,11 @@
     "tab_emojis": "表情符号",
     "placeholder_emojis": "按名称或关键字搜索表情符号...",
     "search_run": "使用 {provider} 搜索",
-    "search_hint": "输入内容以使用 {provider} 搜索"
+    "search_hint": "输入内容以使用 {provider} 搜索",
+    "command_run": "执行命令：{cmd}",
+    "command_hint": "输入要执行的命令",
+    "calc_result": "计算结果（按 Enter 复制）",
+    "no_emojis_found": "未找到表情符号"
   },
   "calendar": {
     "loading": "正在加载...",
@@ -1391,12 +1473,14 @@
       "locked": "已锁定",
       "access_denied": "访问被拒绝",
       "authenticating": "正在验证...",
-      "enter_pin": "输入 PIN 码"
+      "enter_pin": "输入 PIN 码",
+      "too_many_attempts": "尝试次数过多"
     },
     "fingerprint": {
       "ready": "请触摸传感器",
       "not_recognized": "未识别到指纹",
-      "recognized": "指纹已识别"
+      "recognized": "指纹已识别",
+      "blocked": "指纹解锁已禁用"
     },
     "power": {
       "suspend": "睡眠",
@@ -1471,21 +1555,6 @@
       "dynamic": "动态",
       "dynamic_active": "正在适应你的声音"
     },
-    "presets": {
-      "flat": "平直",
-      "bass": "低音增强",
-      "treble": "高音增强",
-      "vocal": "人声",
-      "pop": "流行",
-      "rock": "摇滚",
-      "jazz": "爵士",
-      "classic": "古典",
-      "custom": "自定义"
-    },
-    "searching_lyrics": "正在搜索歌词...",
-    "no_lyrics": "未找到歌词",
-    "select_local_file": "选择本地文件",
-    "lyrics": "歌词",
     "audio": {
       "title": "音频",
       "balance": "声道平衡",
@@ -1505,7 +1574,22 @@
       "off": "关闭",
       "balanced": "均衡",
       "night": "夜间"
-    }
+    },
+    "presets": {
+      "flat": "平直",
+      "bass": "低音增强",
+      "treble": "高音增强",
+      "vocal": "人声",
+      "pop": "流行",
+      "rock": "摇滚",
+      "jazz": "爵士",
+      "classic": "古典",
+      "custom": "自定义"
+    },
+    "searching_lyrics": "正在搜索歌词...",
+    "no_lyrics": "未找到歌词",
+    "select_local_file": "选择本地文件",
+    "lyrics": "歌词"
   },
   "network": {
     "tabs": {
@@ -1551,6 +1635,9 @@
         "badge": "屏幕截图",
         "fallback_summary": "截取的屏幕",
         "click_to_open": "点击打开截图文件夹"
+      },
+      "battery": {
+        "title": "电池"
       }
     }
   },
@@ -1786,7 +1873,8 @@
       "blue": "蓝色",
       "purple": "紫色",
       "pink": "粉色",
-      "monochrome": "黑白单色"
+      "monochrome": "黑白单色",
+      "history": "最近"
     }
   },
   "weather": {
@@ -1912,10 +2000,11 @@
       "material": "Material",
       "materialAnalog": "Material 模拟指针",
       "lockscreen": "锁屏",
-      "stretched": "Stretched",
+      "stretched": "拉伸",
       "lumen": "Lumen",
       "lyrics": "歌词",
-      "simpleLyrics": "简易歌词"
+      "simpleLyrics": "简易歌词",
+      "circle": "圆环"
     },
     "presets": {
       "minimal": {
@@ -1942,12 +2031,20 @@
     "settings": {
       "lyricsLines": "行数",
       "lyricsAlignment": "对齐方式",
+      "usageStyle": "样式",
+      "lineThickness": "线条粗细",
+      "visualizerStyle": "可视化器样式",
+      "showNoLyrics": "显示“暂无歌词”文本",
       "textContent": "文本"
     },
     "align": {
       "left": "靠左",
       "center": "居中",
       "right": "靠右"
+    },
+    "style": {
+      "wave": "波浪",
+      "circle": "圆环"
     },
     "notes": {
       "empty": "暂无笔记"
@@ -1957,7 +2054,7 @@
     }
   },
   "cli": {
-    "usage": "Usage: serpantinum [command] [options...]",
+    "usage": "用法：serpantinum [命令] [选项...]",
     "description": "专为 Wayland 合成器打造的桌面 Shell。",
     "commands": "命令：",
     "script_commands": "脚本命令：",
@@ -1975,19 +2072,19 @@
     "daemon_restarted": "Serpantinum 守护进程已重启。",
     "starting_daemon": "守护进程未运行。正在后台启动 serpantinumd...",
     "error_missing_qml": "错误：缺少要启动的目标。",
-    "launch_usage": "Usage: serpantinum launch <start> [args...]",
-    "error_qml_not_found": "Error: could not resolve {NAME}.qml in {DIR}",
-    "error_shell_qml_not_found": "Error: could not resolve path to shell.qml in {DIR}",
-    "error_unknown_command": "Error: unknown command '{CMD}'.",
-    "error_unknown_target": "Error: unknown target '{TARGET}'.",
+    "launch_usage": "用法：serpantinum launch <start> [参数...]",
+    "error_qml_not_found": "错误：无法在 {DIR} 中解析 {NAME}.qml",
+    "error_shell_qml_not_found": "错误：无法在 {DIR} 中解析 shell.qml 的路径",
+    "error_unknown_command": "错误：未知命令“{CMD}”。",
+    "error_unknown_target": "错误：未知目标“{TARGET}”。",
     "launch_help": {
-      "usage": "Usage: serpantinum launch <start> [arguments...]",
+      "usage": "用法：serpantinum launch <start> [参数...]",
       "description": "直接在运行器模式下启动独立组件。",
       "available_targets": "可用目标：",
       "target_start": "启动初始设置引导界面"
     },
     "msg_help": {
-      "usage": "Usage: serpantinum msg <command|workspace> [arguments...]",
+      "usage": "用法：serpantinum msg <command|workspace> [参数...]",
       "description": "直接发送布局、工作区和窗口管理消息。",
       "available_commands": "可用消息：",
       "cmd_workspace": "切换至工作区 <num>（追加 'move' 将活动窗口一并移至该工作区）",
@@ -1996,7 +2093,7 @@
       "cmd_close": "关闭任何当前活动 Shell 覆盖层"
     },
     "ipc_help": {
-      "usage": "Usage: serpantinum ipc call <target> <method> [arguments...]",
+      "usage": "用法：serpantinum ipc call <target> <method> [参数...]",
       "description": "直接向正在运行的 quickshell 实例发送 IPC 调用。"
     },
     "scripts": {
@@ -2039,7 +2136,7 @@
     "shutting_down": "正在关闭 serpantinum 守护进程...",
     "launching": "正在启动 serpantinum 守护进程...",
     "cli": {
-      "usage": "Usage: serpantinumd <command> [options...]",
+      "usage": "用法：serpantinumd <命令> [选项...]",
       "description": "serpantinum 桌面 shell 的后台服务守护进程。",
       "commands": "命令：",
       "cmd_start": "启动守护进程服务并启动后台工作程序",
@@ -2134,12 +2231,35 @@
     },
     "deps": {
       "syncing": "正在同步并更新系统软件包 (pacman -Syyu)...",
+      "enabling_copr": "正在启用 COPR 软件源 {repo}...",
+      "enabling_terra": "正在启用 Terra 软件源...",
+      "enabling_repo": "正在启用软件源 {repo}...",
       "all_installed": "-> 所有软件包均已安装！跳过软件包下载阶段。",
       "missing_count": "-> 发现 {count} 个缺失的软件包需要安装。",
       "installing_title": "正在安装系统软件包与依赖项...",
       "installing_pkg": "正在安装 {pkg}...",
       "install_ok": "成功安装 {pkg}",
-      "install_failed": "安装 {pkg} 失败"
+      "install_failed": "安装 {pkg} 失败",
+      "quickshell_outdated": "Quickshell {version} 版本过旧，需要 {minimum} 或更高版本。正在升级...",
+      "quickshell_still_old": "Quickshell 仍然低于 {minimum}。请手动更新，否则设置窗口将无法打开。"
+    },
+    "ski": {
+      "installing": "正在安装 Ski 文件管理器...",
+      "up_to_date": "-> Ski {version} 已安装。",
+      "installed": "已安装 Ski {version}",
+      "install_failed": "安装 Ski 失败",
+      "download_failed": "无法下载 Ski，已跳过。您可以稍后从 github.com/ilyamiro/Ski 安装。",
+      "checksum_failed": "Ski 下载校验失败，已跳过。",
+      "unsupported_arch": "预编译 Ski 软件包仅支持 x86_64 架构，已跳过。"
+    },
+    "audio": {
+      "installing": "正在安装 Serpantinum 音频引擎...",
+      "up_to_date": "-> Serpantinum 音频引擎 {version} 已安装。",
+      "installed": "已安装 Serpantinum 音频引擎 {version}",
+      "building": "此系统没有预编译的音频引擎，正在从源码构建...",
+      "install_failed": "安装 Serpantinum 音频引擎失败。从 github.com/ilyamiro/serpantinum-audio 安装之前，均衡器将无法使用。",
+      "download_failed": "无法下载 Serpantinum 音频引擎，已跳过。您可以稍后从 github.com/ilyamiro/serpantinum-audio 安装。",
+      "checksum_failed": "音频引擎下载校验失败，已跳过。"
     },
     "deploy": {
       "configuring_sddm": "正在配置 SDDM 显示管理器...",
@@ -2149,6 +2269,24 @@
       "sddm_no_xorg": "未找到 Xorg，SDDM 将使用 {compositor}。",
       "sddm_no_backend": "在 /usr/local/bin、/usr/bin 或 /bin 中既未找到 Xorg，也未找到登录界面支持的 Wayland 合成器（kwin_wayland/weston）。",
       "sddm_skipped": "已跳过 SDDM 设置：未找到可用的显示服务器或登录合成器。当前显示管理器保持不变。"
+    },
+    "gamma": {
+      "installing": "正在安装 Serpantinum 蓝光滤镜...",
+      "up_to_date": "-> Serpantinum 蓝光滤镜 {version} 已安装。",
+      "installed": "已安装 Serpantinum 蓝光滤镜 {version}",
+      "install_failed": "安装 Serpantinum 蓝光滤镜失败。从 github.com/ilyamiro/serpantinum-gamma 安装之前，该功能将无法使用。",
+      "download_failed": "无法下载 Serpantinum 蓝光滤镜，已跳过。您可以稍后从 github.com/ilyamiro/serpantinum-gamma 安装。",
+      "checksum_failed": "蓝光滤镜下载校验失败，已跳过。",
+      "unsupported_arch": "预编译蓝光滤镜软件包仅支持 x86_64 架构，已跳过。"
+    },
+    "core": {
+      "installing": "正在安装 Serpantinum 核心服务...",
+      "up_to_date": "-> Serpantinum 核心服务 {version} 已安装。",
+      "installed": "已安装 Serpantinum 核心服务 {version}",
+      "install_failed": "安装 Serpantinum 核心服务失败。从 github.com/ilyamiro/serpantinum-core 安装之前，系统占用、键盘锁定指示器和剪贴板将无法使用。",
+      "download_failed": "无法下载 Serpantinum 核心服务，已跳过。您可以稍后从 github.com/ilyamiro/serpantinum-core 安装。",
+      "checksum_failed": "核心服务下载校验失败，已跳过。",
+      "unsupported_arch": "预编译核心服务软件包仅支持 x86_64 架构，已跳过。"
     }
   },
   "translator": {
@@ -2172,7 +2310,13 @@
     "keep_clipboard_sub": "若禁用 — 粘贴后将恢复原有剪贴板内容"
   },
   "datetime": {
-    "full_date": "MMMM d日 dddd"
+    "full_date": "MMMM d日 dddd",
+    "just_now": "刚刚",
+    "minutes_ago": "{mins} 分钟前",
+    "yesterday": "昨天 {time}"
+  },
+  "common": {
+    "select": "选择..."
   },
   "gov_alerts": {
     "status": {

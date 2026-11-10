@@ -12,6 +12,7 @@ GuideTab {
 
     property string currentWallpaperDir: Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || (Quickshell.env("HOME") + "/Pictures/Wallpapers")
     property var availableWallpaperDirs: []
+    property bool showSelionWallpapers: Config.getSetting("showSelionWallpapers", true) !== false
 
     property alias currentWallpaperPath: currentWallpaper.path
     property alias wallpaperRevision: currentWallpaper.revision
@@ -75,6 +76,11 @@ GuideTab {
         Config.setSetting("wallpaperDir", wallpaperTabRoot.currentWallpaperDir);
     }
 
+    function updateShowSelionWallpapers(val) {
+        wallpaperTabRoot.showSelionWallpapers = !!val;
+        Config.setSetting("showSelionWallpapers", !!val);
+    }
+
     Connections {
         target: Config
         function onSettingsLoaded() {
@@ -83,6 +89,7 @@ GuideTab {
             if (wpDir && wpDir !== "") {
                 wallpaperTabRoot.currentWallpaperDir = wpDir;
             }
+            wallpaperTabRoot.showSelionWallpapers = (Config.getSetting("showSelionWallpapers", true) !== false);
         }
     }
 

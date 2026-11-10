@@ -33,7 +33,7 @@
       "notifications": "Notifikasi",
       "idle": "Diam",
       "wellbeing": "Kebugaran Digital",
-      "tutorial": "Tutorial",
+      "tutorial": "Panduan",
       "update": "Pembaruan",
       "about": "Tentang",
       "display_widgets": "Widget",
@@ -358,7 +358,10 @@
               "pills": "Kapsul",
               "numbers": "Angka",
               "pacman": "Pacman"
-            }
+            },
+            "pills": "Indikator pil minimalis",
+            "numbers": "Indeks bernomor",
+            "pacman": "Titik arkade animasi"
           },
           "name": "Ruang kerja"
         },
@@ -377,12 +380,18 @@
             "name": {
               "classic": "Klasik",
               "material": "Material",
-              "badge": "Dot Matrix"
-            }
+              "badge": "Matriks Titik"
+            },
+            "classic": "Waktu dan tanggal bertumpuk yang rapi",
+            "material": "Angka aksen tebal diagonal",
+            "badge": "Kartu bersegmen kapsul"
           }
         },
         "info": "Perekaman/timer",
-        "weather": "Cuaca"
+        "weather": "Cuaca",
+        "notifications": "Notifikasi",
+        "usage": "Penggunaan sistem",
+        "clock": "Jam"
       },
       "position": {
         "title": "Posisi bilah",
@@ -408,6 +417,14 @@
         "hide_empty": {
           "title": "Sembunyikan ruang kerja kosong",
           "desc": "Hanya tampilkan ruang kerja yang terisi dan yang sedang aktif"
+        },
+        "per_monitor": {
+          "title": "Penomoran per monitor",
+          "desc": "Khusus Hyprland. Nomori ruang kerja mulai dari 1 pada setiap monitor dan atur berapa banyak ruang kerja yang dimiliki tiap monitor",
+          "unavailable": "Hanya tersedia di Hyprland"
+        },
+        "monitor_count": {
+          "desc": "Ruang kerja milik monitor ini"
         },
         "style": {
           "title": "Gaya",
@@ -513,11 +530,13 @@
           "name": {
             "classic": "Klasik",
             "minimal": "Minimalis",
-            "text": "Teks"
+            "text": "Teks",
+            "button": "Tombol"
           },
           "classic": "Kapsul dengan isian gelombang gradien",
           "minimal": "Kapsul gaya iOS/Android dengan tutup",
-          "text": "Teks dan ikon bersih tanpa latar belakang"
+          "text": "Teks dan ikon bersih tanpa latar belakang",
+          "button": "Tombol kapsul interaktif dengan latar belakang"
         }
       },
       "wifi": {
@@ -598,14 +617,14 @@
       },
       "media": {
         "info_mode": {
-          "title": "Secondary info",
-          "desc": "Choose whether to show the song duration or its author",
-          "duration": "Duration",
-          "author": "Author"
+          "title": "Info sekunder",
+          "desc": "Pilih apakah ingin menampilkan durasi lagu atau penulisnya",
+          "duration": "Durasi",
+          "author": "Penulis"
         },
         "width": {
-          "title": "Width",
-          "desc": "Width of the song title area"
+          "title": "Lebar",
+          "desc": "Lebar area judul lagu"
         },
         "show_icon": {
           "title": "Tampilkan ikon",
@@ -621,7 +640,7 @@
         },
         "preview": {
           "title": "Judul lagu",
-          "author": "Song author"
+          "author": "Penulis lagu"
         }
       },
       "thickness": {
@@ -648,6 +667,10 @@
           "button": "Tombol ikon interaktif dengan latar belakang",
           "icon": "Ikon bersih tanpa latar belakang"
         }
+      },
+      "height": {
+        "title": "Tinggi bilah",
+        "desc": "Atur tinggi bilah sebagai persentase"
       }
     },
     "theme": {
@@ -659,6 +682,18 @@
       "radius": {
         "title": "Radius sudut",
         "desc": "Radius sudut untuk elemen UI"
+      },
+      "element_opacity": {
+        "title": "Opasitas elemen",
+        "desc": "Opasitas bilah, dock, widget, dan semua elemen shell lainnya"
+      },
+      "blur_background": {
+        "title": "Tambahkan latar belakang wallpaper yang diburamkan",
+        "desc": "Memburamkan wallpaper di belakang setiap elemen yang menggunakan transparansi",
+        "style": {
+          "blur": "Buram",
+          "liquid": "Kaca cair"
+        }
       },
       "colors": {
         "title": "Tema warna",
@@ -727,18 +762,10 @@
             "bottom_left": "Dari kiri bawah",
             "bottom_right": "Dari kanan bawah"
           }
-        }
-      },
-      "element_opacity": {
-        "title": "Opasitas elemen",
-        "desc": "Opasitas bilah, dock, widget, dan semua elemen shell lainnya"
-      },
-      "blur_background": {
-        "title": "Tambahkan latar belakang wallpaper yang diburamkan",
-        "desc": "Memburamkan wallpaper di belakang setiap elemen yang menggunakan transparansi",
-        "style": {
-          "blur": "Buram",
-          "liquid": "Kaca cair"
+        },
+        "show_selion": {
+          "title": "Tampilkan wallpaper Selion",
+          "desc": "Sertakan paket wallpaper bawaan Selion bersama wallpaper kustom Anda"
         }
       },
       "apps": {
@@ -893,6 +920,7 @@
         "excluded_apps": "Aplikasi yang dikecualikan",
         "excluded_apps_desc": "Kecualikan aplikasi dari pelacakan keseluruhan ke depan",
         "overall_limit_desc": "Beri tahu saya saat total waktu layar mencapai batas ini",
+        "add_app": "Tambah aplikasi",
         "no_limits": "Belum ada batas aplikasi",
         "no_excluded": "Tidak ada aplikasi yang dikecualikan",
         "picker_search": "Cari aplikasi...",
@@ -900,6 +928,18 @@
         "picker_apply": "Terapkan",
         "picker_cancel": "Batal"
       },
+      "day": "Hari",
+      "week": "Minggu",
+      "screen_time": "Waktu layar",
+      "less_than_prev": "{time} lebih sedikit dari hari sebelumnya",
+      "more_than_prev": "{time} lebih banyak dari hari sebelumnya",
+      "same_as_prev": "Sama seperti hari sebelumnya",
+      "limit_progress": "{used} dari batas harian {limit}",
+      "limit_reached": "Batas harian {limit} tercapai",
+      "peak_hour": "Jam sibuk",
+      "week_total": "Total mingguan",
+      "less": "Sedikit",
+      "more": "Banyak",
       "notify": {
         "title": "Kesejahteraan digital",
         "overall_reached": "Batas harian total Anda telah tercapai",
@@ -983,6 +1023,10 @@
         "title": "Dok mengambang",
         "desc": "Lepaskan dok dari tepi layar dengan sudut membulat"
       },
+      "background": {
+        "title": "Gambar latar di belakang aplikasi",
+        "desc": "Tampilkan panel dock di belakang ikon aplikasi"
+      },
       "transparency": {
         "title": "Transparansi dok",
         "desc": "Sesuaikan tingkat opasitas latar belakang dok"
@@ -993,8 +1037,9 @@
         "plural": "aplikasi",
         "shuffle": "Acak Aplikasi",
         "empty": "Tidak ada aplikasi yang dikonfigurasikan untuk dok",
-        "enter_edit": "Edit",
-        "exit_edit": "Keluar dari mode edit"
+        "enter_edit": "Ubah",
+        "exit_edit": "Keluar dari mode edit",
+        "desc": "Konfigurasikan dan atur aplikasi yang ditampilkan di dok"
       },
       "picker": {
         "search": "Cari aplikasi...",
@@ -1054,11 +1099,10 @@
         "workspace": "Hanya ruang kerja aktif"
       },
       "window_menu": {
-        "untitled": "Untitled"
-      },
-      "background": {
-        "title": "Gambar latar di belakang aplikasi",
-        "desc": "Tampilkan panel dock di belakang ikon aplikasi"
+        "new_window": "Jendela baru",
+        "pin": "Sematkan ke dok",
+        "unpin": "Lepas dari dok",
+        "untitled": "Tanpa judul"
       }
     },
     "lyrics_picker": {
@@ -1069,7 +1113,8 @@
     "search": {
       "placeholder": "Cari pengaturan...",
       "prompt": "Ketik untuk mencari pengaturan...",
-      "no_results": "Pengaturan tidak ditemukan"
+      "no_results": "Pengaturan tidak ditemukan",
+      "results": "Hasil pencarian"
     },
     "screenshot": {
       "ocr": {
@@ -1173,6 +1218,7 @@
         "desc": "Kelola sidik jari dan tambahkan jari baru"
       },
       "finger_registered": "Terdaftar pada %1",
+      "registered_desc": "Sidik jari biometrik tersimpan",
       "modal": {
         "title": "Daftarkan Sidik Jari",
         "select_desc": "Pilih jari untuk didaftarkan",
@@ -1218,10 +1264,46 @@
         "custom_label": "Batas pengisian",
         "custom_desc": "Persentase batas pengisian baterai"
       },
+      "cpu_freq": {
+        "title": "Batas frekuensi CPU",
+        "desc": "Batasi frekuensi maksimum inti prosesor untuk mode hemat daya"
+      },
+      "cpu_mode_auto": "Otomatis",
+      "cpu_mode_manual": "Manual",
+      "cpu_freq_value": {
+        "title": "Frekuensi maksimum",
+        "desc": "Batas frekuensi yang dipilih untuk mode hemat daya"
+      },
+      "auto_brightness": {
+        "title": "Pengurangan kecerahan otomatis",
+        "desc": "Redupkan kecerahan layar saat masuk ke mode hemat daya"
+      },
+      "saver_brightness": {
+        "title": "Tingkat kecerahan target",
+        "desc": "Tingkat kecerahan layar dalam mode hemat daya"
+      },
       "time_remaining": "tersisa ~%1",
       "time_until_full": "~%1 hingga penuh",
       "hours_short": "j",
-      "minutes_short": "m"
+      "minutes_short": "m",
+      "optimizations": {
+        "title": "Optimalisasi hemat daya",
+        "desc": "Aktifkan atau nonaktifkan manajemen daya perangkat keras dan penyesuaian penghematan baterai",
+        "cpu_boost_title": "Turbo Boost CPU",
+        "cpu_boost_desc": "Izinkan inti prosesor melaju di atas kecepatan dasar",
+        "wifi_powersave_title": "Hemat Daya Wi-Fi",
+        "wifi_powersave_desc": "Kurangi penggunaan daya Wi-Fi selama periode diam",
+        "device_pm_title": "Manajemen Daya Runtime Perangkat",
+        "device_pm_desc": "Tangguhkan otomatis pengontrol bus dan perangkat USB yang diam",
+        "audio_powersave_title": "Hemat Daya Audio",
+        "audio_powersave_desc": "Matikan kodek audio saat senyap",
+        "disk_writeback_title": "Penulisan Balik Disk Tertunda",
+        "disk_writeback_desc": "Kosongkan penyangga kotor setiap 60 detik agar diska dapat tidur",
+        "nmi_watchdog_title": "Nonaktifkan NMI Watchdog",
+        "nmi_watchdog_desc": "Hentikan interupsi pewaktu berkala untuk kondisi C yang lebih dalam",
+        "bluetooth_sleep_title": "Matikan Otomatis Bluetooth",
+        "bluetooth_sleep_desc": "Matikan radio Bluetooth saat tidak ada perangkat yang terhubung"
+      }
     },
     "weather": {
       "enabled": {
@@ -1235,7 +1317,6 @@
       "government": {
         "title": "Peringatan pemerintah",
         "desc": "Kirim peringatan cuaca buruk resmi untuk lokasi Anda",
-        "note": "Lokasi Anda dikirim ke sumber peringatan resmi. Ini tidak menggantikan peringatan darurat resmi.",
         "never": "Tidak pernah",
         "last_success": "Keberhasilan terakhir",
         "sources": "Sumber yang dapat dijangkau",
@@ -1251,13 +1332,9 @@
       "quiet": {
         "title": "Jam tenang",
         "desc": "Tahan peringatan yang tidak mendesak selama jam ini. Peringatan pemerintah yang parah, badai petir, dan es tetap akan diterima",
-        "start": {
-          "title": "Mulai jam tenang",
-          "desc": "Jam lokal, dari 0 sampai 23"
-        },
-        "end": {
-          "title": "Akhir jam tenang",
-          "desc": "Jam lokal, dari 0 sampai 23"
+        "range": {
+          "title": "Periode tenang",
+          "desc": "Seret pegangan untuk memilih kapan peringatan ditahan"
         }
       },
       "kinds": {
@@ -1344,6 +1421,7 @@
     "default_message": "Autentikasi diperlukan",
     "default_description": "Suatu aplikasi meminta izin untuk melakukan tindakan yang memerlukan hak istimewa.",
     "password_placeholder": "Masukkan kata sandi...",
+    "fingerprint_waiting": "Pindai sidik jari atau tunggu kata sandi...",
     "error_failed": "Autentikasi gagal. Coba lagi."
   },
   "applauncher": {
@@ -1355,7 +1433,11 @@
     "tab_emojis": "Emoji",
     "placeholder_emojis": "Cari emoji berdasarkan nama atau kata kunci...",
     "search_run": "Cari dengan {provider}",
-    "search_hint": "Ketik untuk mencari dengan {provider}"
+    "search_hint": "Ketik untuk mencari dengan {provider}",
+    "command_run": "Jalankan perintah: {cmd}",
+    "command_hint": "Ketik perintah untuk dijalankan",
+    "calc_result": "Hasil perhitungan (Enter untuk menyalin)",
+    "no_emojis_found": "Emoji tidak ditemukan"
   },
   "calendar": {
     "loading": "Memuat...",
@@ -1391,12 +1473,14 @@
       "locked": "Terkunci",
       "access_denied": "Akses ditolak",
       "authenticating": "Mengautentikasi...",
-      "enter_pin": "Masukkan PIN"
+      "enter_pin": "Masukkan PIN",
+      "too_many_attempts": "Terlalu banyak percobaan"
     },
     "fingerprint": {
       "ready": "Sentuh sensor",
       "not_recognized": "Sidik jari tidak dikenali",
-      "recognized": "Sidik jari dikenali"
+      "recognized": "Sidik jari dikenali",
+      "blocked": "Sidik jari dinonaktifkan"
     },
     "power": {
       "suspend": "Suspensi",
@@ -1461,31 +1545,16 @@
     "loading": "Memuat...",
     "by_artist": "Oleh {artist}",
     "unknown_artist": "Artis tidak dikenal",
-    "speaker": "Speaker",
+    "speaker": "Pengeras suara",
     "via_source": "Melalui {source}",
-    "offline": "Offline",
-    "equalizer": "Equalizer",
+    "offline": "Luring",
+    "equalizer": "Ekualiser",
     "eq": {
       "apply": "Terapkan",
       "saved": "Disimpan",
       "dynamic": "Dinamis",
       "dynamic_active": "Menyesuaikan dengan suaramu"
     },
-    "presets": {
-      "flat": "Datar",
-      "bass": "Bass",
-      "treble": "Treble",
-      "vocal": "Vokal",
-      "pop": "Pop",
-      "rock": "Rock",
-      "jazz": "Jazz",
-      "classic": "Klasik",
-      "custom": "Kustom"
-    },
-    "searching_lyrics": "Mencari lirik...",
-    "no_lyrics": "Lirik tidak ditemukan",
-    "select_local_file": "Pilih berkas lokal",
-    "lyrics": "Lirik",
     "audio": {
       "title": "Audio",
       "balance": "Keseimbangan kanal",
@@ -1505,7 +1574,22 @@
       "off": "Mati",
       "balanced": "Seimbang",
       "night": "Malam"
-    }
+    },
+    "presets": {
+      "flat": "Datar",
+      "bass": "Bas",
+      "treble": "Trebel",
+      "vocal": "Vokal",
+      "pop": "Pop",
+      "rock": "Rock",
+      "jazz": "Jazz",
+      "classic": "Klasik",
+      "custom": "Kustom"
+    },
+    "searching_lyrics": "Mencari lirik...",
+    "no_lyrics": "Lirik tidak ditemukan",
+    "select_local_file": "Pilih berkas lokal",
+    "lyrics": "Lirik"
   },
   "network": {
     "tabs": {
@@ -1551,6 +1635,9 @@
         "badge": "Tangkapan Layar",
         "fallback_summary": "Layar tertangkap",
         "click_to_open": "Klik untuk membuka folder tangkapan layar"
+      },
+      "battery": {
+        "title": "Baterai"
       }
     }
   },
@@ -1564,7 +1651,7 @@
     },
     "timer": {
       "tabs": {
-        "timer": "Timer",
+        "timer": "Pewaktu",
         "stopwatch": "Stopwatch",
         "pomodoro": "Pomodoro"
       },
@@ -1608,7 +1695,7 @@
         "failed_body": "Tidak dapat menyimpan gambar"
       },
       "palette": "Palet",
-      "palette_default": "Default"
+      "palette_default": "Bawaan"
     },
     "notes": {
       "title": "Catatan",
@@ -1672,7 +1759,7 @@
     "tabs": {
       "draw": "Gambar",
       "system": "Sistem",
-      "timer": "Timer",
+      "timer": "Pewaktu",
       "notes": "Catatan",
       "calculator": "Kalkulator",
       "tab": "Tab"
@@ -1786,7 +1873,8 @@
       "blue": "Biru",
       "purple": "Ungu",
       "pink": "Merah Muda",
-      "monochrome": "Monokrom"
+      "monochrome": "Monokrom",
+      "history": "Terbaru"
     }
   },
   "weather": {
@@ -1799,7 +1887,7 @@
       "snow": "Salju",
       "storm": "Badai",
       "unknown": "Tidak diketahui",
-      "offline": "Offline"
+      "offline": "Luring"
     },
     "days": {
       "mon": "Sen",
@@ -1842,7 +1930,7 @@
       "desc": "Kelola koneksi Wi-Fi, ethernet, dan jaringan"
     },
     "volume": {
-      "name": "Volume & audio",
+      "name": "Volume dan audio",
       "desc": "Kelola perangkat suara dan tingkat volume"
     },
     "guide": {
@@ -1908,14 +1996,15 @@
       "rounded": "Membulat",
       "bars": "Bilah",
       "continuous": "Berkelanjutan",
-      "default": "Default",
+      "default": "Bawaan",
       "material": "Material",
-      "materialAnalog": "Material Analog",
-      "lockscreen": "Lockscreen",
-      "stretched": "Stretched",
+      "materialAnalog": "Analog Material",
+      "lockscreen": "Layar kunci",
+      "stretched": "Terentang",
       "lumen": "Lumen",
       "lyrics": "Lirik",
-      "simpleLyrics": "Lirik Sederhana"
+      "simpleLyrics": "Lirik Sederhana",
+      "circle": "Lingkaran"
     },
     "presets": {
       "minimal": {
@@ -1942,12 +2031,20 @@
     "settings": {
       "lyricsLines": "Baris",
       "lyricsAlignment": "Perataan",
+      "usageStyle": "Gaya",
+      "lineThickness": "Ketebalan",
+      "visualizerStyle": "Gaya visualisator",
+      "showNoLyrics": "Tampilkan teks \"tidak ada lirik\"",
       "textContent": "Teks"
     },
     "align": {
       "left": "Kiri",
       "center": "Tengah",
       "right": "Kanan"
+    },
+    "style": {
+      "wave": "Gelombang",
+      "circle": "Lingkaran"
     },
     "notes": {
       "empty": "Belum ada catatan"
@@ -2134,12 +2231,35 @@
     },
     "deps": {
       "syncing": "Menyinkronkan dan memperbarui paket sistem (pacman -Syyu)...",
+      "enabling_copr": "Mengaktifkan repositori COPR {repo}...",
+      "enabling_terra": "Mengaktifkan repositori Terra...",
+      "enabling_repo": "Mengaktifkan repositori {repo}...",
       "all_installed": "-> Semua paket sudah terinstal! Melewati tahap pengunduhan paket.",
       "missing_count": "-> Ditemukan {count} paket yang hilang untuk diinstal.",
       "installing_title": "Menginstal paket sistem dan dependensi...",
       "installing_pkg": "Menginstal {pkg}...",
       "install_ok": "Berhasil menginstal {pkg}",
-      "install_failed": "Gagal menginstal {pkg}"
+      "install_failed": "Gagal menginstal {pkg}",
+      "quickshell_outdated": "Quickshell {version} terlalu lama, diperlukan {minimum} atau yang lebih baru. Memperbarui...",
+      "quickshell_still_old": "Quickshell masih lebih lama dari {minimum}. Perbarui secara manual, jika tidak pengaturan tidak akan terbuka."
+    },
+    "ski": {
+      "installing": "Menginstal pengelola berkas Ski...",
+      "up_to_date": "-> Ski {version} sudah terinstal.",
+      "installed": "Ski {version} terinstal",
+      "install_failed": "Gagal menginstal Ski",
+      "download_failed": "Tidak dapat mengunduh Ski, melewati. Anda dapat menginstalnya nanti dari github.com/ilyamiro/Ski.",
+      "checksum_failed": "Unduhan Ski gagal melewati pemeriksaan checksum, melewati.",
+      "unsupported_arch": "Paket Ski bawaan hanya tersedia untuk x86_64, melewati."
+    },
+    "audio": {
+      "installing": "Menginstal mesin audio Serpantinum...",
+      "up_to_date": "-> Mesin audio Serpantinum {version} sudah terinstal.",
+      "installed": "Mesin audio Serpantinum {version} terinstal",
+      "building": "Tidak ada mesin audio bawaan untuk sistem ini, membangun dari sumber...",
+      "install_failed": "Gagal menginstal mesin audio Serpantinum. Ekualiser tidak akan berfungsi sampai diinstal dari github.com/ilyamiro/serpantinum-audio.",
+      "download_failed": "Tidak dapat mengunduh mesin audio Serpantinum, melewati. Anda dapat menginstalnya nanti dari github.com/ilyamiro/serpantinum-audio.",
+      "checksum_failed": "Unduhan mesin audio gagal melewati pemeriksaan checksum, melewati."
     },
     "deploy": {
       "configuring_sddm": "Mengonfigurasi manajer tampilan SDDM...",
@@ -2149,6 +2269,24 @@
       "sddm_no_xorg": "Xorg tidak ditemukan, SDDM menggunakan {compositor}.",
       "sddm_no_backend": "Xorg maupun compositor Wayland yang didukung untuk layar login (kwin_wayland/weston) tidak ditemukan di /usr/local/bin, /usr/bin atau /bin.",
       "sddm_skipped": "Pengaturan SDDM dilewati: tidak ada server tampilan atau compositor login yang dapat digunakan. Display manager saat ini tidak diubah."
+    },
+    "gamma": {
+      "installing": "Menginstal filter cahaya biru Serpantinum...",
+      "up_to_date": "-> Filter cahaya biru Serpantinum {version} sudah terinstal.",
+      "installed": "Filter cahaya biru Serpantinum {version} terinstal",
+      "install_failed": "Gagal menginstal filter cahaya biru Serpantinum. Filter ini tidak akan berfungsi sampai diinstal dari github.com/ilyamiro/serpantinum-gamma.",
+      "download_failed": "Tidak dapat mengunduh filter cahaya biru Serpantinum, melewati. Anda dapat menginstalnya nanti dari github.com/ilyamiro/serpantinum-gamma.",
+      "checksum_failed": "Unduhan filter cahaya biru gagal melewati pemeriksaan checksum, melewati.",
+      "unsupported_arch": "Paket filter cahaya biru bawaan hanya tersedia untuk x86_64, melewati."
+    },
+    "core": {
+      "installing": "Menginstal layanan inti Serpantinum...",
+      "up_to_date": "-> Layanan inti Serpantinum {version} sudah terinstal.",
+      "installed": "Layanan inti Serpantinum {version} terinstal",
+      "install_failed": "Gagal menginstal layanan inti Serpantinum. Penggunaan sistem, indikator kunci papan ketik, dan papan klip tidak akan berfungsi sampai diinstal dari github.com/ilyamiro/serpantinum-core.",
+      "download_failed": "Tidak dapat mengunduh layanan inti Serpantinum, melewati. Anda dapat menginstalnya nanti dari github.com/ilyamiro/serpantinum-core.",
+      "checksum_failed": "Unduhan layanan inti gagal melewati pemeriksaan checksum, melewati.",
+      "unsupported_arch": "Paket layanan inti bawaan hanya tersedia untuk x86_64, melewati."
     }
   },
   "translator": {
@@ -2172,7 +2310,13 @@
     "keep_clipboard_sub": "Jika dinonaktifkan — konten papan klip asli dipulihkan setelah menempel"
   },
   "datetime": {
-    "full_date": "dddd, d MMMM"
+    "full_date": "dddd, d MMMM",
+    "just_now": "Baru saja",
+    "minutes_ago": "{mins} mnt yang lalu",
+    "yesterday": "Kemarin {time}"
+  },
+  "common": {
+    "select": "Pilih..."
   },
   "gov_alerts": {
     "status": {
@@ -2188,7 +2332,7 @@
       "none": "Tidak ada cakupan"
     },
     "sources": {
-      "nws": "US National Weather Service",
+      "nws": "Dinas Cuaca Nasional AS",
       "eccc": "Environment Canada",
       "dwd": "Dinas Cuaca Jerman",
       "metno": "MET Norway",

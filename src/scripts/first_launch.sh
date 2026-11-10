@@ -19,14 +19,22 @@ check_status() {
     touch "$FLAG_FILE"
 
     WP_DIR=""
+    SHOW_SELION="true"
     if type get_setting >/dev/null 2>&1; then
         WP_DIR="$(get_setting "wallpaperDir" "")"
         [ -z "$WP_DIR" ] && WP_DIR="$(get_setting "wallpaper_dir" "")"
+        SHOW_SELION="$(get_setting "showSelionWallpapers" "true")"
     fi
 
     RANDOM_WP=""
     if [ -n "$WP_DIR" ] && [ -d "$WP_DIR" ]; then
-        RANDOM_WP="$(find "$WP_DIR" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" -o -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.mov" -o -iname "*.webm" \) 2>/dev/null | shuf -n 1)"
+        if [ "$SHOW_SELION" = "false" ]; then
+            if [ "$(basename "$WP_DIR")" != "Selion" ]; then
+                RANDOM_WP="$(find -L "$WP_DIR" -type f ! -path '*/.*' ! -path "${WP_DIR%/}/Selion" ! -path "${WP_DIR%/}/Selion/*" \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" -o -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.mov" -o -iname "*.webm" \) 2>/dev/null | shuf -n 1)"
+            fi
+        else
+            RANDOM_WP="$(find -L "$WP_DIR" -type f ! -path '*/.*' \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" -o -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.mov" -o -iname "*.webm" \) 2>/dev/null | shuf -n 1)"
+        fi
     fi
 
     START_QML=""

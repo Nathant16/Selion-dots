@@ -358,7 +358,10 @@
               "pills": "膠囊",
               "numbers": "數字",
               "pacman": "小精靈"
-            }
+            },
+            "pills": "極簡膠囊指示器",
+            "numbers": "數字索引",
+            "pacman": "動態街機圓點"
           },
           "name": "工作區"
         },
@@ -378,11 +381,17 @@
               "classic": "傳統",
               "material": "Material",
               "badge": "點陣"
-            }
+            },
+            "classic": "簡潔上下堆疊的時間與日期",
+            "material": "斜角粗體強調數字",
+            "badge": "膠囊分段卡片"
           }
         },
         "info": "錄影/計時器",
-        "weather": "天氣"
+        "weather": "天氣",
+        "notifications": "通知",
+        "usage": "系統使用量",
+        "clock": "時鐘"
       },
       "position": {
         "title": "狀態列位置",
@@ -408,6 +417,14 @@
         "hide_empty": {
           "title": "隱藏空白工作區",
           "desc": "僅顯示已占用的工作區與目前作用中的工作區"
+        },
+        "per_monitor": {
+          "title": "依顯示器個別編號",
+          "desc": "僅限 Hyprland。在每台顯示器上從 1 開始為工作區編號，並設定每台顯示器擁有的工作區數量",
+          "unavailable": "僅在 Hyprland 上可用"
+        },
+        "monitor_count": {
+          "desc": "此顯示器擁有的工作區數量"
         },
         "style": {
           "title": "樣式",
@@ -513,11 +530,13 @@
           "name": {
             "classic": "傳統",
             "minimal": "極簡",
-            "text": "純文字"
+            "text": "純文字",
+            "button": "按鈕"
           },
           "classic": "具漸層波形填滿的膠囊",
           "minimal": "iOS/Android 附端蓋膠囊",
-          "text": "簡潔文字與圖示，無背景"
+          "text": "簡潔文字與圖示，無背景",
+          "button": "帶有背景的互動式膠囊按鈕"
         }
       },
       "wifi": {
@@ -598,14 +617,14 @@
       },
       "media": {
         "info_mode": {
-          "title": "Secondary info",
-          "desc": "Choose whether to show the song duration or its author",
-          "duration": "Duration",
-          "author": "Author"
+          "title": "輔助資訊",
+          "desc": "選擇顯示歌曲長度或作者",
+          "duration": "長度",
+          "author": "作者"
         },
         "width": {
-          "title": "Width",
-          "desc": "Width of the song title area"
+          "title": "寬度",
+          "desc": "歌曲標題區域的寬度"
         },
         "show_icon": {
           "title": "顯示圖示",
@@ -621,7 +640,7 @@
         },
         "preview": {
           "title": "歌曲標題",
-          "author": "Song author"
+          "author": "歌曲作者"
         }
       },
       "thickness": {
@@ -648,6 +667,10 @@
           "button": "帶背景的互動式圖示按鈕",
           "icon": "無背景的簡潔圖示"
         }
+      },
+      "height": {
+        "title": "狀態列高度",
+        "desc": "以百分比設定狀態列高度"
       }
     },
     "theme": {
@@ -659,6 +682,18 @@
       "radius": {
         "title": "邊框圓角",
         "desc": "UI 元素的圓角半徑"
+      },
+      "element_opacity": {
+        "title": "元素不透明度",
+        "desc": "狀態列、Dock、小工具及所有其他介面元素的不透明度"
+      },
+      "blur_background": {
+        "title": "新增模糊的桌布背景",
+        "desc": "對所有使用透明度的元素後方的桌布進行模糊處理",
+        "style": {
+          "blur": "模糊",
+          "liquid": "液態玻璃"
+        }
       },
       "colors": {
         "title": "色彩主題",
@@ -727,18 +762,10 @@
             "bottom_left": "從左下角",
             "bottom_right": "從右下角"
           }
-        }
-      },
-      "element_opacity": {
-        "title": "元素不透明度",
-        "desc": "狀態列、Dock、小工具及所有其他介面元素的不透明度"
-      },
-      "blur_background": {
-        "title": "新增模糊的桌布背景",
-        "desc": "對所有使用透明度的元素後方的桌布進行模糊處理",
-        "style": {
-          "blur": "模糊",
-          "liquid": "液態玻璃"
+        },
+        "show_selion": {
+          "title": "顯示 Selion 桌布",
+          "desc": "在您的自訂桌布之外同時包含內建的 Selion 桌布包"
         }
       },
       "apps": {
@@ -893,6 +920,7 @@
         "excluded_apps": "已排除的應用程式",
         "excluded_apps_desc": "日後從整體使用記錄追蹤中排除的應用程式",
         "overall_limit_desc": "總螢幕使用時間達到此值時通知我",
+        "add_app": "新增應用程式",
         "no_limits": "未設定應用程式限制",
         "no_excluded": "沒有排除的應用程式",
         "picker_search": "搜尋應用程式...",
@@ -900,6 +928,18 @@
         "picker_apply": "套用",
         "picker_cancel": "取消"
       },
+      "day": "日",
+      "week": "週",
+      "screen_time": "螢幕使用時間",
+      "less_than_prev": "比前一天少 {time}",
+      "more_than_prev": "比前一天多 {time}",
+      "same_as_prev": "與前一天相同",
+      "limit_progress": "已使用 {used} / 每日限額 {limit}",
+      "limit_reached": "已達到每日限額 {limit}",
+      "peak_hour": "高峰時段",
+      "week_total": "本週總計",
+      "less": "較少",
+      "more": "較多",
       "notify": {
         "title": "數位健康",
         "overall_reached": "已達到每日總使用上限",
@@ -983,6 +1023,10 @@
         "title": "浮動 Dock",
         "desc": "將 Dock 與螢幕邊緣分離並帶有圓角"
       },
+      "background": {
+        "title": "在應用程式後繪製背景",
+        "desc": "在應用程式圖示後顯示 Dock 面板"
+      },
       "transparency": {
         "title": "Dock 透明度",
         "desc": "調整 Dock 背景不透明度"
@@ -994,7 +1038,8 @@
         "shuffle": "隨機排列應用程式",
         "empty": "尚未為 Dock 設定任何應用程式",
         "enter_edit": "編輯",
-        "exit_edit": "結束編輯模式"
+        "exit_edit": "結束編輯模式",
+        "desc": "設定並整理顯示在 Dock 上的應用程式"
       },
       "picker": {
         "search": "搜尋應用程式...",
@@ -1054,11 +1099,10 @@
         "workspace": "僅作用中工作區"
       },
       "window_menu": {
-        "untitled": "Untitled"
-      },
-      "background": {
-        "title": "在應用程式後繪製背景",
-        "desc": "在應用程式圖示後顯示 Dock 面板"
+        "new_window": "新增視窗",
+        "pin": "釘選到 Dock",
+        "unpin": "從 Dock 取消釘選",
+        "untitled": "未命名"
       }
     },
     "lyrics_picker": {
@@ -1069,7 +1113,8 @@
     "search": {
       "placeholder": "搜尋設定...",
       "prompt": "輸入以搜尋設定...",
-      "no_results": "找不到相關設定"
+      "no_results": "找不到相關設定",
+      "results": "搜尋結果"
     },
     "screenshot": {
       "ocr": {
@@ -1173,6 +1218,7 @@
         "desc": "管理已登記的指紋並新增手指"
       },
       "finger_registered": "已於 %1 登記",
+      "registered_desc": "已儲存的生物辨識指紋",
       "modal": {
         "title": "錄入指紋",
         "select_desc": "選擇要錄入的手指",
@@ -1218,10 +1264,46 @@
         "custom_label": "充電上限",
         "custom_desc": "允許充電的最高百分比"
       },
+      "cpu_freq": {
+        "title": "CPU 頻率限制",
+        "desc": "限制省電模式下的最大核心頻率"
+      },
+      "cpu_mode_auto": "自動",
+      "cpu_mode_manual": "手動",
+      "cpu_freq_value": {
+        "title": "最大頻率",
+        "desc": "省電模式所選的頻率上限"
+      },
+      "auto_brightness": {
+        "title": "自動降低亮度",
+        "desc": "進入省電模式時調暗螢幕亮度"
+      },
+      "saver_brightness": {
+        "title": "目標亮度等級",
+        "desc": "省電模式下的螢幕亮度等級"
+      },
       "time_remaining": "剩餘約 %1",
       "time_until_full": "距充飽約 %1",
       "hours_short": "小時",
-      "minutes_short": "分"
+      "minutes_short": "分",
+      "optimizations": {
+        "title": "省電最佳化",
+        "desc": "切換硬體電源管理與省電微調項目",
+        "cpu_boost_title": "CPU Turbo Boost",
+        "cpu_boost_desc": "允許處理器核心超頻提升至高於基礎時脈",
+        "wifi_powersave_title": "Wi-Fi 省電",
+        "wifi_powersave_desc": "在閒置期間降低 Wi-Fi 功耗",
+        "device_pm_title": "裝置執行階段電源管理 (Runtime PM)",
+        "device_pm_desc": "自動暫停閒置的匯流排控制器與 USB 裝置",
+        "audio_powersave_title": "音訊省電",
+        "audio_powersave_desc": "靜音時關閉音訊編解碼器電源",
+        "disk_writeback_title": "延遲磁碟回寫",
+        "disk_writeback_desc": "每 60 秒寫入髒緩衝區一次，讓磁碟進入休眠",
+        "nmi_watchdog_title": "停用 NMI Watchdog",
+        "nmi_watchdog_desc": "停止週期性計時器中斷以進入更深的 C-states",
+        "bluetooth_sleep_title": "藍牙自動關閉",
+        "bluetooth_sleep_desc": "沒有連線裝置時關閉藍牙無線電"
+      }
     },
     "weather": {
       "enabled": {
@@ -1235,7 +1317,6 @@
       "government": {
         "title": "政府警報",
         "desc": "傳送您所在位置的官方劇烈天氣警報",
-        "note": "您的位置會傳送給官方警報來源。這不能取代官方緊急警報。",
         "never": "從未",
         "last_success": "上次成功",
         "sources": "可連線的來源",
@@ -1251,13 +1332,9 @@
       "quiet": {
         "title": "勿擾時段",
         "desc": "在這些時段內暫緩非緊急提醒。嚴重的政府警報、雷暴和結冰仍會送達",
-        "start": {
-          "title": "勿擾開始時間",
-          "desc": "當地時間小時，0 到 23"
-        },
-        "end": {
-          "title": "勿擾結束時間",
-          "desc": "當地時間小時，0 到 23"
+        "range": {
+          "title": "勿擾期間",
+          "desc": "拖曳控制點以選擇暫緩提醒的時間範圍"
         }
       },
       "kinds": {
@@ -1344,6 +1421,7 @@
     "default_message": "應用程式正在請求管理員權限。",
     "default_description": "需要驗證身分才能以超級使用者身分執行此操作。",
     "password_placeholder": "密碼",
+    "fingerprint_waiting": "請掃描指紋或等待輸入密碼...",
     "error_failed": "驗證失敗。請再試一次。"
   },
   "applauncher": {
@@ -1355,7 +1433,11 @@
     "tab_emojis": "表情符號",
     "placeholder_emojis": "依名稱或關鍵字搜尋表情符號...",
     "search_run": "使用 {provider} 搜尋",
-    "search_hint": "輸入內容以使用 {provider} 搜尋"
+    "search_hint": "輸入內容以使用 {provider} 搜尋",
+    "command_run": "執行指令：{cmd}",
+    "command_hint": "輸入要執行的指令",
+    "calc_result": "計算結果（按 Enter 複製）",
+    "no_emojis_found": "找不到表情符號"
   },
   "calendar": {
     "loading": "載入中...",
@@ -1391,12 +1473,14 @@
       "locked": "已鎖定",
       "access_denied": "存取遭拒",
       "authenticating": "正在驗證...",
-      "enter_pin": "輸入 PIN 碼"
+      "enter_pin": "輸入 PIN 碼",
+      "too_many_attempts": "嘗試次數過多"
     },
     "fingerprint": {
       "ready": "請觸碰感應器",
       "not_recognized": "未辨識到指紋",
-      "recognized": "指紋已辨識"
+      "recognized": "指紋已辨識",
+      "blocked": "指紋辨識已停用"
     },
     "power": {
       "suspend": "睡眠",
@@ -1471,21 +1555,6 @@
       "dynamic": "動態",
       "dynamic_active": "正在適應你的聲音"
     },
-    "presets": {
-      "flat": "平直",
-      "bass": "重低音",
-      "treble": "高音",
-      "vocal": "人聲",
-      "pop": "流行",
-      "rock": "搖滾",
-      "jazz": "爵士",
-      "classic": "古典",
-      "custom": "自訂"
-    },
-    "searching_lyrics": "正在搜尋歌詞...",
-    "no_lyrics": "找不到歌詞",
-    "select_local_file": "選取本機檔案",
-    "lyrics": "歌詞",
     "audio": {
       "title": "音訊",
       "balance": "聲道平衡",
@@ -1505,7 +1574,22 @@
       "off": "關閉",
       "balanced": "平衡",
       "night": "夜間"
-    }
+    },
+    "presets": {
+      "flat": "平直",
+      "bass": "重低音",
+      "treble": "高音",
+      "vocal": "人聲",
+      "pop": "流行",
+      "rock": "搖滾",
+      "jazz": "爵士",
+      "classic": "古典",
+      "custom": "自訂"
+    },
+    "searching_lyrics": "正在搜尋歌詞...",
+    "no_lyrics": "找不到歌詞",
+    "select_local_file": "選取本機檔案",
+    "lyrics": "歌詞"
   },
   "network": {
     "tabs": {
@@ -1551,6 +1635,9 @@
         "badge": "螢幕擷圖",
         "fallback_summary": "已擷取的畫面",
         "click_to_open": "按一下以開啟螢幕擷圖資料夾"
+      },
+      "battery": {
+        "title": "電池"
       }
     }
   },
@@ -1786,7 +1873,8 @@
       "blue": "藍",
       "purple": "紫",
       "pink": "粉紅",
-      "monochrome": "單色"
+      "monochrome": "單色",
+      "history": "最近"
     }
   },
   "weather": {
@@ -1912,10 +2000,11 @@
       "material": "Material",
       "materialAnalog": "Material 類比",
       "lockscreen": "鎖定畫面",
-      "stretched": "Stretched",
+      "stretched": "延展",
       "lumen": "Lumen",
       "lyrics": "歌詞",
-      "simpleLyrics": "簡約歌詞"
+      "simpleLyrics": "簡約歌詞",
+      "circle": "圓環"
     },
     "presets": {
       "minimal": {
@@ -1942,12 +2031,20 @@
     "settings": {
       "lyricsLines": "行數",
       "lyricsAlignment": "對齊方式",
+      "usageStyle": "樣式",
+      "lineThickness": "線條粗細",
+      "visualizerStyle": "視覺效果樣式",
+      "showNoLyrics": "顯示「無歌詞」文字",
       "textContent": "文字"
     },
     "align": {
       "left": "靠左",
       "center": "置中",
       "right": "靠右"
+    },
+    "style": {
+      "wave": "波形",
+      "circle": "圓環"
     },
     "notes": {
       "empty": "尚無筆記"
@@ -2134,12 +2231,35 @@
     },
     "deps": {
       "syncing": "正在同步並更新系統套件 (pacman -syyu)...",
+      "enabling_copr": "正在啟用 COPR 軟體庫 {repo}...",
+      "enabling_terra": "正在啟用 Terra 軟體庫...",
+      "enabling_repo": "正在啟用軟體庫 {repo}...",
       "all_installed": "-> 所有套件皆已安裝！跳過套件下載階段。",
       "missing_count": "-> 發現 {count} 個缺少的套件待安裝。",
       "installing_title": "正在安裝系統套件與相依套件...",
       "installing_pkg": "正在安裝 {pkg}...",
       "install_ok": "已成功安裝 {pkg}",
-      "install_failed": "安裝 {pkg} 失敗"
+      "install_failed": "安裝 {pkg} 失敗",
+      "quickshell_outdated": "Quickshell {version} 版本過舊，需要 {minimum} 或更新版本。正在升級...",
+      "quickshell_still_old": "Quickshell 仍然低於 {minimum}。請手動更新，否則將無法開啟設定視窗。"
+    },
+    "ski": {
+      "installing": "正在安裝 Ski 檔案管理員...",
+      "up_to_date": "-> Ski {version} 已安裝。",
+      "installed": "已安裝 Ski {version}",
+      "install_failed": "安裝 Ski 失敗",
+      "download_failed": "無法下載 Ski，已略過。您之後可從 github.com/ilyamiro/Ski 安裝。",
+      "checksum_failed": "Ski 下載的總和檢查碼驗證失敗，已略過。",
+      "unsupported_arch": "預先建置的 Ski 套件僅支援 x86_64 架構，已略過。"
+    },
+    "audio": {
+      "installing": "正在安裝 Serpantinum 音訊引擎...",
+      "up_to_date": "-> Serpantinum 音訊引擎 {version} 已安裝。",
+      "installed": "已安裝 Serpantinum 音訊引擎 {version}",
+      "building": "此系統沒有預先建置的音訊引擎，正在從原始碼建置...",
+      "install_failed": "安裝 Serpantinum 音訊引擎失敗。在從 github.com/ilyamiro/serpantinum-audio 安裝之前，等化器將無法運作。",
+      "download_failed": "無法下載 Serpantinum 音訊引擎，已略過。您之後可從 github.com/ilyamiro/serpantinum-audio 安裝。",
+      "checksum_failed": "音訊引擎下載的總和檢查碼驗證失敗，已略過。"
     },
     "deploy": {
       "configuring_sddm": "正在設定 SDDM 顯示管理器...",
@@ -2149,6 +2269,24 @@
       "sddm_no_xorg": "找不到 Xorg，SDDM 將使用 {compositor}。",
       "sddm_no_backend": "在 /usr/local/bin、/usr/bin 或 /bin 中既找不到 Xorg，也找不到登入畫面支援的 Wayland 合成器（kwin_wayland/weston）。",
       "sddm_skipped": "已略過 SDDM 設定：找不到可用的顯示伺服器或登入合成器。目前的顯示管理器保持不變。"
+    },
+    "gamma": {
+      "installing": "正在安裝 Serpantinum 藍光濾鏡...",
+      "up_to_date": "-> Serpantinum 藍光濾鏡 {version} 已安裝。",
+      "installed": "已安裝 Serpantinum 藍光濾鏡 {version}",
+      "install_failed": "安裝 Serpantinum 藍光濾鏡失敗。在從 github.com/ilyamiro/serpantinum-gamma 安裝之前，該功能將無法運作。",
+      "download_failed": "無法下載 Serpantinum 藍光濾鏡，已略過。您之後可從 github.com/ilyamiro/serpantinum-gamma 安裝。",
+      "checksum_failed": "藍光濾鏡下載的總和檢查碼驗證失敗，已略過。",
+      "unsupported_arch": "預先建置的藍光濾鏡套件僅支援 x86_64 架構，已略過。"
+    },
+    "core": {
+      "installing": "正在安裝 Serpantinum 核心服務...",
+      "up_to_date": "-> Serpantinum 核心服務 {version} 已安裝。",
+      "installed": "已安裝 Serpantinum 核心服務 {version}",
+      "install_failed": "安裝 Serpantinum 核心服務失敗。在從 github.com/ilyamiro/serpantinum-core 安裝之前，系統使用量、鍵盤鎖定指示器與剪貼簿將無法運作。",
+      "download_failed": "無法下載 Serpantinum 核心服務，已略過。您之後可從 github.com/ilyamiro/serpantinum-core 安裝。",
+      "checksum_failed": "核心服務下載的總和檢查碼驗證失敗，已略過。",
+      "unsupported_arch": "預先建置的核心服務套件僅支援 x86_64 架構，已略過。"
     }
   },
   "translator": {
@@ -2172,7 +2310,13 @@
     "keep_clipboard_sub": "若停用 — 貼上後將還原剪貼簿原本的內容"
   },
   "datetime": {
-    "full_date": "MMMM d日 dddd"
+    "full_date": "MMMM d日 dddd",
+    "just_now": "剛剛",
+    "minutes_ago": "{mins} 分鐘前",
+    "yesterday": "昨天 {time}"
+  },
+  "common": {
+    "select": "選取..."
   },
   "gov_alerts": {
     "status": {

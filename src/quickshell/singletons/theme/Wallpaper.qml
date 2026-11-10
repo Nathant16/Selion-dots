@@ -117,11 +117,18 @@ Item {
     function shuffle(screenName: string, transition: string): void {
         let scrName = screenName || "all";
         let dir = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || (Quickshell.env("HOME") + "/Pictures/Wallpapers");
+        let showSelion = Config.getSetting("showSelionWallpapers", true) !== false;
         let script =
-            "[ -d \"$1\" ] && find -L \"$1\" -maxdepth 1 -type f \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" -o -iname \"*.webp\" -o -iname \"*.bmp\" -o -iname \"*.mp4\" -o -iname \"*.mkv\" -o -iname \"*.mov\" -o -iname \"*.webm\" \\) 2>/dev/null | shuf -n 1";
+            "[ -d \"$1\" ] || exit 0\n" +
+            "if [ \"$2\" = \"0\" ]; then\n" +
+            "  [ \"$(basename \"$1\")\" = \"Selion\" ] && exit 0\n" +
+            "  find -L \"$1\" -type f ! -path '*/.*' ! -path \"${1%/}/Selion\" ! -path \"${1%/}/Selion/*\" \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" -o -iname \"*.webp\" -o -iname \"*.bmp\" -o -iname \"*.mp4\" -o -iname \"*.mkv\" -o -iname \"*.mov\" -o -iname \"*.webm\" \\) 2>/dev/null | shuf -n 1\n" +
+            "else\n" +
+            "  find -L \"$1\" -type f ! -path '*/.*' \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" -o -iname \"*.webp\" -o -iname \"*.bmp\" -o -iname \"*.mp4\" -o -iname \"*.mkv\" -o -iname \"*.mov\" -o -iname \"*.webm\" \\) 2>/dev/null | shuf -n 1\n" +
+            "fi";
         shuffleProcess.targetScreenName = scrName;
         shuffleProcess.transition = transition || "";
-        shuffleProcess.command = ["bash", "-c", script, "shuffle", dir];
+        shuffleProcess.command = ["bash", "-c", script, "shuffle", dir, showSelion ? "1" : "0"];
         shuffleProcess.running = false;
         shuffleProcess.running = true;
     }

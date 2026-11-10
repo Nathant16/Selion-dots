@@ -1,3 +1,11 @@
+### 2.6.0
+
+- feat(wallpapers): switch wallpaper pack to Selion `wallpapers` branch (130 curated UHD/QHD/FHD wallpapers, 508M) synced inside `~/Pictures/Wallpapers/Selion`
+- feat(installer): safely remove legacy `ilyamiro/shell-wallpapers` files from `~/Pictures/Wallpapers` on upgrade while preserving custom user wallpapers
+- feat(wallpaper): add recursive wallpaper indexing (`recursive_index.py`), recursive shuffle/thumbnails/first-launch selection, and subfolder collision-free lookup
+- feat(settings): add "Show Selion wallpapers" toggle (`showSelionWallpapers`) in `Theme / Wallpapers`
+- feat(i18n): align all 23 locale JSONs to a canonical 1,640-key set, translate all missing/English UI strings, and remove 48 obsolete keys
+
 ### 2.5.1
 
 - feat: rebrand shell to Selion (@Nathant)

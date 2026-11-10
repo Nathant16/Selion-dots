@@ -155,11 +155,11 @@ pictures="$(xdg-user-dir PICTURES 2>/dev/null)"
 if [ -z "$pictures" ] || [ "$pictures" = "$HOME" ]; then
     pictures="$HOME/Pictures"
 fi
-wallpapers="$pictures/Wallpapers"
+wallpapers="$pictures/Wallpapers/Selion"
 repo="${XDG_CACHE_HOME:-$HOME/.cache}/serpantinum-wallpapers"
 
 mkdir -p "$wallpapers"
-git clone --depth 1 https://github.com/ilyamiro/shell-wallpapers.git "$repo"
+git clone --depth 1 --branch wallpapers --single-branch https://github.com/Nathant16/Selion-dots.git "$repo"
 find "$repo" -path "$repo/.git" -prune -o -type f \
     \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.webp' \) \
     -exec cp -t "$wallpapers" {} +

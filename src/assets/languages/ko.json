@@ -358,7 +358,10 @@
               "pills": "알약",
               "numbers": "숫자",
               "pacman": "팩맨"
-            }
+            },
+            "pills": "미니멀한 알약 형태 표시기",
+            "numbers": "번호가 매겨진 인덱스",
+            "pacman": "애니메이션 아케이드 도트"
           },
           "name": "작업 공간"
         },
@@ -378,11 +381,17 @@
               "classic": "클래식",
               "material": "머티리얼",
               "badge": "도트 매트릭스"
-            }
+            },
+            "classic": "깔끔하게 세로로 배치된 시간 및 날짜",
+            "material": "대각선 강조 굵은 숫자",
+            "badge": "알약 캡슐형 분할 카드"
           }
         },
         "info": "녹화/타이머",
-        "weather": "날씨"
+        "weather": "날씨",
+        "notifications": "알림",
+        "usage": "시스템 사용량",
+        "clock": "시계"
       },
       "position": {
         "title": "바 위치",
@@ -408,6 +417,14 @@
         "hide_empty": {
           "title": "빈 작업 공간 숨기기",
           "desc": "사용 중인 작업 공간과 현재 작업 공간만 표시"
+        },
+        "per_monitor": {
+          "title": "모니터별 번호 지정",
+          "desc": "Hyprland 전용. 각 모니터에서 작업 공간 번호를 1부터 시작하고 모니터당 할당할 작업 공간 개수를 설정합니다",
+          "unavailable": "Hyprland에서만 사용 가능"
+        },
+        "monitor_count": {
+          "desc": "이 모니터에 할당된 작업 공간 수"
         },
         "style": {
           "title": "스타일",
@@ -513,11 +530,13 @@
           "name": {
             "classic": "클래식",
             "minimal": "미니멀",
-            "text": "텍스트"
+            "text": "텍스트",
+            "button": "버튼"
           },
           "classic": "그라디언트 웨이브 알약 스타일",
           "minimal": "캡이 있는 iOS/Android 캡슐 스타일",
-          "text": "배경 없는 깔끔한 텍스트 및 아이콘"
+          "text": "배경 없는 깔끔한 텍스트 및 아이콘",
+          "button": "배경이 있는 인터랙티브 버튼 캡슐"
         }
       },
       "wifi": {
@@ -598,14 +617,14 @@
       },
       "media": {
         "info_mode": {
-          "title": "Secondary info",
-          "desc": "Choose whether to show the song duration or its author",
-          "duration": "Duration",
-          "author": "Author"
+          "title": "보조 정보",
+          "desc": "곡 재생 시간과 아티스트 중 무엇을 표시할지 선택합니다",
+          "duration": "재생 시간",
+          "author": "아티스트"
         },
         "width": {
-          "title": "Width",
-          "desc": "Width of the song title area"
+          "title": "너비",
+          "desc": "곡 제목 영역의 너비"
         },
         "show_icon": {
           "title": "아이콘 표시",
@@ -621,7 +640,7 @@
         },
         "preview": {
           "title": "곡 제목",
-          "author": "Song author"
+          "author": "곡 아티스트"
         }
       },
       "thickness": {
@@ -648,6 +667,10 @@
           "button": "배경이 있는 인터랙티브 아이콘 버튼",
           "icon": "배경 없는 깔끔한 아이콘"
         }
+      },
+      "height": {
+        "title": "바 높이",
+        "desc": "바의 높이를 백분율로 설정합니다"
       }
     },
     "theme": {
@@ -659,6 +682,18 @@
       "radius": {
         "title": "모서리 반경",
         "desc": "UI 요소의 모서리 둥글기"
+      },
+      "element_opacity": {
+        "title": "요소 불투명도",
+        "desc": "바, 독, 위젯 및 기타 모든 셸 요소의 불투명도"
+      },
+      "blur_background": {
+        "title": "흐린 배경화면 배경 추가",
+        "desc": "투명도를 사용하는 모든 요소 뒤의 배경화면을 흐리게 합니다",
+        "style": {
+          "blur": "흐림",
+          "liquid": "리퀴드 글라스"
+        }
       },
       "colors": {
         "title": "색상 테마",
@@ -727,18 +762,10 @@
             "bottom_left": "왼쪽 아래에서",
             "bottom_right": "오른쪽 아래에서"
           }
-        }
-      },
-      "element_opacity": {
-        "title": "요소 불투명도",
-        "desc": "바, 독, 위젯 및 기타 모든 셸 요소의 불투명도"
-      },
-      "blur_background": {
-        "title": "흐린 배경화면 배경 추가",
-        "desc": "투명도를 사용하는 모든 요소 뒤의 배경화면을 흐리게 합니다",
-        "style": {
-          "blur": "흐림",
-          "liquid": "리퀴드 글라스"
+        },
+        "show_selion": {
+          "title": "Selion 배경화면 표시",
+          "desc": "사용자 지정 배경화면과 함께 기본 내장 Selion 배경화면 팩을 포함합니다"
         }
       },
       "apps": {
@@ -831,20 +858,20 @@
         "over0": "Over0",
         "over1": "Over1",
         "over2": "Over2",
-        "blue": "Blue",
-        "lavender": "Lavender",
-        "sapphire": "Sapphire",
-        "sky": "Sky",
-        "teal": "Teal",
-        "green": "Green",
-        "yellow": "Yellow",
-        "peach": "Peach",
-        "maroon": "Maroon",
-        "red": "Red",
-        "mauve": "Mauve",
-        "pink": "Pink",
-        "flamingo": "Flamingo",
-        "rosewater": "Rosewater"
+        "blue": "파랑",
+        "lavender": "라벤더",
+        "sapphire": "사파이어",
+        "sky": "하늘",
+        "teal": "청록",
+        "green": "초록",
+        "yellow": "노랑",
+        "peach": "복숭아",
+        "maroon": "적갈색",
+        "red": "빨강",
+        "mauve": "연보라",
+        "pink": "분홍",
+        "flamingo": "플라밍고",
+        "rosewater": "로즈워터"
       }
     },
     "wellbeing": {
@@ -893,6 +920,7 @@
         "excluded_apps": "제외된 앱",
         "excluded_apps_desc": "앞으로 전체 사용량 집계에서 제외할 앱을 지정합니다",
         "overall_limit_desc": "총 화면 시간이 이 값에 도달하면 알림",
+        "add_app": "앱 추가",
         "no_limits": "설정된 앱 제한이 없습니다",
         "no_excluded": "제외된 앱이 없습니다",
         "picker_search": "앱 검색...",
@@ -900,6 +928,18 @@
         "picker_apply": "적용",
         "picker_cancel": "취소"
       },
+      "day": "일",
+      "week": "주",
+      "screen_time": "화면 시간",
+      "less_than_prev": "전날보다 {time} 적음",
+      "more_than_prev": "전날보다 {time} 많음",
+      "same_as_prev": "전날과 동일",
+      "limit_progress": "일일 한도 {limit} 중 {used}",
+      "limit_reached": "일일 한도({limit})에 도달함",
+      "peak_hour": "최다 사용 시간",
+      "week_total": "주간 합계",
+      "less": "적음",
+      "more": "많음",
       "notify": {
         "title": "디지털 웰빙",
         "overall_reached": "전체 일일 한도에 도달했습니다",
@@ -983,6 +1023,10 @@
         "title": "플로팅 독",
         "desc": "모서리를 둥글게 하여 화면 가장자리에서 독 분리"
       },
+      "background": {
+        "title": "앱 뒤에 배경 그리기",
+        "desc": "앱 아이콘 뒤에 독 패널 표시"
+      },
       "transparency": {
         "title": "독 투명도",
         "desc": "독 배경 불투명도 조절"
@@ -994,7 +1038,8 @@
         "shuffle": "앱 셔플",
         "empty": "독에 구성된 애플리케이션이 없습니다",
         "enter_edit": "편집 모드 시작",
-        "exit_edit": "편집 모드 종료"
+        "exit_edit": "편집 모드 종료",
+        "desc": "도크에 표시되는 애플리케이션을 설정하고 정리합니다"
       },
       "picker": {
         "search": "앱 검색...",
@@ -1054,11 +1099,10 @@
         "workspace": "활성 작업 공간만"
       },
       "window_menu": {
-        "untitled": "Untitled"
-      },
-      "background": {
-        "title": "앱 뒤에 배경 그리기",
-        "desc": "앱 아이콘 뒤에 독 패널 표시"
+        "new_window": "새 창",
+        "pin": "도크에 고정",
+        "unpin": "도크에서 고정 해제",
+        "untitled": "제목 없음"
       }
     },
     "lyrics_picker": {
@@ -1069,7 +1113,8 @@
     "search": {
       "placeholder": "설정 검색...",
       "prompt": "설정을 검색하려면 입력하세요...",
-      "no_results": "설정을 찾을 수 없습니다"
+      "no_results": "설정을 찾을 수 없습니다",
+      "results": "검색 결과"
     },
     "screenshot": {
       "ocr": {
@@ -1173,6 +1218,7 @@
         "desc": "등록된 지문 관리 및 새 손가락 추가"
       },
       "finger_registered": "%1에 등록됨",
+      "registered_desc": "저장된 생체 지문",
       "modal": {
         "title": "지문 등록",
         "select_desc": "등록할 손가락을 선택하세요",
@@ -1218,10 +1264,46 @@
         "custom_label": "충전 한도",
         "custom_desc": "최대 충전 허용 비율"
       },
+      "cpu_freq": {
+        "title": "CPU 주파수 제한",
+        "desc": "절전 모드에서 최대 코어 주파수를 제한합니다"
+      },
+      "cpu_mode_auto": "자동",
+      "cpu_mode_manual": "수동",
+      "cpu_freq_value": {
+        "title": "최대 주파수",
+        "desc": "절전 모드에 선택된 주파수 상한"
+      },
+      "auto_brightness": {
+        "title": "자동 밝기 감소",
+        "desc": "절전 모드로 전환할 때 화면 밝기를 낮춥니다"
+      },
+      "saver_brightness": {
+        "title": "목표 밝기 수준",
+        "desc": "절전 모드에서의 화면 밝기 수준"
+      },
       "time_remaining": "약 %1 남음",
       "time_until_full": "완충까지 약 %1",
       "hours_short": "시간",
-      "minutes_short": "분"
+      "minutes_short": "분",
+      "optimizations": {
+        "title": "절전 최적화",
+        "desc": "하드웨어 전원 관리 및 배터리 절약 옵션을 전환합니다",
+        "cpu_boost_title": "CPU Turbo Boost",
+        "cpu_boost_desc": "프로세서 코어가 기본 클럭 이상으로 부스트되도록 허용합니다",
+        "wifi_powersave_title": "Wi-Fi 절전",
+        "wifi_powersave_desc": "유휴 상태에서 Wi-Fi 전력 소비를 줄입니다",
+        "device_pm_title": "장치 런타임 PM",
+        "device_pm_desc": "유휴 버스 컨트롤러와 USB 장치를 자동으로 절전 전환합니다",
+        "audio_powersave_title": "오디오 절전",
+        "audio_powersave_desc": "무음 상태일 때 오디오 코덱의 전원을 끕니다",
+        "disk_writeback_title": "디스크 지연 쓰기",
+        "disk_writeback_desc": "드라이브가 절전 상태에 들어갈 수 있도록 60초마다 더티 버퍼를 기록합니다",
+        "nmi_watchdog_title": "NMI Watchdog 비활성화",
+        "nmi_watchdog_desc": "더 깊은 C-상태 진입을 위해 주기적인 타이머 인터럽트를 중지합니다",
+        "bluetooth_sleep_title": "블루투스 자동 전원 끄기",
+        "bluetooth_sleep_desc": "연결된 장치가 없을 때 블루투스 무선을 끕니다"
+      }
     },
     "weather": {
       "enabled": {
@@ -1235,7 +1317,6 @@
       "government": {
         "title": "정부 기상 경보",
         "desc": "내 위치에 대한 공식 기상 특보를 보냅니다",
-        "note": "위치 정보는 공식 경보 출처로 전송됩니다. 공식 긴급 재난 문자를 대체하지는 않습니다.",
         "never": "없음",
         "last_success": "마지막 성공",
         "sources": "연결 가능한 출처",
@@ -1251,13 +1332,9 @@
       "quiet": {
         "title": "방해 금지 시간",
         "desc": "이 시간에는 긴급하지 않은 알림을 보류합니다. 심각한 정부 경보, 뇌우, 결빙 알림은 계속 전달됩니다",
-        "start": {
-          "title": "방해 금지 시작",
-          "desc": "현지 시각, 0부터 23까지"
-        },
-        "end": {
-          "title": "방해 금지 종료",
-          "desc": "현지 시각, 0부터 23까지"
+        "range": {
+          "title": "방해 금지 시간대",
+          "desc": "핸들을 드래그하여 알림을 보류할 시간을 선택하세요"
         }
       },
       "kinds": {
@@ -1344,6 +1421,7 @@
     "default_message": "한 애플리케이션이 관리자 권한을 요청하고 있습니다.",
     "default_description": "이 작업을 관리자 권한으로 실행하려면 인증이 필요합니다.",
     "password_placeholder": "비밀번호",
+    "fingerprint_waiting": "지문을 스캔하거나 비밀번호 입력을 기다리는 중...",
     "error_failed": "인증에 실패했습니다. 다시 시도해 주세요."
   },
   "applauncher": {
@@ -1355,7 +1433,11 @@
     "tab_emojis": "이모지",
     "placeholder_emojis": "이모지 검색 또는 키워드 입력...",
     "search_run": "{provider}에서 검색",
-    "search_hint": "입력하여 {provider}에서 검색"
+    "search_hint": "입력하여 {provider}에서 검색",
+    "command_run": "명령 실행: {cmd}",
+    "command_hint": "실행할 명령을 입력하세요",
+    "calc_result": "계산 결과 (Enter 키로 복사)",
+    "no_emojis_found": "이모지를 찾을 수 없습니다"
   },
   "calendar": {
     "loading": "불러오는 중...",
@@ -1391,12 +1473,14 @@
       "locked": "잠김",
       "access_denied": "접근이 거부되었습니다",
       "authenticating": "인증 중...",
-      "enter_pin": "PIN 입력"
+      "enter_pin": "PIN 입력",
+      "too_many_attempts": "시도 횟수 초과"
     },
     "fingerprint": {
       "ready": "센서를 터치하세요",
       "not_recognized": "지문을 인식하지 못했습니다",
-      "recognized": "지문이 인식되었습니다"
+      "recognized": "지문이 인식되었습니다",
+      "blocked": "지문 인증 비활성화됨"
     },
     "power": {
       "suspend": "절전",
@@ -1551,6 +1635,9 @@
         "badge": "스크린샷",
         "fallback_summary": "화면 캡처됨",
         "click_to_open": "클릭하면 스크린샷 폴더가 열립니다"
+      },
+      "battery": {
+        "title": "배터리"
       }
     }
   },
@@ -1598,14 +1685,17 @@
       }
     },
     "draw": {
+      "hex": "16진수",
       "notification": {
         "app_name": "DrawAction",
-        "saved_title": "Drawing saved",
-        "copied_title": "Drawing copied",
-        "copied_body": "Drawing copied to clipboard",
-        "failed_title": "Export failed",
-        "failed_body": "Could not save drawing"
-      }
+        "saved_title": "그림 저장됨",
+        "copied_title": "그림 복사됨",
+        "copied_body": "그림이 클립보드에 복사되었습니다",
+        "failed_title": "내보내기 실패",
+        "failed_body": "그림을 저장할 수 없습니다"
+      },
+      "palette": "팔레트",
+      "palette_default": "기본"
     },
     "notes": {
       "title": "메모",
@@ -1636,7 +1726,7 @@
       "clear_history": "기록 지우기",
       "copied": "복사됨",
       "deg": "도",
-      "rad": "Rad",
+      "rad": "라디안",
       "grad": "그레이드",
       "inv": "역",
       "mode": {
@@ -1783,7 +1873,8 @@
       "blue": "파랑",
       "purple": "보라",
       "pink": "분홍",
-      "monochrome": "흑백"
+      "monochrome": "흑백",
+      "history": "최근"
     }
   },
   "weather": {
@@ -1909,23 +2000,21 @@
       "material": "머티리얼",
       "materialAnalog": "머티리얼 아날로그",
       "lockscreen": "잠금 화면",
-      "stretched": "Stretched",
+      "stretched": "늘이기",
       "lumen": "루멘",
       "lyrics": "가사",
-      "simpleLyrics": "단순 가사"
+      "simpleLyrics": "단순 가사",
+      "circle": "원형"
     },
     "presets": {
       "minimal": {
-        "name": "미니멀",
-        "desc": "미니멀한 디지털 시계와 컴팩트한 날씨가 포함된 깔끔한 레이아웃입니다."
+        "name": "미니멀"
       },
       "media_station": {
-        "name": "미디어 스테이션",
-        "desc": "중앙 오디오 비주얼라이저 바와 원형 음악 컨트롤러가 포함된 미디어 설정입니다."
+        "name": "미디어 스테이션"
       },
       "dashboard": {
-        "name": "대시보드",
-        "desc": "디지털 시계, 하드웨어 리소스 사용량 및 배터리 상태를 보여주는 대시보드입니다."
+        "name": "대시보드"
       }
     },
     "github": {
@@ -1942,12 +2031,20 @@
     "settings": {
       "lyricsLines": "줄 수",
       "lyricsAlignment": "정렬",
+      "usageStyle": "스타일",
+      "lineThickness": "두께",
+      "visualizerStyle": "비주얼라이저 스타일",
+      "showNoLyrics": "\"가사 없음\" 텍스트 표시",
       "textContent": "텍스트"
     },
     "align": {
       "left": "왼쪽",
       "center": "가운데",
       "right": "오른쪽"
+    },
+    "style": {
+      "wave": "웨이브",
+      "circle": "원형"
     },
     "notes": {
       "empty": "아직 메모가 없습니다"
@@ -2134,12 +2231,35 @@
     },
     "deps": {
       "syncing": "시스템 패키지를 동기화하고 업데이트하는 중 (pacman -syyu)...",
+      "enabling_copr": "COPR 저장소 {repo} 활성화 중...",
+      "enabling_terra": "Terra 저장소 활성화 중...",
+      "enabling_repo": "저장소 {repo} 활성화 중...",
       "all_installed": "-> 모든 패키지가 이미 설치되어 있습니다! 패키지 다운로드 단계를 건너뜁니다.",
       "missing_count": "-> 설치할 패키지 {count}개를 찾았습니다.",
       "installing_title": "시스템 패키지와 의존성을 설치하는 중...",
       "installing_pkg": "{pkg} 설치 중...",
       "install_ok": "{pkg} 설치 완료",
-      "install_failed": "{pkg} 설치 실패"
+      "install_failed": "{pkg} 설치 실패",
+      "quickshell_outdated": "Quickshell {version} 버전이 너무 오래되어 {minimum} 이상이 필요합니다. 업그레이드 중...",
+      "quickshell_still_old": "Quickshell이 여전히 {minimum}보다 이전 버전입니다. 수동으로 업데이트하지 않으면 설정이 열리지 않습니다."
+    },
+    "ski": {
+      "installing": "Ski 파일 관리자 설치 중...",
+      "up_to_date": "-> Ski {version}이(가) 이미 설치되어 있습니다.",
+      "installed": "Ski {version} 설치됨",
+      "install_failed": "Ski 설치 실패",
+      "download_failed": "Ski를 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/Ski에서 설치할 수 있습니다.",
+      "checksum_failed": "Ski 다운로드의 체크섬 검사에 실패하여 건너뜁니다.",
+      "unsupported_arch": "사전 빌드된 Ski 패키지는 x86_64 아키텍처만 지원하므로 건너뜁니다."
+    },
+    "audio": {
+      "installing": "Serpantinum 오디오 엔진 설치 중...",
+      "up_to_date": "-> Serpantinum 오디오 엔진 {version}이(가) 이미 설치되어 있습니다.",
+      "installed": "Serpantinum 오디오 엔진 {version} 설치됨",
+      "building": "이 시스템용으로 사전 빌드된 오디오 엔진이 없어 소스에서 빌드하는 중...",
+      "install_failed": "Serpantinum 오디오 엔진 설치에 실패했습니다. github.com/ilyamiro/serpantinum-audio에서 설치하기 전까지 이퀄라이저가 작동하지 않습니다.",
+      "download_failed": "Serpantinum 오디오 엔진을 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/serpantinum-audio에서 설치할 수 있습니다.",
+      "checksum_failed": "오디오 엔진 다운로드의 체크섬 검사에 실패하여 건너뜁니다."
     },
     "deploy": {
       "configuring_sddm": "SDDM 디스플레이 관리자를 설정하는 중...",
@@ -2149,6 +2269,24 @@
       "sddm_no_xorg": "Xorg를 찾을 수 없어 SDDM에 {compositor}을(를) 사용합니다.",
       "sddm_no_backend": "/usr/local/bin, /usr/bin, /bin에서 Xorg와 로그인 화면용으로 지원되는 Wayland 컴포지터(kwin_wayland/weston)를 모두 찾을 수 없습니다.",
       "sddm_skipped": "SDDM 설정을 건너뜁니다. 사용 가능한 디스플레이 서버 또는 로그인 컴포지터를 찾을 수 없습니다. 현재 디스플레이 매니저는 변경되지 않습니다."
+    },
+    "gamma": {
+      "installing": "Serpantinum 블루라이트 필터 설치 중...",
+      "up_to_date": "-> Serpantinum 블루라이트 필터 {version}이(가) 이미 설치되어 있습니다.",
+      "installed": "Serpantinum 블루라이트 필터 {version} 설치됨",
+      "install_failed": "Serpantinum 블루라이트 필터 설치에 실패했습니다. github.com/ilyamiro/serpantinum-gamma에서 설치하기 전까지 작동하지 않습니다.",
+      "download_failed": "Serpantinum 블루라이트 필터를 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/serpantinum-gamma에서 설치할 수 있습니다.",
+      "checksum_failed": "블루라이트 필터 다운로드의 체크섬 검사에 실패하여 건너뜁니다.",
+      "unsupported_arch": "사전 빌드된 블루라이트 필터 패키지는 x86_64 아키텍처만 지원하므로 건너뜁니다."
+    },
+    "core": {
+      "installing": "Serpantinum 핵심 서비스 설치 중...",
+      "up_to_date": "-> Serpantinum 핵심 서비스 {version}이(가) 이미 설치되어 있습니다.",
+      "installed": "Serpantinum 핵심 서비스 {version} 설치됨",
+      "install_failed": "Serpantinum 핵심 서비스 설치에 실패했습니다. github.com/ilyamiro/serpantinum-core에서 설치하기 전까지 시스템 사용량, 키보드 잠금 표시기 및 클립보드가 작동하지 않습니다.",
+      "download_failed": "Serpantinum 핵심 서비스를 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/serpantinum-core에서 설치할 수 있습니다.",
+      "checksum_failed": "핵심 서비스 다운로드의 체크섬 검사에 실패하여 건너뜁니다.",
+      "unsupported_arch": "사전 빌드된 핵심 서비스 패키지는 x86_64 아키텍처만 지원하므로 건너뜁니다."
     }
   },
   "translator": {
@@ -2172,7 +2310,13 @@
     "keep_clipboard_sub": "끄면 붙여넣기 후 원래 클립보드 내용이 복원됩니다"
   },
   "datetime": {
-    "full_date": "MMMM d일 dddd"
+    "full_date": "MMMM d일 dddd",
+    "just_now": "방금 전",
+    "minutes_ago": "{mins}분 전",
+    "yesterday": "어제 {time}"
+  },
+  "common": {
+    "select": "선택..."
   },
   "gov_alerts": {
     "status": {

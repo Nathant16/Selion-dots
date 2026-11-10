@@ -358,7 +358,10 @@
               "pills": "قرصی",
               "numbers": "اعداد",
               "pacman": "پک‌من"
-            }
+            },
+            "pills": "نشانگرهای قرصی مینیمال",
+            "numbers": "شاخص‌های شماره‌گذاری‌شده",
+            "pacman": "نقطه‌های متحرک آرکید"
           },
           "name": "فضاهای کاری"
         },
@@ -378,11 +381,17 @@
               "classic": "کلاسیک",
               "material": "متریال",
               "badge": "ماتریس نقطه‌ای"
-            }
+            },
+            "classic": "ساعت و تاریخ چیده‌شده ساده روی هم",
+            "material": "اعداد ضخیم مورب با رنگ تاکیدی",
+            "badge": "کارت‌های بخش‌بندی‌شده قرصی-کپسولی"
           }
         },
         "info": "ضبط/زمان‌سنج",
-        "weather": "آب‌وهوا"
+        "weather": "آب‌وهوا",
+        "notifications": "اعلان‌ها",
+        "usage": "مصرف سامانه",
+        "clock": "ساعت"
       },
       "position": {
         "title": "موقعیت نوار",
@@ -408,6 +417,14 @@
         "hide_empty": {
           "title": "پنهان کردن فضاهای کاری خالی",
           "desc": "نمایش فقط فضاهای کاری اشغال‌شده و فضای کاری فعال"
+        },
+        "per_monitor": {
+          "title": "شماره‌گذاری برای هر نمایشگر",
+          "desc": "فقط در Hyprland. شماره‌گذاری فضاهای کاری از ۱ در هر نمایشگر و تعیین تعداد فضاهای کاری متعلق به هر نمایشگر",
+          "unavailable": "فقط در Hyprland در دسترس است"
+        },
+        "monitor_count": {
+          "desc": "فضاهای کاری متعلق به این نمایشگر"
         },
         "style": {
           "title": "سبک",
@@ -513,11 +530,13 @@
           "name": {
             "classic": "کلاسیک",
             "minimal": "مینیمال",
-            "text": "متنی"
+            "text": "متنی",
+            "button": "دکمه"
           },
           "classic": "قرصی با پرشدگی موج گرادیان",
           "minimal": "کپسولی با سرپوش به سبک iOS/اندروید",
-          "text": "متن و نماد ساده بدون پس‌زمینه"
+          "text": "متن و نماد ساده بدون پس‌زمینه",
+          "button": "دکمه قرصی تعاملی با پس‌زمینه"
         }
       },
       "wifi": {
@@ -598,14 +617,14 @@
       },
       "media": {
         "info_mode": {
-          "title": "Secondary info",
-          "desc": "Choose whether to show the song duration or its author",
-          "duration": "Duration",
-          "author": "Author"
+          "title": "اطلاعات ثانویه",
+          "desc": "انتخاب کنید مدت زمان آهنگ نمایش داده شود یا پدیدآورنده آن",
+          "duration": "مدت زمان",
+          "author": "پدیدآورنده"
         },
         "width": {
-          "title": "Width",
-          "desc": "Width of the song title area"
+          "title": "پهنا",
+          "desc": "پهنای ناحیه عنوان آهنگ"
         },
         "show_icon": {
           "title": "نمایش نماد",
@@ -621,7 +640,7 @@
         },
         "preview": {
           "title": "عنوان آهنگ",
-          "author": "Song author"
+          "author": "پدیدآورنده آهنگ"
         }
       },
       "thickness": {
@@ -648,6 +667,10 @@
           "button": "دکمه‌های نمادی تعاملی با پس‌زمینه",
           "icon": "نمادهای ساده بدون پس‌زمینه"
         }
+      },
+      "height": {
+        "title": "ارتفاع نوار",
+        "desc": "تنظیم ارتفاع نوار به صورت درصد"
       }
     },
     "theme": {
@@ -659,6 +682,18 @@
       "radius": {
         "title": "شعاع گوشه‌ها",
         "desc": "شعاع گوشه عناصر رابط کاربری"
+      },
+      "element_opacity": {
+        "title": "شفافیت عناصر",
+        "desc": "شفافیت نوار، داک، ویجت‌ها و هر عنصر دیگر پوسته"
+      },
+      "blur_background": {
+        "title": "افزودن پس‌زمینه تاری از تصویر زمینه",
+        "desc": "تصویر زمینه را پشت هر عنصر شفاف تار می‌کند",
+        "style": {
+          "blur": "تاری",
+          "liquid": "شیشه مایع"
+        }
       },
       "colors": {
         "title": "پوسته‌های رنگی",
@@ -727,18 +762,10 @@
             "bottom_left": "از پایین چپ",
             "bottom_right": "از پایین راست"
           }
-        }
-      },
-      "element_opacity": {
-        "title": "شفافیت عناصر",
-        "desc": "شفافیت نوار، داک، ویجت‌ها و هر عنصر دیگر پوسته"
-      },
-      "blur_background": {
-        "title": "افزودن پس‌زمینه تاری از تصویر زمینه",
-        "desc": "تصویر زمینه را پشت هر عنصر شفاف تار می‌کند",
-        "style": {
-          "blur": "تاری",
-          "liquid": "شیشه مایع"
+        },
+        "show_selion": {
+          "title": "نمایش تصاویر پس‌زمینه Selion",
+          "desc": "گنجاندن بسته تصاویر پس‌زمینه داخلی Selion در کنار پس‌زمینه‌های سفارشی شما"
         }
       },
       "apps": {
@@ -893,6 +920,7 @@
         "excluded_apps": "برنامه‌های مستثنی‌شده",
         "excluded_apps_desc": "مستثنی کردن برنامه‌ها از پایش کلی از این پس",
         "overall_limit_desc": "وقتی کل زمان صفحه‌نمایش به این مقدار رسید به من اطلاع بده",
+        "add_app": "افزودن برنامه",
         "no_limits": "هیچ محدودیتی برای برنامه‌ها تنظیم نشده است",
         "no_excluded": "هیچ برنامه‌ای مستثنا نشده است",
         "picker_search": "جستجوی برنامه‌ها...",
@@ -900,6 +928,18 @@
         "picker_apply": "اعمال",
         "picker_cancel": "لغو"
       },
+      "day": "روز",
+      "week": "هفته",
+      "screen_time": "زمان استفاده از صفحه",
+      "less_than_prev": "{time} کمتر از روز قبل",
+      "more_than_prev": "{time} بیشتر از روز قبل",
+      "same_as_prev": "مشابه روز قبل",
+      "limit_progress": "{used} از سقف روزانه {limit}",
+      "limit_reached": "به سقف روزانه {limit} رسیدید",
+      "peak_hour": "ساعت اوج مصرف",
+      "week_total": "مجموع هفته",
+      "less": "کمتر",
+      "more": "بیشتر",
       "notify": {
         "title": "سلامت دیجیتال",
         "overall_reached": "به محدودیت روزانه کل رسیدید",
@@ -983,6 +1023,10 @@
         "title": "داک شناور",
         "desc": "جدا کردن داک از لبه صفحه با گوشه‌های گرد"
       },
+      "background": {
+        "title": "رسم پس‌زمینه پشت برنامه‌ها",
+        "desc": "نمایش پنل داک پشت آیکون‌های برنامه"
+      },
       "transparency": {
         "title": "شفافیت داک",
         "desc": "تنظیم میزان شفافیت پس‌زمینه داک"
@@ -994,7 +1038,8 @@
         "shuffle": "بُر زدن برنامه‌ها",
         "empty": "هیچ برنامه‌ای برای داک پیکربندی نشده است",
         "enter_edit": "ویرایش",
-        "exit_edit": "خروج از حالت ویرایش"
+        "exit_edit": "خروج از حالت ویرایش",
+        "desc": "پیکربندی و مرتب‌سازی برنامه‌های نمایش‌داده‌شده در داک"
       },
       "picker": {
         "search": "جست‌وجوی برنامه‌ها...",
@@ -1054,11 +1099,10 @@
         "workspace": "فقط فضای کاری فعال"
       },
       "window_menu": {
-        "untitled": "Untitled"
-      },
-      "background": {
-        "title": "رسم پس‌زمینه پشت برنامه‌ها",
-        "desc": "نمایش پنل داک پشت آیکون‌های برنامه"
+        "new_window": "پنجره جدید",
+        "pin": "سنجاق کردن به داک",
+        "unpin": "برداشتن از داک",
+        "untitled": "بدون عنوان"
       }
     },
     "lyrics_picker": {
@@ -1069,7 +1113,8 @@
     "search": {
       "placeholder": "جست‌وجوی تنظیمات...",
       "prompt": "برای جست‌وجوی تنظیمات تایپ کنید...",
-      "no_results": "هیچ تنظیمی پیدا نشد"
+      "no_results": "هیچ تنظیمی پیدا نشد",
+      "results": "نتایج جست‌وجو"
     },
     "screenshot": {
       "ocr": {
@@ -1173,6 +1218,7 @@
         "desc": "مدیریت اثرانگشت‌ها و افزودن انگشت جدید"
       },
       "finger_registered": "ثبت شده در %1",
+      "registered_desc": "اثر انگشت بیومتریک ذخیره‌شده",
       "modal": {
         "title": "افزودن اثرانگشت",
         "select_desc": "یک انگشت را برای ثبت انتخاب کنید",
@@ -1218,10 +1264,46 @@
         "custom_label": "سقف شارژ",
         "custom_desc": "حداکثر درصد شارژ مجاز باتری"
       },
+      "cpu_freq": {
+        "title": "محدودیت فرکانس پردازنده",
+        "desc": "محدود کردن حداکثر فرکانس هسته‌ها برای حالت صرفه‌جویی انرژی"
+      },
+      "cpu_mode_auto": "خودکار",
+      "cpu_mode_manual": "دستی",
+      "cpu_freq_value": {
+        "title": "حداکثر فرکانس",
+        "desc": "سقف فرکانس انتخاب‌شده برای حالت صرفه‌جویی انرژی"
+      },
+      "auto_brightness": {
+        "title": "کاهش خودکار روشنایی",
+        "desc": "کم کردن روشنایی صفحه هنگام ورود به حالت صرفه‌جویی انرژی"
+      },
+      "saver_brightness": {
+        "title": "سطح روشنایی هدف",
+        "desc": "سطح روشنایی صفحه در حالت صرفه‌جویی انرژی"
+      },
       "time_remaining": "~%1 باقی‌مانده",
       "time_until_full": "~%1 تا شارژ کامل",
       "hours_short": "س",
-      "minutes_short": "د"
+      "minutes_short": "د",
+      "optimizations": {
+        "title": "بهینه‌سازی‌های صرفه‌جویی انرژی",
+        "desc": "تغییر وضعیت مدیریت انرژی سخت‌افزار و بهینه‌سازی‌های صرفه‌جویی باتری",
+        "cpu_boost_title": "تقویت Turbo Boost پردازنده",
+        "cpu_boost_desc": "اجازه به هسته‌های پردازنده برای افزایش فرکانس بالاتر از فرکانس پایه",
+        "wifi_powersave_title": "صرفه‌جویی انرژی Wi-Fi",
+        "wifi_powersave_desc": "کاهش مصرف انرژی Wi-Fi در زمان‌های بیکاری",
+        "device_pm_title": "مدیریت انرژی زمان اجرای دستگاه‌ها",
+        "device_pm_desc": "تعلیق خودکار کنترلرهای گذرگاه و دستگاه‌های USB بیکار",
+        "audio_powersave_title": "صرفه‌جویی انرژی صدا",
+        "audio_powersave_desc": "خاموش کردن کدک صدا در زمان سکوت",
+        "disk_writeback_title": "تأخیر در بازنویسی دیسک",
+        "disk_writeback_desc": "تخلیه بافرهای تغییریافته هر ۶۰ ثانیه برای به خواب رفتن درایو",
+        "nmi_watchdog_title": "غیرفعال کردن NMI Watchdog",
+        "nmi_watchdog_desc": "توقف وقفه‌های دوره‌ای تایمر برای دستیابی به وضعیت‌های C-state عمیق‌تر",
+        "bluetooth_sleep_title": "خاموش شدن خودکار Bluetooth",
+        "bluetooth_sleep_desc": "خاموش کردن رادیوی Bluetooth هنگام نبود دستگاه متصل"
+      }
     },
     "weather": {
       "enabled": {
@@ -1235,7 +1317,6 @@
       "government": {
         "title": "هشدارهای رسمی",
         "desc": "ارسال هشدارهای رسمی آب‌وهوای شدید برای مکان شما",
-        "note": "مکان شما برای منابع رسمی هشدار ارسال می‌شود. این جایگزین هشدارهای رسمی اضطراری نیست.",
         "never": "هرگز",
         "last_success": "آخرین موفقیت",
         "sources": "منابع در دسترس",
@@ -1251,13 +1332,9 @@
       "quiet": {
         "title": "ساعات سکوت",
         "desc": "هشدارهای غیرفوری را در این ساعات نگه می‌دارد. هشدارهای رسمی شدید، رعدوبرق و یخ‌زدگی همچنان ارسال می‌شوند",
-        "start": {
-          "title": "شروع ساعات سکوت",
-          "desc": "ساعت محلی، از ۰ تا ۲۳"
-        },
-        "end": {
-          "title": "پایان ساعات سکوت",
-          "desc": "ساعت محلی، از ۰ تا ۲۳"
+        "range": {
+          "title": "بازه سکوت",
+          "desc": "دستگیره‌ها را بکشید تا زمان نگه‌داشتن هشدارها را انتخاب کنید"
         }
       },
       "kinds": {
@@ -1344,6 +1421,7 @@
     "default_message": "یک برنامه درخواست دسترسی‌های مدیریتی دارد.",
     "default_description": "برای اجرای این کنش به عنوان کاربر ارشد احراز هویت لازم است.",
     "password_placeholder": "گذرواژه",
+    "fingerprint_waiting": "اثر انگشت را اسکن کنید یا منتظر گذرواژه بمانید...",
     "error_failed": "احراز هویت ناموفق بود. لطفاً دوباره تلاش کنید."
   },
   "applauncher": {
@@ -1355,7 +1433,11 @@
     "tab_emojis": "شکلک‌ها",
     "placeholder_emojis": "جست‌وجوی شکلک با نام یا کلیدواژه...",
     "search_run": "جستجو در {provider}",
-    "search_hint": "برای جستجو در {provider} تایپ کنید"
+    "search_hint": "برای جستجو در {provider} تایپ کنید",
+    "command_run": "اجرای دستور: {cmd}",
+    "command_hint": "یک دستور برای اجرا تایپ کنید",
+    "calc_result": "نتیجه محاسبه (برای کپی Enter را بزنید)",
+    "no_emojis_found": "هیچ شکلکی پیدا نشد"
   },
   "calendar": {
     "loading": "در حال بارگذاری...",
@@ -1391,12 +1473,14 @@
       "locked": "قفل شد",
       "access_denied": "دسترسی رد شد",
       "authenticating": "در حال احراز هویت...",
-      "enter_pin": "پین را وارد کنید"
+      "enter_pin": "پین را وارد کنید",
+      "too_many_attempts": "تعداد تلاش‌ها بیش از حد مجاز است"
     },
     "fingerprint": {
       "ready": "حسگر را لمس کنید",
       "not_recognized": "اثر انگشت شناسایی نشد",
-      "recognized": "اثر انگشت شناسایی شد"
+      "recognized": "اثر انگشت شناسایی شد",
+      "blocked": "اثر انگشت غیرفعال شد"
     },
     "power": {
       "suspend": "تعلیق",
@@ -1471,21 +1555,6 @@
       "dynamic": "پویا",
       "dynamic_active": "در حال سازگاری با صدای شما"
     },
-    "presets": {
-      "flat": "یکنواخت",
-      "bass": "بیس",
-      "treble": "تریبل",
-      "vocal": "آوازی",
-      "pop": "پاپ",
-      "rock": "راک",
-      "jazz": "جاز",
-      "classic": "کلاسیک",
-      "custom": "سفارشی"
-    },
-    "searching_lyrics": "در حال جست‌وجوی متن ترانه...",
-    "no_lyrics": "متن ترانه‌ای یافت نشد",
-    "select_local_file": "انتخاب پرونده محلی",
-    "lyrics": "متن ترانه",
     "audio": {
       "title": "صدا",
       "balance": "تعادل کانال‌ها",
@@ -1505,7 +1574,22 @@
       "off": "خاموش",
       "balanced": "متعادل",
       "night": "شب"
-    }
+    },
+    "presets": {
+      "flat": "یکنواخت",
+      "bass": "بیس",
+      "treble": "تریبل",
+      "vocal": "آوازی",
+      "pop": "پاپ",
+      "rock": "راک",
+      "jazz": "جاز",
+      "classic": "کلاسیک",
+      "custom": "سفارشی"
+    },
+    "searching_lyrics": "در حال جست‌وجوی متن ترانه...",
+    "no_lyrics": "متن ترانه‌ای یافت نشد",
+    "select_local_file": "انتخاب پرونده محلی",
+    "lyrics": "متن ترانه"
   },
   "network": {
     "tabs": {
@@ -1551,6 +1635,9 @@
         "badge": "نماگرفت",
         "fallback_summary": "تصویر گرفته‌شده",
         "click_to_open": "برای باز کردن پوشه نماگرفت کلیک کنید"
+      },
+      "battery": {
+        "title": "باتری"
       }
     }
   },
@@ -1786,7 +1873,8 @@
       "blue": "آبی",
       "purple": "بنفش",
       "pink": "صورتی",
-      "monochrome": "تک‌رنگ"
+      "monochrome": "تک‌رنگ",
+      "history": "اخیر"
     }
   },
   "weather": {
@@ -1911,11 +1999,12 @@
       "default": "پیش‌فرض",
       "material": "متریال",
       "materialAnalog": "متریال عقربه‌ای",
-      "lockscreen": "Lockscreen",
-      "stretched": "Stretched",
+      "lockscreen": "صفحه قفل",
+      "stretched": "کشیده",
       "lumen": "لومن",
       "lyrics": "متن ترانه",
-      "simpleLyrics": "متن ترانه ساده"
+      "simpleLyrics": "متن ترانه ساده",
+      "circle": "دایره"
     },
     "presets": {
       "minimal": {
@@ -1942,12 +2031,20 @@
     "settings": {
       "lyricsLines": "سطرها",
       "lyricsAlignment": "تراز",
+      "usageStyle": "سبک",
+      "lineThickness": "ضخامت",
+      "visualizerStyle": "سبک رقص نور",
+      "showNoLyrics": "نمایش متن «بدون متن ترانه»",
       "textContent": "متن"
     },
     "align": {
       "left": "چپ",
       "center": "وسط",
       "right": "راست"
+    },
+    "style": {
+      "wave": "موج",
+      "circle": "دایره"
     },
     "notes": {
       "empty": "هنوز یادداشتی وجود ندارد"
@@ -2134,12 +2231,35 @@
     },
     "deps": {
       "syncing": "در حال همگام‌سازی و به‌روزرسانی بسته‌های سیستم (pacman -syyu)...",
+      "enabling_copr": "در حال فعال‌سازی مخزن COPR {repo}...",
+      "enabling_terra": "در حال فعال‌سازی مخزن Terra...",
+      "enabling_repo": "در حال فعال‌سازی مخزن {repo}...",
       "all_installed": "-> تمام بسته‌ها از قبل نصب شده‌اند! رد کردن مرحله بارگیری بسته‌ها.",
       "missing_count": "-> {count} بسته ناموجود برای نصب پیدا شد.",
       "installing_title": "در حال نصب بسته‌ها و وابستگی‌های سامانه...",
       "installing_pkg": "در حال نصب {pkg}...",
       "install_ok": "بسته {pkg} با موفقیت نصب شد",
-      "install_failed": "نصب بسته {pkg} ناموفق بود"
+      "install_failed": "نصب بسته {pkg} ناموفق بود",
+      "quickshell_outdated": "نسخه Quickshell {version} بیش از حد قدیمی است، نسخه {minimum} یا جدیدتر لازم است. در حال ارتقا...",
+      "quickshell_still_old": "نسخه Quickshell همچنان قدیمی‌تر از {minimum} است. آن را به صورت دستی به‌روزرسانی کنید، در غیر این صورت تنظیمات باز نخواهد شد."
+    },
+    "ski": {
+      "installing": "در حال نصب مدیر پرونده Ski...",
+      "up_to_date": "-> Ski {version} از قبل نصب شده است.",
+      "installed": "Ski {version} نصب شد",
+      "install_failed": "نصب Ski ناموفق بود",
+      "download_failed": "بارگیری Ski ممکن نشد، در حال رد کردن. بعداً می‌توانید آن را از github.com/ilyamiro/Ski نصب کنید.",
+      "checksum_failed": "بررسی جمع کنترلی بارگیری Ski ناموفق بود، رد می‌شود.",
+      "unsupported_arch": "بسته‌های از پیش ساخته‌شده Ski فقط برای x86_64 وجود دارند، رد می‌شود."
+    },
+    "audio": {
+      "installing": "در حال نصب موتور صدای Serpantinum...",
+      "up_to_date": "-> موتور صدای Serpantinum {version} از قبل نصب شده است.",
+      "installed": "موتور صدای Serpantinum {version} نصب شد",
+      "building": "موتور صدای از پیش ساخته‌شده‌ای برای این سیستم وجود ندارد، در حال ساخت از کد منبع...",
+      "install_failed": "نصب موتور صدای Serpantinum ناموفق بود. اکولایزر تا زمانی که از github.com/ilyamiro/serpantinum-audio نصب نشود کار نخواهد کرد.",
+      "download_failed": "بارگیری موتور صدای Serpantinum ممکن نشد، در حال رد کردن. بعداً می‌توانید آن را از github.com/ilyamiro/serpantinum-audio نصب کنید.",
+      "checksum_failed": "بررسی جمع کنترلی بارگیری موتور صدا ناموفق بود، رد می‌شود."
     },
     "deploy": {
       "configuring_sddm": "در حال پیکربندی مدیر ورود SDDM...",
@@ -2149,6 +2269,24 @@
       "sddm_no_xorg": "Xorg پیدا نشد، برای SDDM از {compositor} استفاده می‌شود.",
       "sddm_no_backend": "نه Xorg و نه کامپوزیتور Wayland پشتیبانی‌شده برای صفحه ورود (kwin_wayland/weston) در /usr/local/bin، /usr/bin یا /bin پیدا شد.",
       "sddm_skipped": "راه‌اندازی SDDM رد شد: هیچ سرور نمایش یا کامپوزیتور ورود قابل استفاده‌ای پیدا نشد. مدیر نمایش فعلی بدون تغییر باقی می‌ماند."
+    },
+    "gamma": {
+      "installing": "در حال نصب فیلتر نور آبی Serpantinum...",
+      "up_to_date": "-> فیلتر نور آبی Serpantinum {version} از قبل نصب شده است.",
+      "installed": "فیلتر نور آبی Serpantinum {version} نصب شد",
+      "install_failed": "نصب فیلتر نور آبی Serpantinum ناموفق بود. تا زمانی که از github.com/ilyamiro/serpantinum-gamma نصب نشود کار نخواهد کرد.",
+      "download_failed": "بارگیری فیلتر نور آبی Serpantinum ممکن نشد، در حال رد کردن. بعداً می‌توانید آن را از github.com/ilyamiro/serpantinum-gamma نصب کنید.",
+      "checksum_failed": "بررسی جمع کنترلی بارگیری فیلتر نور آبی ناموفق بود، رد می‌شود.",
+      "unsupported_arch": "بسته‌های از پیش ساخته‌شده فیلتر نور آبی فقط برای x86_64 وجود دارند، رد می‌شود."
+    },
+    "core": {
+      "installing": "در حال نصب سرویس‌های هسته Serpantinum...",
+      "up_to_date": "-> سرویس‌های هسته Serpantinum {version} از قبل نصب شده‌اند.",
+      "installed": "سرویس‌های هسته Serpantinum {version} نصب شدند",
+      "install_failed": "نصب سرویس‌های هسته Serpantinum ناموفق بود. مصرف منابع سیستم، نشانگرهای قفل صفحه‌کلید و بریده‌دان تا زمانی که از github.com/ilyamiro/serpantinum-core نصب نشوند کار نخواهند کرد.",
+      "download_failed": "بارگیری سرویس‌های هسته Serpantinum ممکن نشد، در حال رد کردن. بعداً می‌توانید آن‌ها را از github.com/ilyamiro/serpantinum-core نصب کنید.",
+      "checksum_failed": "بررسی جمع کنترلی بارگیری سرویس‌های هسته ناموفق بود، رد می‌شود.",
+      "unsupported_arch": "بسته‌های از پیش ساخته‌شده سرویس‌های هسته فقط برای x86_64 وجود دارند، رد می‌شود."
     }
   },
   "translator": {
@@ -2172,7 +2310,13 @@
     "keep_clipboard_sub": "در صورت غیرفعال بودن — محتوای اصلی بریده‌دان پس از جای‌گذاری بازیابی می‌شود"
   },
   "datetime": {
-    "full_date": "dddd، dd MMMM"
+    "full_date": "dddd، dd MMMM",
+    "just_now": "هم‌اکنون",
+    "minutes_ago": "{mins} دقیقه پیش",
+    "yesterday": "دیروز {time}"
+  },
+  "common": {
+    "select": "انتخاب..."
   },
   "gov_alerts": {
     "status": {
@@ -2189,7 +2333,7 @@
     },
     "sources": {
       "nws": "سرویس ملی هواشناسی ایالات متحده",
-      "eccc": "Environment Canada",
+      "eccc": "سازمان محیط زیست کانادا",
       "dwd": "سرویس هواشناسی آلمان",
       "metno": "MET Norway",
       "kde": "سرور هشدار KDE",
