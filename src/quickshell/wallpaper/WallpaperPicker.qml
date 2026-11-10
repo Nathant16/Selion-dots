@@ -1128,6 +1128,18 @@ Item {
     FileView {
         id: indexDiskReader
         printErrors: false
+        watchChanges: true
+        onFileChanged: {
+            let trimmed = text().trim();
+            if (trimmed.length === 0) return;
+            try {
+                let data = JSON.parse(trimmed);
+                if (data && data.srcDir === window.srcDir &&
+                    (data.showSelion === undefined || Boolean(data.showSelion) === window.showSelionWallpapers)) {
+                    window.loadIndexData(data);
+                }
+            } catch(e) {}
+        }
         onLoaded: {
             let trimmed = text().trim();
             if (trimmed.length === 0) return;
