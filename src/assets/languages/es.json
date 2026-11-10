@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "Cargando...",
       "unknown": "Desconocido",
       "version_by": "v{version} • por {author}",
@@ -21,7 +21,7 @@
         "uptime": "Tiempo de actividad",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "Bienvenida",
@@ -53,7 +53,7 @@
       "general_presets": "Preajustes",
       "fingerprint": "Huellas dactilares",
       "power": "Energía",
-"general_weather": "Clima"
+      "general_weather": "Clima"
     },
     "launcher": {
       "position": {
@@ -1267,7 +1267,7 @@
       "hours_short": "h",
       "minutes_short": "m"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "Alertas meteorológicas",
         "desc": "Enviar notificaciones cuando cambie el clima o se emitan avisos"
@@ -1751,7 +1751,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "Hecho por @{author}",
     "welcome": "Bienvenido",
     "tagline": "Un entorno de escritorio creado para",
@@ -2171,7 +2171,7 @@
       "tagline": "Un entorno de escritorio creado para ti",
       "support_creator": "Apoya al creador:",
       "buy_coffee": "Si disfrutas este proyecto, ¡invítame a un café!",
-      "installed_success": "✔ Serpantinum {ver} ({commit}) instalado con éxito.",
+      "installed_success": "✔ Selion {ver} ({commit}) instalado con éxito.",
       "failed_packages": "Los siguientes paquetes encontraron errores durante la instalación:",
       "restart_prompt": "Reinicia tu compositor o ejecuta 'serpantinumd start' para comenzar.",
       "ask_reboot": "¿Deseas reiniciar? [y/n] "

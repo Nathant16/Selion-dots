@@ -1,11 +1,11 @@
 <div align="center">
-  <a href="https://ko-fi.com/ilyamiro">
-    <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="ko-fi" />
-  </a>
+  <img src="docs/assets/banner.png" alt="Selion" width="850" />
 </div>
 
 <div align="center">
-  <img src="docs/assets/banner.png" alt="Serpantinum" width="850" />
+  <a href="https://t.me/Nathant16">
+    <img src="https://img.shields.io/badge/Telegram-@Nathant16-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram" />
+  </a>
 </div>
 
 ## Previews
@@ -17,18 +17,7 @@
 
 ---
 
-> [!IMPORTANT]
-> **Hey, join our subreddit!** Share your setups, ask questions and follow updates at **[r/serpantinum](https://www.reddit.com/r/serpantinum)**.
->
-> [![Join r/serpantinum](https://img.shields.io/badge/Join-r%2Fserpantinum-FF4500?style=for-the-badge&logo=reddit&logoColor=white)](https://www.reddit.com/r/serpantinum)
-
 ## Installation
-
-> [!TIP]
-> Full installation and configuration instructions live at **[serpantinum.dev](https://serpantinum.dev)**.
-
-> [!IMPORTANT]
-> **Migrating from v1:** All previous configuration will be backed up and unused. Configuration of compositor settings such as monitors, keybinds, and autostart is now up to you, as the project migrated from being dotfiles to being a shell.
 
 ### Arch Linux, Fedora, Void Linux and their derivatives
 
@@ -37,13 +26,7 @@ For Arch-based distributions (including systemd, OpenRC, and other init systems)
 Use this installer:
 
 ```bash
-curl -fsSL install.serpantinum.dev | bash
-```
-
-If this doesn't work, use:
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ilyamiro/serpantinum/master/install/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Nathant16/Selion-dots/master/install/install.sh)"
 ```
 
 > [!NOTE]

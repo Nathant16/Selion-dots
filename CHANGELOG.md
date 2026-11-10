@@ -1,3 +1,12 @@
+### 2.5.1
+
+- feat: rebrand shell to Selion (@Nathant)
+- feat(contacts): replace repository links with Nathant16/Selion-dots and add Telegram contact (https://t.me/Nathant16)
+- feat(installer): updated SELION banner, cleanup legacy social links (Twitter, Reddit, Ko-fi)
+- fix(welcome): dynamically calculate title length in WelcomeTab instead of hardcoding length 11
+- feat(power): bidirectional side panel power profile sync, 5s smooth brightness fade, hardware-adaptive CPU frequency selector
+- feat(polkit): show fingerprint scan waiting prompt while PAM fprintd is active
+
 ### 2.5.0
 
 - feat(weather): replace quiet hours selectors with a draggable time range slider in its own group

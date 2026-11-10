@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "Đang tải...",
       "unknown": "Không rõ",
       "version_by": "v{version} • bởi {author}",
@@ -21,7 +21,7 @@
         "uptime": "Thời gian hoạt động",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "Chào mừng",
@@ -52,7 +52,7 @@
       "general_presets": "Cấu hình sẵn",
       "fingerprint": "Vân tay",
       "power": "Nguồn điện",
-"general_weather": "Thời tiết"
+      "general_weather": "Thời tiết"
     },
     "launcher": {
       "position": {
@@ -1223,7 +1223,7 @@
       "hours_short": "g",
       "minutes_short": "p"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "Cảnh báo thời tiết",
         "desc": "Gửi thông báo khi thời tiết thay đổi hoặc có cảnh báo được ban hành"
@@ -1707,7 +1707,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "Thực hiện bởi @{author}",
     "welcome": "Chào mừng",
     "tagline": "Một desktop shell được xây dựng cho",
@@ -2127,7 +2127,7 @@
       "tagline": "Một desktop shell được xây dựng cho bạn",
       "support_creator": "Ủng hộ tác giả:",
       "buy_coffee": "Nếu bạn thích dự án này, hãy cân nhắc mời tôi một ly cà phê!",
-      "installed_success": "✔ Đã cài đặt thành công Serpantinum {ver} ({commit}).",
+      "installed_success": "✔ Đã cài đặt thành công Selion {ver} ({commit}).",
       "failed_packages": "Các gói sau đã gặp lỗi trong quá trình cài đặt:",
       "restart_prompt": "Hãy khởi động lại compositor hoặc chạy 'serpantinumd start' để bắt đầu.",
       "ask_reboot": "Bạn có muốn khởi động lại không? [y/n] "

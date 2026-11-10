@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "در حال بارگذاری...",
       "unknown": "ناشناخته",
       "version_by": "نسخه {version} • اثر {author}",
@@ -21,7 +21,7 @@
         "uptime": "مدت‌زمان روشن‌بودن",
         "default_os": "لینوکس"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "خوش‌آمدید",
@@ -52,7 +52,7 @@
       "general_presets": "پیش‌تنظیم‌ها",
       "fingerprint": "اثر انگشت",
       "power": "باتری و انرژی",
-"general_weather": "آب‌وهوا"
+      "general_weather": "آب‌وهوا"
     },
     "launcher": {
       "position": {
@@ -1223,7 +1223,7 @@
       "hours_short": "س",
       "minutes_short": "د"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "هشدارهای آب‌وهوا",
         "desc": "ارسال اعلان وقتی آب‌وهوا تغییر می‌کند یا هشدار صادر می‌شود"
@@ -1710,7 +1710,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "ساخته‌شده توسط @{author}",
     "welcome": "خوش‌آمدید",
     "tagline": "یک پوسته میزکار ساخته‌شده برای",
@@ -2127,7 +2127,7 @@
       "tagline": "یک پوسته میزکار ساخته‌شده برای شما",
       "support_creator": "حمایت از سازنده:",
       "buy_coffee": "اگر از این پروژه لذت می‌برید، برای من یک قهوه بخرید!",
-      "installed_success": "✔ سرپانتینوم {ver} ({commit}) با موفقیت نصب شد.",
+      "installed_success": "✔ Selion {ver} ({commit}) با موفقیت نصب شد.",
       "failed_packages": "بسته‌های زیر در حین نصب با خطا مواجه شدند:",
       "restart_prompt": "برای شروع، کامپوزیتور خود را مجدداً راه‌اندازی کنید یا دستور 'serpantinumd start' را اجرا کنید.",
       "ask_reboot": "آیا مایلید سیستم را بازراه‌اندازی کنید؟ [y/n] "

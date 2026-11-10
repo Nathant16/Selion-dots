@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "Laden...",
       "unknown": "Onbekend",
       "version_by": "v{version} • door {author}",
@@ -21,7 +21,7 @@
         "uptime": "Uptime",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "Welkom",
@@ -52,7 +52,7 @@
       "general_presets": "Voorinstellingen",
       "fingerprint": "Vingerafdrukken",
       "power": "Energie",
-"general_weather": "Weer"
+      "general_weather": "Weer"
     },
     "launcher": {
       "position": {
@@ -1223,7 +1223,7 @@
       "hours_short": "u",
       "minutes_short": "m"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "Weerwaarschuwingen",
         "desc": "Meldingen sturen wanneer het weer verandert of waarschuwingen worden uitgegeven"
@@ -1710,7 +1710,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "Gemaakt door @{author}",
     "welcome": "Welkom",
     "tagline": "Een desktopshell gebouwd voor",
@@ -2127,7 +2127,7 @@
       "tagline": "Een desktopshell gebouwd voor jou",
       "support_creator": "Steun de maker:",
       "buy_coffee": "Als u van dit project geniet, overweeg dan een kopje koffie voor mij te kopen!",
-      "installed_success": "✔ Serpantinum {ver} ({commit}) succesvol geïnstalleerd.",
+      "installed_success": "✔ Selion {ver} ({commit}) succesvol geïnstalleerd.",
       "failed_packages": "De volgende pakketten hebben fouten ondervonden tijdens de installatie:",
       "restart_prompt": "Herstart uw compositor of voer 'serpantinumd start' uit om te beginnen.",
       "ask_reboot": "Wilt u opnieuw opstarten? [j/n] "

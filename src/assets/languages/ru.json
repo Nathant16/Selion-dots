@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "Загрузка...",
       "unknown": "Неизвестно",
       "version_by": "v{version} • от {author}",
@@ -21,7 +21,7 @@
         "uptime": "Время работы",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "Добро пожаловать",
@@ -53,7 +53,7 @@
       "general_presets": "Пресеты",
       "fingerprint": "Отпечатки пальцев",
       "power": "Питание",
-"general_weather": "Погода"
+      "general_weather": "Погода"
     },
     "launcher": {
       "position": {
@@ -1312,7 +1312,7 @@
         "bluetooth_sleep_desc": "Отключение радиомодуля Bluetooth при отсутствии активных подключений"
       }
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "Погодные оповещения",
         "desc": "Присылать уведомления при изменении погоды или выпуске предупреждений"
@@ -1800,7 +1800,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "Создано @{author}",
     "welcome": "Добро пожаловать",
     "tagline": "Оболочка рабочего стола, созданная для",
@@ -2221,7 +2221,7 @@
       "tagline": "Оболочка рабочего стола, созданная для вас",
       "support_creator": "Поддержать автора:",
       "buy_coffee": "Если вам нравится этот проект, угостите автора кофе!",
-      "installed_success": "✔ Serpantinum {ver} ({commit}) успешно установлен.",
+      "installed_success": "✔ Selion {ver} ({commit}) успешно установлен.",
       "failed_packages": "При установке следующих пакетов возникли ошибки:",
       "restart_prompt": "Перезапустите композитор или выполните 'serpantinumd start' для начала работы.",
       "ask_reboot": "Перезагрузить систему сейчас? [y/n] "

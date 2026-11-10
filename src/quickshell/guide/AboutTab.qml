@@ -117,7 +117,7 @@ GuideTab {
                             Text {
                                 text: I18n.t("guide.about.version_by", {
                                     version: (Updater.localVersion !== "..." ? Updater.localVersion : (rootObj.dotsVersion !== "Loading..." && rootObj.dotsVersion !== I18n.t("guide.about.loading") ? rootObj.dotsVersion : "2.0.0")),
-                                    author: "@ilyamiro"
+                                    author: "@Nathant"
                                 })
                                 font.family: ThemeBackend.fontFamily
                                 font.pixelSize: rootObj.s(13)
@@ -363,7 +363,7 @@ GuideTab {
                 spacing: rootObj.s(12)
 
                 ClickButton {
-                    Layout.preferredWidth: rootObj.s(260)
+                    Layout.preferredWidth: rootObj.s(220)
                     Layout.preferredHeight: rootObj.s(42)
                     horizontalPadding: rootObj.s(14)
                     cornerRadius: ThemeBackend.borderRadius
@@ -375,6 +375,21 @@ GuideTab {
                     textColor: ThemeBackend.text
 
                     onTriggered: Quickshell.execDetached(["xdg-open", "https://github.com/Nathant16/Selion-dots"])
+                }
+
+                ClickButton {
+                    Layout.preferredWidth: rootObj.s(220)
+                    Layout.preferredHeight: rootObj.s(42)
+                    horizontalPadding: rootObj.s(14)
+                    cornerRadius: ThemeBackend.borderRadius
+                    buttonText: "Telegram (@Nathant16)"
+                    textFontSize: rootObj.s(13)
+                    buttonIcon: ""
+                    iconFontSize: rootObj.s(16)
+                    accentColor: ThemeBackend.surface0
+                    textColor: ThemeBackend.text
+
+                    onTriggered: Quickshell.execDetached(["xdg-open", "https://t.me/Nathant16"])
                 }
             }
         }

@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "불러오는 중...",
       "unknown": "알 수 없음",
       "version_by": "v{version} • {author} 제작",
@@ -21,7 +21,7 @@
         "uptime": "가동 시간",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "시작",
@@ -52,7 +52,7 @@
       "general_presets": "프리셋",
       "fingerprint": "지문",
       "power": "전원",
-"general_weather": "날씨"
+      "general_weather": "날씨"
     },
     "launcher": {
       "position": {
@@ -1223,7 +1223,7 @@
       "hours_short": "시간",
       "minutes_short": "분"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "날씨 알림",
         "desc": "날씨가 바뀌거나 경보가 발령되면 알림을 보냅니다"
@@ -1707,7 +1707,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "@{author} 제작",
     "welcome": "환영합니다",
     "tagline": "이런 분을 위해 만든 데스크톱 셸",
@@ -2127,7 +2127,7 @@
       "tagline": "당신을 위해 만든 데스크톱 셸",
       "support_creator": "제작자 후원하기:",
       "buy_coffee": "이 프로젝트가 마음에 드셨다면 커피 한 잔 사 주세요!",
-      "installed_success": "✔ Serpantinum {ver} ({commit}) 설치가 완료되었습니다.",
+      "installed_success": "✔ Selion {ver} ({commit}) 설치가 완료되었습니다.",
       "failed_packages": "다음 패키지를 설치하는 중 오류가 발생했습니다:",
       "restart_prompt": "컴포지터를 다시 시작하거나 'serpantinumd start'를 실행해 시작하세요.",
       "ask_reboot": "다시 시작하시겠습니까? [y/n] "

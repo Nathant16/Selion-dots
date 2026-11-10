@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "正在加载...",
       "unknown": "未知",
       "version_by": "v{version} • 作者：{author}",
@@ -21,7 +21,7 @@
         "uptime": "运行时间",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "欢迎",
@@ -52,7 +52,7 @@
       "general_presets": "预设",
       "fingerprint": "指纹",
       "power": "电源",
-"general_weather": "天气"
+      "general_weather": "天气"
     },
     "launcher": {
       "position": {
@@ -1223,7 +1223,7 @@
       "hours_short": "小时",
       "minutes_short": "分"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "天气提醒",
         "desc": "天气变化或发布预警时发送通知"
@@ -1710,7 +1710,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "作者 @{author}",
     "welcome": "欢迎",
     "tagline": "专为您打造的桌面 Shell",
@@ -2127,7 +2127,7 @@
       "tagline": "专为您打造的桌面 Shell",
       "support_creator": "支持创作者：",
       "buy_coffee": "如果您喜欢本项目，请考虑请我喝杯咖啡！",
-      "installed_success": "✔ Serpantinum {ver} ({commit}) 安装成功。",
+      "installed_success": "✔ Selion {ver} ({commit}) 安装成功。",
       "failed_packages": "以下软件包在安装过程中遇到错误：",
       "restart_prompt": "重启您的合成器或运行 'serpantinumd start' 即可开始。",
       "ask_reboot": "是否立即重启？[y/n] "

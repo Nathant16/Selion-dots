@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "Зареждане...",
       "unknown": "Неизвестно",
       "version_by": "v{version} • от {author}",
@@ -21,7 +21,7 @@
         "uptime": "Време на работа",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "Добре дошли",
@@ -52,7 +52,7 @@
       "general_presets": "Предварителни настройки",
       "fingerprint": "Отпечатъци",
       "power": "Захранване",
-"general_weather": "Време"
+      "general_weather": "Време"
     },
     "launcher": {
       "position": {
@@ -1223,7 +1223,7 @@
       "hours_short": "ч",
       "minutes_short": "мин"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "Метео предупреждения",
         "desc": "Изпращай известия, когато времето се промени или бъдат издадени предупреждения"
@@ -1710,7 +1710,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "Създадено от @{author}",
     "welcome": "Добре дошли",
     "tagline": "Работна среда, създадена за",
@@ -2127,7 +2127,7 @@
       "tagline": "Работна среда, създадена за вас",
       "support_creator": "Подкрепете създателя:",
       "buy_coffee": "Ако ви харесва този проект, можете да ме почерпите с кафе!",
-      "installed_success": "✔ Serpantinum {ver} ({commit}) е инсталиран успешно.",
+      "installed_success": "✔ Selion {ver} ({commit}) е инсталиран успешно.",
       "failed_packages": "Следните пакети срещнаха грешки по време на инсталацията:",
       "restart_prompt": "Рестартирайте вашия композитор или изпълнете 'serpantinumd start', за да започнете.",
       "ask_reboot": "Искате ли да рестартирате? [y/n] "

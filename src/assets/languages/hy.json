@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "Բեռնվում է...",
       "unknown": "Անհայտ",
       "version_by": "v{version} • հեղինակ՝ {author}",
@@ -21,7 +21,7 @@
         "uptime": "Աշխատաժամանակ",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "Բարի գալուստ",
@@ -52,7 +52,7 @@
       "general_presets": "Նախադրվածքներ",
       "fingerprint": "Մատնահետքեր",
       "power": "Սնուցում",
-"general_weather": "Եղանակ"
+      "general_weather": "Եղանակ"
     },
     "launcher": {
       "position": {
@@ -1223,7 +1223,7 @@
       "hours_short": "ժ",
       "minutes_short": "ր"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "Եղանակի ծանուցումներ",
         "desc": "Ուղարկել ծանուցումներ, երբ եղանակը փոխվում է կամ տրվում են զգուշացումներ"
@@ -1707,7 +1707,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "Ստեղծել է @{author}",
     "welcome": "Բարի գալուստ",
     "tagline": "Աշխատասեղանի թաղանթ՝ ստեղծված",
@@ -2127,7 +2127,7 @@
       "tagline": "Աշխատասեղանի թաղանթ՝ ստեղծված ձեզ համար",
       "support_creator": "Աջակցեք ստեղծողին՝",
       "buy_coffee": "Եթե ձեզ դուր է գալիս այս նախագիծը, կարող եք ինձ սուրճ հյուրասիրել։",
-      "installed_success": "✔ Serpantinum {ver} ({commit})-ը հաջողությամբ տեղադրվեց։",
+      "installed_success": "✔ Selion {ver} ({commit})-ը հաջողությամբ տեղադրվեց։",
       "failed_packages": "Հետևյալ փաթեթների տեղադրման ժամանակ սխալներ առաջացան՝",
       "restart_prompt": "Սկսելու համար վերագործարկեք կոմպոզիտորը կամ կատարեք 'serpantinumd start' հրամանը։",
       "ask_reboot": "Ցանկանո՞ւմ եք վերագործարկել։ [y/n] "

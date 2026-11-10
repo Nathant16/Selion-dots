@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "Yüklənir...",
       "unknown": "Naməlum",
       "version_by": "v{version} • müəllif: {author}",
@@ -21,7 +21,7 @@
         "uptime": "İşləmə müddəti",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "Xoş gəlmisiniz",
@@ -52,7 +52,7 @@
       "general_presets": "Hazır ayarlar",
       "fingerprint": "Barmaq izləri",
       "power": "Qida",
-"general_weather": "Hava"
+      "general_weather": "Hava"
     },
     "launcher": {
       "position": {
@@ -1217,7 +1217,7 @@
       "hours_short": "saat",
       "minutes_short": "dəq"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "Hava xəbərdarlıqları",
         "desc": "Hava dəyişdikdə və ya xəbərdarlıq verildikdə bildiriş göndər"
@@ -1701,7 +1701,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "Hazırlayan: @{author}",
     "welcome": "Xoş gəlmisiniz",
     "tagline": "Bu iş masası mühitinin hazırlandığı şəxs",
@@ -2121,7 +2121,7 @@
       "tagline": "Sizin üçün hazırlanmış iş masası mühiti",
       "support_creator": "Müəllifə dəstək olun:",
       "buy_coffee": "Layihə xoşunuza gəlirsə, mənə bir fincan qəhvə almaqla dəstək ola bilərsiniz!",
-      "installed_success": "✔ Serpantinum {ver} ({commit}) uğurla quraşdırıldı.",
+      "installed_success": "✔ Selion {ver} ({commit}) uğurla quraşdırıldı.",
       "failed_packages": "Aşağıdakı paketlərin quraşdırılması zamanı xətalar baş verdi:",
       "restart_prompt": "Başlamaq üçün görüntü birləşdiricisini yenidən başladın və ya 'serpantinumd start' əmrini icra edin.",
       "ask_reboot": "Yenidən başlatmaq istəyirsiniz? [y/n] "

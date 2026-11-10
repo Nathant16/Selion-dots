@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "लोड हो रहा है...",
       "unknown": "अज्ञात",
       "version_by": "v{version} • {author} द्वारा",
@@ -21,7 +21,7 @@
         "uptime": "अपटाइम",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "स्वागत है",
@@ -52,7 +52,7 @@
       "general_presets": "प्रीसेट",
       "fingerprint": "फ़िंगरप्रिंट",
       "power": "पावर",
-"general_weather": "मौसम"
+      "general_weather": "मौसम"
     },
     "launcher": {
       "position": {
@@ -1223,7 +1223,7 @@
       "hours_short": "घं",
       "minutes_short": "मि"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "मौसम चेतावनियाँ",
         "desc": "मौसम बदलने या चेतावनी जारी होने पर सूचनाएँ भेजें"
@@ -1710,7 +1710,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "@{author} द्वारा निर्मित",
     "welcome": "स्वागत है",
     "tagline": "एक डेस्कटॉप शेल जो बना है",
@@ -2127,7 +2127,7 @@
       "tagline": "एक डेस्कटॉप शेल जो आपके लिए बना है",
       "support_creator": "निर्माता का समर्थन करें:",
       "buy_coffee": "यदि आप इस प्रोजेक्ट को पसंद करते हैं, तो मुझे एक कॉफ़ी पिलाने पर विचार करें!",
-      "installed_success": "✔ Serpantinum {ver} ({commit}) सफलतापूर्वक इंस्टॉल हुआ।",
+      "installed_success": "✔ Selion {ver} ({commit}) सफलतापूर्वक इंस्टॉल हुआ।",
       "failed_packages": "इंस्टॉलेशन के दौरान निम्नलिखित पैकेजों में त्रुटियां आईं:",
       "restart_prompt": "शुरू करने के लिए अपने कंपोज़िटर को रीस्टार्ट करें या 'serpantinumd start' चलाएं।",
       "ask_reboot": "क्या आप पुनरारंभ करना चाहते हैं? [y/n] "

@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "載入中...",
       "unknown": "未知",
       "version_by": "v{version} • 由 {author} 製作",
@@ -21,7 +21,7 @@
         "uptime": "開機時間",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "歡迎",
@@ -52,7 +52,7 @@
       "general_presets": "預設集",
       "fingerprint": "指紋",
       "power": "電源",
-"general_weather": "天氣"
+      "general_weather": "天氣"
     },
     "launcher": {
       "position": {
@@ -1223,7 +1223,7 @@
       "hours_short": "小時",
       "minutes_short": "分"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "天氣提醒",
         "desc": "天氣變化或發布警報時傳送通知"
@@ -1710,7 +1710,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "由 @{author} 製作",
     "welcome": "歡迎",
     "tagline": "專為您量身打造的桌面 Shell",
@@ -2127,7 +2127,7 @@
       "tagline": "為您量身打造的桌面 Shell",
       "support_creator": "贊助創作者：",
       "buy_coffee": "如果您喜歡這個專案，歡迎請我喝杯咖啡！",
-      "installed_success": "✔ Serpantinum {ver} ({commit}) 已成功安裝。",
+      "installed_success": "✔ Selion {ver} ({commit}) 已成功安裝。",
       "failed_packages": "下列套件在安裝過程中發生錯誤：",
       "restart_prompt": "重新啟動您的合成器或執行「serpantinumd start」以開始使用。",
       "ask_reboot": "您要重新開機嗎？[y/n] "

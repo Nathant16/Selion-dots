@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "Yükleniyor...",
       "unknown": "Bilinmiyor",
       "version_by": "v{version} • {author} tarafından",
@@ -21,7 +21,7 @@
         "uptime": "Çalışma süresi",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "Hoş Geldiniz",
@@ -52,7 +52,7 @@
       "general_presets": "Ön ayarlar",
       "fingerprint": "Parmak izleri",
       "power": "Güç",
-"general_weather": "Hava durumu"
+      "general_weather": "Hava durumu"
     },
     "launcher": {
       "position": {
@@ -1223,7 +1223,7 @@
       "hours_short": "sa",
       "minutes_short": "dk"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "Hava durumu uyarıları",
         "desc": "Hava durumu değiştiğinde veya uyarı yayınlandığında bildirim gönder"
@@ -1710,7 +1710,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "@{author} tarafından yapıldı",
     "welcome": "Hoş Geldiniz",
     "tagline": "Şunun için oluşturulmuş bir masaüstü kabuğu:",
@@ -2127,7 +2127,7 @@
       "tagline": "Sizin için oluşturulmuş bir masaüstü kabuğu",
       "support_creator": "Geliştiriciyi destekleyin:",
       "buy_coffee": "Bu projeyi beğendiyseniz, bana bir kahve ısmarlamayı düşünebilirsiniz!",
-      "installed_success": "✔ Serpantinum {ver} ({commit}) başarıyla kuruldu.",
+      "installed_success": "✔ Selion {ver} ({commit}) başarıyla kuruldu.",
       "failed_packages": "Aşağıdaki paketler kurulum sırasında hatalarla karşılaştı:",
       "restart_prompt": "Başlamak için birleştiricinizi yeniden başlatın veya 'serpantinumd start' komutunu çalıştırın.",
       "ask_reboot": "Yeniden başlatmak istiyor musunuz? [y/n] "

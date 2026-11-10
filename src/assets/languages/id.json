@@ -1,7 +1,7 @@
 {
   "guide": {
     "about": {
-      "title": "Serpantinum",
+      "title": "Selion",
       "loading": "Memuat...",
       "unknown": "Tidak diketahui",
       "version_by": "v{version} • oleh {author}",
@@ -21,7 +21,7 @@
         "uptime": "Waktu aktif",
         "default_os": "Linux"
       },
-      "github_repo": "ilyamiro/serpantinum"
+      "github_repo": "Nathant16/Selion-dots"
     },
     "tabs": {
       "welcome": "Selamat Datang",
@@ -52,7 +52,7 @@
       "general_presets": "Preset",
       "fingerprint": "Sidik jari",
       "power": "Daya",
-"general_weather": "Cuaca"
+      "general_weather": "Cuaca"
     },
     "launcher": {
       "position": {
@@ -1223,7 +1223,7 @@
       "hours_short": "j",
       "minutes_short": "m"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "Peringatan cuaca",
         "desc": "Kirim notifikasi saat cuaca berubah atau peringatan dikeluarkan"
@@ -1710,7 +1710,7 @@
     }
   },
   "start": {
-    "title": "Serpantinum",
+    "title": "Selion",
     "made_by": "Dibuat oleh @{author}",
     "welcome": "Selamat Datang",
     "tagline": "Shell desktop yang dibangun untuk",
@@ -2127,7 +2127,7 @@
       "tagline": "Shell desktop yang dibangun untuk Anda",
       "support_creator": "Dukung pembuat:",
       "buy_coffee": "Jika Anda menikmati proyek ini, pertimbangkan untuk mentraktir saya kopi!",
-      "installed_success": "✔ Serpantinum {ver} ({commit}) berhasil diinstal.",
+      "installed_success": "✔ Selion {ver} ({commit}) berhasil diinstal.",
       "failed_packages": "Paket-paket berikut mengalami kesalahan saat instalasi:",
       "restart_prompt": "Mulai ulang kompositor Anda atau jalankan 'serpantinumd start' untuk memulai.",
       "ask_reboot": "Apakah Anda ingin memulai ulang sistem? [y/n] "

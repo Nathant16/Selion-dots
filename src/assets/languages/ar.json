@@ -148,7 +148,7 @@
   },
   "guide": {
     "about": {
-      "github_repo": "ilyamiro/serpantinum",
+      "github_repo": "Nathant16/Selion-dots",
       "hardware": {
         "device_name": "اسم الجهاز",
         "disk_capacity": "سعة القرص",
@@ -166,7 +166,7 @@
         "shell": "الصدفة (Shell)",
         "uptime": "مدة التشغيل"
       },
-      "title": "Serpantinum",
+      "title": "Selion",
       "unknown": "غير معروف",
       "version_by": "الإصدار {version} بواسطة @{author}"
     },
@@ -1020,7 +1020,7 @@
       "general_presets": "الإعدادات المسبقة",
       "fingerprint": "بصمات الأصابع",
       "power": "الطاقة",
-"general_weather": "الطقس"
+      "general_weather": "الطقس"
     },
     "theme": {
       "colors": {
@@ -1414,7 +1414,7 @@
       "hours_short": "س",
       "minutes_short": "د"
     },
-"weather": {
+    "weather": {
       "enabled": {
         "title": "تنبيهات الطقس",
         "desc": "إرسال إشعارات عند تغير الطقس أو إصدار تحذيرات"
@@ -1562,7 +1562,7 @@
       "gpu": "كرت الشاشة:",
       "install_mode": "نمط التثبيت:",
       "installed": " (مثبت)",
-      "installed_success": "تم تثبيت Serpantinum الإصدار {ver} ({commit}) بنجاح!",
+      "installed_success": "تم تثبيت Selion الإصدار {ver} ({commit}) بنجاح!",
       "main_menu_header": " استخدم مفاتيح الأسهم للتنقل، وEnter للاختيار ",
       "main_menu_prompt": " القائمة الرئيسية > ",
       "menu_exit": "خروج",
@@ -1936,7 +1936,7 @@
     "made_by": "صُنع بواسطة @{author}",
     "start_preview": "بدء المعاينة",
     "tagline": "واجهة سطح مكتب صُممت من أجل",
-    "title": "Serpantinum",
+    "title": "Selion",
     "welcome": "مرحبًا بك",
     "you": "أنت"
   },
