@@ -92,7 +92,11 @@ if not package_managed:
     try:
         req = urllib.request.Request(
             f"https://raw.githubusercontent.com/{REPO}/master/version.txt",
-            headers={"User-Agent": "updater-script"}
+            headers={
+                "User-Agent": "updater-script",
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache"
+            }
         )
         res = urllib.request.urlopen(req, timeout=5)
         remote_ver = res.read().decode("utf-8").strip()
