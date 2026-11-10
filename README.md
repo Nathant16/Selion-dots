@@ -1,17 +1,19 @@
 <div align="center">
 
-```text
+<pre align="center">
 ███████╗███████╗██╗     ██╗ ██████╗ ███╗   ██╗
 ██╔════╝██╔════╝██║     ██║██╔═══██╗████╗  ██║
 ███████╗█████╗  ██║     ██║██║   ██║██╔██╗ ██║
 ╚════██║██╔══╝  ██║     ██║██║   ██║██║╚██╗██║
 ███████║███████╗███████╗██║╚██████╔╝██║ ╚████║
 ╚══════╝╚══════╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
-```
+</pre>
 
 ### Selion Shell
 
 A modern, highly customizable and fluid desktop shell for Wayland.
+
+A fork of [Serpantinum](https://github.com/ilyamiro/serpantinum).
 
 [Telegram](https://t.me/Nathant16) • [Releases](https://github.com/Nathant16/Selion-dots/releases) • [License](LICENSE.md)
 
@@ -97,3 +99,4 @@ serpantinumd stop
 ## License
 
 This project is licensed under the [GNU Affero General Public License v3.0](LICENSE.md).
+Original project by [Illia Miroshnichenko](https://github.com/ilyamiro/serpantinum).
