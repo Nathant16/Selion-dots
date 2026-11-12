@@ -152,6 +152,40 @@ if command -v iw >/dev/null 2>&1; then
 fi
 
 # ------------------------------------------------------------------------------
+# 6b. ETHERNET IDLE PHY SLEEP (Power down disconnected ports to eliminate drain)
+# ------------------------------------------------------------------------------
+for eth in /sys/class/net/*; do
+    [ -d "$eth/device" ] || continue
+    [ -d "$eth/wireless" ] && continue
+    iface=$(basename "$eth")
+    carrier=$(cat "$eth/carrier" 2>/dev/null || echo "0")
+    operstate=$(cat "$eth/operstate" 2>/dev/null || echo "down")
+    if [ "$carrier" = "0" ] || [ "$operstate" = "down" ]; then
+        if [ "$PROFILE" = "power-saver" ]; then
+            ip link set "$iface" down 2>/dev/null || sudo -n ip link set "$iface" down 2>/dev/null || true
+        else
+            ip link set "$iface" up 2>/dev/null || sudo -n ip link set "$iface" up 2>/dev/null || true
+        fi
+    fi
+done
+
+# ------------------------------------------------------------------------------
+# 6c. DISPLAY REFRESH RATE (48Hz on Battery / 60Hz on AC)
+# ------------------------------------------------------------------------------
+TARGET_HZ=$([ "$PROFILE" = "power-saver" ] && echo "48.01" || echo "60.01")
+for hsock in /run/user/*/hypr/*/.socket.sock; do
+    if [ -S "$hsock" ]; then
+        sig=$(basename "$(dirname "$hsock")")
+        HYPRLAND_INSTANCE_SIGNATURE="$sig" hyprctl keyword monitor "eDP-1,1920x1080@${TARGET_HZ},0x0,1" >/dev/null 2>&1 || true
+    fi
+done
+for swsock in /run/user/*/sway-ipc.*.sock; do
+    if [ -S "$swsock" ]; then
+        SWAYSOCK="$swsock" swaymsg output eDP-1 mode "1920x1080@${TARGET_HZ}Hz" >/dev/null 2>&1 || true
+    fi
+done
+
+# ------------------------------------------------------------------------------
 # 7. BLUETOOTH SLEEP
 # ------------------------------------------------------------------------------
 if command -v bluetoothctl >/dev/null 2>&1; then
@@ -181,7 +215,7 @@ for snd_c in /sys/module/snd_hda_intel/parameters/power_save_controller; do
 done
 
 # ------------------------------------------------------------------------------
-# 9. NVMe & USB RUNTIME POWER MANAGEMENT (Protected for Input Devices)
+# 9. NVMe & USB RUNTIME POWER MANAGEMENT (Strictly Protected for Mice/Keyboards)
 # ------------------------------------------------------------------------------
 case "$PROFILE" in
     power-saver)
@@ -200,9 +234,12 @@ case "$PROFILE" in
             udev_dir=$(dirname "$uctrl")
             prod=$(cat "$udev_dir/product" 2>/dev/null || cat "$udev_dir/../product" 2>/dev/null)
             vendor=$(cat "$udev_dir/idVendor" 2>/dev/null || cat "$udev_dir/../idVendor" 2>/dev/null)
-            if [[ "$prod" =~ (Receiver|Mouse|Keyboard) ]] || [ "$vendor" = "046d" ]; then
+            b_class=$(cat "$udev_dir/*/bInterfaceClass" 2>/dev/null || cat "$udev_dir/bInterfaceClass" 2>/dev/null)
+            # Never autosuspend mice, keyboards, touchpads, or RF receivers
+            if [[ "$prod" =~ (Receiver|Mouse|Keyboard|Touchpad|Pointer|TrackPoint) ]] || [ "$vendor" = "046d" ] || [[ "$b_class" =~ 03 ]]; then
                 [ -w "$uctrl" ] && echo on > "$uctrl" 2>/dev/null
                 [ -w "$udev_dir/autosuspend_delay_ms" ] && echo -1 > "$udev_dir/autosuspend_delay_ms" 2>/dev/null
+                [ -w "$udev_dir/power/wakeup" ] && echo enabled > "$udev_dir/power/wakeup" 2>/dev/null
             else
                 [ -w "$uctrl" ] && echo auto > "$uctrl" 2>/dev/null
             fi

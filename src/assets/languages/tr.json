@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "NMI Watchdog'u Devre Dışı Bırak",
         "nmi_watchdog_desc": "Daha derin C-durumları için periyodik zamanlayıcı kesmelerini durdur",
         "bluetooth_sleep_title": "Bluetooth Otomatik Kapanma",
-        "bluetooth_sleep_desc": "Bağlı cihaz olmadığında Bluetooth radyosunu kapat"
+        "bluetooth_sleep_desc": "Bağlı cihaz olmadığında Bluetooth radyosunu kapat",
+        "bus_device_pm_title": "Veri Yolu ve Cihaz Gücü (PCIe ASPM ve USB)",
+        "bus_device_pm_desc": "Fare yanıtını koruyarak PCIe ASPM ve USB cihazları için derin uyku",
+        "network_powersave_title": "Ağ Güç Yönetimi (Wi-Fi ve Ethernet)",
+        "network_powersave_desc": "Boş Ethernet bağlantı noktalarını kapatma ve kararlı Wi-Fi uyku modu",
+        "storage_kernel_pm_title": "Depolama ve Çekirdek Zamanlayıcıları (NVMe ve Watchdog)",
+        "storage_kernel_pm_desc": "Çekirdek uyandırmalarını azaltma (NMI kapatma) ve gecikmeli SSD yazımı",
+        "display_refresh_save_title": "Pilde 48 Hz Ekran Yenileme Hızı",
+        "display_refresh_save_desc": "Hyprland ve Sway içinde pilde ekran yenileme hızını 48 Hz'e düşür"
       }
     },
     "weather": {

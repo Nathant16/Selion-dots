@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "Изключване на NMI Watchdog",
         "nmi_watchdog_desc": "Спиране на периодичните таймерни прекъсвания за по-дълбоки C-състояния",
         "bluetooth_sleep_title": "Автоматично изключване на Bluetooth",
-        "bluetooth_sleep_desc": "Изключване на Bluetooth модула, когато няма свързани устройства"
+        "bluetooth_sleep_desc": "Изключване на Bluetooth модула, когато няма свързани устройства",
+        "bus_device_pm_title": "Енергоспестяване на шина и устройства (PCIe ASPM & USB)",
+        "bus_device_pm_desc": "Дълбок сън за PCIe ASPM и USB със защита на мишката от изключване",
+        "network_powersave_title": "Управление на мрежовото захранване (Wi-Fi & Ethernet)",
+        "network_powersave_desc": "Приспиване на неактивни Ethernet портове и стабилен сън на Wi-Fi",
+        "storage_kernel_pm_title": "Дискове и таймери на ядрото (NVMe & Watchdog)",
+        "storage_kernel_pm_desc": "По-малко събуждания на ядрото (изключен NMI) и отложен запис на SSD",
+        "display_refresh_save_title": "48 Hz честота на екрана при батерия",
+        "display_refresh_save_desc": "Намаляване на опресняването на екрана до 48 Hz на батерия в Hyprland и Sway"
       }
     },
     "weather": {

@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "NMI Watchdog deaktivieren",
         "nmi_watchdog_desc": "Periodische Timer-Interrupts für tiefere C-States stoppen",
         "bluetooth_sleep_title": "Bluetooth-Auto-Abschaltung",
-        "bluetooth_sleep_desc": "Bluetooth-Funkmodul ausschalten, wenn keine Geräte verbunden sind"
+        "bluetooth_sleep_desc": "Bluetooth-Funkmodul ausschalten, wenn keine Geräte verbunden sind",
+        "bus_device_pm_title": "Bus- & Geräte-Stromsparfunktion (PCIe ASPM & USB)",
+        "bus_device_pm_desc": "Tiefschlaf für PCIe ASPM und USB-Geräte mit Schutz für Maus und Tastatur",
+        "network_powersave_title": "Netzwerk-Energieverwaltung (WLAN & Ethernet)",
+        "network_powersave_desc": "Ruhezustand ungenutzter Ethernet-Ports und stabiler WLAN-Schlaf",
+        "storage_kernel_pm_title": "Speicher & Kernel-Timer (NVMe & Watchdog)",
+        "storage_kernel_pm_desc": "Weniger Kernel-Wakeups (NMI-Watchdog aus) und verzögertes SSD-Schreiben",
+        "display_refresh_save_title": "48 Hz Display-Bildwiederholrate bei Akkubetrieb",
+        "display_refresh_save_desc": "Bildwiederholfrequenz des internen Displays im Akkubetrieb auf 48 Hz senken"
       }
     },
     "weather": {

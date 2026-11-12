@@ -1,7 +1,18 @@
+%wheel ALL=(ALL) NOPASSWD: /usr/local/bin/apply-power-profile.sh
+%wheel ALL=(ALL) NOPASSWD: /usr/local/bin/battery
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/class/power_supply/*/*
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/devices/system/cpu/*/*
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/devices/system/cpu/*/*/*
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /proc/sys/vm/*
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /proc/sys/kernel/*
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/module/*/*
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/module/*/*/*
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/bus/pci/devices/*/power/control
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/bus/usb/devices/*/power/control
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/class/backlight/*/brightness
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/iw dev * set power_save *
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/ip link set * down
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/ip link set * up
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/sysctl -q -w *
+
 

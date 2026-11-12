@@ -1295,20 +1295,28 @@
       "optimizations": {
         "title": "Оптимизации энергосбережения",
         "desc": "Управление настройками оборудования для экономии заряда батареи",
+        "bus_device_pm_title": "Шина и периферия (PCIe ASPM & USB)",
+        "bus_device_pm_desc": "Глубокий сон PCIe ASPM и USB с защитой мыши от отключения",
+        "network_powersave_title": "Управление сетью (Wi-Fi и Ethernet)",
+        "network_powersave_desc": "Спящий режим свободных Ethernet-портов и стабильный сон Wi-Fi",
+        "bluetooth_sleep_title": "Автоотключение Bluetooth",
+        "bluetooth_sleep_desc": "Отключение радиомодуля Bluetooth при отсутствии активных подключений",
+        "storage_kernel_pm_title": "Накопитель и ядро (NVMe & Watchdog)",
+        "storage_kernel_pm_desc": "Снижение фоновых прерываний ядра (NMI) и отложенная запись на SSD",
+        "audio_powersave_title": "Спящий режим аудиочипа",
+        "audio_powersave_desc": "Отключение питания аудиокодека при отсутствии звука",
+        "display_refresh_save_title": "Частота экрана 48 Гц на батарее",
+        "display_refresh_save_desc": "Снижение частоты обновления дисплея до 48 Гц в Hyprland и Sway",
         "cpu_boost_title": "Turbo Boost процессора",
         "cpu_boost_desc": "Разрешить ядрам процессора повышать частоту выше базовой",
         "wifi_powersave_title": "Энергосбережение Wi-Fi",
         "wifi_powersave_desc": "Снижение энергопотребления беспроводного модуля в простое",
         "device_pm_title": "Автосон контроллеров и USB",
         "device_pm_desc": "Автоматический переход в сон неиспользуемых шин и устройств",
-        "audio_powersave_title": "Спящий режим аудиочипа",
-        "audio_powersave_desc": "Отключение питания аудиокодека при отсутствии звука",
         "disk_writeback_title": "Отложенная запись на диск",
         "disk_writeback_desc": "Сброс буфера диска раз в 60 с для редких пробуждений SSD",
         "nmi_watchdog_title": "Отключение NMI Watchdog",
-        "nmi_watchdog_desc": "Отключение аппаратного таймера NMI для глубокого сна ядер (C6/C10)",
-        "bluetooth_sleep_title": "Автоотключение Bluetooth",
-        "bluetooth_sleep_desc": "Отключение радиомодуля Bluetooth при отсутствии активных подключений"
+        "nmi_watchdog_desc": "Отключение аппаратного таймера NMI для глубокого сна ядер (C6/C10)"
       }
     },
     "weather": {

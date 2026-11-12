@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "Tắt NMI Watchdog",
         "nmi_watchdog_desc": "Dừng các ngắt định thời định kỳ để đạt trạng thái C-state sâu hơn",
         "bluetooth_sleep_title": "Tự động tắt Bluetooth",
-        "bluetooth_sleep_desc": "Tắt sóng Bluetooth khi không có thiết bị nào kết nối"
+        "bluetooth_sleep_desc": "Tắt sóng Bluetooth khi không có thiết bị nào kết nối",
+        "bus_device_pm_title": "Nguồn Bus & Thiết bị (PCIe ASPM & USB)",
+        "bus_device_pm_desc": "Ngủ sâu cho PCIe ASPM và USB trong khi vẫn giữ chuột hoạt động",
+        "network_powersave_title": "Quản lý nguồn mạng (Wi-Fi & Ethernet)",
+        "network_powersave_desc": "Tắt các cổng Ethernet không dùng và bật chế độ ngủ Wi-Fi ổn định",
+        "storage_kernel_pm_title": "Bộ nhớ & Bộ hẹn giờ nhân (NVMe & Watchdog)",
+        "storage_kernel_pm_desc": "Giảm đánh thức nhân (tắt NMI) và trì hoãn ghi SSD",
+        "display_refresh_save_title": "Tần số quét màn hình 48 Hz khi dùng pin",
+        "display_refresh_save_desc": "Giảm tần số quét xuống 48 Hz khi dùng pin trong Hyprland và Sway"
       }
     },
     "weather": {

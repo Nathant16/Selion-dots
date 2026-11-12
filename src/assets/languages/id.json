@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "Nonaktifkan NMI Watchdog",
         "nmi_watchdog_desc": "Hentikan interupsi pewaktu berkala untuk kondisi C yang lebih dalam",
         "bluetooth_sleep_title": "Matikan Otomatis Bluetooth",
-        "bluetooth_sleep_desc": "Matikan radio Bluetooth saat tidak ada perangkat yang terhubung"
+        "bluetooth_sleep_desc": "Matikan radio Bluetooth saat tidak ada perangkat yang terhubung",
+        "bus_device_pm_title": "Daya Bus & Perangkat (PCIe ASPM & USB)",
+        "bus_device_pm_desc": "Tidur lelap untuk PCIe ASPM dan USB dengan perlindungan mouse tetap aktif",
+        "network_powersave_title": "Manajemen Daya Jaringan (Wi-Fi & Ethernet)",
+        "network_powersave_desc": "Matikan port Ethernet yang tidak aktif dan mode tidur Wi-Fi yang stabil",
+        "storage_kernel_pm_title": "Penyimpanan & Timer Kernel (NVMe & Watchdog)",
+        "storage_kernel_pm_desc": "Kurangi bangun kernel (matikan NMI) dan tunda penulisan SSD",
+        "display_refresh_save_title": "Refresh Layar 48 Hz pada Baterai",
+        "display_refresh_save_desc": "Turunkan refresh rate layar internal ke 48 Hz saat memakai baterai"
       }
     },
     "weather": {

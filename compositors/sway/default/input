@@ -1,0 +1,15 @@
+#  ▀  █▀▀▄ █▀▀█ █  █ ▀▀█▀▀
+# ▀█▀ █  █ █  █ █  █   █
+# ▀▀▀ ▀  ▀ █▀▀▀  ▀▀▀   ▀
+
+input type:keyboard {
+  xkb_layout "us,ru"
+  xkb_options "grp:alt_shift_toggle,grp:ctrl_shift_toggle"
+}
+
+input type:touchpad {
+  dwt enabled
+  tap enabled
+  natural_scroll enabled
+  middle_emulation enabled
+}

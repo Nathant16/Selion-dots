@@ -1,7 +1,27 @@
-include config/variables
-include config/input
-include config/output
-include config/layout
-include config/autostart
-include config/window-rules
-include config/keybinds
+# ██████╗  █████╗   ███╗  ██╗ █████╗ ████████╗  ███████╗██████╗ ██╗████████╗
+# ██╔══██╗██╔══██╗  ████╗ ██║██╔══██╗╚══██╔══╝  ██╔════╝██╔══██╗██║╚══██╔══╝
+# ██║  ██║██║  ██║  ██╔██╗██║██║  ██║   ██║     █████╗  ██║  ██║██║   ██║
+# ██║  ██║██║  ██║  ██║╚████║██║  ██║   ██║     ██╔══╝  ██║  ██║██║   ██║
+# ██████╔╝╚█████╔╝  ██║ ╚███║╚█████╔╝   ██║     ███████╗██████╔╝██║   ██║
+# ╚═════╝  ╚════╝   ╚═╝  ╚══╝ ╚════╝    ╚═╝     ╚══════╝╚═════╝ ╚═╝   ╚═╝
+
+
+# █▀▀ █▀▀▄ ▀█ █▀  ▀  █▀▀█ █▀▀█ █▀▀▄ █▀▄▀█ █▀▀ █▀▀▄ ▀▀█▀▀
+# █▀▀ █  █  █▄█  ▀█▀ █▄▄▀ █  █ █  █ █ ▀ █ █▀▀ █  █   █
+# ▀▀▀ ▀  ▀   ▀   ▀▀▀ ▀ ▀▀ ▀▀▀▀ ▀  ▀ ▀   ▀ ▀▀▀ ▀  ▀   ▀
+
+include default/gpu-env
+
+
+# █▀▀ █▀▀█ █  █ █▀▀█ █▀▀ █▀▀
+# ▀▀█ █  █ █  █ █▄▄▀ █   █▀▀
+# ▀▀▀ ▀▀▀▀  ▀▀▀ ▀ ▀▀ ▀▀▀ ▀▀▀
+
+include default/general
+include default/monitors
+include default/input
+include default/appearance
+include default/windowrules
+include default/keybindings
+include default/autostart
+include userprefs

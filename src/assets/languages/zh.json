@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "禁用 NMI Watchdog",
         "nmi_watchdog_desc": "停止周期性定时器中断以进入更深的 C-states",
         "bluetooth_sleep_title": "蓝牙自动关闭",
-        "bluetooth_sleep_desc": "没有连接设备时关闭蓝牙射频"
+        "bluetooth_sleep_desc": "没有连接设备时关闭蓝牙射频",
+        "bus_device_pm_title": "总线与设备电源管理 (PCIe ASPM & USB)",
+        "bus_device_pm_desc": "PCIe ASPM和USB深度休眠，同时保持鼠标正常响应",
+        "network_powersave_title": "网络电源管理 (Wi-Fi & 以太网)",
+        "network_powersave_desc": "休眠未连接的以太网端口并启用稳定的Wi-Fi节能",
+        "storage_kernel_pm_title": "存储与内核计时器 (NVMe & Watchdog)",
+        "storage_kernel_pm_desc": "减少内核唤醒（禁用NMI）并启用延迟SSD写入",
+        "display_refresh_save_title": "使用电池时48 Hz屏幕刷新率",
+        "display_refresh_save_desc": "在Hyprland和Sway中使用电池时将刷新率降至48 Hz"
       }
     },
     "weather": {

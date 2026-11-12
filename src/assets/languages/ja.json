@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "NMI Watchdog を無効化",
         "nmi_watchdog_desc": "より深い C-ステートのため定期的なタイマー割り込みを停止します",
         "bluetooth_sleep_title": "Bluetooth 自動電源オフ",
-        "bluetooth_sleep_desc": "接続されたデバイスがないときに Bluetooth 無線をオフにします"
+        "bluetooth_sleep_desc": "接続されたデバイスがないときに Bluetooth 無線をオフにします",
+        "bus_device_pm_title": "バスおよびデバイスの省電力 (PCIe ASPM & USB)",
+        "bus_device_pm_desc": "マウスの応答性を維持しながらPCIe ASPMとUSB機器をディープスリープ",
+        "network_powersave_title": "ネットワーク電源管理 (Wi-Fi & Ethernet)",
+        "network_powersave_desc": "未接続のEthernetポートの休止と安定したWi-Fiスリープ",
+        "storage_kernel_pm_title": "ストレージおよびカーネルタイマー (NVMe & Watchdog)",
+        "storage_kernel_pm_desc": "カーネル割り込みの低減 (NMI無効化) とSSD書き込みの遅延実行",
+        "display_refresh_save_title": "バッテリー駆動時の48Hzディスプレイリフレッシュレート",
+        "display_refresh_save_desc": "HyprlandおよびSwayでバッテリー時にリフレッシュレートを48Hzに低下"
       }
     },
     "weather": {

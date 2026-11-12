@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "Disabilita NMI Watchdog",
         "nmi_watchdog_desc": "Interrompi gli interrupt periodici del timer per stati C più profondi",
         "bluetooth_sleep_title": "Spegnimento automatico Bluetooth",
-        "bluetooth_sleep_desc": "Spegni la radio Bluetooth quando nessun dispositivo è connesso"
+        "bluetooth_sleep_desc": "Spegni la radio Bluetooth quando nessun dispositivo è connesso",
+        "bus_device_pm_title": "Risparmio energetico bus e dispositivi (PCIe ASPM e USB)",
+        "bus_device_pm_desc": "Sospensione profonda PCIe ASPM e USB mantenendo il mouse reattivo",
+        "network_powersave_title": "Gestione energetica di rete (Wi-Fi ed Ethernet)",
+        "network_powersave_desc": "Sospensione delle porte Ethernet inattive e sonno Wi-Fi stabile",
+        "storage_kernel_pm_title": "Archiviazione e timer del kernel (NVMe e Watchdog)",
+        "storage_kernel_pm_desc": "Meno risvegli del kernel (disabilita NMI) e scrittura ritardata su SSD",
+        "display_refresh_save_title": "Frequenza schermo a 48 Hz a batteria",
+        "display_refresh_save_desc": "Riduce la frequenza di aggiornamento a 48 Hz a batteria in Hyprland e Sway"
       }
     },
     "weather": {

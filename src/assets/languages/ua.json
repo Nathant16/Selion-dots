@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "Вимкнути NMI Watchdog",
         "nmi_watchdog_desc": "Зупинити періодичні переривання таймера для глибших C-станів",
         "bluetooth_sleep_title": "Автовимкнення Bluetooth",
-        "bluetooth_sleep_desc": "Вимикати радіомодуль Bluetooth, коли немає підключених пристроїв"
+        "bluetooth_sleep_desc": "Вимикати радіомодуль Bluetooth, коли немає підключених пристроїв",
+        "bus_device_pm_title": "Шина та периферія (PCIe ASPM & USB)",
+        "bus_device_pm_desc": "Глибокий сон PCIe ASPM та USB із захистом миші від вимкнення",
+        "network_powersave_title": "Керування мережею (Wi-Fi та Ethernet)",
+        "network_powersave_desc": "Сплячий режим вільних Ethernet-портів та стабільний сон Wi-Fi",
+        "storage_kernel_pm_title": "Накопичувач та ядро (NVMe & Watchdog)",
+        "storage_kernel_pm_desc": "Зниження фонових переривань ядра (NMI) та відкладений запис на SSD",
+        "display_refresh_save_title": "Частота екрана 48 Гц на батареї",
+        "display_refresh_save_desc": "Зниження частоти оновлення дисплея до 48 Гц у Hyprland та Sway"
       }
     },
     "weather": {

@@ -1,0 +1,19 @@
+//  ▀  █▀▀▄ █▀▀█ █  █ ▀▀█▀▀
+// ▀█▀ █  █ █  █ █  █   █
+// ▀▀▀ ▀  ▀ █▀▀▀  ▀▀▀   ▀
+
+input {
+    keyboard {
+        xkb {
+            layout "us,ru"
+            options "grp:alt_shift_toggle,grp:ctrl_shift_toggle"
+        }
+    }
+    touchpad {
+        tap
+        natural-scroll
+        accel-profile "flat"
+        click-method "clickfinger"
+    }
+}
+

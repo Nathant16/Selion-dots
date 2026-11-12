@@ -1,0 +1,14 @@
+# █ █ █ █ █▄ █ █▀▄ █▀█ █ █ █ 　 █▀█ █ █ █   █▀▀ █▀
+# ▀▄▀▄▀ █ █ ▀█ █▄▀ █▄█ ▀▄▀▄▀ 　 █▀▄ █▄█ █▄▄ ██▄ ▄█
+
+# Window rules for Sway
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="bubble"] floating enable
+for_window [window_role="dialog"] floating enable
+for_window [window_type="dialog"] floating enable
+for_window [app_id="org.gnome.FileRoller"] floating enable
+for_window [app_id="pavucontrol"] floating enable
+for_window [app_id="pwvucontrol"] floating enable
+for_window [title="Picture-in-Picture"] floating enable, sticky enable
+for_window [title="Picture in picture"] floating enable, sticky enable
+

@@ -1,3 +1,10 @@
+# ██████╗  █████╗   ███╗  ██╗ █████╗ ████████╗  ███████╗██████╗ ██╗████████╗
+# ██╔══██╗██╔══██╗  ████╗ ██║██╔══██╗╚══██╔══╝  ██╔════╝██╔══██╗██║╚══██╔══╝
+# ██║  ██║██║  ██║  ██╔██╗██║██║  ██║   ██║     █████╗  ██║  ██║██║   ██║
+# ██║  ██║██║  ██║  ██║╚████║██║  ██║   ██║     ██╔══╝  ██║  ██║██║   ██║
+# ██████╔╝╚█████╔╝  ██║ ╚███║╚█████╔╝   ██║     ███████╗██████╔╝██║   ██║
+# ╚═════╝  ╚════╝   ╚═╝  ╚══╝ ╚════╝    ╚═╝     ╚══════╝╚═════╝ ╚═╝   ╚═╝
+
 # DriftWM Configuration - Synchronized with PC and SelionOS
 
 mod_key = "super"
@@ -5,6 +12,9 @@ focus_follows_mouse = false
 focus_placement = "center"
 window_placement = "center"
 
+#  █    █▀▀█ █  █ █▀▀▄ █▀▀ █  █
+#  █    █▄▄█ █  █ █  █ █   █▀▀█
+#  █▄▄█ ▀  ▀  ▀▀▀ ▀  ▀ ▀▀▀ ▀  ▀
 autostart = [
     "wl-paste --type text --watch cliphist store",
     "wl-paste --type image --watch cliphist store",
@@ -18,6 +28,9 @@ restore_windows = true
 restore_camera = true
 restore_bookmarks = true
 
+# █▀▀ █▀▀▄ ▀█ █▀  ▀  █▀▀█ █▀▀█ █▀▀▄ █▀▄▀█ █▀▀ █▀▀▄ ▀▀█▀▀
+# █▀▀ █  █  █▄█  ▀█▀ █▄▄▀ █  █ █  █ █ ▀ █ █▀▀ █  █   █
+# ▀▀▀ ▀  ▀   ▀   ▀▀▀ ▀ ▀▀ ▀▀▀▀ ▀  ▀ ▀   ▀ ▀▀▀ ▀  ▀   ▀
 [env]
 TERMINAL = "kitty"
 QT_WAYLAND_DISABLE_WINDOWDECORATION = "1"
@@ -27,6 +40,9 @@ MOZ_ENABLE_WAYLAND = "1"
 XDG_CURRENT_DESKTOP = "driftwm:sway:wlroots"
 XDG_SESSION_DESKTOP = "driftwm"
 
+#  ▀  █▀▀▄ █▀▀█ █  █ ▀▀█▀▀
+# ▀█▀ █  █ █  █ █  █   █
+# ▀▀▀ ▀  ▀ █▀▀▀  ▀▀▀   ▀
 [input.keyboard]
 layout = "us,ru"
 repeat_rate = 25
@@ -51,6 +67,9 @@ step = 1.25
 trackpad_speed = 1.5
 fit_padding = 40.0
 
+# █▀▀█ █▀▀▄  ▀  █▀▄▀█ █▀▀█ ▀▀█▀▀  ▀  █▀▀█ █▀▀▄ █▀▀
+# █▄▄█ █  █ ▀█▀ █ ▀ █ █▄▄█   █   ▀█▀ █  █ █  █ ▀▀█
+# ▀  ▀ ▀  ▀ ▀▀▀ ▀   ▀ ▀  ▀   ▀   ▀▀▀ ▀▀▀▀ ▀  ▀ ▀▀▀
 [decorations]
 corner_radius = 16
 shadow = true
@@ -64,6 +83,8 @@ opacity_focused = 1.0
 [background]
 type = "none"
 
+# █ █ █ █ █▄ █ █▀▄ █▀█ █ █ █ 　 █▀█ █ █ █   █▀▀ █▀
+# ▀▄▀▄▀ █ █ ▀█ █▄▀ █▄█ ▀▄▀▄▀ 　 █▀▄ █▄█ █▄▄ ██▄ ▄█
 [[window_rules]]
 app_id = "kitty"
 size = [960, 600]
@@ -72,6 +93,9 @@ size = [960, 600]
 app_id = "ski"
 decoration = "minimal"
 
+# █ █ █▀▀ █  █ █▀▀▄  ▀  █▀▀▄ █▀▀▄  ▀  █▀▀▄ █▀▀▀ █▀▀
+# █▀▄ █▀▀ █▄▄█ █▀▀▄ ▀█▀ █  █ █  █ ▀█▀ █  █ █ ▀█ ▀▀█
+# ▀ ▀ ▀▀▀ ▄▄▄█ ▀▀▀  ▀▀▀ ▀  ▀ ▀▀▀  ▀▀▀ ▀  ▀ ▀▀▀▀ ▀▀▀
 [keybindings]
 # Раскладка клавиатуры
 "alt+shift" = "switch-layout next"

@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "NMI Watchdog uitschakelen",
         "nmi_watchdog_desc": "Periodieke timerinterrupts stoppen voor diepere C-states",
         "bluetooth_sleep_title": "Bluetooth automatisch uitschakelen",
-        "bluetooth_sleep_desc": "Bluetooth-radio uitschakelen wanneer er geen apparaten verbonden zijn"
+        "bluetooth_sleep_desc": "Bluetooth-radio uitschakelen wanneer er geen apparaten verbonden zijn",
+        "bus_device_pm_title": "Bus- en apparaatenergie (PCIe ASPM & USB)",
+        "bus_device_pm_desc": "Diepe slaapstand voor PCIe ASPM en USB met muisbeveiliging",
+        "network_powersave_title": "Netwerk energiebeheer (Wi-Fi & Ethernet)",
+        "network_powersave_desc": "Inactieve Ethernet-poorten uitschakelen en stabiele Wi-Fi-slaapstand",
+        "storage_kernel_pm_title": "Opslag & kernel-timers (NVMe & Watchdog)",
+        "storage_kernel_pm_desc": "Minder kernel wakeups (NMI uitschakelen) en vertraagd schrijven naar SSD",
+        "display_refresh_save_title": "48 Hz vernieuwingsfrequentie op batterij",
+        "display_refresh_save_desc": "Verlaag schermverversingssnelheid naar 48 Hz op batterij in Hyprland en Sway"
       }
     },
     "weather": {

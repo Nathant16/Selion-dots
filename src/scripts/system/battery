@@ -222,7 +222,7 @@ def show_status():
     else:
         bar_color = "\033[38;2;242;115;115m"
     
-    bar = bar_color + "█" * filled + "\033[38;2;80;80;90m" + "░" * (bar_len - filled) + "\033[0m"
+    bar = bar_color + "█" * filled + "\033[38;2;80;80;90m" + "─" * (bar_len - filled) + "\033[0m"
 
     if status == "Charging":
         icon = "⚡"
@@ -499,12 +499,12 @@ OPTS_CONFIG_PATH = os.path.expanduser("~/.config/serpantinum/power_optimizations
 
 def load_opts_config():
     defaults = {
-        "wifi_powersave": True,
-        "device_pm": True,
-        "audio_powersave": True,
-        "disk_writeback": True,
-        "nmi_watchdog": True,
+        "bus_device_pm": True,
+        "network_powersave": True,
         "bluetooth_sleep": True,
+        "storage_kernel_pm": True,
+        "audio_powersave": True,
+        "display_refresh_save": True,
         "cpu_max_freq": 0,
         "auto_brightness": True,
         "power_saver_brightness": 80,
@@ -513,6 +513,13 @@ def load_opts_config():
         try:
             with open(OPTS_CONFIG_PATH, "r") as f:
                 saved = json.load(f)
+                # Transparent migration for legacy keys
+                if "device_pm" in saved and "bus_device_pm" not in saved:
+                    saved["bus_device_pm"] = saved["device_pm"]
+                if "wifi_powersave" in saved and "network_powersave" not in saved:
+                    saved["network_powersave"] = saved["wifi_powersave"]
+                if ("disk_writeback" in saved or "nmi_watchdog" in saved) and "storage_kernel_pm" not in saved:
+                    saved["storage_kernel_pm"] = saved.get("disk_writeback", True) and saved.get("nmi_watchdog", True)
                 defaults.update(saved)
         except Exception:
             pass
@@ -784,7 +791,19 @@ def save_opts_config(cfg):
         print(f"Failed to save opts config: {e}", file=sys.stderr)
 
 def get_hw_opt_state(opt_id, saved_val):
-    if opt_id == "wifi_powersave":
+    if opt_id in ("bus_device_pm", "device_pm"):
+        aspm = read_val("/sys/module/pcie_aspm/parameters/policy", "")
+        if "powersupersave" in aspm or "powersave" in aspm:
+            return True
+        pci_ctrls = glob.glob("/sys/bus/pci/devices/*/power/control")
+        if pci_ctrls:
+            states = [read_val(c, "") for c in pci_ctrls[:10]]
+            if "auto" in states:
+                return True
+            if "on" in states:
+                return False
+        return saved_val
+    elif opt_id in ("network_powersave", "wifi_powersave"):
         for w in glob.glob("/sys/class/net/*/wireless"):
             dev = os.path.basename(os.path.dirname(w))
             try:
@@ -801,57 +820,25 @@ def get_hw_opt_state(opt_id, saved_val):
         if v:
             return v == "1"
         return saved_val
-    elif opt_id == "disk_writeback":
+    elif opt_id in ("storage_kernel_pm", "disk_writeback", "nmi_watchdog"):
         v = read_val("/proc/sys/vm/dirty_writeback_centisecs", "")
         try:
             if v and int(v) >= 1500:
                 return True
-            elif v:
-                return False
         except ValueError:
             pass
         return saved_val
-    elif opt_id == "nmi_watchdog":
-        v = read_val("/proc/sys/kernel/nmi_watchdog", "")
-        if v:
-            return v == "0"
-        return saved_val
-    elif opt_id == "device_pm":
-        pci_ctrls = glob.glob("/sys/bus/pci/devices/*/power/control")
-        if pci_ctrls:
-            states = [read_val(c, "") for c in pci_ctrls[:10]]
-            if "auto" in states:
-                return True
-            if "on" in states:
-                return False
-        return saved_val
     elif opt_id == "bluetooth_sleep":
+        return saved_val
+    elif opt_id == "display_refresh_save":
         return saved_val
     return saved_val
 
 def apply_single_opt(opt_id, enabled):
-    if opt_id == "wifi_powersave":
-        mode = "on" if enabled else "off"
-        for w in glob.glob("/sys/class/net/*/wireless"):
-            dev = os.path.basename(os.path.dirname(w))
-            res = subprocess.run(["iw", "dev", dev, "set", "power_save", mode], capture_output=True)
-            if res.returncode != 0:
-                subprocess.run(["sudo", "-n", "iw", "dev", dev, "set", "power_save", mode], capture_output=True)
-    elif opt_id == "audio_powersave":
-        val = "1" if enabled else "0"
-        if os.path.exists("/sys/module/snd_hda_intel/parameters/power_save"):
-            write_val("/sys/module/snd_hda_intel/parameters/power_save", val)
-        if os.path.exists("/sys/module/snd_hda_intel/parameters/power_save_controller"):
-            write_val("/sys/module/snd_hda_intel/parameters/power_save_controller", "Y" if enabled else "N")
-    elif opt_id == "disk_writeback":
-        val = "6000" if enabled else "500"
-        if not write_val("/proc/sys/vm/dirty_writeback_centisecs", val):
-            subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", f"vm.dirty_writeback_centisecs={val}"], capture_output=True)
-    elif opt_id == "nmi_watchdog":
-        val = "0" if enabled else "1"
-        if not write_val("/proc/sys/kernel/nmi_watchdog", val):
-            subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", f"kernel.nmi_watchdog={val}"], capture_output=True)
-    elif opt_id == "device_pm":
+    if opt_id in ("bus_device_pm", "device_pm"):
+        aspm_path = "/sys/module/pcie_aspm/parameters/policy"
+        if os.path.exists(aspm_path):
+            write_val(aspm_path, "powersupersave" if enabled else "default")
         if enabled:
             for ctrl in glob.glob("/sys/bus/pci/devices/*/power/control"):
                 pci_dir = os.path.dirname(ctrl)
@@ -864,11 +851,16 @@ def apply_single_opt(opt_id, enabled):
                 udev_dir = os.path.dirname(uctrl)
                 prod = read_val(os.path.join(udev_dir, "product"), "") + read_val(os.path.join(udev_dir, "..", "product"), "")
                 vendor = read_val(os.path.join(udev_dir, "idVendor"), "") + read_val(os.path.join(udev_dir, "..", "idVendor"), "")
-                if any(x in prod for x in ("Receiver", "Mouse", "Keyboard")) or vendor == "046d":
+                b_class = read_val(os.path.join(udev_dir, "bInterfaceClass"), "")
+                # Strictly protect all Mice, Keyboards, RF Receivers from autosuspend
+                if any(x in prod for x in ("Receiver", "Mouse", "Keyboard", "Touchpad", "TrackPoint", "Pointer")) or vendor == "046d" or "03" in b_class:
                     write_val(uctrl, "on")
                     delay_ms = os.path.join(udev_dir, "autosuspend_delay_ms")
                     if os.path.exists(delay_ms):
                         write_val(delay_ms, "-1")
+                    wakeup = os.path.join(udev_dir, "power/wakeup")
+                    if os.path.exists(wakeup):
+                        write_val(wakeup, "enabled")
                 else:
                     write_val(uctrl, "auto")
         else:
@@ -876,6 +868,50 @@ def apply_single_opt(opt_id, enabled):
                 write_val(ctrl, "on")
             for uctrl in glob.glob("/sys/bus/usb/devices/*/power/control"):
                 write_val(uctrl, "on")
+
+    elif opt_id in ("network_powersave", "wifi_powersave"):
+        mode = "on" if enabled else "off"
+        if shutil.which("iw"):
+            for w in glob.glob("/sys/class/net/*/wireless"):
+                dev = os.path.basename(os.path.dirname(w))
+                try:
+                    res = subprocess.run(["iw", "dev", dev, "set", "power_save", mode], capture_output=True)
+                    if res.returncode != 0:
+                        subprocess.run(["sudo", "-n", "iw", "dev", dev, "set", "power_save", mode], capture_output=True)
+                except Exception:
+                    pass
+        # Power down disconnected Ethernet ports to eliminate PHY link search drain
+        for eth in glob.glob("/sys/class/net/*"):
+            if not os.path.exists(os.path.join(eth, "device")) or os.path.exists(os.path.join(eth, "wireless")):
+                continue
+            iface = os.path.basename(eth)
+            carrier = read_val(os.path.join(eth, "carrier"), "0")
+            operstate = read_val(os.path.join(eth, "operstate"), "down")
+            if carrier == "0" or operstate == "down":
+                target_state = "down" if enabled else "up"
+                try:
+                    subprocess.run(["sudo", "-n", "ip", "link", "set", iface, target_state], capture_output=True)
+                except Exception:
+                    pass
+
+    elif opt_id == "audio_powersave":
+        val = "1" if enabled else "0"
+        if os.path.exists("/sys/module/snd_hda_intel/parameters/power_save"):
+            write_val("/sys/module/snd_hda_intel/parameters/power_save", val)
+        if os.path.exists("/sys/module/snd_hda_intel/parameters/power_save_controller"):
+            write_val("/sys/module/snd_hda_intel/parameters/power_save_controller", "Y" if enabled else "N")
+
+    elif opt_id in ("storage_kernel_pm", "disk_writeback", "nmi_watchdog", "laptop_mode"):
+        wb_val = "6000" if enabled else "500"
+        if not write_val("/proc/sys/vm/dirty_writeback_centisecs", wb_val):
+            subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", f"vm.dirty_writeback_centisecs={wb_val}"], capture_output=True)
+        lm_val = "5" if enabled else "0"
+        if not write_val("/proc/sys/vm/laptop_mode", lm_val):
+            subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", f"vm.laptop_mode={lm_val}"], capture_output=True)
+        nmi_val = "0" if enabled else "1"
+        if not write_val("/proc/sys/kernel/nmi_watchdog", nmi_val):
+            subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", f"kernel.nmi_watchdog={nmi_val}"], capture_output=True)
+
     elif opt_id == "bluetooth_sleep":
         if enabled:
             try:
@@ -889,13 +925,23 @@ def apply_single_opt(opt_id, enabled):
                 subprocess.run(["bluetoothctl", "power", "on"], capture_output=True, timeout=1)
             except Exception:
                 pass
-    elif opt_id == "laptop_mode":
-        val = "5" if enabled else "0"
-        expire = "6000" if enabled else "3000"
-        if not write_val("/proc/sys/vm/laptop_mode", val):
-            subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", f"vm.laptop_mode={val}"], capture_output=True)
-        if not write_val("/proc/sys/vm/dirty_expire_centisecs", expire):
-            subprocess.run(["sudo", "-n", "sysctl", "-q", "-w", f"vm.dirty_expire_centisecs={expire}"], capture_output=True)
+
+    elif opt_id == "display_refresh_save":
+        target_hz = "48.01" if enabled else "60.01"
+        # Hyprland
+        for hypr_dir in glob.glob("/run/user/*/hypr"):
+            hypr_socks = glob.glob(f"{hypr_dir}/*/.socket.sock")
+            if hypr_socks:
+                sig = os.path.basename(os.path.dirname(hypr_socks[0]))
+                env = os.environ.copy()
+                env["HYPRLAND_INSTANCE_SIGNATURE"] = sig
+                subprocess.run(["hyprctl", "keyword", "monitor", f"eDP-1,1920x1080@{target_hz},0x0,1"], env=env, capture_output=True)
+        # Sway
+        for sway_sock in glob.glob("/run/user/*/sway-ipc.*.sock"):
+            env = os.environ.copy()
+            env["SWAYSOCK"] = sway_sock
+            subprocess.run(["swaymsg", "output", "eDP-1", "mode", f"1920x1080@{target_hz}Hz"], env=env, capture_output=True)
+
     elif opt_id == "ryzen_tdp":
         ryzenadj_bin = shutil.which("ryzenadj") or ("/usr/local/bin/ryzenadj" if os.path.exists("/usr/local/bin/ryzenadj") else None)
         if ryzenadj_bin:
@@ -908,46 +954,40 @@ def get_optimizations_list():
     saved = load_opts_config()
     meta = [
         {
-            "id": "wifi_powersave",
-            "title": "Wi-Fi Power Save",
-            "desc": "Reduce Wi-Fi power draw when idle",
-            "icon": "󰤨",
-        },
-        {
-            "id": "device_pm",
-            "title": "Device Runtime PM",
-            "desc": "Auto-suspend idle bus controllers and USB devices",
+            "id": "bus_device_pm",
+            "title": "Bus & Device Power (PCIe ASPM & USB)",
+            "desc": "Deep sleep for PCIe ASPM and USB devices while keeping mouse responsive",
             "icon": "󰚥",
         },
         {
-            "id": "audio_powersave",
-            "title": "Audio Power Save",
-            "desc": "Power down audio codec when silent",
-            "icon": "󰕾",
-        },
-        {
-            "id": "disk_writeback",
-            "title": "Delayed Disk Writeback",
-            "desc": "Flush dirty buffers every 60s to let drive sleep",
-            "icon": "\uf0a0",
-        },
-        {
-            "id": "nmi_watchdog",
-            "title": "Disable NMI Watchdog",
-            "desc": "Stop periodic timer interrupts for deeper C-states",
-            "icon": "󰒲",
-        },
-        {
-            "id": "laptop_mode",
-            "title": "VM Laptop Mode",
-            "desc": "Coalesce disk writes with reads to let drive sleep",
-            "icon": "󰌢",
+            "id": "network_powersave",
+            "title": "Network Power Management (Wi-Fi & Ethernet)",
+            "desc": "Power down disconnected Ethernet PHYs and enable stable Wi-Fi sleep",
+            "icon": "󰤨",
         },
         {
             "id": "bluetooth_sleep",
             "title": "Bluetooth Auto Power-Off",
             "desc": "Turn off Bluetooth radio when no devices connected",
             "icon": "󰂯",
+        },
+        {
+            "id": "storage_kernel_pm",
+            "title": "Storage & Kernel Timers (NVMe & Watchdog)",
+            "desc": "Reduce kernel wakeups (disable NMI watchdog) and delay SSD flush",
+            "icon": "󰒲",
+        },
+        {
+            "id": "audio_powersave",
+            "title": "Audio Codec Power Save",
+            "desc": "Power down audio codec when silent",
+            "icon": "󰕾",
+        },
+        {
+            "id": "display_refresh_save",
+            "title": "48 Hz Display Refresh on Battery",
+            "desc": "Drop internal screen refresh rate to 48.01 Hz on battery in Hyprland & Sway",
+            "icon": "󰍹",
         }
     ]
     if os.path.exists("/usr/local/bin/ryzenadj") or shutil.which("ryzenadj"):

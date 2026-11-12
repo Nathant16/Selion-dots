@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "NMI Watchdog अक्षम करें",
         "nmi_watchdog_desc": "गहरे C-states के लिए आवधिक टाइमर व्यवधान बंद करें",
         "bluetooth_sleep_title": "Bluetooth स्वतः बंद करें",
-        "bluetooth_sleep_desc": "कोई डिवाइस कनेक्ट न होने पर Bluetooth रेडियो बंद करें"
+        "bluetooth_sleep_desc": "कोई डिवाइस कनेक्ट न होने पर Bluetooth रेडियो बंद करें",
+        "bus_device_pm_title": "बस और डिवाइस पावर (PCIe ASPM और USB)",
+        "bus_device_pm_desc": "माउस को सक्रिय रखते हुए PCIe ASPM और USB के लिए डीप स्लीप",
+        "network_powersave_title": "नेटवर्क पावर प्रबंधन (Wi-Fi और ईथरनेट)",
+        "network_powersave_desc": "अप्रयुक्त ईथरनेट पोर्ट को बंद करना और स्थिर Wi-Fi स्लीप मोड",
+        "storage_kernel_pm_title": "स्टोरेज और कर्नेल टाइमर (NVMe और वॉचडॉग)",
+        "storage_kernel_pm_desc": "कर्नेल वेकअप कम करना (NMI वॉचडॉग बंद) और विलंबित SSD राइटिंग",
+        "display_refresh_save_title": "बैटरी पर 48 Hz स्क्रीन रिफ्रेश रेट",
+        "display_refresh_save_desc": "Hyprland और Sway में बैटरी पर डिस्प्ले रिफ्रेश रेट को 48 Hz तक घटाएं"
       }
     },
     "weather": {

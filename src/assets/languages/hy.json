@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "Անջատել NMI Watchdog-ը",
         "nmi_watchdog_desc": "Դադարեցնել պարբերական ժամաչափի ընդհատումները ավելի խորը C-վիճակների համար",
         "bluetooth_sleep_title": "Bluetooth-ի ավտոմատ անջատում",
-        "bluetooth_sleep_desc": "Անջատել Bluetooth ռադիոն, երբ միացված սարքեր չկան"
+        "bluetooth_sleep_desc": "Անջատել Bluetooth ռադիոն, երբ միացված սարքեր չկան",
+        "bus_device_pm_title": "Շինայի և սարքերի էներգախնայողություն (PCIe ASPM & USB)",
+        "bus_device_pm_desc": "PCIe ASPM և USB խորը քուն՝ մկնիկի անխափան աշխատանքով",
+        "network_powersave_title": "Ցանցի էներգիայի կառավարում (Wi-Fi & Ethernet)",
+        "network_powersave_desc": "Չօգտագործվող Ethernet պորտերի անջատում և կայուն Wi-Fi քուն",
+        "storage_kernel_pm_title": "Կրիչ և միջուկի ժամանակաչափեր (NVMe & Watchdog)",
+        "storage_kernel_pm_desc": "Միջուկի արթնացումների նվազեցում (NMI անջատում) և հետաձգված գրառում SSD-ում",
+        "display_refresh_save_title": "Էկրանի 48 Հց թարմացում մարտկոցի վրա",
+        "display_refresh_save_desc": "Էկրանի թարմացման հաճախականության իջեցում մինչև 48 Հց Hyprland-ում և Sway-ում"
       }
     },
     "weather": {

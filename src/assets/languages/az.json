@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "NMI Watchdog-u söndür",
         "nmi_watchdog_desc": "Daha dərin C-vəziyyətləri üçün dövri taymer kəsilmələrini dayandır",
         "bluetooth_sleep_title": "Bluetooth avtomatik sönmə",
-        "bluetooth_sleep_desc": "Heç bir cihaz qoşulu olmadıqda Bluetooth radiosunu söndür"
+        "bluetooth_sleep_desc": "Heç bir cihaz qoşulu olmadıqda Bluetooth radiosunu söndür",
+        "bus_device_pm_title": "Şin və Cihaz Gücü (PCIe ASPM və USB)",
+        "bus_device_pm_desc": "Siçanın işləməsini saxlayaraq PCIe ASPM və USB üçün dərin yuxu",
+        "network_powersave_title": "Şəbəkə Enerji İdarəetməsi (Wi-Fi və Ethernet)",
+        "network_powersave_desc": "Boş Ethernet portlarının yatırılması və stabil Wi-Fi yuxusu",
+        "storage_kernel_pm_title": "Yaddaş və Nüvə Taymerləri (NVMe və Watchdog)",
+        "storage_kernel_pm_desc": "Nüvə oyanmalarını azaltmaq (NMI söndürmək) və SSD-yə təxirə salınmış yazı",
+        "display_refresh_save_title": "Batareyada 48 Hz Ekran Yeniləmə Tezliyi",
+        "display_refresh_save_desc": "Hyprland və Sway-də batareyada ekran tezliyini 48 Hz-ə endirmək"
       }
     },
     "weather": {

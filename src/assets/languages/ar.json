@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "تعطيل NMI Watchdog",
         "nmi_watchdog_desc": "إيقاف مقاطعات المؤقت الدورية للوصول إلى حالات C-states أعمق",
         "bluetooth_sleep_title": "إيقاف تشغيل Bluetooth تلقائيًا",
-        "bluetooth_sleep_desc": "إيقاف بث Bluetooth عند عدم اتصال أي أجهزة"
+        "bluetooth_sleep_desc": "إيقاف بث Bluetooth عند عدم اتصال أي أجهزة",
+        "bus_device_pm_title": "طاقة الناقل والأجهزة (PCIe ASPM و USB)",
+        "bus_device_pm_desc": "سكون عميق لـ PCIe ASPM و USB مع الحفاظ على استجابة الفأرة",
+        "network_powersave_title": "إدارة طاقة الشبكة (Wi-Fi و Ethernet)",
+        "network_powersave_desc": "إيقاف منافذ Ethernet غير المستخدمة ووضع سكون مستقر للـ Wi-Fi",
+        "storage_kernel_pm_title": "التخزين ومؤقتات النواة (NVMe و Watchdog)",
+        "storage_kernel_pm_desc": "تقليل تنبيهات النواة (تعطيل NMI) وتأخير الكتابة على SSD",
+        "display_refresh_save_title": "معدل تحديث الشاشة 48 هرتز على البطارية",
+        "display_refresh_save_desc": "خفض معدل تحديث الشاشة إلى 48 هرتز على البطارية في Hyprland و Sway"
       }
     },
     "weather": {

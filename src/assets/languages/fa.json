@@ -1308,7 +1308,15 @@
         "nmi_watchdog_title": "غیرفعال کردن NMI Watchdog",
         "nmi_watchdog_desc": "توقف وقفه‌های دوره‌ای تایمر برای دستیابی به وضعیت‌های C-state عمیق‌تر",
         "bluetooth_sleep_title": "خاموش شدن خودکار Bluetooth",
-        "bluetooth_sleep_desc": "خاموش کردن رادیوی Bluetooth هنگام نبود دستگاه متصل"
+        "bluetooth_sleep_desc": "خاموش کردن رادیوی Bluetooth هنگام نبود دستگاه متصل",
+        "bus_device_pm_title": "توان گذرگاه و دستگاه‌ها (PCIe ASPM و USB)",
+        "bus_device_pm_desc": "خواب عمیق PCIe ASPM و USB با حفظ عملکرد ماوس",
+        "network_powersave_title": "مدیریت توان شبکه (Wi-Fi و Ethernet)",
+        "network_powersave_desc": "خاموش کردن پورت‌های اترنت غیرفعال و خواب پایدار وای‌فای",
+        "storage_kernel_pm_title": "ذخیره‌سازی و زمان‌سنج‌های هسته (NVMe و Watchdog)",
+        "storage_kernel_pm_desc": "کاهش بیداری‌های هسته (غیرفعال‌سازی NMI) و نوشتن با تاخیر در SSD",
+        "display_refresh_save_title": "نرخ نوسازی صفحه ۴۸ هرتز روی باتری",
+        "display_refresh_save_desc": "کاهش نرخ نوسازی به ۴۸ هرتز در حالت باتری در Hyprland و Sway"
       }
     },
     "weather": {
