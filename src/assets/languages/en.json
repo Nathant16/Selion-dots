@@ -52,7 +52,8 @@
       "general_presets": "Presets",
       "fingerprint": "Fingerprints",
       "power": "Power",
-      "general_weather": "Weather"
+      "general_weather": "Weather",
+      "packages": "Additional Packages"
     },
     "launcher": {
       "position": {

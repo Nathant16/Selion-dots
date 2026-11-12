@@ -44,7 +44,7 @@ GuideTab {
 
     Process {
         id: fingerprintProbe
-        command: ["serpantinum-core", "system", "fingerprint"]
+        command: ["bash", "-c", "command -v serpantinum-core >/dev/null && serpantinum-core system fingerprint || (command -v fprintd-list >/dev/null && fprintd-list \"$USER\" 2>&1 | grep -qv 'No devices available')"]
         onExited: (exitCode) => displayLockscreenRoot.fingerprintSupported = exitCode === 0
     }
 

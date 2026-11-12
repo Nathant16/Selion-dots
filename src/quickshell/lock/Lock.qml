@@ -212,11 +212,13 @@ Scope {
     function startFingerprint() {
         if (!root.fingerprintEnabled) {
             root.fpUnsupported = true;
+            root.fingerprintAvailable = false;
             root.startPassword(true);
             return;
         }
         if (root.fpUnsupported || root.fpBlocked || !rootLock.locked || root.isUnlocking || fpPam.active) return;
         if (lockUI.fpState === "success") return;
+        root.fingerprintAvailable = true;
         root.fpGotInfo = false;
         root.fpAborting = false;
         fpPam.start();
@@ -482,6 +484,7 @@ Scope {
 
     PamContext {
         id: fpPam
+        config: "serpantinum"
         user: (typeof SystemInfo !== "undefined" && SystemInfo.username !== "") ? SystemInfo.username : (Quickshell.env("USER") || "")
 
         onPamMessage: root.handleFingerprintMessage()

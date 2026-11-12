@@ -384,9 +384,15 @@ setup_pam_service() {
     done
     [ -n "$base" ] || return 0
 
+    # Simultaneous fingerprint + password authentication for sudo, polkit, and login
+    local fp_mod="pam_fprintd.so"
+    if [ -f /usr/lib/security/pam_fprintd_grosshack.so ]; then
+        fp_mod="pam_fprintd_grosshack.so"
+    fi
+
     local content=""
     if ! grep -qs "pam_fprintd" "$pam_dir/$base"; then
-        content+="-auth       sufficient   pam_fprintd.so"$'\n'
+        content+="-auth       sufficient   $fp_mod"$'\n'
     fi
     content+="auth        include      $base"$'\n'
     content+="account     include      $base"$'\n'
@@ -396,10 +402,9 @@ setup_pam_service() {
         sudo chmod 644 "$target" 2>/dev/null || true
     fi
 
-    # Simultaneous fingerprint + password authentication for sudo, polkit, and login
-    local fp_mod="pam_fprintd.so"
-    if [ -f /usr/lib/security/pam_fprintd_grosshack.so ]; then
-        fp_mod="pam_fprintd_grosshack.so"
+    # Ensure fprintd service is enabled
+    if command -v systemctl >/dev/null 2>&1; then
+        sudo systemctl enable fprintd.service 2>/dev/null || true
     fi
 
     # Configure sudo: allow typing password OR scanning fingerprint simultaneously
@@ -729,7 +734,12 @@ deploy_package() {
         sudo chmod 440 /etc/sudoers.d/99-serpantinum-power 2>/dev/null || true
     fi
 
-    # Deploy polkit rules for powerprofilesctl and fprintd passwordless management
+    # Deploy polkit rules for reboot/poweroff, powerprofilesctl, and fprintd passwordless management
+    if [ -f "$TARGET_BASE/src/assets/polkit/48-selion-reboot.rules" ]; then
+        sudo mkdir -p /etc/polkit-1/rules.d 2>/dev/null || true
+        sudo cp "$TARGET_BASE/src/assets/polkit/48-selion-reboot.rules" /etc/polkit-1/rules.d/48-selion-reboot.rules 2>/dev/null || true
+        sudo chmod 644 /etc/polkit-1/rules.d/48-selion-reboot.rules 2>/dev/null || true
+    fi
     if [ -f "$TARGET_BASE/src/assets/polkit/49-power-profiles.rules" ]; then
         sudo mkdir -p /etc/polkit-1/rules.d 2>/dev/null || true
         sudo cp "$TARGET_BASE/src/assets/polkit/49-power-profiles.rules" /etc/polkit-1/rules.d/49-power-profiles.rules 2>/dev/null || true

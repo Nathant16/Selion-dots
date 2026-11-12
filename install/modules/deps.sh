@@ -172,6 +172,7 @@ configure_qt_icon_theme() {
 compositor_package_name() {
     case "$1" in
         mango) echo "mangowm" ;;
+        driftwm) echo "driftwm-bin" ;;
         *) echo "$1" ;;
     esac
 }

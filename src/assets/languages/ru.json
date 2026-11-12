@@ -52,7 +52,8 @@
       "general_presets": "Пресеты",
       "fingerprint": "Отпечатки пальцев",
       "power": "Питание",
-      "general_weather": "Погода"
+      "general_weather": "Погода",
+      "packages": "Дополнительные пакеты"
     },
     "launcher": {
       "position": {

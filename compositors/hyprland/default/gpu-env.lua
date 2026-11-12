@@ -2,5 +2,9 @@
 --  █ ▄▄  █▄▄█  █  █ 　  █  █  █▀▀▀   █    █▀▀▀  █      █
 --  █▄▄█  █     ▀▄▄▀ 　  █▄▄▀  █▄▄▄   █    █▄▄▄  █▄▄█   █
 
--- GPU Auto-detection (default/gpu)
--- Fallback for non-UWSM sessions. Uses unified detector script to set GPU_SETUP and source profile.
+-- GPU Auto-detection
+local f = io.open(os.getenv("HOME") .. "/.config/hypr/gpu-env.lua", "r")
+if f then
+    f:close()
+    require("gpu-env")
+end
