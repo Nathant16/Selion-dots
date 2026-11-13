@@ -37,8 +37,12 @@ elif [ -n "$SWAYSOCK" ] || pgrep -x sway &>/dev/null; then
     swaymsg exit 2>/dev/null || \
     pkill -SIGTERM -x sway 2>/dev/null
 elif [ -n "$MANGO_INSTANCE_SIGNATURE" ] || pgrep -x mango &>/dev/null; then
-    mmsg -d quit 2>/dev/null || \
+    if [ -z "$MANGO_INSTANCE_SIGNATURE" ]; then
+        MANGO_INSTANCE_SIGNATURE=$(ls /run/user/"$UID"/mango-*.sock 2>/dev/null | head -n1)
+        export MANGO_INSTANCE_SIGNATURE
+    fi
     mmsg dispatch quit 2>/dev/null || \
+    mmsg -d quit 2>/dev/null || \
     pkill -SIGTERM -x mango 2>/dev/null
 elif [ -n "$WAYFIRE_SOCKET" ] || pgrep -x wayfire &>/dev/null; then
     wayfire-msg -c exit 2>/dev/null || \
