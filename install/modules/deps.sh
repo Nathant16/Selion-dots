@@ -299,3 +299,30 @@ install_dependencies() {
     install_fonts
     configure_qt_icon_theme
 }
+
+install_additional_packages() {
+    local pkgs=("$@")
+    [ ${#pkgs[@]} -eq 0 ] && return 0
+
+    echo -e "\n\e[36m[ INFO ]\e[0m $(t "installer.deps.additional_installing" "Installing additional packages...")\n"
+    local SAFE_JOBS=$(( $(nproc) / 2 ))
+    [[ $SAFE_JOBS -lt 1 ]] && SAFE_JOBS=1
+    [[ $SAFE_JOBS -gt 4 ]] && SAFE_JOBS=4
+
+    for pkg in "${pkgs[@]}"; do
+        if pm_is_installed "$pkg"; then
+            echo -e "\e[32m[ OK ] $pkg already installed\e[0m"
+            continue
+        fi
+        echo -e "\n\e[36m=================================================================\e[0m"
+        echo -e "\e[34m::\e[0m \e[1mInstalling $pkg...\e[0m"
+        echo -e "\e[36m=================================================================\e[0m"
+        if pm_install_pkg "$pkg" "$SAFE_JOBS"; then
+            echo -e "\n\e[32m[ OK ] Successfully installed $pkg\e[0m"
+        else
+            echo -e "\n\e[31m[ FAIL ] Could not install $pkg\e[0m"
+            FAILED_PKGS+=("$pkg")
+        fi
+        sleep 0.2
+    done
+}

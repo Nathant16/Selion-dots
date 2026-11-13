@@ -649,7 +649,6 @@ Item {
         { id: "Power", key: "power", name: "Power", icon: "󰂄", file: "PowerTab.qml" },
         { id: "Fingerprint", key: "fingerprint", name: "Fingerprints", icon: "󰈷", file: "FingerprintTab.qml" },
         { id: "Idle", key: "idle", name: "Idle", icon: "󰒲", file: "IdleTab.qml" },
-        { id: "Packages", key: "packages", name: "Additional Packages", icon: "󰏔", file: "packages/PackagesTab.qml" },
         { id: "About", key: "about", name: "About", icon: "󰋽", separatorBefore: true, file: "AboutTab.qml" }
     ]
 

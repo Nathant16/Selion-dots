@@ -503,6 +503,125 @@ manage_sddm_menu() {
     done
 }
 
+AVAILABLE_ADDITIONAL_PKGS=(
+    "zen-browser-bin:Zen Browser (Firefox vertical tabs)"
+    "brave-bin:Brave Browser (Chromium privacy)"
+    "firefox:Mozilla Firefox"
+    "visual-studio-code-bin:Visual Studio Code"
+    "zed:Zed Editor (High-performance Rust editor)"
+    "neovim:Neovim"
+    "ayugram-desktop-bin:AyuGram Desktop (Telegram client)"
+    "vesktop-bin:Vesktop (Discord Wayland client)"
+    "obsidian:Obsidian Note-taking"
+    "spotify:Spotify Music"
+    "steam:Steam Gaming"
+    "prismlauncher:Prism Launcher (Minecraft)"
+)
+SELECTED_ADDITIONAL_PKGS=()
+
+toggle_additional_pkg() {
+    local target="$1"
+    local updated=()
+    local found=false
+    for p in "${SELECTED_ADDITIONAL_PKGS[@]}"; do
+        if [ "$p" == "$target" ]; then
+            found=true
+        else
+            updated+=("$p")
+        fi
+    done
+    if [ "$found" = false ]; then
+        updated+=("$target")
+    fi
+    SELECTED_ADDITIONAL_PKGS=("${updated[@]}")
+}
+
+additional_packages_menu() {
+    local cursor=0
+    local rendered_lines=0
+
+    while true; do
+        draw_banner
+        draw_status_bar "$(t "installer.ui.additional_pkgs_prompt" " Additional packages > ")" "$(t "installer.ui.additional_pkgs_header" " Toggle optional packages, then select done ")"
+        stty -echo 2>/dev/null || true
+        printf "\e[?25l"
+
+        echo -e "\n${BOLD}${C_BLUE}$(t "installer.ui.additional_pkgs_title" "=== Select additional packages ===")${RESET}\n"
+
+        local items=()
+        for idx in "${!AVAILABLE_ADDITIONAL_PKGS[@]}"; do
+            local entry="${AVAILABLE_ADDITIONAL_PKGS[$idx]}"
+            local pkg="${entry%%:*}"
+            local label="${entry#*:}"
+            local check="${DIM}[ ]${RESET}"
+            if [[ " ${SELECTED_ADDITIONAL_PKGS[*]} " =~ " ${pkg} " ]]; then
+                check="${C_GREEN}[✓]${RESET}"
+            fi
+            local num=$(( idx + 1 ))
+            items+=("$num. $check $label")
+        done
+        local done_num=$(( ${#AVAILABLE_ADDITIONAL_PKGS[@]} + 1 ))
+        items+=("$done_num. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Done")${RESET}")
+
+        if [ "$rendered_lines" -gt 0 ]; then
+            printf "\033[%dA" "$rendered_lines"
+        fi
+
+        for i in "${!items[@]}"; do
+            if [ "$i" -eq "$cursor" ]; then
+                printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
+            else
+                printf "\r\033[K    %s\n" "${items[$i]}"
+            fi
+        done
+        rendered_lines=${#items[@]}
+
+        local key
+        key=$(read_key)
+
+        case "$key" in
+            UP|[kK])
+                if [ "$cursor" -gt 0 ]; then
+                    cursor=$(( cursor - 1 ))
+                else
+                    cursor=$(( ${#items[@]} - 1 ))
+                fi
+                ;;
+            DOWN|[jJ])
+                if [ "$cursor" -lt $(( ${#items[@]} - 1 )) ]; then
+                    cursor=$(( cursor + 1 ))
+                else
+                    cursor=0
+                fi
+                ;;
+            ESC|[qQ])
+                break
+                ;;
+            ENTER|SPACE)
+                if [ "$cursor" -eq ${#AVAILABLE_ADDITIONAL_PKGS[@]} ]; then
+                    break
+                else
+                    local chosen_entry="${AVAILABLE_ADDITIONAL_PKGS[$cursor]}"
+                    local chosen_pkg="${chosen_entry%%:*}"
+                    toggle_additional_pkg "$chosen_pkg"
+                fi
+                ;;
+            *)
+                if [[ "$key" =~ ^[0-9]+$ ]]; then
+                    local sel_idx=$(( key - 1 ))
+                    if [ "$sel_idx" -ge 0 ] && [ "$sel_idx" -lt ${#AVAILABLE_ADDITIONAL_PKGS[@]} ]; then
+                        local chosen_entry="${AVAILABLE_ADDITIONAL_PKGS[$sel_idx]}"
+                        local chosen_pkg="${chosen_entry%%:*}"
+                        toggle_additional_pkg "$chosen_pkg"
+                    elif [ "$sel_idx" -eq ${#AVAILABLE_ADDITIONAL_PKGS[@]} ]; then
+                        break
+                    fi
+                fi
+                ;;
+        esac
+    done
+}
+
 run_installer_ui() {
     if [ "${NONINTERACTIVE:-0}" = "1" ] || [ "${AUTO_INSTALL:-0}" = "1" ]; then
         if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
@@ -548,25 +667,28 @@ run_installer_ui() {
             local S_SDDM="${DIM}[OFF]${RESET}"
             local S_TEL="${DIM}[OFF]${RESET}"
             local S_WP="${DIM}[3 Random]${RESET}"
+            local S_ADD="${DIM}[None]${RESET}"
 
             [ "$OPT_SDDM" = true ] && S_SDDM="${C_GREEN}[ON]${RESET}"
             [ "$ENABLE_TELEMETRY" = true ] && S_TEL="${C_GREEN}[ON]${RESET}"
             [ "$INSTALL_FULL_WALLPAPERS" = true ] && S_WP="${C_GREEN}[Full Pack]${RESET}"
+            [ ${#SELECTED_ADDITIONAL_PKGS[@]} -gt 0 ] && S_ADD="${C_GREEN}[${#SELECTED_ADDITIONAL_PKGS[@]} Selected]${RESET}"
 
             local items=()
             items+=("1. $(t "installer.ui.menu_overview" "count=${#REQUIRED_PKGS[@]}")")
             items+=("2. $COMP_MENU_ITEM")
             items+=("3. $(t "installer.ui.menu_sddm") $S_SDDM")
             items+=("4. $(t "installer.ui.menu_wallpapers") $S_WP")
-            items+=("5. $(t "installer.ui.menu_telemetry") $S_TEL")
+            items+=("5. $(t "installer.ui.menu_additional_pkgs" "Additional Packages") $S_ADD")
+            items+=("6. $(t "installer.ui.menu_telemetry") $S_TEL")
 
             if [[ "$INSTALL_STATE" == "current" ]]; then
-                items+=("6. ${BOLD}${C_GREEN}$(t "installer.ui.menu_update")${RESET}")
-                items+=("7. ${BOLD}${C_YELLOW}$(t "installer.ui.menu_reinstall")${RESET}")
-                items+=("8. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
+                items+=("7. ${BOLD}${C_GREEN}$(t "installer.ui.menu_update")${RESET}")
+                items+=("8. ${BOLD}${C_YELLOW}$(t "installer.ui.menu_reinstall")${RESET}")
+                items+=("9. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
             else
-                items+=("6. ${BOLD}${C_GREEN}$(t "installer.ui.menu_install")${RESET}")
-                items+=("7. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
+                items+=("7. ${BOLD}${C_GREEN}$(t "installer.ui.menu_install")${RESET}")
+                items+=("8. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
             fi
 
             if [ "$rendered_lines" -gt 0 ]; then
@@ -616,9 +738,13 @@ run_installer_ui() {
                     INSTALL_FULL_WALLPAPERS=$([ "$INSTALL_FULL_WALLPAPERS" = true ] && echo false || echo true)
                     ;;
                 "5")
-                    ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                    additional_packages_menu
+                    break
                     ;;
                 "6")
+                    ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                    ;;
+                "7")
                     if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                         printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
                         sleep 1.5
@@ -628,7 +754,7 @@ run_installer_ui() {
                     cleanup_terminal
                     return 0
                     ;;
-                "7")
+                "8")
                     if [[ "$INSTALL_STATE" == "current" ]]; then
                         if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                             printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
@@ -644,7 +770,7 @@ run_installer_ui() {
                         exit 0
                     fi
                     ;;
-                "8")
+                "9")
                     if [[ "$INSTALL_STATE" == "current" ]]; then
                         cleanup_terminal
                         clear
@@ -675,9 +801,13 @@ run_installer_ui() {
                             INSTALL_FULL_WALLPAPERS=$([ "$INSTALL_FULL_WALLPAPERS" = true ] && echo false || echo true)
                             ;;
                         *"5."*)
-                            ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                            additional_packages_menu
+                            break
                             ;;
                         *"6."*)
+                            ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                            ;;
+                        *"7."*)
                             if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                                 printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
                                 sleep 1.5
@@ -687,7 +817,7 @@ run_installer_ui() {
                             cleanup_terminal
                             return 0
                             ;;
-                        *"7."*)
+                        *"8."*)
                             if [[ "$INSTALL_STATE" == "current" ]]; then
                                 if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                                     printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
@@ -703,7 +833,7 @@ run_installer_ui() {
                                 exit 0
                             fi
                             ;;
-                        *"8."*)
+                        *"9."*)
                             if [[ "$INSTALL_STATE" == "current" ]]; then
                                 cleanup_terminal
                                 clear

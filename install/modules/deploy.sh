@@ -766,6 +766,14 @@ deploy_package() {
         sudo fc-cache -f 2>/dev/null || true
     fi
 
+    # Ensure driftwm session desktop entry is accessible to display managers
+    if [ -f "/usr/local/share/wayland-sessions/driftwm.desktop" ] && [ ! -f "/usr/share/wayland-sessions/driftwm.desktop" ]; then
+        sudo ln -sf /usr/local/share/wayland-sessions/driftwm.desktop /usr/share/wayland-sessions/driftwm.desktop 2>/dev/null || true
+    fi
+    if [ -f "/usr/local/share/xdg-desktop-portal/driftwm-portals.conf" ] && [ ! -f "/usr/share/xdg-desktop-portal/driftwm-portals.conf" ]; then
+        sudo ln -sf /usr/local/share/xdg-desktop-portal/driftwm-portals.conf /usr/share/xdg-desktop-portal/driftwm-portals.conf 2>/dev/null || true
+    fi
+
     remove_settings_desktop_entry
 
     setup_pam_service

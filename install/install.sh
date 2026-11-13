@@ -92,6 +92,7 @@ elif [[ "$INSTALL_STATE" == "fresh" || "$IS_REINSTALL" == true ]]; then
 fi
 
 install_dependencies "$INSTALL_STATE" "$IS_REINSTALL" "${SELECTED_COMPOSITORS[@]}"
+install_additional_packages "${SELECTED_ADDITIONAL_PKGS[@]}"
 install_ski
 install_audio_daemon
 install_gamma_daemon
