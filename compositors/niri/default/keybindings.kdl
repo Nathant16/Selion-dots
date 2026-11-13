@@ -3,29 +3,74 @@
 // ▀ ▀ ▀▀▀ ▄▄▄█ ▀▀▀  ▀▀▀ ▀  ▀ ▀▀▀  ▀▀▀ ▀  ▀ ▀▀▀▀ ▀▀▀
 
 binds {
+    // Terminal, File Manager & Task Manager
     Mod+Return { spawn "kitty"; }
     Mod+KP_Enter { spawn "kitty"; }
-    Mod+F { spawn "firefox"; }
     Mod+E { spawn "ski"; }
-    Mod+Backspace { toggle-overview; }
+    Ctrl+Shift+Escape { spawn "kitty" "-e" "btop"; }
+
+    // App Shortcuts (Synchronized with PC / userprefs)
+    Mod+Shift+C { spawn "code"; }
+    Mod+Shift+F { spawn "zen-browser"; }
+    Mod+Shift+A { spawn "antigravity-ide"; }
+    Mod+Shift+S { spawn "spotify"; }
+    Mod+Shift+T { spawn "AyuGram"; }
+    Mod+Shift+G { spawn "steam"; }
+    Mod+Shift+M { spawn "prismlauncher"; }
+    Mod+Shift+D { spawn "discord"; }
+    Mod+Shift+O { spawn "obsidian"; }
+    Mod+Shift+P { spawn "pwvucontrol"; }
+
+    // Window Actions
     Mod+Q { close-window; }
     Mod+Ctrl+Shift+Q { quit skip-confirmation=true; }
     Mod+Shift+E { quit; }
+    Alt+Return { maximize-window-to-edges; }
     Mod+Alt+F { maximize-window-to-edges; }
-    Mod+Shift+F { toggle-window-floating; }
+    Mod+Shift+Space { toggle-window-floating; }
+    Mod+Backspace { toggle-overview; }
 
-    XF86MonBrightnessDown { spawn "serpantinum" "brightness" "lower"; }
-    XF86MonBrightnessUp { spawn "serpantinum" "brightness" "raise"; }
+    // Focus & Navigation
+    Mod+Left { focus-column-left; }
+    Mod+Right { focus-column-right; }
+    Mod+Up { focus-window-or-workspace-up; }
+    Mod+Down { focus-window-or-workspace-down; }
+    Alt+Tab { focus-window-down; }
 
+    // Move Windows
+    Mod+Ctrl+Left { move-column-left; }
+    Mod+Ctrl+Right { move-column-right; }
+    Mod+Ctrl+Up { move-column-to-workspace-up; }
+    Mod+Ctrl+Down { move-column-to-workspace-down; }
+
+    // Resize Columns & Windows
+    Mod+Shift+Left { set-column-width "-5%"; }
+    Mod+Shift+Right { set-column-width "+5%"; }
+    Mod+Shift+Up { set-window-height "-5%"; }
+    Mod+Shift+Down { set-window-height "+5%"; }
+
+    // Shell, Launcher, Clipboard & System Controls
+    Mod+Space { spawn "serpantinum" "msg" "toggle" "launcher"; }
+    Mod+R { spawn "serpantinum" "msg" "toggle" "launcher"; }
+    Mod+V { spawn "serpantinum" "msg" "toggle" "clipboard"; }
+    Mod+W { spawn "serpantinum" "msg" "toggle" "wallpaper"; }
+    Mod+B { spawn "serpantinum" "msg" "bar" "autohide"; }
+    Mod+L { spawn "serpantinum" "lock"; }
+    Mod+X { spawn "serpantinum" "lock"; }
+    Mod+Shift+X { spawn "serpantinum" "lock"; }
+    XF86PowerOff { spawn "serpantinum" "lock"; }
+    Mod+P { spawn "/usr/local/bin/battery" "--cycle"; }
+    XF86Launch1 { spawn "/usr/local/bin/battery" "--cycle"; }
+
+    // Screenshots
     Print { spawn "serpantinum" "screenshot"; }
     Shift+Print { spawn "serpantinum" "screenshot" "--edit"; }
     Super+Print { spawn "serpantinum" "screenshot" "--full"; }
     Super+Shift+Print { spawn "serpantinum" "screenshot" "--full" "--edit"; }
 
-    XF86PowerOff { spawn "serpantinum" "lock"; }
-    Mod+L { spawn "serpantinum" "lock"; }
-
-    Mod+Space { spawn "playerctl" "play-pause"; }
+    // Hardware & Media Controls
+    XF86MonBrightnessDown { spawn "serpantinum" "brightness" "lower"; }
+    XF86MonBrightnessUp { spawn "serpantinum" "brightness" "raise"; }
     XF86AudioPause { spawn "playerctl" "play-pause"; }
     XF86AudioPlay { spawn "playerctl" "play-pause"; }
     XF86AudioPrev { spawn "playerctl" "previous"; }
@@ -35,33 +80,7 @@ binds {
     XF86AudioLowerVolume { spawn "serpantinum" "volume" "lower"; }
     XF86AudioRaiseVolume { spawn "serpantinum" "volume" "raise"; }
 
-    Mod+R { spawn "serpantinum" "reload"; }
-    Mod+C { spawn "serpantinum" "msg" "toggle" "clipboard"; }
-    Mod+D { spawn "serpantinum" "msg" "toggle" "launcher"; }
-    Mod+M { spawn "serpantinum" "msg" "toggle" "music"; }
-    Mod+B { spawn "serpantinum" "msg" "toggle" "system"; }
-    Mod+W { spawn "serpantinum" "msg" "toggle" "wallpaper"; }
-    Mod+S { spawn "serpantinum" "msg" "toggle" "calendar"; }
-    Mod+N { spawn "serpantinum" "msg" "toggle" "network"; }
-    Mod+V { spawn "serpantinum" "msg" "toggle" "volume"; }
-    Mod+H { spawn "serpantinum" "msg" "toggle" "settings"; }
-    Mod+A { spawn "serpantinum" "msg" "bar" "autohide"; }
-
-    Mod+Left { focus-column-left; }
-    Mod+Right { focus-column-right; }
-    Mod+Up { focus-window-or-workspace-up; }
-    Mod+Down { focus-window-or-workspace-down; }
-
-    Mod+Ctrl+Left { move-column-left; }
-    Mod+Ctrl+Right { move-column-right; }
-    Mod+Ctrl+Up { move-column-to-workspace-up; }
-    Mod+Ctrl+Down { move-column-to-workspace-down; }
-
-    Mod+Shift+Left { set-column-width "-5%"; }
-    Mod+Shift+Right { set-column-width "+5%"; }
-    Mod+Shift+Up { set-window-height "-5%"; }
-    Mod+Shift+Down { set-window-height "+5%"; }
-
+    // Workspaces 1..10
     Mod+1 { spawn "serpantinum" "msg" "workspace" "1"; }
     Mod+2 { spawn "serpantinum" "msg" "workspace" "2"; }
     Mod+3 { spawn "serpantinum" "msg" "workspace" "3"; }
