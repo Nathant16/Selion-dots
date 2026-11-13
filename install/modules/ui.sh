@@ -537,7 +537,6 @@ PKGS_MEDIA=(
     "steam:Steam Gaming Platform"
     "prismlauncher:Prism Launcher (Minecraft)"
     "obs-studio:OBS Studio (Screen recorder & streaming)"
-    "blueman:Blueman (Bluetooth Manager GUI)"
 )
 
 AVAILABLE_ADDITIONAL_PKGS=(
