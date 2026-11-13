@@ -11,23 +11,18 @@ binds {
 
     // App Shortcuts (Synchronized with PC / userprefs)
     Mod+Shift+C { spawn "code"; }
-    Mod+Shift+F { spawn "zen-browser"; }
-    Mod+Shift+A { spawn "antigravity-ide"; }
+    Mod+Shift+Z { spawn "zen-browser"; }
     Mod+Shift+S { spawn "spotify"; }
     Mod+Shift+T { spawn "AyuGram"; }
     Mod+Shift+G { spawn "steam"; }
-    Mod+Shift+M { spawn "prismlauncher"; }
     Mod+Shift+D { spawn "discord"; }
     Mod+Shift+O { spawn "obsidian"; }
-    Mod+Shift+P { spawn "pwvucontrol"; }
 
     // Window Actions
     Mod+Q { close-window; }
-    Mod+Ctrl+Shift+Q { quit skip-confirmation=true; }
-    Mod+Shift+E { quit; }
     Alt+Return { maximize-window-to-edges; }
     Mod+Alt+F { maximize-window-to-edges; }
-    Mod+Shift+Space { toggle-window-floating; }
+    Mod+Space { toggle-window-floating; }
     Mod+Backspace { toggle-overview; }
 
     // Focus & Navigation
@@ -37,11 +32,17 @@ binds {
     Mod+Down { focus-window-or-workspace-down; }
     Alt+Tab { focus-window-down; }
 
-    // Move Windows
-    Mod+Ctrl+Left { move-column-left; }
-    Mod+Ctrl+Right { move-column-right; }
-    Mod+Ctrl+Up { move-column-to-workspace-up; }
-    Mod+Ctrl+Down { move-column-to-workspace-down; }
+    // Move Windows (Super + Alt + Стрелки)
+    Mod+Alt+Left { move-column-left; }
+    Mod+Alt+Right { move-column-right; }
+    Mod+Alt+Up { move-window-up; }
+    Mod+Alt+Down { move-window-down; }
+
+    // Workspace Navigation (Super + Ctrl + Стрелки)
+    Mod+Ctrl+Left { focus-workspace-up; }
+    Mod+Ctrl+Right { focus-workspace-down; }
+    Mod+Ctrl+Up { focus-workspace-up; }
+    Mod+Ctrl+Down { focus-workspace-down; }
 
     // Resize Columns & Windows
     Mod+Shift+Left { set-column-width "-5%"; }
@@ -50,17 +51,13 @@ binds {
     Mod+Shift+Down { set-window-height "+5%"; }
 
     // Shell, Launcher, Clipboard & System Controls
-    Mod+Space { spawn "serpantinum" "msg" "toggle" "launcher"; }
-    Mod+R { spawn "serpantinum" "msg" "toggle" "launcher"; }
+    Mod+A { spawn "serpantinum" "msg" "toggle" "launcher"; }
+    Mod+R { spawn "serpantinum" "reload"; }
     Mod+V { spawn "serpantinum" "msg" "toggle" "clipboard"; }
     Mod+W { spawn "serpantinum" "msg" "toggle" "wallpaper"; }
     Mod+B { spawn "serpantinum" "msg" "bar" "autohide"; }
     Mod+L { spawn "serpantinum" "lock"; }
-    Mod+X { spawn "serpantinum" "lock"; }
-    Mod+Shift+X { spawn "serpantinum" "lock"; }
     XF86PowerOff { spawn "serpantinum" "lock"; }
-    Mod+P { spawn "/usr/local/bin/battery" "--cycle"; }
-    XF86Launch1 { spawn "/usr/local/bin/battery" "--cycle"; }
 
     // Screenshots
     Print { spawn "serpantinum" "screenshot"; }

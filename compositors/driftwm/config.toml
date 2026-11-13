@@ -111,6 +111,7 @@ decoration = "minimal"
 "mod+q" = "close-window"
 "mod+shift+q" = "suspend-window"
 "alt+return" = "toggle-fullscreen"
+"mod+space" = "toggle-pin-to-screen"
 "mod+t" = "toggle-pin-to-screen"
 "mod+backspace" = "center-window"
 
@@ -122,43 +123,40 @@ decoration = "minimal"
 "alt+tab" = "cycle-windows forward"
 "alt+shift+tab" = "cycle-windows backward"
 
-# Перемещение окон и панорамирование
+# Перемещение окон на активном воркспейсе (Super + Alt + Стрелки)
+"mod+alt+left" = "move-to-snap left"
+"mod+alt+right" = "move-to-snap right"
+"mod+alt+up" = "move-to-snap up"
+"mod+alt+down" = "move-to-snap down"
+
+# Перемещение между воркспейсами (Super + Ctrl + Стрелки)
+"mod+ctrl+left" = "go-to-prev-bookmark"
+"mod+ctrl+right" = "go-to-next-bookmark"
+"mod+ctrl+up" = "go-to-prev-bookmark"
+"mod+ctrl+down" = "go-to-next-bookmark"
+
+# Изменение размера
 "mod+shift+left" = "move-to-snap left"
 "mod+shift+right" = "move-to-snap right"
 "mod+shift+up" = "move-to-snap up"
 "mod+shift+down" = "move-to-snap down"
 
-"mod+ctrl+left" = "pan-viewport left"
-"mod+ctrl+right" = "pan-viewport right"
-"mod+ctrl+up" = "pan-viewport up"
-"mod+ctrl+down" = "pan-viewport down"
-
 # Приложения (соответствие ПК / userprefs)
 "mod+shift+c" = "exec code"
-"mod+shift+f" = "exec zen-browser"
-"mod+shift+a" = "exec antigravity-ide"
+"mod+shift+z" = "exec zen-browser"
 "mod+shift+s" = "exec spotify"
 "mod+shift+t" = "exec AyuGram"
 "mod+shift+g" = "exec steam"
-"mod+shift+m" = "exec prismlauncher"
 "mod+shift+d" = "exec discord"
 "mod+shift+o" = "exec obsidian"
-"mod+shift+p" = "exec pwvucontrol"
 
 # Оболочка, лаунчер, буфер обмена и меню питания
-"mod+space" = "spawn serpantinum msg toggle launcher"
-"mod+r" = "spawn serpantinum msg toggle launcher"
+"mod+a" = "spawn serpantinum msg toggle launcher"
+"mod+r" = "spawn serpantinum reload"
 "mod+v" = "spawn serpantinum msg toggle clipboard"
-"mod+shift+x" = "spawn serpantinum lock"
-"mod+x" = "spawn serpantinum lock"
-"mod+l" = "spawn serpantinum lock"
-"mod+p" = "spawn /usr/local/bin/battery --cycle"
-"XF86Launch1" = "spawn /usr/local/bin/battery --cycle"
-"mod+b" = "spawn serpantinum msg bar autohide"
 "mod+w" = "spawn serpantinum msg toggle wallpaper"
-"mod+shift+r" = "reload-config"
-"mod+m" = "quit"
-"mod+ctrl+shift+q" = "quit"
+"mod+b" = "spawn serpantinum msg bar autohide"
+"mod+l" = "spawn serpantinum lock"
 
 # Скриншоты
 "Print" = "exec serpantinum screenshot"

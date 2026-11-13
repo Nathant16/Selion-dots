@@ -503,19 +503,47 @@ manage_sddm_menu() {
     done
 }
 
-AVAILABLE_ADDITIONAL_PKGS=(
-    "zen-browser-bin:Zen Browser (Firefox vertical tabs)"
+PKGS_DEVELOPMENT=(
+    "visual-studio-code-bin:Visual Studio Code (Microsoft official build)"
+    "neovim:Neovim (Vim-fork focused on extensibility)"
+    "zed:Zed Editor (High-performance Rust editor)"
+    "lazygit:Lazygit (Terminal UI for Git)"
+    "docker:Docker (Container application platform)"
+    "docker-compose:Docker Compose"
+    "postman-bin:Postman (API development platform)"
+    "dbeaver:DBeaver (Universal database manager)"
+    "github-cli:GitHub CLI (Command line tool for GitHub)"
+    "nodejs:Node.js & npm (JavaScript runtime and package manager)"
+    "rust:Rust toolchain"
+)
+
+PKGS_SOCIAL=(
+    "discord:Discord (Official chat client)"
+    "vesktop-bin:Vesktop (Discord Wayland client with screenshare fixes)"
+    "telegram-desktop:Telegram Desktop (Official client)"
+    "ayugram-desktop-bin:AyuGram Desktop (Privacy-oriented Telegram client)"
+)
+
+PKGS_BROWSERS=(
+    "zen-browser-bin:Zen Browser (Firefox fork with vertical tabs)"
     "brave-bin:Brave Browser (Chromium privacy)"
     "firefox:Mozilla Firefox"
-    "visual-studio-code-bin:Visual Studio Code"
-    "zed:Zed Editor (High-performance Rust editor)"
-    "neovim:Neovim"
-    "ayugram-desktop-bin:AyuGram Desktop (Telegram client)"
-    "vesktop-bin:Vesktop (Discord Wayland client)"
-    "obsidian:Obsidian Note-taking"
+    "google-chrome:Google Chrome"
+)
+
+PKGS_MEDIA=(
     "spotify:Spotify Music"
-    "steam:Steam Gaming"
+    "obsidian:Obsidian (Markdown notes)"
+    "steam:Steam Gaming Platform"
     "prismlauncher:Prism Launcher (Minecraft)"
+    "obs-studio:OBS Studio (Screen recorder & streaming)"
+)
+
+AVAILABLE_ADDITIONAL_PKGS=(
+    "${PKGS_DEVELOPMENT[@]}"
+    "${PKGS_SOCIAL[@]}"
+    "${PKGS_BROWSERS[@]}"
+    "${PKGS_MEDIA[@]}"
 )
 SELECTED_ADDITIONAL_PKGS=()
 
@@ -536,21 +564,35 @@ toggle_additional_pkg() {
     SELECTED_ADDITIONAL_PKGS=("${updated[@]}")
 }
 
-additional_packages_menu() {
+count_selected_in_category() {
+    local -n arr="$1"
+    local count=0
+    for entry in "${arr[@]}"; do
+        local pkg="${entry%%:*}"
+        if [[ " ${SELECTED_ADDITIONAL_PKGS[*]} " =~ " ${pkg} " ]]; then
+            count=$(( count + 1 ))
+        fi
+    done
+    echo "$count"
+}
+
+category_items_menu() {
+    local cat_title="$1"
+    local -n cat_pkgs="$2"
     local cursor=0
     local rendered_lines=0
 
     while true; do
         draw_banner
-        draw_status_bar "$(t "installer.ui.additional_pkgs_prompt" " Additional packages > ")" "$(t "installer.ui.additional_pkgs_header" " Toggle optional packages, then select done ")"
+        draw_status_bar " Additional packages > $cat_title " " Toggle packages, then select Done "
         stty -echo 2>/dev/null || true
         printf "\e[?25l"
 
-        echo -e "\n${BOLD}${C_BLUE}$(t "installer.ui.additional_pkgs_title" "=== Select additional packages ===")${RESET}\n"
+        echo -e "\n${BOLD}${C_BLUE}=== $cat_title ===${RESET}\n"
 
         local items=()
-        for idx in "${!AVAILABLE_ADDITIONAL_PKGS[@]}"; do
-            local entry="${AVAILABLE_ADDITIONAL_PKGS[$idx]}"
+        for idx in "${!cat_pkgs[@]}"; do
+            local entry="${cat_pkgs[$idx]}"
             local pkg="${entry%%:*}"
             local label="${entry#*:}"
             local check="${DIM}[ ]${RESET}"
@@ -560,8 +602,8 @@ additional_packages_menu() {
             local num=$(( idx + 1 ))
             items+=("$num. $check $label")
         done
-        local done_num=$(( ${#AVAILABLE_ADDITIONAL_PKGS[@]} + 1 ))
-        items+=("$done_num. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Done")${RESET}")
+        local done_num=$(( ${#cat_pkgs[@]} + 1 ))
+        items+=("$done_num. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Back to Categories")${RESET}")
 
         if [ "$rendered_lines" -gt 0 ]; then
             printf "\033[%dA" "$rendered_lines"
@@ -598,10 +640,10 @@ additional_packages_menu() {
                 break
                 ;;
             ENTER|SPACE)
-                if [ "$cursor" -eq ${#AVAILABLE_ADDITIONAL_PKGS[@]} ]; then
+                if [ "$cursor" -eq ${#cat_pkgs[@]} ]; then
                     break
                 else
-                    local chosen_entry="${AVAILABLE_ADDITIONAL_PKGS[$cursor]}"
+                    local chosen_entry="${cat_pkgs[$cursor]}"
                     local chosen_pkg="${chosen_entry%%:*}"
                     toggle_additional_pkg "$chosen_pkg"
                 fi
@@ -609,14 +651,100 @@ additional_packages_menu() {
             *)
                 if [[ "$key" =~ ^[0-9]+$ ]]; then
                     local sel_idx=$(( key - 1 ))
-                    if [ "$sel_idx" -ge 0 ] && [ "$sel_idx" -lt ${#AVAILABLE_ADDITIONAL_PKGS[@]} ]; then
-                        local chosen_entry="${AVAILABLE_ADDITIONAL_PKGS[$sel_idx]}"
+                    if [ "$sel_idx" -ge 0 ] && [ "$sel_idx" -lt ${#cat_pkgs[@]} ]; then
+                        local chosen_entry="${cat_pkgs[$sel_idx]}"
                         local chosen_pkg="${chosen_entry%%:*}"
                         toggle_additional_pkg "$chosen_pkg"
-                    elif [ "$sel_idx" -eq ${#AVAILABLE_ADDITIONAL_PKGS[@]} ]; then
+                    elif [ "$sel_idx" -eq ${#cat_pkgs[@]} ]; then
                         break
                     fi
                 fi
+                ;;
+        esac
+    done
+}
+
+additional_packages_menu() {
+    local cursor=0
+    local rendered_lines=0
+
+    while true; do
+        draw_banner
+        draw_status_bar "$(t "installer.ui.additional_pkgs_prompt" " Additional packages > ")" "$(t "installer.ui.additional_pkgs_header" " Select category, then choose packages ")"
+        stty -echo 2>/dev/null || true
+        printf "\e[?25l"
+
+        echo -e "\n${BOLD}${C_BLUE}$(t "installer.ui.additional_pkgs_title" "=== Select package categories ===")${RESET}\n"
+
+        local c_dev; c_dev=$(count_selected_in_category PKGS_DEVELOPMENT)
+        local c_soc; c_soc=$(count_selected_in_category PKGS_SOCIAL)
+        local c_brw; c_brw=$(count_selected_in_category PKGS_BROWSERS)
+        local c_med; c_med=$(count_selected_in_category PKGS_MEDIA)
+
+        local s_dev="${DIM}[None]${RESET}"; [ "$c_dev" -gt 0 ] && s_dev="${C_GREEN}[$c_dev Selected]${RESET}"
+        local s_soc="${DIM}[None]${RESET}"; [ "$c_soc" -gt 0 ] && s_soc="${C_GREEN}[$c_soc Selected]${RESET}"
+        local s_brw="${DIM}[None]${RESET}"; [ "$c_brw" -gt 0 ] && s_brw="${C_GREEN}[$c_brw Selected]${RESET}"
+        local s_med="${DIM}[None]${RESET}"; [ "$c_med" -gt 0 ] && s_med="${C_GREEN}[$c_med Selected]${RESET}"
+
+        local items=()
+        items+=("1. 🛠️  Development $s_dev")
+        items+=("2. 💬 Social Media $s_soc")
+        items+=("3. 🌐 Web Browsers $s_brw")
+        items+=("4. 🎮 Gaming & Media $s_med")
+        items+=("5. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Done")${RESET}")
+
+        if [ "$rendered_lines" -gt 0 ]; then
+            printf "\033[%dA" "$rendered_lines"
+        fi
+
+        for i in "${!items[@]}"; do
+            if [ "$i" -eq "$cursor" ]; then
+                printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
+            else
+                printf "\r\033[K    %s\n" "${items[$i]}"
+            fi
+        done
+        rendered_lines=${#items[@]}
+
+        local key
+        key=$(read_key)
+
+        case "$key" in
+            UP|[kK])
+                if [ "$cursor" -gt 0 ]; then
+                    cursor=$(( cursor - 1 ))
+                else
+                    cursor=$(( ${#items[@]} - 1 ))
+                fi
+                ;;
+            DOWN|[jJ])
+                if [ "$cursor" -lt $(( ${#items[@]} - 1 )) ]; then
+                    cursor=$(( cursor + 1 ))
+                else
+                    cursor=0
+                fi
+                ;;
+            ESC|[qQ])
+                break
+                ;;
+            ENTER|SPACE)
+                case "$cursor" in
+                    0) category_items_menu "Development Packages" PKGS_DEVELOPMENT ;;
+                    1) category_items_menu "Social Media Packages" PKGS_SOCIAL ;;
+                    2) category_items_menu "Web Browsers" PKGS_BROWSERS ;;
+                    3) category_items_menu "Gaming & Media Packages" PKGS_MEDIA ;;
+                    4) break ;;
+                esac
+                rendered_lines=0
+                ;;
+            *)
+                case "$key" in
+                    1) category_items_menu "Development Packages" PKGS_DEVELOPMENT; rendered_lines=0 ;;
+                    2) category_items_menu "Social Media Packages" PKGS_SOCIAL; rendered_lines=0 ;;
+                    3) category_items_menu "Web Browsers" PKGS_BROWSERS; rendered_lines=0 ;;
+                    4) category_items_menu "Gaming & Media Packages" PKGS_MEDIA; rendered_lines=0 ;;
+                    5) break ;;
+                esac
                 ;;
         esac
     done

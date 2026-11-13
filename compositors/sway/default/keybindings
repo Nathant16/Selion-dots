@@ -10,24 +10,19 @@ bindsym $mod+KP_Enter exec $terminal
 bindsym $mod+E exec ski
 bindsym Ctrl+Shift+Escape exec $terminal -e btop
 
-# App Shortcuts (Synchronized with PC)
+# App Shortcuts (Synchronized with PC / userprefs)
 bindsym $mod+Shift+C exec code
-bindsym $mod+Shift+F exec zen-browser
-bindsym $mod+Shift+A exec antigravity-ide
+bindsym $mod+Shift+Z exec zen-browser
 bindsym $mod+Shift+S exec spotify
 bindsym $mod+Shift+T exec AyuGram
 bindsym $mod+Shift+G exec steam
-bindsym $mod+Shift+M exec prismlauncher
 bindsym $mod+Shift+D exec discord
 bindsym $mod+Shift+O exec obsidian
-bindsym $mod+Shift+P exec pwvucontrol
 
 # Window Actions
 bindsym $mod+Q kill
-bindsym $mod+Ctrl+Shift+Q exit
-bindsym $mod+Shift+E exit
 bindsym Alt+Return fullscreen toggle
-bindsym $mod+Shift+space floating toggle
+bindsym $mod+space floating toggle
 
 # Focus & Navigation
 bindsym $mod+Left focus left
@@ -37,21 +32,23 @@ bindsym $mod+Down focus down
 bindsym Alt+Tab focus next
 bindsym Alt+Shift+Tab focus prev
 
+# Move Windows (Super + Alt + Стрелки)
+bindsym $mod+Alt+Left move left
+bindsym $mod+Alt+Right move right
+bindsym $mod+Alt+Up move up
+bindsym $mod+Alt+Down move down
+
+# Workspace Navigation (Super + Ctrl + Стрелки)
+bindsym $mod+Ctrl+Left workspace prev
+bindsym $mod+Ctrl+Right workspace next
+bindsym $mod+Ctrl+Up workspace prev
+bindsym $mod+Ctrl+Down workspace next
+
 # Resize Windows
 bindsym $mod+Shift+Left resize shrink width 5 ppt
 bindsym $mod+Shift+Right resize grow width 5 ppt
 bindsym $mod+Shift+Up resize shrink height 5 ppt
 bindsym $mod+Shift+Down resize grow height 5 ppt
-
-# Move Windows
-bindsym $mod+Ctrl+Left move left
-bindsym $mod+Ctrl+Right move right
-bindsym $mod+Ctrl+Up move up
-bindsym $mod+Ctrl+Down move down
-bindsym $mod+Shift+Ctrl+Left move left
-bindsym $mod+Shift+Ctrl+Right move right
-bindsym $mod+Shift+Ctrl+Up move up
-bindsym $mod+Shift+Ctrl+Down move down
 
 # Scratchpad / Special Workspace
 bindsym $mod+S scratchpad show
@@ -59,18 +56,14 @@ bindsym $mod+Alt+S move scratchpad
 bindsym $mod+BackSpace scratchpad show
 
 # Shell, Launcher, Clipboard & System Controls
-bindsym $mod+space exec serpantinum msg toggle launcher
-bindsym $mod+R exec serpantinum msg toggle launcher
+bindsym $mod+A exec serpantinum msg toggle launcher
+bindsym $mod+R exec serpantinum reload
 bindsym $mod+V exec serpantinum msg toggle clipboard
-bindsym $mod+Shift+X exec serpantinum lock
-bindsym $mod+X exec serpantinum lock
+bindsym $mod+W exec serpantinum msg toggle wallpaper
+bindsym $mod+B exec serpantinum msg bar autohide
+
 bindsym $mod+L exec serpantinum lock
 bindsym XF86PowerOff exec serpantinum lock
-bindsym $mod+P exec /usr/local/bin/battery --cycle
-bindsym XF86Launch1 exec /usr/local/bin/battery --cycle
-bindsym $mod+B exec serpantinum msg bar autohide
-bindsym $mod+W exec serpantinum msg toggle wallpaper
-bindsym $mod+Shift+R reload
 
 # Screenshots
 bindsym Print exec serpantinum screenshot

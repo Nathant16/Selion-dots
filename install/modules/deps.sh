@@ -46,7 +46,7 @@ SUPPORTED_DISTROS=(
 )
 
 REQUIRED_PKGS=(
-    "kitty" "zbar" "tesseract" "tesseract-data-eng"
+    "kitty" "btop" "zbar" "tesseract" "tesseract-data-eng"
     "wl-clipboard" "qt6-multimedia"
     "cliphist" "jq" "ddcutil"
     "bluez" "networkmanager" "matugen"
