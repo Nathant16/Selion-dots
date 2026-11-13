@@ -93,9 +93,42 @@ enable_user_service() {
     esac
 }
 
+configure_bluetooth() {
+    local init_sys="$1"
+
+    if [ -d /etc/bluetooth ]; then
+        sudo chmod 755 /etc/bluetooth 2>/dev/null || true
+    fi
+
+    if [ -f /etc/bluetooth/main.conf ]; then
+        if grep -q "^\[Policy\]" /etc/bluetooth/main.conf; then
+            if grep -qE "^#?AutoEnable" /etc/bluetooth/main.conf; then
+                sudo sed -i 's/^#\?AutoEnable=.*/AutoEnable=true/' /etc/bluetooth/main.conf
+            else
+                sudo sed -i '/^\[Policy\]/a AutoEnable=true' /etc/bluetooth/main.conf
+            fi
+        else
+            printf "\n[Policy]\nAutoEnable=true\n" | sudo tee -a /etc/bluetooth/main.conf >/dev/null
+        fi
+    fi
+
+    if command -v rfkill &>/dev/null; then
+        sudo rfkill unblock bluetooth 2>/dev/null || true
+    fi
+
+    enable_system_service "bluetooth" "$init_sys"
+    enable_system_service "bluetoothd" "$init_sys"
+
+    if command -v bluetoothctl &>/dev/null; then
+        bluetoothctl power on 2>/dev/null || true
+    fi
+}
+
 setup_services() {
     local init_sys
     init_sys=$(detect_init_system)
+
+    configure_bluetooth "$init_sys"
 
     if declare -f pm_setup_services >/dev/null; then
         pm_setup_services "$init_sys"

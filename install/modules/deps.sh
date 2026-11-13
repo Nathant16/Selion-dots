@@ -49,7 +49,7 @@ REQUIRED_PKGS=(
     "kitty" "btop" "zbar" "tesseract" "tesseract-data-eng"
     "wl-clipboard" "qt6-multimedia"
     "cliphist" "jq" "ddcutil"
-    "bluez" "networkmanager" "matugen"
+    "bluez" "bluez-utils" "networkmanager" "matugen"
     "pipewire" "wireplumber" "pipewire-pulse" "pipewire-alsa" "libpulse" "python" "python-pillow" "fprintd"
     "imagemagick" "file"
     "ffmpeg" "fastfetch" "quickshell"

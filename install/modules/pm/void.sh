@@ -16,6 +16,7 @@ VOID_HYPRLAND_REPO_BASE="https://mirror.black-hole.dev"
 VOID_SDDM_SESSION_WRAPPER="/usr/local/share/serpantinum/sddm-wayland-session"
 
 declare -A PM_PKG_MAP=(
+    [bluez-utils]="bluez"
     [tesseract]="tesseract-ocr"
     [tesseract-data-eng]="tesseract-ocr-eng"
     [networkmanager]="NetworkManager"

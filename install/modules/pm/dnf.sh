@@ -19,6 +19,7 @@ declare -A PM_PKG_MAP=(
     [jq]="jq"
     [ddcutil]="ddcutil"
     [bluez]="bluez"
+    [bluez-utils]="bluez"
     [networkmanager]="NetworkManager"
     [matugen]="matugen"
     [pipewire]="pipewire"
