@@ -5,3 +5,6 @@
 # Default monitor configuration
 # Sway automatically enables and configures preferred modes for all outputs.
 # Override specific displays in userprefs (e.g. output DP-1 mode 2560x1440@165Hz)
+output * {
+    scale 1.0
+}

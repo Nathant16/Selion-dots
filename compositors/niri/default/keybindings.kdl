@@ -8,6 +8,8 @@ binds {
     Mod+E { spawn "ski"; }
     Mod+Backspace { toggle-overview; }
     Mod+Q { close-window; }
+    Mod+Ctrl+Shift+Q { quit skip-confirmation=true; }
+    Mod+Shift+E { quit; }
     Mod+Alt+F { maximize-window-to-edges; }
     Mod+Shift+F { toggle-window-floating; }
 

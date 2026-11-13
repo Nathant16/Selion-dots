@@ -45,6 +45,8 @@ hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("serpantinum msg toggle wallpaper"), 
 -- ==> Window Actions
 hl.bind(mainMod .. " + Q", hl.dsp.window.close(), { description = "Close window" })
 hl.bind(mainMod .. " + K", hl.dsp.window.kill(), { description = "Kill window" })
+hl.bind(mainMod .. " + CTRL + SHIFT + Q", hl.dsp.exec_cmd("hyprctl dispatch exit"), { description = "Exit Hyprland session" })
+hl.bind(subMod .. " + E", hl.dsp.exec_cmd("hyprctl dispatch exit"), { description = "Exit Hyprland session" })
 hl.bind("ALT + Return", hl.dsp.window.fullscreen(), { description = "Toggle fullscreen" })
 hl.bind(subMod .. " + Space", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle floating" })
 hl.bind(mainMod .. " + ALT + F", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }), { description = "Toggle maximized" })

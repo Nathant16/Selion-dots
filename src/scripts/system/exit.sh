@@ -14,7 +14,7 @@ fi
 sleep 0.2
 
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] || pgrep -x Hyprland &>/dev/null; then
-    hyprctl dispatch 'hl.dsp.exit()' 2>/dev/null || \
+    hyprctl dispatch exit 2>/dev/null || \
     pkill -SIGTERM -x Hyprland 2>/dev/null
 elif [ -n "$NIRI_SOCKET" ] || pgrep -x niri &>/dev/null; then
     niri msg action quit --skip-confirmation 2>/dev/null || \
@@ -22,11 +22,13 @@ elif [ -n "$NIRI_SOCKET" ] || pgrep -x niri &>/dev/null; then
     pkill -SIGTERM -x niri 2>/dev/null
 elif [ -n "$DRIFTWM_SOCKET" ] || pgrep -x driftwm &>/dev/null; then
     driftwm msg action quit 2>/dev/null || \
+    driftwm msg quit 2>/dev/null || \
     pkill -SIGTERM -x driftwm 2>/dev/null
 elif [ -n "$SWAYSOCK" ] || pgrep -x sway &>/dev/null; then
     swaymsg exit 2>/dev/null || \
     pkill -SIGTERM -x sway 2>/dev/null
 elif [ -n "$MANGO_INSTANCE_SIGNATURE" ] || pgrep -x mango &>/dev/null; then
+    mmsg -d quit 2>/dev/null || \
     mmsg dispatch quit 2>/dev/null || \
     pkill -SIGTERM -x mango 2>/dev/null
 elif [ -n "$WAYFIRE_SOCKET" ] || pgrep -x wayfire &>/dev/null; then

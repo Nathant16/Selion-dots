@@ -23,6 +23,8 @@ bindsym $mod+Shift+P exec pwvucontrol
 
 # Window Actions
 bindsym $mod+Q kill
+bindsym $mod+Ctrl+Shift+Q exit
+bindsym $mod+Shift+E exit
 bindsym Alt+Return fullscreen toggle
 bindsym $mod+Shift+space floating toggle
 
