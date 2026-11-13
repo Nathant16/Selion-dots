@@ -992,10 +992,17 @@ Item {
     }
 
     function syncFromSrcModel() {
-        if (srcModel.status !== FolderListModel.Ready || srcModel.count === 0) return;
+        let models = [];
+        if (srcModel.status === FolderListModel.Ready && srcModel.count > 0) models.push({ model: srcModel, prefix: "" });
+        if (window.showSelionWallpapers && selionModel.status === FolderListModel.Ready && selionModel.count > 0) models.push({ model: selionModel, prefix: "Selion/" });
+
+        if (models.length === 0) return;
+
+        let totalFiles = 0;
+        for (let m = 0; m < models.length; m++) totalFiles += models[m].model.count;
 
         if ((localProxyModel.count > 0 || videoProxyModel.count > 0) &&
-            srcModel.count === (localProxyModel.count + videoProxyModel.count)) {
+            totalFiles === (localProxyModel.count + videoProxyModel.count)) {
             return;
         }
 
@@ -1007,44 +1014,48 @@ Item {
         let newColorMap = Object.assign({}, window.colorMap);
         let newBucketMap = Object.assign({}, window.bucketMap);
 
-        for (let i = 0; i < srcModel.count; i++) {
-            let fn = srcModel.get(i, "fileName");
-            let fu = srcModel.get(i, "fileUrl");
-            if (!fn) continue;
-            let sFn = String(fn);
-            if (seen[sFn]) continue;
-            seen[sFn] = true;
+        for (let m = 0; m < models.length; m++) {
+            let curModel = models[m].model;
+            let pfx = models[m].prefix;
+            for (let i = 0; i < curModel.count; i++) {
+                let fn = curModel.get(i, "fileName");
+                let fu = curModel.get(i, "fileUrl");
+                if (!fn) continue;
+                let sFn = pfx + String(fn);
+                if (seen[sFn]) continue;
+                seen[sFn] = true;
 
-            let sFu = String(fu);
-            let clean = window.getCleanName(sFn);
-            let base = window.getCleanBaseName(sFn);
-            let isVid = window.isVideoTarget(sFn) || sFn.toLowerCase().match(/\.(mp4|mkv|mov|webm)$/) !== null;
+                let sFu = String(fu);
+                let clean = window.getCleanName(sFn);
+                let base = window.getCleanBaseName(sFn);
+                let isVid = window.isVideoTarget(sFn) || sFn.toLowerCase().match(/\.(mp4|mkv|mov|webm)$/) !== null;
 
-            let cached = newThumbLookup[sFn] || newThumbLookup[clean] || newThumbLookup[base];
-            let item = cached ? cached : {
-                "fileName": sFn,
-                "filePath": decodeURIComponent(sFu.replace("file://", "")),
-                "fileUrl": sFu,
-                "isVideo": isVid,
-                "posterPath": "",
-                "posterUrl": "",
-                "hex": "#808080",
-                "bucket": isVid ? "Video" : "Monochrome"
-            };
+                let cached = newThumbLookup[sFn] || newThumbLookup[clean] || newThumbLookup[base];
+                let item = cached ? cached : {
+                    "fileName": sFn,
+                    "filePath": decodeURIComponent(sFu.replace("file://", "")),
+                    "fileUrl": sFu,
+                    "isVideo": isVid,
+                    "posterPath": "",
+                    "posterUrl": "",
+                    "hex": "#808080",
+                    "bucket": isVid ? "Video" : "Monochrome"
+                };
 
-            newSrcLookup[sFn] = sFn;
-            newSrcLookup[clean] = sFn;
-            newSrcLookup[base] = sFn;
+                newSrcLookup[sFn] = sFn;
+                newSrcLookup[clean] = sFn;
+                newSrcLookup[base] = sFn;
 
-            newThumbLookup[sFn] = item;
-            newThumbLookup[clean] = item;
-            newThumbLookup[base] = item;
+                newThumbLookup[sFn] = item;
+                newThumbLookup[clean] = item;
+                newThumbLookup[base] = item;
 
-            newColorMap[sFn] = item.hex;
-            newBucketMap[sFn] = item.bucket;
+                newColorMap[sFn] = item.hex;
+                newBucketMap[sFn] = item.bucket;
 
-            if (isVid) videoItems.push(item);
-            else localItems.push(item);
+                if (isVid) videoItems.push(item);
+                else localItems.push(item);
+            }
         }
 
         window.srcNameLookup = newSrcLookup;
@@ -1081,6 +1092,24 @@ Item {
             if (window.isDownloadingWallpaper && window.isDownloaded(window.currentDownloadName)) {
                 window.isDownloadingWallpaper = false;
             }
+            indexerDebounceTimer.restart();
+        }
+        onStatusChanged: {
+            if (status === FolderListModel.Ready) {
+                window.syncFromSrcModel();
+                indexerDebounceTimer.restart();
+            }
+        }
+    }
+
+    FolderListModel {
+        id: selionModel
+        folder: "file://" + window.srcDir + "/Selion"
+        nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.webp", "*.gif", "*.bmp", "*.mp4", "*.mkv", "*.mov", "*.webm", "*.JPG", "*.JPEG", "*.PNG", "*.WEBP", "*.GIF", "*.BMP", "*.MP4", "*.MKV", "*.MOV", "*.WEBM"]
+        caseSensitive: true
+        showDirs: false
+        onCountChanged: {
+            window.syncFromSrcModel();
             indexerDebounceTimer.restart();
         }
         onStatusChanged: {

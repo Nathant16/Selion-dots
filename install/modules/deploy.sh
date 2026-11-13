@@ -173,7 +173,47 @@ install_wallpapers() {
         fi
     fi
 
-    rm -f "${XDG_CACHE_HOME:-"$HOME/.cache"}/serpantinum/wallpaper/current_index.json" 2>/dev/null || true
+    local cache_dir="${XDG_CACHE_HOME:-"$HOME/.cache"}/serpantinum/wallpaper"
+    mkdir -p "$cache_dir"
+
+    # Pre-index wallpapers for fast loading in WallpaperPicker
+    local run_dir="${XDG_RUNTIME_DIR:-"/run/user/$(id -u)"}/serpantinum/wallpaper"
+    mkdir -p "$run_dir"
+    local p_root="${PROJECT_ROOT:-"$HOME/.local/share/serpantinum"}"
+    local indexer_script="$p_root/src/scripts/wallpaper/recursive_index.py"
+    if [ ! -f "$indexer_script" ]; then
+        indexer_script="$HOME/.local/share/serpantinum/src/scripts/wallpaper/recursive_index.py"
+    fi
+    if [ -f "$indexer_script" ]; then
+        echo -e "\e[36m[ INFO ]\e[0m Pre-indexing wallpapers..."
+        python3 "$indexer_script" "$wallpaper_dir" "$cache_dir" "$run_dir" "1" >/dev/null 2>&1 || true
+    fi
+
+    # Ensure a default wallpaper state exists so first boot never renders a black screen
+    local default_wp="$selion_dir/1.png"
+    if [ ! -f "$default_wp" ]; then
+        default_wp="$(find "$selion_dir" "$wallpaper_dir" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | sort -V | head -n 1)"
+    fi
+    if [ -n "$default_wp" ] && [ -f "$default_wp" ]; then
+        local def_state="$cache_dir/current_default"
+        printf '%s' "$default_wp" > "$def_state"
+        printf '%s\n' "${default_wp##*/}" > "${def_state}_name"
+        for cur_link in /sys/class/drm/card*-*/status; do
+            if [ -f "$cur_link" ] && grep -q '^connected$' "$cur_link" 2>/dev/null; then
+                local conn_dir
+                conn_dir="$(dirname "$cur_link")"
+                local out_name
+                out_name="$(basename "$conn_dir" | sed -E 's/^card[0-9]+-//')"
+                if [ -n "$out_name" ]; then
+                    local out_file="$cache_dir/current_$out_name"
+                    if [ ! -f "$out_file" ] || [ ! -s "$out_file" ]; then
+                        printf '%s' "$default_wp" > "$out_file"
+                        printf '%s\n' "${default_wp##*/}" > "${out_file}_name"
+                    fi
+                fi
+            fi
+        done
+    fi
 }
 
 resolve_sddm_backend() {

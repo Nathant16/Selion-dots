@@ -130,13 +130,38 @@ ShellRoot {
                     running: false
                     command: [
                         "bash", "-c",
-                        "F1='" + barWindow.wpStatePath + "'; F2='" + barWindow.wpStatePath + "_name'; [ -f \"$F1\" ] && cat \"$F1\" || true; echo '---SPLIT---'; [ -f \"$F2\" ] && cat \"$F2\" || true"
+                        "F1='" + barWindow.wpStatePath + "'; F2='" + barWindow.wpStatePath + "_name'; " +
+                        "WP=''; FALLBACK=0; " +
+                        "if [ -f \"$F1\" ] && [ -s \"$F1\" ]; then " +
+                        "    SAVED=\"$(cat \"$F1\" 2>/dev/null)\"; " +
+                        "    if [ -n \"$SAVED\" ] && [ -f \"$SAVED\" ]; then WP=\"$SAVED\"; fi; " +
+                        "fi; " +
+                        "if [ -z \"$WP\" ]; then " +
+                        "    FALLBACK=1; " +
+                        "    for d in \"$HOME/Pictures/Wallpapers/Selion\" \"$HOME/Pictures/Wallpapers\" \"/usr/share/sddm/themes/material-you\" \"/usr/share/wallpapers\"; do " +
+                        "        if [ -d \"$d\" ]; then " +
+                        "            CANDIDATE=\"$(find \"$d\" -maxdepth 2 -type f \\( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \\) 2>/dev/null | sort -V | head -n 1)\"; " +
+                        "            if [ -n \"$CANDIDATE\" ] && [ -f \"$CANDIDATE\" ]; then " +
+                        "                WP=\"$CANDIDATE\"; NAME=\"${CANDIDATE##*/}\"; " +
+                        "                mkdir -p \"$(dirname \"$F1\")\"; " +
+                        "                printf '%s' \"$WP\" > \"$F1\"; printf '%s\\n' \"$NAME\" > \"$F2\"; " +
+                        "                break; " +
+                        "            fi; " +
+                        "        fi; " +
+                        "    done; " +
+                        "fi; " +
+                        "if [ -n \"$WP\" ]; then printf '%s\\n' \"$WP\"; fi; " +
+                        "echo '---SPLIT---'; " +
+                        "if [ -f \"$F2\" ]; then cat \"$F2\"; elif [ -n \"$WP\" ]; then printf '%s\\n' \"${WP##*/}\"; fi; " +
+                        "echo '---SPLIT---'; " +
+                        "if [ \"$FALLBACK\" = 1 ]; then echo 'FALLBACK'; fi"
                     ]
                     stdout: StdioCollector {
                         onStreamFinished: {
                             let parts = this.text.split("---SPLIT---");
                             let savedPath = parts[0] ? parts[0].trim() : "";
                             let savedName = parts[1] ? parts[1].trim() : "";
+                            let isFallback = parts[2] ? parts[2].trim() === "FALLBACK" : false;
                             if (savedPath !== "") {
                                 barWindow.originalFileName = savedName;
                                 barWindow._loadNew(savedPath, false);
@@ -144,6 +169,8 @@ ShellRoot {
                                     videoSnapshotProcess.targetPath = savedPath;
                                     videoSnapshotProcess.running = false;
                                     videoSnapshotProcess.running = true;
+                                } else if (isFallback && typeof Matugen !== "undefined" && typeof Matugen.generate === "function") {
+                                    Matugen.generate(savedPath);
                                 }
                                 if (savedName !== "") {
                                     let histFile = barWindow.wpCacheDir + "/history.txt";
@@ -642,8 +669,12 @@ ShellRoot {
                             asynchronous: true
                             visible: !barWindow.isVideoA && barWindow.pathA !== ""
                             cache: true
-                            sourceSize.width: parent.width > 0 ? Math.ceil(parent.width * (Screen.devicePixelRatio || 1)) : 0
-                            sourceSize.height: parent.height > 0 ? Math.ceil(parent.height * (Screen.devicePixelRatio || 1)) : 0
+                            sourceSize.width: (barWindow.screen && barWindow.screen.geometry && barWindow.screen.geometry.width > 0)
+                                ? Math.ceil(barWindow.screen.geometry.width * (Screen.devicePixelRatio || 1))
+                                : (parent.width > 0 ? Math.ceil(parent.width * (Screen.devicePixelRatio || 1)) : 1920)
+                            sourceSize.height: (barWindow.screen && barWindow.screen.geometry && barWindow.screen.geometry.height > 0)
+                                ? Math.ceil(barWindow.screen.geometry.height * (Screen.devicePixelRatio || 1))
+                                : (parent.height > 0 ? Math.ceil(parent.height * (Screen.devicePixelRatio || 1)) : 1080)
                         }
 
                         Loader {
@@ -710,8 +741,12 @@ ShellRoot {
                             asynchronous: true
                             visible: !barWindow.isVideoB && barWindow.pathB !== ""
                             cache: true
-                            sourceSize.width: parent.width > 0 ? Math.ceil(parent.width * (Screen.devicePixelRatio || 1)) : 0
-                            sourceSize.height: parent.height > 0 ? Math.ceil(parent.height * (Screen.devicePixelRatio || 1)) : 0
+                            sourceSize.width: (barWindow.screen && barWindow.screen.geometry && barWindow.screen.geometry.width > 0)
+                                ? Math.ceil(barWindow.screen.geometry.width * (Screen.devicePixelRatio || 1))
+                                : (parent.width > 0 ? Math.ceil(parent.width * (Screen.devicePixelRatio || 1)) : 1920)
+                            sourceSize.height: (barWindow.screen && barWindow.screen.geometry && barWindow.screen.geometry.height > 0)
+                                ? Math.ceil(barWindow.screen.geometry.height * (Screen.devicePixelRatio || 1))
+                                : (parent.height > 0 ? Math.ceil(parent.height * (Screen.devicePixelRatio || 1)) : 1080)
                         }
 
                         Loader {

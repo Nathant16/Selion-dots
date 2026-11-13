@@ -4,6 +4,7 @@
 
 binds {
     Mod+Return { spawn "kitty"; }
+    Mod+KP_Enter { spawn "kitty"; }
     Mod+F { spawn "firefox"; }
     Mod+E { spawn "ski"; }
     Mod+Backspace { toggle-overview; }

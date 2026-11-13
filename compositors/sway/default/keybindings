@@ -6,6 +6,8 @@
 
 # Terminal, File Manager & Task Manager
 bindsym $mod+Return exec $terminal
+bindsym $mod+KP_Enter exec $terminal
+bindcode $mod+36 exec $terminal
 bindsym $mod+E exec ski
 bindsym Ctrl+Shift+Escape exec $terminal -e btop
 

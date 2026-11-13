@@ -12,6 +12,9 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- ==> Terminal, File Manager & Task Manager
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal), { description = "Open terminal" })
+hl.bind(mainMod .. " + KP_Enter", hl.dsp.exec_cmd(terminal), { description = "Open terminal (keypad)" })
+hl.bind(mainMod .. " + code:36", hl.dsp.exec_cmd(terminal), { description = "Open terminal (Enter code:36)" })
+hl.bind(mainMod .. " + code:104", hl.dsp.exec_cmd(terminal), { description = "Open terminal (KP_Enter code:104)" })
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("ski"), { description = "Open file manager" })
 hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd(terminal .. " -e btop"), { description = "Open system monitor" })
 

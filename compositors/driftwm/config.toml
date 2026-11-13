@@ -103,6 +103,7 @@ decoration = "minimal"
 
 # Терминал, файловый менеджер и монитор процессов
 "mod+return" = "exec kitty"
+"mod+kp_enter" = "exec kitty"
 "mod+e" = "exec ski"
 "ctrl+shift+escape" = "exec kitty -e btop"
 
