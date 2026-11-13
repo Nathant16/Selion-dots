@@ -14,9 +14,18 @@ fi
 sleep 0.2
 
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] || pgrep -x Hyprland &>/dev/null; then
+    if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+        HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 /run/user/"$UID"/hypr/ 2>/dev/null | head -n1 || ls -1 /tmp/hypr/ 2>/dev/null | head -n1)
+        export HYPRLAND_INSTANCE_SIGNATURE
+    fi
+    hyprctl dispatch 'hl.dsp.exit()' 2>/dev/null || \
     hyprctl dispatch exit 2>/dev/null || \
     pkill -SIGTERM -x Hyprland 2>/dev/null
 elif [ -n "$NIRI_SOCKET" ] || pgrep -x niri &>/dev/null; then
+    if [ -z "$NIRI_SOCKET" ]; then
+        NIRI_SOCKET=$(ls /run/user/"$UID"/niri.*.sock 2>/dev/null | head -n1)
+        export NIRI_SOCKET
+    fi
     niri msg action quit --skip-confirmation 2>/dev/null || \
     niri msg action quit 2>/dev/null || \
     pkill -SIGTERM -x niri 2>/dev/null
