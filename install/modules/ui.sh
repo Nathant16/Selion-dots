@@ -504,6 +504,16 @@ manage_sddm_menu() {
 }
 
 run_installer_ui() {
+    if [ "${NONINTERACTIVE:-0}" = "1" ] || [ "${AUTO_INSTALL:-0}" = "1" ]; then
+        if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
+            SELECTED_COMPOSITORS=("hyprland" "driftwm" "niri" "sway" "mango")
+        fi
+        OPT_SDDM="${OPT_SDDM:-true}"
+        INSTALL_FULL_WALLPAPERS="${INSTALL_FULL_WALLPAPERS:-false}"
+        ENABLE_TELEMETRY="${ENABLE_TELEMETRY:-false}"
+        return 0
+    fi
+
     local cursor=0
 
     while true; do
@@ -733,6 +743,10 @@ EOF
         done
     fi
     printf "\n%s\n\n" "$(t "installer.ui.restart_prompt")"
+
+    if [ "${NONINTERACTIVE:-0}" = "1" ] || [ "${AUTO_INSTALL:-0}" = "1" ]; then
+        return 0
+    fi
 
     local restart_choice=""
     local prompt_msg
