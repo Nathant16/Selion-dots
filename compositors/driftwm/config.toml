@@ -130,10 +130,10 @@ decoration = "minimal"
 "mod+alt+down" = "move-to-snap down"
 
 # Перемещение между воркспейсами (Super + Ctrl + Стрелки)
-"mod+ctrl+left" = "go-to-prev-bookmark"
-"mod+ctrl+right" = "go-to-next-bookmark"
-"mod+ctrl+up" = "go-to-prev-bookmark"
-"mod+ctrl+down" = "go-to-next-bookmark"
+"mod+ctrl+left" = "go-to-bookmark prev"
+"mod+ctrl+right" = "go-to-bookmark next"
+"mod+ctrl+up" = "go-to-bookmark prev"
+"mod+ctrl+down" = "go-to-bookmark next"
 
 # Изменение размера
 "mod+shift+left" = "move-to-snap left"
