@@ -1,6 +1,9 @@
 %wheel ALL=(ALL) NOPASSWD: /usr/local/bin/apply-power-profile.sh
 %wheel ALL=(ALL) NOPASSWD: /usr/local/bin/battery
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/class/power_supply/*/*
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/bus/platform/drivers/*/*/*
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/devices/platform/*/*
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/devices/platform/*/*/*
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/devices/system/cpu/*/*
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /sys/devices/system/cpu/*/*/*
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/tee /proc/sys/vm/*

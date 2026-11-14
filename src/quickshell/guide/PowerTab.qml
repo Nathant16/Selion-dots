@@ -34,6 +34,13 @@ GuideTab {
     property bool autoBrightnessEnabled: true
     property int powerSaverBrightness: 60
 
+    onThresholdEndChanged: {
+        let target = Math.max(70, Math.min(95, thresholdEnd < 100 ? thresholdEnd : 80));
+        if (typeof limitSelector !== "undefined" && limitSelector && limitSelector.value !== target) {
+            limitSelector.value = target;
+        }
+    }
+
     readonly property string batteryScriptPath: (typeof Caching !== "undefined" && Caching.serpantinumDir)
         ? (Caching.serpantinumDir + "/scripts/system/battery")
         : "battery"
@@ -82,16 +89,26 @@ GuideTab {
     }
 
     function setLimit(limitVal) {
+        if (cmdProc.running) {
+            cmdProc.running = false;
+        }
         cmdProc.command = [powerTabRoot.batteryScriptPath, "limit", String(limitVal)];
         cmdProc.running = true;
     }
 
-    function toggleConservation() {
-        if (powerTabRoot.conservationMode) {
-            setLimit(100);
+    function setConservation(enabled) {
+        powerTabRoot.conservationMode = enabled;
+        if (enabled) {
+            let target = (powerTabRoot.thresholdEnd < 100 && powerTabRoot.thresholdEnd >= 70) ? powerTabRoot.thresholdEnd : 80;
+            powerTabRoot.thresholdEnd = target;
+            setLimit(target);
         } else {
-            setLimit(80);
+            setLimit(100);
         }
+    }
+
+    function toggleConservation() {
+        setConservation(!powerTabRoot.conservationMode);
     }
 
     function setCpuFreqMode(mode) {
@@ -472,6 +489,7 @@ GuideTab {
                     expanded: powerTabRoot.conservationMode && powerTabRoot.hasThresholdSupport
 
                     Toggle {
+                        id: conservationToggle
                         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                         checked: powerTabRoot.conservationMode
                         accentColor: ThemeBackend.mauve
@@ -479,7 +497,7 @@ GuideTab {
                         handleColor: ThemeBackend.crust
                         handleOffColor: ThemeBackend.text
                         onToggled: function(val) {
-                            powerTabRoot.toggleConservation();
+                            powerTabRoot.setConservation(val);
                         }
                     }
 
@@ -513,17 +531,11 @@ GuideTab {
                                 cornerRadius: ThemeBackend.borderRadius
                                 fontFamily: ThemeBackend.fontFamily
                                 fontPixelSize: rootObj.s(11)
-                                onValueChanged: function(val) {
-                                    if (!powerTabRoot.conservationMode) return;
-                                    let num = (typeof val === "number" && !isNaN(val)) ? val : value;
-                                    let rounded = Math.round(num / 5) * 5;
-                                    if (!isNaN(rounded) && rounded >= 70 && rounded <= 95 && powerTabRoot.thresholdEnd !== rounded && powerTabRoot.thresholdEnd < 100) {
-                                        powerTabRoot.setLimit(rounded);
-                                    }
-                                }
                                 onTriggered: {
-                                    if (powerTabRoot.conservationMode) {
-                                        let rounded = Math.round(limitSelector.value / 5) * 5;
+                                    if (!powerTabRoot.conservationMode) return;
+                                    let rounded = Math.round(limitSelector.value / 5) * 5;
+                                    if (rounded >= 70 && rounded <= 95 && powerTabRoot.thresholdEnd !== rounded) {
+                                        powerTabRoot.thresholdEnd = rounded;
                                         powerTabRoot.setLimit(rounded);
                                     }
                                 }

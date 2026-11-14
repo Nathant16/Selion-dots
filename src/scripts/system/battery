@@ -58,6 +58,130 @@ def format_time(seconds):
     m = int((seconds % 3600) // 60)
     return f"{h}h {m:02d}m"
 
+def get_threshold_hardware():
+    bat_dir = get_battery_dir()
+    if bat_dir:
+        end = os.path.join(bat_dir, "charge_control_end_threshold")
+        start = os.path.join(bat_dir, "charge_control_start_threshold")
+        if os.path.exists(end):
+            end_legacy = os.path.join(bat_dir, "charge_stop_threshold")
+            start_legacy = os.path.join(bat_dir, "charge_start_threshold")
+            return {
+                "kind": "charge_control",
+                "end": end,
+                "start": start if os.path.exists(start) else None,
+                "end_legacy": end_legacy if os.path.exists(end_legacy) else None,
+                "start_legacy": start_legacy if os.path.exists(start_legacy) else None,
+            }
+
+        end_legacy = os.path.join(bat_dir, "charge_stop_threshold")
+        start_legacy = os.path.join(bat_dir, "charge_start_threshold")
+        if os.path.exists(end_legacy):
+            return {
+                "kind": "charge_control",
+                "end": end_legacy,
+                "start": start_legacy if os.path.exists(start_legacy) else None,
+                "end_legacy": None,
+                "start_legacy": None,
+            }
+
+    # Lenovo IdeaPad / Legion / Yoga conservation mode
+    ideapad = (
+        glob.glob("/sys/bus/platform/drivers/ideapad_acpi/*/conservation_mode") +
+        glob.glob("/sys/devices/platform/ideapad_acpi/conservation_mode") +
+        glob.glob("/sys/bus/platform/drivers/ideapad_laptop/*/conservation_mode")
+    )
+    if ideapad and os.path.exists(ideapad[0]):
+        return {"kind": "ideapad_conservation", "file": ideapad[0]}
+
+    # ASUS WMI
+    asus = glob.glob("/sys/devices/platform/asus-nb-wmi/charge_control_end_threshold")
+    if asus and os.path.exists(asus[0]):
+        return {"kind": "charge_control", "end": asus[0], "start": None, "end_legacy": None, "start_legacy": None}
+
+    # LG Gram
+    lg = glob.glob("/sys/devices/platform/lg-laptop/battery_care_limit")
+    if lg and os.path.exists(lg[0]):
+        return {"kind": "lg_care", "file": lg[0]}
+
+    # Samsung
+    samsung = glob.glob("/sys/devices/platform/samsung/battery_life_extender")
+    if samsung and os.path.exists(samsung[0]):
+        return {"kind": "samsung_extender", "file": samsung[0]}
+
+    # Huawei
+    huawei = glob.glob("/sys/devices/platform/huawei-wmi/charge_thresholds")
+    if huawei and os.path.exists(huawei[0]):
+        return {"kind": "huawei", "file": huawei[0]}
+
+    # Apple Silicon
+    apple = glob.glob("/sys/class/power_supply/macsmc-battery/charge_control_limit_max")
+    if apple and os.path.exists(apple[0]):
+        return {"kind": "charge_control", "end": apple[0], "start": None, "end_legacy": None, "start_legacy": None}
+
+    return None
+
+def read_threshold_info():
+    hw = get_threshold_hardware()
+    if not hw:
+        return {"supported": False, "start": 0, "end": 100, "is_conservation": False}
+
+    kind = hw["kind"]
+    if kind == "charge_control":
+        try:
+            th_end = int(read_val(hw["end"], "100"))
+        except ValueError:
+            th_end = 100
+        try:
+            th_start = int(read_val(hw["start"], "0")) if hw.get("start") else 0
+        except ValueError:
+            th_start = 0
+        return {
+            "supported": True,
+            "start": th_start,
+            "end": th_end,
+            "is_conservation": (th_end < 100),
+        }
+    elif kind == "ideapad_conservation":
+        val = read_val(hw["file"], "0")
+        is_on = (val == "1")
+        return {
+            "supported": True,
+            "start": 75 if is_on else 95,
+            "end": 80 if is_on else 100,
+            "is_conservation": is_on,
+        }
+    elif kind == "lg_care":
+        val = read_val(hw["file"], "100")
+        th_end = int(val) if val.isdigit() else 100
+        return {
+            "supported": True,
+            "start": max(15, th_end - 5),
+            "end": th_end,
+            "is_conservation": (th_end < 100),
+        }
+    elif kind == "samsung_extender":
+        val = read_val(hw["file"], "0")
+        is_on = (val == "1")
+        return {
+            "supported": True,
+            "start": 75 if is_on else 95,
+            "end": 80 if is_on else 100,
+            "is_conservation": is_on,
+        }
+    elif kind == "huawei":
+        parts = read_val(hw["file"], "0 100").split()
+        th_start = int(parts[0]) if len(parts) > 0 and parts[0].isdigit() else 0
+        th_end = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 100
+        return {
+            "supported": True,
+            "start": th_start,
+            "end": th_end,
+            "is_conservation": (th_end < 100),
+        }
+
+    return {"supported": False, "start": 0, "end": 100, "is_conservation": False}
+
 def get_json_data():
     bat_dir = get_battery_dir()
     b = get_battery_info()
@@ -85,18 +209,11 @@ def get_json_data():
     else:
         bl_pct = 100
 
-    start_file = os.path.join(bat_dir, "charge_control_start_threshold") if bat_dir else ""
-    end_file = os.path.join(bat_dir, "charge_control_end_threshold") if bat_dir else ""
-    has_threshold_support = bool(end_file and os.path.exists(end_file))
-    try:
-        th_start = int(read_val(start_file, "0")) if has_threshold_support else 0
-    except ValueError:
-        th_start = 0
-    try:
-        th_end = int(read_val(end_file, "100")) if has_threshold_support else 100
-    except ValueError:
-        th_end = 100
-    is_conservation = (th_end < 100)
+    th_info = read_threshold_info()
+    has_threshold_support = th_info["supported"]
+    th_start = th_info["start"]
+    th_end = th_info["end"]
+    is_conservation = th_info["is_conservation"]
 
     if not has_bat:
         return {
@@ -231,11 +348,14 @@ def show_status():
     else:
         icon = "🔌"
 
-    threshold_desc = f"Стоп: {th_end}% (Старт: {th_start}%)"
-    if th_end == 80:
-        threshold_desc += " \033[1;32m[Режим продления жизни батареи]\033[0m"
-    elif th_end == 100:
-        threshold_desc += " \033[1;34m[Режим полного заряда]\033[0m"
+    if has_threshold_support:
+        threshold_desc = f"Стоп: {th_end}% (Старт: {th_start}%)" if th_start > 0 else f"Стоп: {th_end}%"
+        if is_conservation:
+            threshold_desc += " \033[1;32m[Режим продления жизни батареи: ВКЛ]\033[0m"
+        else:
+            threshold_desc += " \033[1;34m[Режим полного заряда: 100%]\033[0m"
+    else:
+        threshold_desc = "\033[2mНе поддерживается оборудованием\033[0m"
 
     print("")
     print("\033[1;36m╭─ ThinkPad Power & Battery Monitor ─────────────────────────────╮\033[0m")
@@ -246,7 +366,7 @@ def show_status():
     print(f"\033[1;36m│\033[0m 🛡️  \033[1mПорог зарядки: [0m   {threshold_desc}")
     print(f"\033[1;36m│\033[0m 📊 \033[1mЗдоровье батареи: [0m {health_pct:.1f}% ({energy_full_wh:.2f} / {energy_design_wh:.2f} Wh, {cycles} циклов)")
     print("\033[1;36m╰────────────────────────────────────────────────────────────────╯\033[0m")
-    print("\033[2mБыстрые команды: battery save | battery bal | battery perf | battery limit 80 | battery limit 100\033[0m\n")
+    print("\033[2mБыстрые команды: battery save | battery bal | battery perf | battery limit 80 | battery limit 100 | battery conservation [on|off]\033[0m\n")
 
 BRI_PID_FILE = "/tmp/serpantinum_bri_fade.pid"
 HOOK_STAMP_FILE = "/tmp/serpantinum_last_profile_hook"
@@ -440,60 +560,96 @@ def set_profile(prof, set_dbus=True):
     print(f"\033[1;32m✔ Установлен профиль энергопотребления:\033[0m \033[1m{prof}\033[0m")
 
 def set_limit(limit_val):
-    bat_dir = get_battery_dir()
-    if not bat_dir:
-        print("\033[1;31mБатарея не найдена.\033[0m")
+    hw = get_threshold_hardware()
+    if not hw:
+        print("\033[1;31mУправление порогом зарядки / conservation mode не поддерживается этим устройством.\033[0m")
         return False
 
-    start_path = os.path.join(bat_dir, "charge_control_start_threshold")
-    end_path = os.path.join(bat_dir, "charge_control_end_threshold")
-    
-    if not os.path.exists(end_path):
-        print("\033[1;31mУправление порогом зарядки не поддерживается этим устройством.\033[0m")
-        return False
+    cur = read_threshold_info()
+    current_end = cur["end"]
 
-    try:
-        current_end = int(read_val(end_path, "100"))
-    except ValueError:
-        current_end = 100
+    limit_str = str(limit_val).strip().lower()
 
-    if str(limit_val).lower() in ("80", "conservation", "eco", "desk"):
-        target_start = 75
-        target_end = 80
-        desc = "зарядка до 80% (начинается при < 75%). Продлевает срок службы батареи на годы."
-    elif str(limit_val).lower() in ("100", "full", "travel"):
-        target_start = 95
+    if limit_str in ("toggle", "switch"):
+        limit_str = "100" if cur["is_conservation"] else "80"
+
+    if limit_str in ("80", "conservation", "conservation-mode", "eco", "desk", "on", "enable", "true", "1", "yes"):
+        saved_cfg = load_opts_config()
+        saved_custom = int(saved_cfg.get("battery_threshold_end", 80))
+        target_end = saved_custom if (70 <= saved_custom <= 95) else 80
+        target_start = max(15, target_end - 5)
+        desc = f"зарядка до {target_end}% (начинается при < {target_start}%). Продлевает срок службы аккумулятора."
+        enable_conservation = True
+    elif limit_str in ("100", "full", "travel", "off", "disable", "false", "0", "no"):
         target_end = 100
-        desc = "зарядка до 100%. Подходит для поездок."
+        target_start = 95
+        desc = "зарядка до 100% (режим полного заряда). Подходит для поездок."
+        enable_conservation = False
     else:
         try:
-            val = int(limit_val)
+            val = int(limit_str)
             if 20 <= val <= 100:
                 target_end = val
                 target_start = max(15, val - 5)
                 desc = f"зарядка до {val}% (старт при < {target_start}%)."
+                enable_conservation = (val < 100)
             else:
-                print("\033[1;31mУкажите значение от 20 до 100.\033[0m")
+                print("\033[1;31mУкажите значение от 20 до 100 или on/off.\033[0m")
                 return False
         except ValueError:
-            print("\033[1;31mНеверное значение. Примеры: battery limit 80  или  battery limit 100\033[0m")
+            print("\033[1;31mНеверное значение. Примеры: battery limit 80 | battery limit 100 | battery conservation on/off\033[0m")
             return False
 
-    has_start = os.path.exists(start_path)
-
-    # Write in safe order to avoid kernel rejecting threshold if end < start
-    if has_start:
-        if target_end > current_end:
-            write_val(end_path, target_end)
-            write_val(start_path, target_start)
+    kind = hw["kind"]
+    ok = True
+    if kind == "charge_control":
+        end_path = hw["end"]
+        start_path = hw.get("start")
+        has_start = bool(start_path and os.path.exists(start_path))
+        if has_start:
+            if target_end > current_end:
+                w1 = write_val(end_path, target_end)
+                w2 = write_val(start_path, target_start)
+            else:
+                w1 = write_val(start_path, target_start)
+                w2 = write_val(end_path, target_end)
+            ok = w1 or w2
         else:
-            write_val(start_path, target_start)
-            write_val(end_path, target_end)
-    else:
-        write_val(end_path, target_end)
+            ok = write_val(end_path, target_end)
 
-    print(f"\033[1;32m✔ Режим защиты аккумулятора:\033[0m {desc}")
-    return True
+        # Sync legacy ThinkPad nodes if present
+        if hw.get("end_legacy"):
+            write_val(hw["end_legacy"], target_end)
+        if hw.get("start_legacy"):
+            write_val(hw["start_legacy"], target_start)
+
+    elif kind == "ideapad_conservation":
+        ok = write_val(hw["file"], "1" if enable_conservation else "0")
+
+    elif kind == "lg_care":
+        ok = write_val(hw["file"], str(target_end))
+
+    elif kind == "samsung_extender":
+        ok = write_val(hw["file"], "1" if enable_conservation else "0")
+
+    elif kind == "huawei":
+        ok = write_val(hw["file"], f"{target_start} {target_end}")
+
+    # Persist setting in power_optimizations.json
+    try:
+        cfg = load_opts_config()
+        cfg["battery_threshold_end"] = target_end
+        cfg["battery_threshold_start"] = target_start
+        cfg["conservation_mode"] = enable_conservation
+        save_opts_config(cfg)
+    except Exception:
+        pass
+
+    if ok:
+        print(f"\033[1;32m✔ Режим защиты аккумулятора:\033[0m {desc}")
+    else:
+        print(f"\033[1;33m⚠ Запрос отправлен, но запись в sysfs не удалась (требуются права root/sudo):\033[0m {desc}")
+    return ok
 
 OPTS_CONFIG_PATH = os.path.expanduser("~/.config/serpantinum/power_optimizations.json")
 
@@ -1024,8 +1180,26 @@ def set_optimization(opt_id, enabled):
         apply_single_opt(opt_id, bool(enabled))
     return get_optimizations_list()
 
+def apply_saved_battery_threshold():
+    saved = load_opts_config()
+    saved_end = saved.get("battery_threshold_end")
+    if saved_end is not None:
+        try:
+            val = int(saved_end)
+            if 20 <= val <= 100:
+                hw = get_threshold_hardware()
+                if hw:
+                    cur = read_threshold_info()
+                    if cur.get("end") != val:
+                        set_limit(val)
+        except Exception:
+            pass
+
 def apply_all_optimizations():
-    # Only apply if in power-saver
+    # Always restore battery charge threshold / conservation mode if configured
+    apply_saved_battery_threshold()
+
+    # Power-saver profile optimizations
     platform_profile = get_current_profile()
     if platform_profile not in ("low-power", "power-saver"):
         return False
@@ -1145,11 +1319,20 @@ def main():
             set_profile(sys.argv[2].lower())
         else:
             print("Использование: battery profile [power-saver | balanced | performance]")
+    elif arg in ("conservation", "conservation-mode", "conservation_mode", "--conservation", "-c"):
+        if len(sys.argv) > 2:
+            set_limit(sys.argv[2])
+        else:
+            set_limit("toggle")
     elif arg in ("limit", "threshold", "cap", "set-limit"):
         if len(sys.argv) > 2:
             set_limit(sys.argv[2])
         else:
-            print("Использование: battery limit [80 | 100 | <процент>]")
+            info = read_threshold_info()
+            if info["supported"]:
+                status_str = "включен" if info["is_conservation"] else "выключен"
+                print(f"Текущий порог: {info['end']}% (Режим сбережения: {status_str})")
+            print("Использование: battery limit [80 | 100 | <процент> | on | off | toggle]")
     elif arg in ("watch", "top"):
         try:
             while True:
@@ -1159,16 +1342,16 @@ def main():
         except KeyboardInterrupt:
             pass
     elif arg in ("help", "-h", "--help"):
-        print("ThinkPad Battery Manager")
+        print("Battery & Power Manager")
         print("Использование:")
-        print("  battery               - текущий статус и потребление ватт")
-        print("  battery json          - статус в формате JSON (для GUI и скриптов)")
-        print("  battery save          - включить экономный режим (power-saver)")
-        print("  battery bal           - сбалансированный режим (balanced)")
-        print("  battery perf          - режим максимальной мощности (performance)")
-        print("  battery limit 80      - продление жизни батареи (зарядка до 80%)")
-        print("  battery limit 100     - полная зарядка (100% для поездок)")
-        print("  battery watch         - мониторинг расхода в реальном времени")
+        print("  battery                              - текущий статус и потребление ватт")
+        print("  battery json                         - статус в формате JSON (для GUI и скриптов)")
+        print("  battery save                         - включить экономный режим (power-saver)")
+        print("  battery bal                          - сбалансированный режим (balanced)")
+        print("  battery perf                         - режим максимальной мощности (performance)")
+        print("  battery conservation [on|off|toggle] - режим защиты аккумулятора (80%)")
+        print("  battery limit [80 | 100 | <процент>] - ограничение уровня заряда батареи")
+        print("  battery watch                        - мониторинг расхода в реальном времени")
     else:
         print(f"Неизвестная команда: {arg}. Запустите 'battery help' для справки.")
 
