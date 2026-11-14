@@ -1867,6 +1867,7 @@ Item {
 
     ListView {
         id: view
+        focus: true
         anchors.fill: parent
         opacity: window.isReady ? 1.0 : 0.0
         anchors.margins: window.isReady ? 0 : window.s(40)

@@ -20,7 +20,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
     focusable: clipboardWindow.isVisible
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.keyboardFocus: clipboardWindow.isVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: clipboardWindow.isVisible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     color: "transparent"
 
     mask: Region { item: topBarHole; intersection: Intersection.Xor }

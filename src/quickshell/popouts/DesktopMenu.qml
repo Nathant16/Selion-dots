@@ -17,7 +17,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Bottom
     focusable: desktopMenuWindow.isVisible
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.keyboardFocus: desktopMenuWindow.isVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: desktopMenuWindow.isVisible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     color: "transparent"
 
     Shortcut {

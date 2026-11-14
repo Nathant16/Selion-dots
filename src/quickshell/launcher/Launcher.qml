@@ -21,7 +21,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
     focusable: launcherWindow.isVisible
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.keyboardFocus: launcherWindow.isVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: launcherWindow.isVisible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     color: "transparent"
 
     mask: Region { item: topBarHole; intersection: Intersection.Xor }

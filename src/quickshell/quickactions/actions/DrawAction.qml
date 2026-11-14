@@ -99,7 +99,7 @@ Item {
         }
     ]
     property int activePaletteIndex: 0
-    property string picturesDir: ""
+    property string picturesDir: Quickshell.env("HOME") + "/Pictures"
 
     Process {
         id: getPicturesDir

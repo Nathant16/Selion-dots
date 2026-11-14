@@ -16,7 +16,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
     focusable: dashboardWindow.isOpen
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.keyboardFocus: dashboardWindow.isOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: dashboardWindow.isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     color: "transparent"
 
     mask: Region { item: topBarHole; intersection: Intersection.Xor }

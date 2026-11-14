@@ -225,7 +225,7 @@ PanelWindow {
 
     exclusionMode: ExclusionMode.Ignore
     focusable: true
-    WlrLayershell.keyboardFocus: masterWindow.isVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: masterWindow.isVisible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     implicitWidth: masterWindow.screen ? masterWindow.screen.width : 0
     implicitHeight: masterWindow.screen ? masterWindow.screen.height : 0
@@ -559,6 +559,9 @@ PanelWindow {
     onIsVisibleChanged: {
         if (isVisible) {
             widgetStack.forceActiveFocus();
+            if (widgetStack.currentItem && typeof widgetStack.currentItem.forceActiveFocus === "function") {
+                widgetStack.currentItem.forceActiveFocus();
+            }
         } else if (currentActive === "hidden" && !delayedClear.running) {
             for (let k in widgetCache) {
                 let it = widgetCache[k];
