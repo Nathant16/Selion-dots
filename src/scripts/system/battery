@@ -585,7 +585,7 @@ def set_saver_brightness(val):
         val = int(val)
         val = max(50, min(95, val))
     except (ValueError, TypeError):
-        val = 80
+        val = 60
     saved = load_opts_config()
     saved["power_saver_brightness"] = val
     save_opts_config(saved)
@@ -1104,7 +1104,7 @@ def main():
         apply_all_optimizations()
         print("✔ Applied power optimizations from config.")
     elif arg in ("fade-brightness", "fade_brightness"):
-        target = 80
+        target = 60
         dur = 5.0
         if len(sys.argv) > 2:
             try:
