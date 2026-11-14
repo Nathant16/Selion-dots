@@ -139,7 +139,7 @@ _pad_label() {
 }
 
 draw_banner() {
-    clear
+    clear 2>/dev/null || true
     printf "%s%s" "$BOLD" "$C_CYAN"
     cat << "EOF"
 ███████╗███████╗██╗     ██╗ ██████╗ ███╗   ██╗
@@ -181,6 +181,16 @@ EOF
     printf "\033[K%s %s%s%s (%s)\n" "$BOLD" "$(_pad_label "$lbl_ver" "$col_w")" "$RESET" "$TARGET_VERSION" "$TARGET_COMMIT"
     printf "\033[K%s %s%s%s\n" "$BOLD" "$(_pad_label "$lbl_mode" "$col_w")" "$RESET" "$INSTALL_STATE"
     printf "\033[K%s================================================================================%s\n\n" "$C_BLUE" "$RESET"
+}
+
+draw_status_bar() {
+    local left="${1:-}"
+    local right="${2:-}"
+    if [ -n "$right" ]; then
+        printf "\033[K%s%s%s %s(%s)%s\n" "$C_CYAN" "$left" "$RESET" "$DIM" "$right" "$RESET"
+    elif [ -n "$left" ]; then
+        printf "\033[K%s%s%s\n" "$C_CYAN" "$left" "$RESET"
+    fi
 }
 
 show_package_overview() {
@@ -920,20 +930,20 @@ run_installer_ui() {
                         return 0
                     else
                         cleanup_terminal
-                        clear
+                        clear 2>/dev/null || true
                         exit 0
                     fi
                     ;;
                 "9")
                     if [[ "$INSTALL_STATE" == "current" ]]; then
                         cleanup_terminal
-                        clear
+                        clear 2>/dev/null || true
                         exit 0
                     fi
                     ;;
                 ESC|[qQ])
                     cleanup_terminal
-                    clear
+                    clear 2>/dev/null || true
                     exit 0
                     ;;
                 ENTER|SPACE)
@@ -983,14 +993,14 @@ run_installer_ui() {
                                 return 0
                             else
                                 cleanup_terminal
-                                clear
+                                clear 2>/dev/null || true
                                 exit 0
                             fi
                             ;;
                         *"9."*)
                             if [[ "$INSTALL_STATE" == "current" ]]; then
                                 cleanup_terminal
-                                clear
+                                clear 2>/dev/null || true
                                 exit 0
                             fi
                             ;;
