@@ -16,12 +16,6 @@ Item {
     focus: true
     Keys.forwardTo: [view]
 
-    onVisibleChanged: {
-        if (visible) {
-            view.forceActiveFocus();
-        }
-    }
-
     function dismissHost() {
         if (typeof masterWindow !== "undefined" && masterWindow.switchWidget) {
             masterWindow.switchWidget("hidden", "");
