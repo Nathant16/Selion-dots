@@ -794,7 +794,6 @@ ALLOWED_SCRIPTS=(
     "screenshot"
     "location_manual"
     "gamma"
-    "autostart"
 )
 
 COMMAND="$1"

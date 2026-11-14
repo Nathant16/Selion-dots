@@ -180,50 +180,6 @@
             "changelog": "سجل التغييرات",
             "update_btn": "تحديث"
         },
-        "autostart": {
-            "title": "بدء التشغيل التلقائي",
-            "desc": "إدارة البرامج والنصوص البرمجية التي تعمل تلقائيًا عند بدء الجلسة",
-            "master_switch": {
-                "title": "تفعيل بدء التشغيل التلقائي",
-                "desc": "تشغيل قائمة البرامج المحددة عند تسجيل الدخول"
-            },
-            "add_button": "إضافة تطبيق",
-            "empty_title": "لا توجد تطبيقات تبدأ تلقائيًا",
-            "empty_desc": "انقر على إضافة تطبيق لتحديد الأوامر وفترات التأخير.",
-            "name_label": "الاسم",
-            "name_placeholder": "مثال Discord, EasyEffects, Script",
-            "exec_label": "الأمر القابل للتنفيذ",
-            "exec_placeholder": "مسار البرنامج أو الأمر مع الخيارات (مثال: discord --start-minimized)",
-            "browse_file": "استعراض الملفات",
-            "delay_label": "تأخير بدء التشغيل",
-            "delay_desc": "الوقت بالثواني للانتظار قبل التشغيل",
-            "delay_unit": "ث",
-            "count_label": "عدد مرات التشغيل",
-            "count_desc": "عدد النسخ المراد تشغيلها عند البدء",
-            "repeat_delay_label": "فترة التكرار",
-            "repeat_delay_desc": "التأخير بين عمليات التشغيل المتكررة",
-            "workspace_label": "مساحة العمل",
-            "workspace_default": "افتراضي",
-            "silent_label": "تشغيل صامت",
-            "silent_desc": "عدم سحب التركيز عند فتح النافذة",
-            "condition_label": "شرط التشغيل",
-            "condition_always": "دائمًا",
-            "condition_ac_only": "عند الاتصال بالكهرباء فقط",
-            "condition_battery_only": "على البطارية فقط",
-            "condition_multi_monitor": "عند وجود شاشات متعددة فقط",
-            "restart_crash_label": "إعادة التشغيل التلقائي عند الانهيار",
-            "restart_crash_desc": "إعادة تشغيل العملية تلقائيًا في حال توقفها المفاجئ",
-            "status_running": "قيد التشغيل",
-            "status_success": "ناجح",
-            "status_failed": "فشل",
-            "status_idle": "خامل",
-            "view_log": "السجل",
-            "no_log": "السجل فارغ حاليًا",
-            "run_now": "تشغيل الآن",
-            "delete": "حذف",
-            "toggle": "تفعيل / تعطيل",
-            "close": "إغلاق"
-        },
         "bar": {
             "autohide": {
                 "desc": "إخفاء الشريط عند عدم تحويم مؤشر الفأرة فوقه",
@@ -1083,8 +1039,6 @@
             "bar_side_modules": "الوحدات الجانبية",
             "fingerprint": "بصمات الأصابع",
             "power": "الطاقة",
-            "autostart": "بدء التشغيل التلقائي",
-            "keybindings": "اختصارات لوحة المفاتيح",
             "packages": "حزم إضافية"
         },
         "theme": {
@@ -1649,30 +1603,6 @@
                 "display_refresh_save_title": "معدل تحديث الشاشة 48 هرتز على البطارية",
                 "display_refresh_save_desc": "خفض معدل تحديث الشاشة إلى 48 هرتز على البطارية في Hyprland و Sway"
             }
-        },
-        "keybindings": {
-            "title": "اختصارات لوحة المفاتيح",
-            "subtitle": "ورقة مرجعية كاملة للاختصارات المتزامنة عبر مدراء النوافذ الـ 5",
-            "close_editor": "إغلاق",
-            "add_custom": "+ اختصار مخصص",
-            "search_placeholder": "بحث بالمفتاح أو الإجراء (مثال Super + I، الطرفية)...",
-            "editor_title": "إضافة اختصار مخصص (userprefs)",
-            "save": "حفظ",
-            "action_cmd": "أمر / إجراء (مثال: zen-browser)",
-            "cat_all": "الكل",
-            "cat_apps": "التطبيقات",
-            "cat_custom": "مخصص",
-            "cat_media": "الوسائط",
-            "cat_shell": "الطرفية",
-            "cat_windows": "النوافذ",
-            "custom_badge": "مخصص",
-            "edit": "تعديل التركيبة",
-            "edit_custom_title": "تعديل اختصار المفاتيح",
-            "edit_standard_title": "تعديل الاختصار القياسي",
-            "keys_hint": "اضغط على المفاتيح أو اكتب (مثال: Super + T)",
-            "name": "الاسم",
-            "overridden": "معدل",
-            "reset_default": "إعادة التعيين إلى الافتراضي"
         },
         "wallpaper": {
             "select_wallpaper": "اختيار خلفية الشاشة"

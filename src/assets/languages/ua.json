@@ -56,8 +56,6 @@
             "bar_side_modules": "Бічні модулі",
             "fingerprint": "Відбитки пальців",
             "power": "Живлення",
-            "autostart": "Автозапуск",
-            "keybindings": "Гарячі клавіші",
             "packages": "Додаткові пакети"
         },
         "launcher": {
@@ -989,50 +987,6 @@
             "screen_time": "Екранний час"
         },
         "update_available": "Доступні оновлення",
-        "autostart": {
-            "title": "Автозапуск",
-            "desc": "Керування програмами та скриптами, що запускаються під час входу",
-            "master_switch": {
-                "title": "Увімкнути автозапуск",
-                "desc": "Автоматично виконувати список програм під час входу"
-            },
-            "add_button": "Додати програму",
-            "empty_title": "Немає програм в автозапуску",
-            "empty_desc": "Натисніть «Додати програму», щоб налаштувати команди, затримки та кількість запусків.",
-            "name_label": "Назва",
-            "name_placeholder": "наприклад, Discord, EasyEffects, Скрипт",
-            "exec_label": "Команда запуску",
-            "exec_placeholder": "Шлях до файлу або команда з прапорцями (наприклад, discord --start-minimized)",
-            "browse_file": "Обрати файл",
-            "delay_label": "Затримка запуску",
-            "delay_desc": "Час очікування в секундах перед запуском",
-            "delay_unit": "с",
-            "count_label": "Кількість запусків",
-            "count_desc": "Кількість екземплярів для запуску під час старту",
-            "repeat_delay_label": "Інтервал повтору",
-            "repeat_delay_desc": "Затримка між повторними запусками",
-            "workspace_label": "Робочий простір",
-            "workspace_default": "За замовчуванням",
-            "silent_label": "Тихий запуск",
-            "silent_desc": "Не перехоплювати фокус під час відкриття вікна",
-            "condition_label": "Умова запуску",
-            "condition_always": "Завжди",
-            "condition_ac_only": "Лише від мережі",
-            "condition_battery_only": "Лише від батареї",
-            "condition_multi_monitor": "Лише за наявності моніторів",
-            "restart_crash_label": "Автоперезапуск / Watchdog",
-            "restart_crash_desc": "Автоматично перезапускати процес у разі збою",
-            "status_running": "Працює",
-            "status_success": "Успішно",
-            "status_failed": "Помилка",
-            "status_idle": "Очікування",
-            "view_log": "Журнал",
-            "no_log": "Журнал порожній",
-            "run_now": "Запустити зараз",
-            "delete": "Видалити",
-            "toggle": "Увімкнути / Вимкнути",
-            "close": "Закрити"
-        },
         "osd": {
             "capslock": {
                 "title": "Показувати під час Caps Lock"
@@ -1495,30 +1449,6 @@
                 "display_refresh_save_title": "Частота екрана 48 Гц на батареї",
                 "display_refresh_save_desc": "Зниження частоти оновлення дисплея до 48 Гц у Hyprland та Sway"
             }
-        },
-        "keybindings": {
-            "title": "Гарячі клавіші",
-            "subtitle": "Повна шпаргалка комбінацій, синхронізованих між усіма 5 WM",
-            "close_editor": "Закрити",
-            "add_custom": "+ Власний бінд",
-            "search_placeholder": "Пошук за комбінацією або дією (наприклад, Super + I, термінал)...",
-            "editor_title": "Додати власну комбінацію (userprefs)",
-            "save": "Зберегти",
-            "action_cmd": "Команда / Дія (напр. zen-browser)",
-            "cat_all": "Всі",
-            "cat_apps": "Програми",
-            "cat_custom": "Власні",
-            "cat_media": "Медіа",
-            "cat_shell": "Оболонка",
-            "cat_windows": "Вікна",
-            "custom_badge": "Власний",
-            "edit": "Змінити комбінацію",
-            "edit_custom_title": "Редагувати комбінацію",
-            "edit_standard_title": "Змінити стандартну комбінацію",
-            "keys_hint": "Натисніть сполучення або введіть (напр. Super + T)",
-            "name": "Назва",
-            "overridden": "Змінено",
-            "reset_default": "Скинути до типових"
         },
         "wallpaper": {
             "select_wallpaper": "Вибрати шпалери"

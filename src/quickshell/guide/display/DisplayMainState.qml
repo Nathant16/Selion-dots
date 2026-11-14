@@ -243,19 +243,8 @@ GuideTab {
         id: monitorDetector
         running: false
         command: [
-            "bash",
-            "-c",
-            displayTabRoot.compositor === "niri"
-                ? "niri msg -j outputs 2>/dev/null"
-                : (displayTabRoot.compositor === "sway"
-                    ? "swaymsg -t get_outputs -r 2>/dev/null"
-                    : (displayTabRoot.compositor === "mango"
-                        ? "mmsg get all-monitors 2>/dev/null | jq -c '.monitors' 2>/dev/null"
-                        : (displayTabRoot.compositor === "hyprland"
-                            ? "hyprctl monitors all -j 2>/dev/null || hyprctl monitors -j 2>/dev/null"
-                            : (displayTabRoot.compositor === "driftwm"
-                                ? "driftwm msg state --json 2>/dev/null | jq -c '.Ok.State.outputs' 2>/dev/null"
-                                : "true"))))
+            "python3",
+            Caching.serpantinumDir + "/scripts/system/monitors_detector.py"
         ]
         stdout: StdioCollector {
             onStreamFinished: {
@@ -267,97 +256,8 @@ GuideTab {
                 let mList = [];
                 try {
                     let data = JSON.parse(out.trim());
-                    if (displayTabRoot.compositor === "niri") {
-                        let keys = Object.keys(data);
-                        for (let i = 0; i < keys.length; i++) {
-                            let k = keys[i];
-                            let item = data[k];
-                            let modeIdx = (item.current_mode !== undefined && item.current_mode !== null) ? item.current_mode : 0;
-                            let modes = item.modes || [];
-                            let m = modes[modeIdx] || modes[0] || {};
-                            let w = m.width || 0;
-                            let h = m.height || 0;
-                            let rr = m.refresh_rate ? Math.round(m.refresh_rate / 1000) : 60;
-                            let sc = item.scale !== undefined ? item.scale : 1.0;
-                            let isOff = item.active === false || item.is_active === false || (modes.length > 0 && (item.current_mode === null || item.current_mode === undefined));
-                            mList.push({
-                                name: k,
-                                dimensions: w + "x" + h,
-                                framerate: rr.toString(),
-                                scale: sc,
-                                active: !isOff
-                            });
-                        }
-                    } else if (displayTabRoot.compositor === "mango") {
-                        if (Array.isArray(data)) {
-                            for (let i = 0; i < data.length; i++) {
-                                let item = data[i];
-                                mList.push({
-                                    name: item.name || "",
-                                    dimensions: (item.width || 0) + "x" + (item.height || 0),
-                                    framerate: "60",
-                                    scale: item.scale !== undefined ? item.scale : 1.0,
-                                    active: item.active !== false
-                                });
-                            }
-                        }
-                    } else if (displayTabRoot.compositor === "sway") {
-                        if (Array.isArray(data)) {
-                            for (let i = 0; i < data.length; i++) {
-                                let item = data[i];
-                                let name = item.name || "";
-                                let cm = item.current_mode || {};
-                                let w = cm.width || (item.rect ? item.rect.width : 0);
-                                let h = cm.height || (item.rect ? item.rect.height : 0);
-                                let rr = cm.refresh ? Math.round(cm.refresh / 1000) : 60;
-                                let sc = item.scale !== undefined ? item.scale : 1.0;
-                                let isOff = item.active === false;
-                                mList.push({
-                                    name: name,
-                                    dimensions: w + "x" + h,
-                                    framerate: rr.toString(),
-                                    scale: sc,
-                                    active: !isOff
-                                });
-                            }
-                        }
-                    } else if (displayTabRoot.compositor === "hyprland") {
-                        if (Array.isArray(data)) {
-                            for (let i = 0; i < data.length; i++) {
-                                let item = data[i];
-                                let name = item.name || "";
-                                let w = item.width || 0;
-                                let h = item.height || 0;
-                                let rr = item.refreshRate ? Math.round(item.refreshRate) : 60;
-                                let sc = item.scale !== undefined ? item.scale : 1.0;
-                                let isOff = item.disabled === true;
-                                mList.push({
-                                    name: name,
-                                    dimensions: w + "x" + h,
-                                    framerate: rr.toString(),
-                                    scale: sc,
-                                    active: !isOff
-                                });
-                            }
-                        }
-                    } else if (displayTabRoot.compositor === "driftwm") {
-                        if (Array.isArray(data)) {
-                            for (let i = 0; i < data.length; i++) {
-                                let item = data[i];
-                                let name = item.name || "eDP-1";
-                                let sz = item.size || [1920, 1080];
-                                let w = sz[0] || 1920;
-                                let h = sz[1] || 1080;
-                                let sc = item.zoom !== undefined ? item.zoom : 1.0;
-                                mList.push({
-                                    name: name,
-                                    dimensions: w + "x" + h,
-                                    framerate: "60",
-                                    scale: sc,
-                                    active: item.active !== false
-                                });
-                            }
-                        }
+                    if (Array.isArray(data)) {
+                        mList = data;
                     }
                 } catch (e) {
                 }
@@ -506,6 +406,10 @@ GuideTab {
             Quickshell.execDetached(["bash", "-c", "swaymsg output " + monName + " mode " + resStr + "@" + (rateStr || "60") + "Hz"]);
         } else if (displayTabRoot.compositor === "niri") {
             Quickshell.execDetached(["bash", "-c", "niri msg output " + monName + " mode " + resStr + "@" + (rateStr || "60")]);
+        } else {
+            // Universal Wayland output management (driftwm, labwc, etc.)
+            let cmd = rateStr ? ("wlr-randr --output " + monName + " --mode " + resStr + "@" + rateStr) : ("wlr-randr --output " + monName + " --mode " + resStr);
+            Quickshell.execDetached(["bash", "-c", cmd]);
         }
         displayTabRoot.updateMonitorSetting(monName, "resolution", resStr);
         if (rateStr) displayTabRoot.updateMonitorSetting(monName, "framerate", rateStr);
@@ -524,6 +428,8 @@ GuideTab {
             let luaCmd = 'hl.monitor({ output = "' + monName + '", mode = "' + modeStr + '", position = "auto", scale = ' + scaleVal.toString() + ' })';
             Quickshell.execDetached(["bash", "-c", "hyprctl eval '" + luaCmd + "' || hyprctl keyword monitor " + monName + "," + modeStr + ",auto," + scaleVal.toString()]);
             displayTabRoot.saveHyprlandMonitor(monName, modeStr, scaleVal);
+        } else {
+            Quickshell.execDetached(["bash", "-c", "wlr-randr --output " + monName + " --scale " + scaleVal.toString()]);
         }
     }
 

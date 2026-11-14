@@ -56,8 +56,6 @@
             "bar_side_modules": "Módulos laterales",
             "fingerprint": "Huellas dactilares",
             "power": "Energía",
-            "autostart": "Inicio automático",
-            "keybindings": "Atajos de teclado",
             "packages": "Paquetes adicionales"
         },
         "launcher": {
@@ -989,50 +987,6 @@
             "screen_time": "Tiempo de pantalla"
         },
         "update_available": "Actualización disponible",
-        "autostart": {
-            "title": "Inicio automático",
-            "desc": "Gestionar programas y scripts iniciados automáticamente al comenzar la sesión",
-            "master_switch": {
-                "title": "Activar inicio automático",
-                "desc": "Ejecutar globalmente las aplicaciones configuradas al iniciar sesión"
-            },
-            "add_button": "Añadir aplicación",
-            "empty_title": "No hay aplicaciones en inicio automático",
-            "empty_desc": "Haga clic en Añadir aplicación para configurar comandos y retardos.",
-            "name_label": "Nombre",
-            "name_placeholder": "ej: Discord, EasyEffects, Script",
-            "exec_label": "Comando ejecutable",
-            "exec_placeholder": "Ruta o comando con argumentos (ej: discord --start-minimized)",
-            "browse_file": "Examinar",
-            "delay_label": "Retardo de inicio",
-            "delay_desc": "Tiempo de espera en segundos antes de iniciar",
-            "delay_unit": "s",
-            "count_label": "Cantidad de ejecuciones",
-            "count_desc": "Número de instancias a ejecutar al inicio",
-            "repeat_delay_label": "Intervalo de repetición",
-            "repeat_delay_desc": "Retardo entre ejecuciones repetidas",
-            "workspace_label": "Espacio de trabajo",
-            "workspace_default": "Por defecto",
-            "silent_label": "Inicio silencioso",
-            "silent_desc": "No robar el foco al abrir la ventana",
-            "condition_label": "Condición de inicio",
-            "condition_always": "Siempre",
-            "condition_ac_only": "Solo conectado a la corriente",
-            "condition_battery_only": "Solo con batería",
-            "condition_multi_monitor": "Solo con múltiples monitores",
-            "restart_crash_label": "Keep-Alive / Watchdog",
-            "restart_crash_desc": "Reiniciar el proceso automáticamente si falla",
-            "status_running": "En ejecución",
-            "status_success": "Completado",
-            "status_failed": "Fallido",
-            "status_idle": "Inactivo",
-            "view_log": "Registro",
-            "no_log": "El registro está vacío",
-            "run_now": "Ejecutar ahora",
-            "delete": "Eliminar",
-            "toggle": "Activar / Desactivar",
-            "close": "Cerrar"
-        },
         "osd": {
             "capslock": {
                 "title": "Mostrar con Bloq Mayús"
@@ -1495,30 +1449,6 @@
                 "display_refresh_save_title": "Frecuencia de pantalla a 48 Hz en batería",
                 "display_refresh_save_desc": "Reducir la tasa de refresco a 48 Hz en batería en Hyprland y Sway"
             }
-        },
-        "keybindings": {
-            "title": "Atajos de teclado",
-            "subtitle": "Chuleta completa de atajos sincronizados en los 5 WMs",
-            "close_editor": "Cerrar",
-            "add_custom": "+ Atajo personalizado",
-            "search_placeholder": "Buscar por tecla o acción (ej: Super + I, terminal)...",
-            "editor_title": "Añadir atajo personalizado (userprefs)",
-            "save": "Guardar",
-            "action_cmd": "Comando / Acción (ej. zen-browser)",
-            "cat_all": "Todo",
-            "cat_apps": "Aplicaciones",
-            "cat_custom": "Personalizados",
-            "cat_media": "Multimedia",
-            "cat_shell": "Shell",
-            "cat_windows": "Ventanas",
-            "custom_badge": "Personalizado",
-            "edit": "Editar combinación",
-            "edit_custom_title": "Editar atajo de teclado",
-            "edit_standard_title": "Editar atajo estándar",
-            "keys_hint": "Presiona la combinación o escribe (ej. Super + T)",
-            "name": "Nombre",
-            "overridden": "Modificado",
-            "reset_default": "Restablecer por defecto"
         },
         "wallpaper": {
             "select_wallpaper": "Seleccionar fondo de pantalla"

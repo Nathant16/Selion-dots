@@ -272,7 +272,7 @@ Rectangle {
                 implicitWidth: rootObj.s(180)
                 implicitHeight: rootObj.s(32)
                 cornerRadius: rootObj.s(6)
-                options: ["1920x1080", "2560x1440", "3840x2160", "2560x1600", "1920x1200", "1600x900", "1366x768", "1280x720"]
+                options: (modelData.modes && modelData.modes.length > 0) ? modelData.modes : [modelData.dimensions || "1920x1080"]
                 currentIndex: {
                     let cur = modelData.dimensions || "1920x1080";
                     let idx = options.indexOf(cur);
