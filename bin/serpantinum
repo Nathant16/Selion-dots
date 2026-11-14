@@ -440,6 +440,7 @@ cli_set_theme() {
     cli_cfg_apply '.theme = ((.theme // {}) + {activePreset: $n, matugen: false, colors: $c})' --arg n "$name" --argjson c "$colors"
     cli_ipc matugen generateFromStatic "$colors" "$mode"
     cli_ipc theme reloadColors
+    python3 "$SERPANTINUM_DIR/scripts/theming/sync_compositor_theme.py" "$colors" 2>/dev/null || true
 }
 
 cli_app_theme() {

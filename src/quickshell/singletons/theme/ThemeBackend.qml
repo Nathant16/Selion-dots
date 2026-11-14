@@ -323,6 +323,11 @@ Item {
         }
     }
 
+    function syncCompositors() {
+        let script = ((typeof Caching !== "undefined" && Caching.serpantinumDir) ? Caching.serpantinumDir : (Quickshell.env("HOME") + "/.local/share/serpantinum/src")) + "/scripts/theming/sync_compositor_theme.py";
+        Quickshell.execDetached(["python3", script]);
+    }
+
     function _flushColorQueue() {
         let n = Math.min(root.colorsPerFrame, root._colorQueue.length);
         for (let i = 0; i < n; i++) {
@@ -330,13 +335,18 @@ Item {
             root[item.name] = item.value;
         }
         root._colorQueue = root._colorQueue.slice(n);
+        if (root._colorQueue.length === 0) {
+            root.syncCompositors();
+        }
     }
 
     FrameAnimation {
         id: colorStepTimer
         onTriggered: {
             root._flushColorQueue();
-            if (root._colorQueue.length === 0) stop();
+            if (root._colorQueue.length === 0) {
+                stop();
+            }
         }
     }
 
@@ -389,5 +399,6 @@ Item {
         root._readInProgress = true;
         root.updateColors();
         root.updateActiveFontLoader();
+        root.syncCompositors();
     }
 }

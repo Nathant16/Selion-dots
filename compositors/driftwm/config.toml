@@ -71,12 +71,12 @@ fit_padding = 40.0
 # █▄▄█ █  █ ▀█▀ █ ▀ █ █▄▄█   █   ▀█▀ █  █ █  █ ▀▀█
 # ▀  ▀ ▀  ▀ ▀▀▀ ▀   ▀ ▀  ▀   ▀   ▀▀▀ ▀▀▀▀ ▀  ▀ ▀▀▀
 [decorations]
-corner_radius = 16
+corner_radius = 12
 shadow = true
 default_mode = "minimal"
 border_width = 2
-border_color = "#38342b"
-border_color_focused = "#e0c56d"
+border_color = "#313244"
+border_color_focused = "#cba6f7"
 opacity = 1.0
 opacity_focused = 1.0
 

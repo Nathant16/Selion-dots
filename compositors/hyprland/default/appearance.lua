@@ -17,6 +17,24 @@ hl.animation({ leaf = "borderangle", enabled = true, speed = 30, bezier = "liner
 hl.animation({ leaf = "fade", enabled = true, speed = 6, bezier = "wind" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "wind", style = "slide" })
 
+local home = os.getenv("HOME") or ""
+local theme_file = home .. "/.local/state/serpantinum/theme_hyprland.lua"
+local active_border = "rgba(cba6f7ee) rgba(89b4faee) 45deg"
+local inactive_border = "rgba(313244aa)"
+local rounding = 12
+
+local ok, theme = pcall(function()
+    local chunk = loadfile(theme_file)
+    if chunk then return chunk() end
+    return nil
+end)
+
+if ok and type(theme) == "table" then
+    if theme.active_border then active_border = theme.active_border end
+    if theme.inactive_border then inactive_border = theme.inactive_border end
+    if theme.rounding then rounding = theme.rounding end
+end
+
 hl.config({
     general = {
         border_size = 2,
@@ -25,11 +43,11 @@ hl.config({
         float_gaps = 6,
         resize_on_border = true,
         extend_border_grab_area = 30,
-        "col.active_border = rgba(cba6f7ee) rgba(89b4faee) 45deg",
-        "col.inactive_border = rgba(313244aa)",
+        "col.active_border = " .. active_border,
+        "col.inactive_border = " .. inactive_border,
     },
     decoration = {
-        rounding = 12,
+        rounding = rounding,
         active_opacity = 1.0,
         inactive_opacity = 1.0,
         shadow = {

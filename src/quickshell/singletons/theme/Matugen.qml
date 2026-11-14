@@ -314,6 +314,7 @@ Item {
                     Quickshell.execDetached(["bash", "-c", "cp -f \"$1/qs_colors.json\" \"$1/qs_matugen_colors.json\" 2>/dev/null || true", "_", root.stateDir]);
                 }
                 AppTheming.apply();
+                ThemeBackend.syncCompositors();
             }
 
             root._currentReqType = "";

@@ -8,7 +8,16 @@ layout {
         off
     }
     focus-ring {
-        off
+        width 2
+        active-gradient from="#cba6f7" to="#89b4fa" angle=45
+        inactive-color "#313244"
     }
 }
+
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+include "~/.local/state/serpantinum/theme_niri.kdl"
 
