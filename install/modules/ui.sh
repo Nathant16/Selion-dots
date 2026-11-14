@@ -532,8 +532,8 @@ PKGS_BROWSERS=(
 )
 
 PKGS_GAMES=(
-    "steam:Steam (Official gaming client) [Recommended, Default]"
-    "gamemode:GameMode (Game performance optimization service) [Recommended, Default]"
+    "steam:Steam (Official gaming client) [Recommended]"
+    "gamemode:GameMode (Game performance optimization service) [Recommended]"
     "mangohud:MangoHud (Overlay for FPS, temperatures & hardware stats)"
     "portproton:PortProton (Windows games launcher & presets) [Recommended]"
     "prismlauncher:Prism Launcher (Custom Minecraft launcher with instance manager)"
@@ -561,7 +561,7 @@ AVAILABLE_ADDITIONAL_PKGS=(
     "${PKGS_OFFICE[@]}"
     "${PKGS_MEDIA[@]}"
 )
-SELECTED_ADDITIONAL_PKGS=("steam" "gamemode")
+SELECTED_ADDITIONAL_PKGS=()
 
 toggle_additional_pkg() {
     local target="$1"
@@ -707,12 +707,12 @@ additional_packages_menu() {
         local s_med="${DIM}[None]${RESET}"; [ "$c_med" -gt 0 ] && s_med="${C_GREEN}[$c_med Selected]${RESET}"
 
         local items=()
-        items+=("1. 🛠️  Development $s_dev")
-        items+=("2. 💬 Social Media $s_soc")
-        items+=("3. 🌐 Web Browsers $s_brw")
-        items+=("4. 🎮 Games $s_gam")
-        items+=("5. 📄 Office $s_off")
-        items+=("6. 🎵 Media & Entertainment $s_med")
+        items+=("1. Development $s_dev")
+        items+=("2. Social Media $s_soc")
+        items+=("3. Web Browsers $s_brw")
+        items+=("4. Games $s_gam")
+        items+=("5. Office $s_off")
+        items+=("6. Media & Entertainment $s_med")
         items+=("7. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Done")${RESET}")
 
         if [ "$rendered_lines" -gt 0 ]; then
