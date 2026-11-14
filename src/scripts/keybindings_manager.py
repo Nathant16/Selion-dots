@@ -303,7 +303,7 @@ def main():
         sync_userprefs(comp)
         print(json.dumps({"success": True, "id": new_id}))
 
-    elif action == "delete":
+    elif action in ("delete", "remove"):
         target_id = sys.argv[2] if len(sys.argv) > 2 else ""
         s = load_settings()
         custom = s.get("custom_keybindings", [])
