@@ -48,11 +48,6 @@ PanelWindow {
         onActivated: launcherWindow.closeLauncher()
     }
 
-    Keys.onEscapePressed: (event) => {
-        launcherWindow.closeLauncher();
-        event.accepted = true;
-    }
-
     property bool isVisible: LauncherController.isVisible
     property int configRevision: 0
     property bool appsLoaded: false

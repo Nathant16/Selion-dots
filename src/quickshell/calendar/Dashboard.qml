@@ -88,11 +88,6 @@ PanelWindow {
         onActivated: dashboardWindow.closeDashboard()
     }
 
-    Keys.onEscapePressed: (event) => {
-        dashboardWindow.closeDashboard();
-        event.accepted = true;
-    }
-
     Connections {
         target: (typeof Config !== "undefined") ? Config : null
         function onSettingsLoaded() {

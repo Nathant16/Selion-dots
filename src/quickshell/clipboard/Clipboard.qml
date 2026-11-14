@@ -47,11 +47,6 @@ PanelWindow {
         onActivated: clipboardWindow.closeClipboard()
     }
 
-    Keys.onEscapePressed: (event) => {
-        clipboardWindow.closeClipboard();
-        event.accepted = true;
-    }
-
     property bool isVisible: ClipboardController.isVisible
     property int configRevision: 0
     property bool isDirty: true
