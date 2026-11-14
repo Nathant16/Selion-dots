@@ -38,6 +38,8 @@ Item {
         onActivated: {
             if (calHover.hovered) {
                 window.setMonthOffset(window.targetMonthOffset - 1);
+            } else if (hubHover.hovered) {
+                window.scrollStripDelta(120);
             } else {
                 window.setWeatherView(window.targetWeatherView - 1);
             }
@@ -50,6 +52,8 @@ Item {
         onActivated: {
             if (calHover.hovered) {
                 window.setMonthOffset(window.targetMonthOffset + 1);
+            } else if (hubHover.hovered) {
+                window.scrollStripDelta(-120);
             } else {
                 window.setWeatherView(window.targetWeatherView + 1);
             }
@@ -257,12 +261,55 @@ Item {
         return Math.max(0, Math.min(start, window.stripSlots.length - window.hourCount));
     }
 
-    property real stripPos: stripStart
+    property bool isScrollingStrip: false
+    property real targetStripPos: stripStart
+    onStripStartChanged: {
+        if (!isScrollingStrip) {
+            targetStripPos = stripStart;
+        }
+    }
+
+    Timer {
+        id: stripScrollTimer
+        interval: 650
+        repeat: false
+        onTriggered: window.isScrollingStrip = false
+    }
+
+    function scrollStripDelta(d) {
+        if (Math.abs(d) < 1) return;
+        window.isScrollingStrip = true;
+        stripScrollTimer.restart();
+
+        let maxPos = Math.max(0, window.stripSlots.length - window.hourCount);
+        let step = d < 0 ? 1 : -1;
+        if (Math.abs(d) > 200) {
+            step = (d < 0 ? 1 : -1) * Math.min(4, Math.round(Math.abs(d) / 120));
+        }
+        let nextPos = Math.max(0, Math.min(maxPos, window.targetStripPos + step));
+        window.targetStripPos = nextPos;
+
+        let focusedHour = nextPos + 1;
+        for (let dayIdx = window.stripDayStarts.length - 1; dayIdx >= 0; dayIdx--) {
+            if (focusedHour >= window.stripDayStarts[dayIdx]) {
+                if (window.targetWeatherView !== dayIdx) {
+                    window.targetWeatherView = dayIdx;
+                }
+                break;
+            }
+        }
+    }
+
+    property real stripPos: targetStripPos
     Behavior on stripPos {
-        NumberAnimation { duration: 650; easing.type: Easing.OutCubic }
+        NumberAnimation {
+            id: stripPosAnim
+            duration: 380
+            easing.type: Easing.OutCubic
+        }
     }
     readonly property real focusStrength: Math.max(0, Math.min(1, 1 - window.stripPos / Math.max(1, window.stripDayStarts[1] || 8)))
-    readonly property real stripSpin: Math.max(-28, Math.min(28, (window.stripStart - window.stripPos) * 9))
+    readonly property real stripSpin: Math.max(-32, Math.min(32, (window.targetStripPos - window.stripPos) * 14))
 
     function parseClock(str) {
         if (!str) return null;
@@ -686,11 +733,25 @@ Item {
                 Layout.column: window.vertical ? 0 : 1
                 Layout.fillWidth: true
                 Layout.fillHeight: !window.vertical
-                Layout.preferredHeight: window.vertical ? window.s(290) : -1
+                Layout.preferredHeight: window.vertical ? window.s(320) : -1
 
                 opacity: window.introClock
                 scale: 0.85 + (0.15 * window.introClock)
                 transform: Translate { y: window.s(25) * (1.0 - window.introClock) }
+
+                HoverHandler { id: hubHover }
+
+                WheelHandler {
+                    id: hubWheel
+                    target: null
+                    acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                    onWheel: event => {
+                        let dy = event.angleDelta.y !== 0 ? event.angleDelta.y : event.pixelDelta.y;
+                        let dx = event.angleDelta.x !== 0 ? event.angleDelta.x : event.pixelDelta.x;
+                        let d = Math.abs(dx) > Math.abs(dy) ? -dx : dy;
+                        window.scrollStripDelta(d);
+                    }
+                }
 
                 ColumnLayout {
                     anchors.centerIn: parent
@@ -762,9 +823,21 @@ Item {
                         readonly property real pillStep: window.s(46) + window.s(6)
 
                         Layout.alignment: Qt.AlignHCenter
-                        Layout.preferredHeight: window.s(98)
+                        Layout.preferredHeight: window.s(116)
                         Layout.preferredWidth: window.hourCount * pillStep - window.s(6) + 2 * pad
                         clip: true
+
+                    WheelHandler {
+                        id: hourStripWheel
+                        target: null
+                        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                        onWheel: event => {
+                            let dy = event.angleDelta.y !== 0 ? event.angleDelta.y : event.pixelDelta.y;
+                            let dx = event.angleDelta.x !== 0 ? event.angleDelta.x : event.pixelDelta.x;
+                            let d = Math.abs(dx) > Math.abs(dy) ? -dx : dy;
+                            window.scrollStripDelta(d);
+                        }
+                    }
 
                     Row {
                         id: hourRow
@@ -791,8 +864,9 @@ Item {
                                 readonly property real emphasis: Math.max(0, 1 - Math.abs(index - window.liveHourIndex) / 5)
                                 scale: (isHighlighted ? 1.08 + 0.12 * window.focusStrength : 1.0 - (1.0 - (0.72 + 0.26 * emphasis)) * window.focusStrength) * hoverScale
                                 opacity: isHighlighted ? 1.0 : 0.85 - (0.85 - (0.35 + 0.5 * emphasis)) * window.focusStrength
-                                rotation: -arc * 9 + window.stripSpin
-                                transform: Translate { y: (0.5 - hourPill.arc * hourPill.arc) * window.s(14) }
+                                transformOrigin: Item.Top
+                                rotation: -arc * 16 + window.stripSpin
+                                transform: Translate { y: (0.4 - hourPill.arc * hourPill.arc) * window.s(22) }
 
                                 Rectangle {
                                     anchors.fill: parent
@@ -845,7 +919,28 @@ Item {
                                     }
                                 }
 
-                                MouseArea { id: hrMa; anchors.fill: parent; hoverEnabled: true }
+                                MouseArea {
+                                    id: hrMa
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        let maxPos = Math.max(0, window.stripSlots.length - window.hourCount);
+                                        let target = Math.max(0, Math.min(maxPos, index - Math.floor(window.hourCount / 2)));
+                                        window.isScrollingStrip = true;
+                                        stripScrollTimer.restart();
+                                        window.targetStripPos = target;
+                                        let focusedHour = target + 1;
+                                        for (let dayIdx = window.stripDayStarts.length - 1; dayIdx >= 0; dayIdx--) {
+                                            if (focusedHour >= window.stripDayStarts[dayIdx]) {
+                                                if (window.targetWeatherView !== dayIdx) {
+                                                    window.targetWeatherView = dayIdx;
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
