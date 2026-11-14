@@ -386,6 +386,8 @@ GuideTab {
                 Repeater {
                     model: keybindingsTabRoot.allItems
                     delegate: Rectangle {
+                        id: itemCard
+                        property var cardKeys: modelData.keys || []
                         Layout.fillWidth: true
                         implicitHeight: itemRow.implicitHeight + s(20)
                         radius: ThemeBackend.borderRadius
@@ -411,7 +413,7 @@ GuideTab {
                             RowLayout {
                                 spacing: s(4)
                                 Repeater {
-                                    model: modelData.keys || []
+                                    model: itemCard.cardKeys
                                     delegate: RowLayout {
                                         spacing: s(4)
                                         Rectangle {
@@ -434,7 +436,7 @@ GuideTab {
                                         }
 
                                         Text {
-                                            visible: index < (modelData.length ? modelData.length - 1 : 0)
+                                            visible: index < (itemCard.cardKeys.length - 1)
                                             text: "+"
                                             font.pixelSize: s(11)
                                             font.bold: true
@@ -468,14 +470,9 @@ GuideTab {
                             }
 
                             // Custom delete button if custom
-                            IconButton {
+                            DeleteButton {
                                 visible: !!modelData.isCustom
-                                implicitWidth: s(30)
-                                implicitHeight: s(30)
-                                icon: "󰅖"
-                                iconColor: ThemeBackend.red
-                                baseColor: Qt.alpha(ThemeBackend.red, 0.15)
-                                hoverColor: Qt.alpha(ThemeBackend.red, 0.3)
+                                size: s(28)
                                 cornerRadius: s(6)
                                 onClicked: deleteCustomKeybinding(modelData.id)
                             }
