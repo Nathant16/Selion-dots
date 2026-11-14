@@ -319,6 +319,7 @@ setup_sddm() {
     sudo rm -rf /usr/share/sddm/themes/material-you
     sudo rm -f /etc/sddm.conf.d/*matugen*.conf
     sudo rm -f /etc/sddm.conf.d/*material-you*.conf
+    sudo rm -f /etc/sddm.conf.d/*autologin*.conf
 
     if [ "$is_update" != true ] && [ -f /etc/sddm.conf ]; then
         sudo cp -a /etc/sddm.conf "/etc/sddm.conf.backup.$(date +%Y%m%d_%H%M%S)" 2>/dev/null || true
