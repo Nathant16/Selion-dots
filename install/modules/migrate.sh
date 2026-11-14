@@ -7,6 +7,7 @@ get_compositor_config_dir_name() {
         driftwm) echo "driftwm" ;;
         niri) echo "niri" ;;
         sway) echo "sway" ;;
+        mango) echo "mango" ;;
         *) echo "$comp" ;;
     esac
 }
@@ -29,7 +30,7 @@ backup_managed_configs() {
         if [ -d "$comp_dir" ] && [ "$(ls -A "$comp_dir" 2>/dev/null)" ]; then
             mkdir -p "$BACKUP_ROOT/$dir_name"
             cp -a "$comp_dir/." "$BACKUP_ROOT/$dir_name/" 2>/dev/null || true
-            ((backed_up_count++))
+            backed_up_count=$((backed_up_count + 1))
         fi
     done
 
@@ -40,7 +41,7 @@ backup_managed_configs() {
         if [ -d "$src_dir" ] && [ "$(ls -A "$src_dir" 2>/dev/null)" ]; then
             mkdir -p "$BACKUP_ROOT/$d"
             cp -a "$src_dir/." "$BACKUP_ROOT/$d/" 2>/dev/null || true
-            ((backed_up_count++))
+            backed_up_count=$((backed_up_count + 1))
         fi
     done
 
@@ -50,12 +51,14 @@ backup_managed_configs() {
         local src_file="$HOME/.config/$f"
         if [ -f "$src_file" ]; then
             cp -a "$src_file" "$BACKUP_ROOT/" 2>/dev/null || true
-            ((backed_up_count++))
+            backed_up_count=$((backed_up_count + 1))
         fi
     done
 
     if [ "$backed_up_count" -gt 0 ]; then
         echo "[backup] Backed up $backed_up_count managed configuration(s) to $BACKUP_ROOT"
+    else
+        rmdir "$BACKUP_ROOT" 2>/dev/null || true
     fi
 }
 
@@ -69,8 +72,6 @@ migrate_legacy() {
     pkill -f "hypr/scripts/quickshell" 2>/dev/null || true
 
     pm_remove_conflicting_pkg "quickshell-git"
-
-    backup_compositors "${compositors[@]}"
 
     if [ -f "$HOME/.local/state/imperative-dots-version" ]; then
         mkdir -p "$HOME/.config/hypr_backup"

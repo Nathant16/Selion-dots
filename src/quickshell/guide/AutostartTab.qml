@@ -148,12 +148,14 @@ GuideTab {
         let isSilent = (silent === true);
 
         let finalExec = execCmd;
-        if (ws > 0 || isSilent) {
+        if (Compositor.name === "hyprland" && (ws > 0 || isSilent)) {
             let rules = "[";
             if (ws > 0) rules += "workspace " + ws + " ";
             if (isSilent) rules += "silent ";
             rules = rules.trim() + "]";
             finalExec = "hyprctl dispatch 'hl.dsp.exec_cmd(\\\"" + rules + " " + execCmd + "\\\")' 2>/dev/null || hyprctl dispatch exec \\\"" + rules + " " + execCmd + "\\\"";
+        } else if (ws > 0 || isSilent) {
+            finalExec = "(" + execCmd + ") &";
         }
 
         let script = "";

@@ -575,6 +575,10 @@ deploy_package() {
                     find "$SRC_COMP_DIR" -type f | while IFS= read -r src_file; do
                         local rel_path="${src_file#$SRC_COMP_DIR/}"
                         if [[ "$rel_path" == *userprefs* ]]; then
+                            if [ ! -e "$TARGET_CONFIG_DIR/$rel_path" ]; then
+                                mkdir -p "$(dirname "$TARGET_CONFIG_DIR/$rel_path")"
+                                cp "$src_file" "$TARGET_CONFIG_DIR/$rel_path"
+                            fi
                             continue
                         fi
                         mkdir -p "$(dirname "$TARGET_CONFIG_DIR/$rel_path")"
@@ -678,23 +682,24 @@ deploy_package() {
                     local comp_part="${file#compositor*/}"
                     local comp_name="${comp_part%%/*}"
                     local comp_file="${comp_part#*/}"
-                    if [[ "$comp_file" != *userprefs* ]]; then
-                        for comp in "${COMPOSITORS[@]}"; do
-                            if [[ "$comp" == "$comp_name" ]]; then
-                                local target_config_name
-                                case "$comp" in
-                                    hyprland) target_config_name="hypr" ;;
-                                    driftwm) target_config_name="driftwm" ;;
-                                    niri) target_config_name="niri" ;;
-                                    sway) target_config_name="sway" ;;
-                                    mango) target_config_name="mango" ;;
-                                    *) target_config_name="$comp" ;;
-                                esac
-                                mkdir -p "$(dirname "$HOME/.config/$target_config_name/$comp_file")"
-                                cp "$REPO_ROOT/$file" "$HOME/.config/$target_config_name/$comp_file"
+                    for comp in "${COMPOSITORS[@]}"; do
+                        if [[ "$comp" == "$comp_name" ]]; then
+                            local target_config_name
+                            case "$comp" in
+                                hyprland) target_config_name="hypr" ;;
+                                driftwm) target_config_name="driftwm" ;;
+                                niri) target_config_name="niri" ;;
+                                sway) target_config_name="sway" ;;
+                                mango) target_config_name="mango" ;;
+                                *) target_config_name="$comp" ;;
+                            esac
+                            local dest_target="$HOME/.config/$target_config_name/$comp_file"
+                            if [[ "$comp_file" != *userprefs* ]] || [ ! -e "$dest_target" ]; then
+                                mkdir -p "$(dirname "$dest_target")"
+                                cp "$REPO_ROOT/$file" "$dest_target"
                             fi
-                        done
-                    fi
+                        fi
+                    done
                 fi
             done <<< "$changed_files"
         fi
