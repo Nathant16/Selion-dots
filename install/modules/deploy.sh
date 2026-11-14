@@ -759,6 +759,10 @@ deploy_package() {
         sudo chmod 755 /usr/local/bin/battery 2>/dev/null || true
         sudo ln -sf /usr/local/bin/battery /usr/local/bin/power 2>/dev/null || true
     fi
+    if [ -f "$TARGET_BASE/src/scripts/system/monitor_manager.py" ]; then
+        sudo cp "$TARGET_BASE/src/scripts/system/monitor_manager.py" /usr/local/bin/serpantinum-monitor 2>/dev/null || true
+        sudo chmod 755 /usr/local/bin/serpantinum-monitor 2>/dev/null || true
+    fi
 
     # Deploy sudoers rule for hardware power optimizations
     if [ -d /etc/sudoers.d ]; then
