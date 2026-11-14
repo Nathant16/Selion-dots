@@ -138,17 +138,29 @@ ShellRoot {
                         "fi; " +
                         "if [ -z \"$WP\" ]; then " +
                         "    FALLBACK=1; " +
-                        "    for d in \"$HOME/Pictures/Wallpapers/Selion\" \"$HOME/Pictures/Wallpapers\" \"/usr/share/sddm/themes/material-you\" \"/usr/share/wallpapers\"; do " +
-                        "        if [ -d \"$d\" ]; then " +
-                        "            CANDIDATE=\"$(find \"$d\" -maxdepth 2 -type f \\( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \\) 2>/dev/null | sort -V | head -n 1)\"; " +
-                        "            if [ -n \"$CANDIDATE\" ] && [ -f \"$CANDIDATE\" ]; then " +
-                        "                WP=\"$CANDIDATE\"; NAME=\"${CANDIDATE##*/}\"; " +
-                        "                mkdir -p \"$(dirname \"$F1\")\"; " +
-                        "                printf '%s' \"$WP\" > \"$F1\"; printf '%s\\n' \"$NAME\" > \"$F2\"; " +
-                        "                break; " +
-                        "            fi; " +
+                        "    if [ -f \"${F1%/*}/current_default\" ]; then " +
+                        "        DEF=\"$(cat \"${F1%/*}/current_default\" 2>/dev/null)\"; " +
+                        "        if [ -n \"$DEF\" ] && [ -f \"$DEF\" ]; then WP=\"$DEF\"; NAME=\"${DEF##*/}\"; fi; " +
+                        "    fi; " +
+                        "    if [ -z \"$WP\" ]; then " +
+                        "        CFG_WP=\"\"; " +
+                        "        SETTINGS_FILE=\"$HOME/.config/serpantinum/settings.json\"; " +
+                        "        if [ -f \"$SETTINGS_FILE\" ] && command -v jq >/dev/null 2>&1; then " +
+                        "            CFG_WP=\"$(jq -r '.wallpaperDir // .wallpaper_dir // empty' \"$SETTINGS_FILE\" 2>/dev/null || true)\"; " +
+                        "            CFG_WP=\"${CFG_WP/#\\~/$HOME}\"; " +
                         "        fi; " +
-                        "    done; " +
+                        "        for d in \"$CFG_WP/Selion\" \"$CFG_WP\" \"$HOME/Pictures/Wallpapers/Selion\" \"$HOME/Pictures/Wallpapers\" \"$HOME/Pictures/Wallpaper/Selion\" \"$HOME/Pictures/Wallpaper\" \"/usr/share/sddm/themes/material-you\" \"/usr/share/wallpapers\"; do " +
+                        "            if [ -n \"$d\" ] && [ -d \"$d\" ]; then " +
+                        "                CANDIDATE=\"$(find \"$d\" -maxdepth 2 -type f \\( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \\) 2>/dev/null | sort -V | head -n 1)\"; " +
+                        "                if [ -n \"$CANDIDATE\" ] && [ -f \"$CANDIDATE\" ]; then " +
+                        "                    WP=\"$CANDIDATE\"; NAME=\"${CANDIDATE##*/}\"; " +
+                        "                    mkdir -p \"$(dirname \"$F1\")\"; " +
+                        "                    printf '%s' \"$WP\" > \"$F1\"; printf '%s\\n' \"$NAME\" > \"$F2\"; " +
+                        "                    break; " +
+                        "                fi; " +
+                        "            fi; " +
+                        "        done; " +
+                        "    fi; " +
                         "fi; " +
                         "if [ -n \"$WP\" ]; then printf '%s\\n' \"$WP\"; fi; " +
                         "echo '---SPLIT---'; " +

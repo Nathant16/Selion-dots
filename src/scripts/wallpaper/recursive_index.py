@@ -315,6 +315,13 @@ def main():
         src_dir = urllib.parse.unquote(src_dir[7:])
     src_abs = os.path.abspath(os.path.expanduser(src_dir))
 
+    actual_dir = src_abs
+    if not os.path.isdir(actual_dir):
+        if actual_dir.endswith("/Wallpapers") and os.path.isdir(actual_dir[:-1]):
+            actual_dir = actual_dir[:-1]
+        elif actual_dir.endswith("/Wallpaper") and os.path.isdir(actual_dir + "s"):
+            actual_dir = actual_dir + "s"
+
     cache_dir = sys.argv[2] if len(sys.argv) > 2 else "/tmp"
     run_dir = sys.argv[3] if len(sys.argv) > 3 else cache_dir
     show_selion = True
@@ -327,7 +334,15 @@ def main():
     lock_path = os.path.join(run_dir, f"recursive_indexer_{get_hash(src_abs)}.lock")
     with open(lock_path, "w") as lock_fd:
         fcntl.flock(lock_fd, fcntl.LOCK_EX)
-        data = build_recursive_index(src_abs, cache_dir, run_dir, show_selion)
+        data = build_recursive_index(actual_dir, cache_dir, run_dir, show_selion)
+        data["srcDir"] = src_abs
+        data["actualDir"] = actual_dir
+        current_index = os.path.join(cache_dir, "current_index.json")
+        try:
+            with open(current_index, "w", encoding="utf-8") as fp:
+                json.dump(data, fp)
+        except OSError:
+            pass
         sys.stdout.write(json.dumps(data))
         sys.stdout.flush()
 

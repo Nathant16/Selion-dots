@@ -793,7 +793,7 @@ run_installer_ui() {
             SELECTED_COMPOSITORS=("hyprland" "driftwm" "niri" "sway" "mango")
         fi
         OPT_SDDM="${OPT_SDDM:-true}"
-        INSTALL_FULL_WALLPAPERS="${INSTALL_FULL_WALLPAPERS:-false}"
+        INSTALL_FULL_WALLPAPERS="${INSTALL_FULL_WALLPAPERS:-true}"
         ENABLE_TELEMETRY="${ENABLE_TELEMETRY:-false}"
         return 0
     fi

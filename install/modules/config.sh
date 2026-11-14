@@ -10,6 +10,16 @@ init_serpantinum_config() {
     local script_path="$project_root/src/scripts/location.sh"
 
     if [[ "$install_state" == "current" && "$is_reinstall" != "true" ]]; then
+        # Ensure wallpaperDir is populated even on updates if missing
+        if [ -f "$CONFIG_FILE" ] && command -v jq >/dev/null 2>&1; then
+            local cur_wp
+            cur_wp="$(jq -r '.wallpaperDir // .wallpaper_dir // empty' "$CONFIG_FILE" 2>/dev/null || true)"
+            if [ -z "$cur_wp" ] && [ -n "$wallpaper_dir" ]; then
+                local updated
+                updated="$(jq --arg wp "$wallpaper_dir" '. + {wallpaperDir: $wp}' "$CONFIG_FILE" 2>/dev/null || true)"
+                [ -n "$updated" ] && echo "$updated" > "$CONFIG_FILE"
+            fi
+        fi
         return 0
     fi
 

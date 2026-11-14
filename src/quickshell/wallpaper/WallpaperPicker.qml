@@ -122,10 +122,22 @@ Item {
     property string _lastFilterApplied: ""
     property int _lastProxyVersion: -1
 
+    function normalizePath(p) {
+        if (!p) return "";
+        let home = Quickshell.env("HOME") || "";
+        let s = String(p).trim();
+        if (s.startsWith("file://")) s = s.substring(7);
+        if (s.startsWith("~/") || s === "~") s = home + s.substring(1);
+        while (s.length > 1 && s.endsWith("/")) s = s.substring(0, s.length - 1);
+        return s;
+    }
+
     property var configSettings: Config.rawSettings
     property string srcDir: {
         let dummy = configSettings;
-        return Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || (Quickshell.env("HOME") + "/Pictures/Wallpapers");
+        let p = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || "";
+        if (p) return window.normalizePath(p);
+        return window.normalizePath(Quickshell.env("HOME") + "/Pictures/Wallpapers");
     }
     property bool showSelionWallpapers: {
         let dummy = configSettings;
@@ -154,7 +166,8 @@ Item {
     Connections {
         target: Config
         function onSettingsLoaded() {
-            let dir = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || (Quickshell.env("HOME") + "/Pictures/Wallpapers");
+            let p = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || "";
+            let dir = p ? window.normalizePath(p) : window.normalizePath(Quickshell.env("HOME") + "/Pictures/Wallpapers");
             if (dir && dir !== window.srcDir) {
                 window.srcDir = dir;
             }
@@ -781,6 +794,9 @@ Item {
             if (displayModel.count === 0) {
                 window.syncFromSrcModel();
             }
+            if (displayModel.count === 0 && localProxyModel.count === 0 && videoProxyModel.count === 0) {
+                window.triggerIndexer();
+            }
             window.selectCurrentWallpaperTabAndFocus();
         } else if (window.hasSearched) {
             window.searchIndexRestored = false;
@@ -1076,7 +1092,12 @@ Item {
         if (srcModel.status === FolderListModel.Ready && srcModel.count > 0) models.push({ model: srcModel, prefix: "" });
         if (window.showSelionWallpapers && selionModel.status === FolderListModel.Ready && selionModel.count > 0) models.push({ model: selionModel, prefix: "Selion/" });
 
-        if (models.length === 0) return;
+        if (models.length === 0) {
+            if (localProxyModel.count === 0 && videoProxyModel.count === 0) {
+                window.triggerIndexer();
+            }
+            return;
+        }
 
         let totalFiles = 0;
         for (let m = 0; m < models.length; m++) totalFiles += models[m].model.count;
@@ -1243,7 +1264,12 @@ Item {
             if (trimmed.length === 0) return;
             try {
                 let data = JSON.parse(trimmed);
-                if (data && data.srcDir === window.srcDir &&
+                let normDataDir = window.normalizePath(data ? (data.srcDir || data.actualDir || "") : "");
+                let normSrcDir = window.normalizePath(window.srcDir);
+                let dirMatches = (normDataDir === normSrcDir) ||
+                                 (normDataDir.endsWith("/Wallpaper") && normSrcDir.endsWith("/Wallpapers")) ||
+                                 (normDataDir.endsWith("/Wallpapers") && normSrcDir.endsWith("/Wallpaper"));
+                if (data && dirMatches &&
                     (data.showSelion === undefined || Boolean(data.showSelion) === window.showSelionWallpapers)) {
                     window.loadIndexData(data);
                 }
@@ -1254,7 +1280,12 @@ Item {
             if (trimmed.length === 0) return;
             try {
                 let data = JSON.parse(trimmed);
-                if (data && data.srcDir === window.srcDir &&
+                let normDataDir = window.normalizePath(data ? (data.srcDir || data.actualDir || "") : "");
+                let normSrcDir = window.normalizePath(window.srcDir);
+                let dirMatches = (normDataDir === normSrcDir) ||
+                                 (normDataDir.endsWith("/Wallpaper") && normSrcDir.endsWith("/Wallpapers")) ||
+                                 (normDataDir.endsWith("/Wallpapers") && normSrcDir.endsWith("/Wallpaper"));
+                if (data && dirMatches &&
                     (data.showSelion === undefined || Boolean(data.showSelion) === window.showSelionWallpapers)) {
                     window.loadIndexData(data);
                 }
@@ -1388,6 +1419,9 @@ Item {
         }
 
         if (window.currentFilter !== "Search") {
+            if (displayModel.count === 0 && (localProxyModel.count > 0 || videoProxyModel.count > 0)) {
+                window.applyFilters(true);
+            }
             window.selectCurrentWallpaperTabAndFocus();
         }
 

@@ -10,7 +10,21 @@ GuideTab {
 
     property alias wallpaperDirScanner: wallpaperDirScanner
 
-    property string currentWallpaperDir: Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || (Quickshell.env("HOME") + "/Pictures/Wallpapers")
+    function normalizeDir(p) {
+        if (!p) return "";
+        let home = Quickshell.env("HOME") || "";
+        let s = String(p).trim();
+        if (s.startsWith("file://")) s = s.substring(7);
+        if (s.startsWith("~/") || s === "~") s = home + s.substring(1);
+        while (s.length > 1 && s.endsWith("/")) s = s.substring(0, s.length - 1);
+        return s;
+    }
+
+    property string currentWallpaperDir: {
+        let p = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || "";
+        if (p) return normalizeDir(p);
+        return normalizeDir(Quickshell.env("HOME") + "/Pictures/Wallpapers");
+    }
     property var availableWallpaperDirs: []
     property bool showSelionWallpapers: Config.getSetting("showSelionWallpapers", true) !== false
 

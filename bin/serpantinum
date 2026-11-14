@@ -361,9 +361,19 @@ cli_wallpaper_files() {
     local dir
     dir="$(cli_cfg_get wallpaperDir "")"
     [ -n "$dir" ] || dir="$(cli_cfg_get wallpaper_dir "")"
-    [ -n "$dir" ] || dir="${WALLPAPER_DIR:-$HOME/Pictures/Wallpapers}"
+    [ -n "$dir" ] || dir="${WALLPAPER_DIR:-}"
+    dir="${dir/#\~/$HOME}"
+    if [ -z "$dir" ] || [ ! -d "$dir" ]; then
+        if [ -d "$HOME/Pictures/Wallpapers" ]; then
+            dir="$HOME/Pictures/Wallpapers"
+        elif [ -d "$HOME/Pictures/Wallpaper" ]; then
+            dir="$HOME/Pictures/Wallpaper"
+        else
+            dir="$HOME/Pictures/Wallpapers"
+        fi
+    fi
     [ -d "$dir" ] || return 0
-    find "$dir" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -iname "*.gif" -o -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.mov" -o -iname "*.webm" \) | sort
+    find "$dir" -maxdepth 2 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -iname "*.gif" -o -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.mov" -o -iname "*.webm" \) | sort
 }
 
 cli_theme_find() {

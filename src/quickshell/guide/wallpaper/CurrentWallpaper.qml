@@ -7,7 +7,13 @@ Item {
     id: root
 
     property string screenName: (Quickshell.screens && Quickshell.screens.length > 0 && Quickshell.screens[0].name) ? Quickshell.screens[0].name : ""
-    property string wallpaperDir: Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || (Quickshell.env("HOME") + "/Pictures/Wallpapers")
+    property string wallpaperDir: {
+        let p = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || "";
+        let home = Quickshell.env("HOME") || "";
+        if (p.startsWith("~/") || p === "~") p = home + p.substring(1);
+        if (!p) p = home + "/Pictures/Wallpapers";
+        return p;
+    }
     property string path: ""
     property int revision: 0
     readonly property bool isVideo: {

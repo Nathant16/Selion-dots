@@ -33,6 +33,22 @@ render_wallpaper_progress() {
 }
 
 get_wallpaper_dir() {
+    local cfg_dir=""
+    local settings_file="$HOME/.config/serpantinum/settings.json"
+    if [ -f "$settings_file" ] && command -v jq >/dev/null 2>&1; then
+        cfg_dir="$(jq -r '.wallpaperDir // .wallpaper_dir // empty' "$settings_file" 2>/dev/null || true)"
+        if [[ -n "$cfg_dir" && "$cfg_dir" != "null" ]]; then
+            cfg_dir="${cfg_dir/#\~/$HOME}"
+            echo "$cfg_dir"
+            return 0
+        fi
+    fi
+
+    if [ -n "$WALLPAPER_DIR" ]; then
+        echo "${WALLPAPER_DIR/#\~/$HOME}"
+        return 0
+    fi
+
     local user_pics=""
     if [ -f "$HOME/.config/user-dirs.dirs" ]; then
         user_pics=$(grep '^XDG_PICTURES_DIR' "$HOME/.config/user-dirs.dirs" 2>/dev/null | cut -d= -f2 | tr -d '"' | sed "s|\$HOME|$HOME|g")
@@ -46,6 +62,22 @@ get_wallpaper_dir() {
         user_pics="$HOME/Pictures"
     fi
     user_pics="${user_pics%/}"
+
+    # Prefer existing wallpaper directory (Wallpapers vs Wallpaper)
+    if [ -d "$user_pics/Wallpapers" ]; then
+        echo "$user_pics/Wallpapers"
+        return 0
+    elif [ -d "$user_pics/Wallpaper" ]; then
+        echo "$user_pics/Wallpaper"
+        return 0
+    elif [ -d "$HOME/Pictures/Wallpapers" ]; then
+        echo "$HOME/Pictures/Wallpapers"
+        return 0
+    elif [ -d "$HOME/Pictures/Wallpaper" ]; then
+        echo "$HOME/Pictures/Wallpaper"
+        return 0
+    fi
+
     echo "$user_pics/Wallpapers"
 }
 
@@ -59,6 +91,15 @@ install_wallpapers() {
     local clone_dir="${XDG_CACHE_HOME:-"$HOME/.cache"}/serpantinum-wallpapers"
 
     mkdir -p "$wallpaper_dir" "$selion_dir"
+
+    # Compatibility symlink: keep Wallpaper and Wallpapers in sync
+    local pics_parent="$(dirname "$wallpaper_dir")"
+    local base_name="$(basename "$wallpaper_dir")"
+    if [ "$base_name" = "Wallpapers" ] && [ ! -e "$pics_parent/Wallpaper" ]; then
+        ln -s "Wallpapers" "$pics_parent/Wallpaper" 2>/dev/null || true
+    elif [ "$base_name" = "Wallpaper" ] && [ ! -e "$pics_parent/Wallpapers" ]; then
+        ln -s "Wallpaper" "$pics_parent/Wallpapers" 2>/dev/null || true
+    fi
 
     local sync_success=false
     local legacy_marker="${XDG_STATE_HOME:-"$HOME/.local/state"}/serpantinum/legacy_wallpapers_cleaned"
@@ -109,7 +150,11 @@ install_wallpapers() {
     if [ "$sync_success" != true ]; then
         rm -rf "$clone_dir"
         echo -e "\n\e[36m[ INFO ]\e[0m Cloning wallpapers repository..."
-        git clone --depth 1 --branch "$wallpaper_branch" --single-branch "$wallpaper_repo" "$clone_dir" 2>/dev/null || true
+        if ! git clone --depth 1 --branch "$wallpaper_branch" --single-branch --progress "$wallpaper_repo" "$clone_dir"; then
+            echo -e "\e[33m[ WARN ]\e[0m Failed to clone wallpapers repository. Retrying..."
+            sleep 2
+            git clone --depth 1 --branch "$wallpaper_branch" --single-branch --progress "$wallpaper_repo" "$clone_dir" || true
+        fi
     fi
 
     local src_dir="$clone_dir"
@@ -118,6 +163,7 @@ install_wallpapers() {
     fi
 
     if [ ! -d "$src_dir" ]; then
+        echo -e "\e[33m[ WARN ]\e[0m Wallpapers could not be downloaded. You can install them later."
         return 0
     fi
 
@@ -192,7 +238,7 @@ install_wallpapers() {
     # Ensure a default wallpaper state exists so first boot never renders a black screen
     local default_wp="$selion_dir/1.png"
     if [ ! -f "$default_wp" ]; then
-        default_wp="$(find "$selion_dir" "$wallpaper_dir" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | sort -V | head -n 1)"
+        default_wp="$(find "$selion_dir" "$wallpaper_dir" "$pics_parent/Wallpapers" "$pics_parent/Wallpaper" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | sort -V | head -n 1)"
     fi
     if [ -n "$default_wp" ] && [ -f "$default_wp" ]; then
         local def_state="$cache_dir/current_default"

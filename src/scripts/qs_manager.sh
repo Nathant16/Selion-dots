@@ -117,7 +117,23 @@ if [[ "$ACTION" =~ ^[0-9]+$ ]]; then
     exit 0
 fi
 
-SRC_DIR="${WALLPAPER_DIR:-${srcdir:-$HOME/Pictures/Wallpapers}}"
+if [[ -z "${WALLPAPER_DIR:-}" ]]; then
+    if [[ -f "$HOME/.config/serpantinum/settings.json" ]] && command -v jq >/dev/null 2>&1; then
+        cfg_wp="$(jq -r '.wallpaperDir // .wallpaper_dir // empty' "$HOME/.config/serpantinum/settings.json" 2>/dev/null || true)"
+        [[ -n "$cfg_wp" && "$cfg_wp" != "null" ]] && WALLPAPER_DIR="${cfg_wp/#\~/$HOME}"
+    fi
+fi
+if [[ -z "${WALLPAPER_DIR:-}" ]]; then
+    if [[ -d "$HOME/Pictures/Wallpapers" ]]; then
+        SRC_DIR="$HOME/Pictures/Wallpapers"
+    elif [[ -d "$HOME/Pictures/Wallpaper" ]]; then
+        SRC_DIR="$HOME/Pictures/Wallpaper"
+    else
+        SRC_DIR="$HOME/Pictures/Wallpapers"
+    fi
+else
+    SRC_DIR="${WALLPAPER_DIR/#\~/$HOME}"
+fi
 THUMB_DIR="$QS_CACHE_WALLPAPER/thumbs"
 PREP_LOCK="$QS_RUN_DIR/wallpaper_prep.lock"
 
@@ -136,6 +152,16 @@ build_manifest() {
 
 handle_wallpaper_prep() {
     [[ -d "$THUMB_DIR" ]] || mkdir -p "$THUMB_DIR"
+
+    if [[ -d "$SRC_DIR" ]]; then
+        local p_dir="$(dirname "$SRC_DIR")"
+        local b_dir="$(basename "$SRC_DIR")"
+        if [[ "$b_dir" == "Wallpapers" && ! -e "$p_dir/Wallpaper" ]]; then
+            ln -s "Wallpapers" "$p_dir/Wallpaper" 2>/dev/null || true
+        elif [[ "$b_dir" == "Wallpaper" && ! -e "$p_dir/Wallpapers" ]]; then
+            ln -s "Wallpaper" "$p_dir/Wallpapers" 2>/dev/null || true
+        fi
+    fi
 
     (
         if [[ -f "$PREP_LOCK" ]]; then

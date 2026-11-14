@@ -116,15 +116,20 @@ Item {
 
     function shuffle(screenName: string, transition: string): void {
         let scrName = screenName || "all";
-        let dir = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || (Quickshell.env("HOME") + "/Pictures/Wallpapers");
+        let home = Quickshell.env("HOME") || "";
+        let dir = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || "";
+        if (dir.startsWith("~/") || dir === "~") dir = home + dir.substring(1);
+        if (!dir) dir = home + "/Pictures/Wallpapers";
         let showSelion = Config.getSetting("showSelionWallpapers", true) !== false;
         let script =
-            "[ -d \"$1\" ] || exit 0\n" +
+            "TARGET_DIR=\"$1\"\n" +
+            "[ -d \"$TARGET_DIR\" ] || if [ -d \"$HOME/Pictures/Wallpapers\" ]; then TARGET_DIR=\"$HOME/Pictures/Wallpapers\"; elif [ -d \"$HOME/Pictures/Wallpaper\" ]; then TARGET_DIR=\"$HOME/Pictures/Wallpaper\"; fi\n" +
+            "[ -d \"$TARGET_DIR\" ] || exit 0\n" +
             "if [ \"$2\" = \"0\" ]; then\n" +
-            "  [ \"$(basename \"$1\")\" = \"Selion\" ] && exit 0\n" +
-            "  find -L \"$1\" -type f ! -path '*/.*' ! -path \"${1%/}/Selion\" ! -path \"${1%/}/Selion/*\" \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" -o -iname \"*.webp\" -o -iname \"*.bmp\" -o -iname \"*.mp4\" -o -iname \"*.mkv\" -o -iname \"*.mov\" -o -iname \"*.webm\" \\) 2>/dev/null | shuf -n 1\n" +
+            "  [ \"$(basename \"$TARGET_DIR\")\" = \"Selion\" ] && exit 0\n" +
+            "  find -L \"$TARGET_DIR\" -type f ! -path '*/.*' ! -path \"${TARGET_DIR%/}/Selion\" ! -path \"${TARGET_DIR%/}/Selion/*\" \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" -o -iname \"*.webp\" -o -iname \"*.bmp\" -o -iname \"*.mp4\" -o -iname \"*.mkv\" -o -iname \"*.mov\" -o -iname \"*.webm\" \\) 2>/dev/null | shuf -n 1\n" +
             "else\n" +
-            "  find -L \"$1\" -type f ! -path '*/.*' \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" -o -iname \"*.webp\" -o -iname \"*.bmp\" -o -iname \"*.mp4\" -o -iname \"*.mkv\" -o -iname \"*.mov\" -o -iname \"*.webm\" \\) 2>/dev/null | shuf -n 1\n" +
+            "  find -L \"$TARGET_DIR\" -type f ! -path '*/.*' \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" -o -iname \"*.webp\" -o -iname \"*.bmp\" -o -iname \"*.mp4\" -o -iname \"*.mkv\" -o -iname \"*.mov\" -o -iname \"*.webm\" \\) 2>/dev/null | shuf -n 1\n" +
             "fi";
         shuffleProcess.targetScreenName = scrName;
         shuffleProcess.transition = transition || "";
