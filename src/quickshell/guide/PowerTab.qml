@@ -32,7 +32,7 @@ GuideTab {
     property string cpuFreqMode: "auto"
 
     property bool autoBrightnessEnabled: true
-    property int powerSaverBrightness: 80
+    property int powerSaverBrightness: 60
 
     readonly property string batteryScriptPath: (typeof Caching !== "undefined" && Caching.serpantinumDir)
         ? (Caching.serpantinumDir + "/scripts/system/battery")
@@ -172,7 +172,7 @@ GuideTab {
                         powerTabRoot.autoBrightnessEnabled = Boolean(d.auto_brightness);
                     }
                     if (d.power_saver_brightness !== undefined) {
-                        powerTabRoot.powerSaverBrightness = Number(d.power_saver_brightness) || 80;
+                        powerTabRoot.powerSaverBrightness = Number(d.power_saver_brightness) || 60;
                     }
                 } catch(e) {}
             }

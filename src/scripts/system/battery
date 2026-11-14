@@ -122,7 +122,7 @@ def get_json_data():
             "has_threshold_support": False,
             "cpu_freq": get_cpu_freq_info(),
             "auto_brightness": bool(load_opts_config().get("auto_brightness", True)),
-            "power_saver_brightness": int(load_opts_config().get("power_saver_brightness", 80))
+            "power_saver_brightness": int(load_opts_config().get("power_saver_brightness", 60))
         }
 
     status = b.get("POWER_SUPPLY_STATUS", "Unknown")
@@ -186,7 +186,7 @@ def get_json_data():
         "has_threshold_support": has_threshold_support,
         "cpu_freq": get_cpu_freq_info(),
         "auto_brightness": bool(load_opts_config().get("auto_brightness", True)),
-        "power_saver_brightness": int(load_opts_config().get("power_saver_brightness", 80))
+        "power_saver_brightness": int(load_opts_config().get("power_saver_brightness", 60))
     }
 
 def show_status():
@@ -400,7 +400,7 @@ def apply_profile_optimizations(prof):
             if not existing_pre or int(existing_pre) <= 0:
                 saved["pre_saver_brightness"] = cur_b
                 save_opts_config(saved)
-            target_b = int(saved.get("power_saver_brightness", 80))
+            target_b = int(saved.get("power_saver_brightness", 60))
             start_fade_brightness_bg(target_b, duration=5.0)
 
         # 2. Apply CPU frequency limit
@@ -507,7 +507,7 @@ def load_opts_config():
         "display_refresh_save": True,
         "cpu_max_freq": 0,
         "auto_brightness": True,
-        "power_saver_brightness": 80,
+        "power_saver_brightness": 60,
     }
     if os.path.exists(OPTS_CONFIG_PATH):
         try:
@@ -570,7 +570,7 @@ def set_auto_brightness(enabled):
             if not saved.get("pre_saver_brightness"):
                 saved["pre_saver_brightness"] = cur_b
                 save_opts_config(saved)
-            target_b = int(saved.get("power_saver_brightness", 80))
+            target_b = int(saved.get("power_saver_brightness", 60))
             start_fade_brightness_bg(target_b, duration=5.0)
         else:
             pre_b = saved.get("pre_saver_brightness", 0)
@@ -1042,7 +1042,7 @@ def apply_all_optimizations():
         if not existing_pre or int(existing_pre) <= 0:
             saved["pre_saver_brightness"] = cur_b
             save_opts_config(saved)
-        target_b = int(saved.get("power_saver_brightness", 80))
+        target_b = int(saved.get("power_saver_brightness", 60))
         start_fade_brightness_bg(target_b, duration=5.0)
     return True
 
