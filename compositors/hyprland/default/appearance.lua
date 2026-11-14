@@ -13,14 +13,13 @@ hl.animation({ leaf = "windowsIn", enabled = true, speed = 6, bezier = "winIn", 
 hl.animation({ leaf = "windowsOut", enabled = true, speed = 5, bezier = "winOut", style = "slide" })
 hl.animation({ leaf = "windowsMove", enabled = true, speed = 5, bezier = "wind", style = "slide" })
 hl.animation({ leaf = "border", enabled = true, speed = 1, bezier = "liner" })
-hl.animation({ leaf = "borderangle", enabled = true, speed = 30, bezier = "liner", style = "loop" })
+hl.animation({ leaf = "borderangle", enabled = false })
 hl.animation({ leaf = "fade", enabled = true, speed = 6, bezier = "wind" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "wind", style = "slide" })
 
 local home = os.getenv("HOME") or ""
 local theme_file = home .. "/.local/state/serpantinum/theme_hyprland.lua"
-local active_1 = "rgba(cba6f7ee)"
-local active_2 = "rgba(89b4faee)"
+local active = "rgba(cba6f7ee)"
 local inactive = "rgba(313244aa)"
 local rounding = 12
 
@@ -31,8 +30,11 @@ local ok, theme = pcall(function()
 end)
 
 if ok and type(theme) == "table" then
-    if theme.active_border_1 then active_1 = theme.active_border_1 end
-    if theme.active_border_2 then active_2 = theme.active_border_2 end
+    if theme.active_border then
+        active = theme.active_border
+    elseif theme.active_border_1 then
+        active = theme.active_border_1
+    end
     if theme.inactive_border then inactive = theme.inactive_border end
     if theme.rounding then rounding = theme.rounding end
 end
@@ -45,10 +47,7 @@ hl.config({
         float_gaps = 6,
         resize_on_border = true,
         extend_border_grab_area = 30,
-        ["col.active_border"] = {
-            colors = { active_1, active_2 },
-            angle = 45,
-        },
+        ["col.active_border"] = active,
         ["col.inactive_border"] = inactive,
     },
     decoration = {
