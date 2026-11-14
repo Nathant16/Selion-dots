@@ -261,6 +261,33 @@ Rectangle {
         }
 
         SettingsRow {
+            rootObj: monDelegate.rootObj
+            baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
+            icon: "󰍹"
+            title: I18n.t("guide.display.resolution.title", "Разрешение экрана")
+            description: I18n.t("guide.display.resolution.desc", "Установить разрешение монитора")
+
+            Dropdown {
+                id: resDropdown
+                implicitWidth: rootObj.s(180)
+                implicitHeight: rootObj.s(32)
+                cornerRadius: rootObj.s(6)
+                options: ["1920x1080", "2560x1440", "3840x2160", "2560x1600", "1920x1200", "1600x900", "1366x768", "1280x720"]
+                currentIndex: {
+                    let cur = modelData.dimensions || "1920x1080";
+                    let idx = options.indexOf(cur);
+                    return idx >= 0 ? idx : 0;
+                }
+                accentColor: ThemeBackend.mauve
+                baseColor: ThemeBackend.surface0
+                textColor: ThemeBackend.text
+                onSelected: function(idx, val) {
+                    monDelegate.tab.applyMonitorResolution(monDelegate.monName, val, modelData.framerate || "60");
+                }
+            }
+        }
+
+        SettingsRow {
             visible: monDelegate.tab.compositor !== "mango"
             rootObj: monDelegate.rootObj
             baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)

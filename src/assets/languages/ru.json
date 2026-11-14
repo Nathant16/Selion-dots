@@ -53,7 +53,9 @@
       "bar_side_modules": "Боковые модули",
       "fingerprint": "Отпечатки пальцев",
       "power": "Питание",
-      "packages": "Дополнительные пакеты"
+      "packages": "Дополнительные пакеты",
+      "autostart": "Автозапуск",
+      "keybindings": "Горячие клавиши"
     },
     "launcher": {
       "position": {
@@ -364,6 +366,12 @@
           "follows_hint": "Следует обоям",
           "none": "Фон не выбран"
         }
+      },
+      "layout_stage": "2D Расположение мониторов",
+      "monitors_detected": "монитор(ов)",
+      "resolution": {
+        "title": "Разрешение экрана",
+        "desc": "Установить разрешение монитора"
       }
     },
     "bar": {
@@ -976,7 +984,49 @@
       "screen_time": "Экранное время"
     },
     "update_available": "Доступны обновления",
-    "autostart": {},
+    "autostart": {
+      "title": "Автозапуск",
+      "desc": "Управление программами, бинарниками и скриптами, запускаемыми при старте сессии",
+      "master_switch": {
+        "title": "Включить автозапуск",
+        "desc": "Глобально запускать настроенный список приложений при входе в систему"
+      },
+      "add_button": "Добавить приложение",
+      "empty_title": "Нет приложений в автозапуске",
+      "empty_desc": "Нажмите «Добавить приложение», чтобы указать команды, бинарники, задержку и количество запусков.",
+      "name_label": "Название",
+      "name_placeholder": "например, Discord, EasyEffects, Скрипт",
+      "exec_label": "Команда / Исполняемый файл",
+      "exec_placeholder": "Путь к бинарнику или команда с флагами (например, discord --start-minimized)",
+      "browse_file": "Выбрать файл",
+      "delay_label": "Задержка",
+      "delay_desc": "Время ожидания в секундах перед запуском",
+      "delay_unit": "с",
+      "count_label": "Количество запусков",
+      "count_desc": "Сколько раз запустить команду при старте",
+      "repeat_delay_label": "Интервал повтора",
+      "repeat_delay_desc": "Задержка между повторными запусками",
+      "workspace_label": "Рабочий стол",
+      "workspace_default": "По умолчанию",
+      "silent_label": "Тихий запуск",
+      "silent_desc": "Запускать окно в фоне без перехвата фокуса",
+      "condition_label": "Условие запуска",
+      "condition_always": "Всегда",
+      "condition_ac_only": "Только от сети",
+      "condition_battery_only": "Только от батареи",
+      "condition_multi_monitor": "При внешнем мониторе",
+      "restart_crash_label": "Автоперезапуск",
+      "restart_crash_desc": "Перезапускать службу в случае падения",
+      "status_running": "Работает",
+      "status_success": "Успешно",
+      "status_failed": "Ошибка",
+      "status_idle": "Ожидание",
+      "view_log": "Лог",
+      "no_log": "Лог пока пуст",
+      "run_now": "Запустить сейчас",
+      "delete": "Удалить",
+      "toggle": "Включить / Отключить"
+    },
     "osd": {
       "capslock": {
         "title": "Показывать при Caps Lock"
@@ -1429,6 +1479,15 @@
         "nmi_watchdog_title": "Отключение NMI Watchdog",
         "nmi_watchdog_desc": "Отключение аппаратного таймера NMI для глубокого сна ядер (C6/C10)"
       }
+    },
+    "keybindings": {
+      "title": "Горячие клавиши",
+      "subtitle": "Полная шпаргалка комбинаций, синхронизированных между всеми 5 WM",
+      "close_editor": "Закрыть",
+      "add_custom": "+ Свой бинд",
+      "search_placeholder": "Поиск по комбинации или названию (например, Super + I, терминал, закрыть)...",
+      "editor_title": "Добавить пользовательскую комбинацию (userprefs)",
+      "save": "Сохранить"
     }
   },
   "sysnotif": {

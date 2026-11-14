@@ -531,7 +531,7 @@ deploy_package() {
 
         if [ -d "$REPO_ROOT/src" ] && [ "$(ls -A "$REPO_ROOT/src" 2>/dev/null)" ]; then
             cp -r "$REPO_ROOT/src/." "$TARGET_BASE/src/"
-            find "$TARGET_BASE/src/scripts" -type f -name "*.sh" -exec chmod +x {} + 2>/dev/null || true
+            find "$TARGET_BASE/src/scripts" -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} + 2>/dev/null || true
         fi
 
         for cfg in "${EXTRA_CONFIGS[@]}"; do

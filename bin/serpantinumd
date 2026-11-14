@@ -298,6 +298,11 @@ if [ "$COMMAND" == "start" ]; then
         python3 "$SERPANTINUM_DIR/scripts/system/battery" apply-opts >/dev/null 2>&1 &
     fi
 
+    # Launch user-configured autostart applications
+    if [ -f "$SERPANTINUM_DIR/scripts/autostart.sh" ]; then
+        bash "$SERPANTINUM_DIR/scripts/autostart.sh" 9>&- >/dev/null 2>&1 &
+    fi
+
     (
         bash "$SERPANTINUM_DIR/scripts/migrate_easyeffects.sh"
         command -v serpantinum-audio >/dev/null 2>&1 && serpantinum-audio start

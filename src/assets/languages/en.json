@@ -53,7 +53,9 @@
       "bar_side_modules": "Side modules",
       "fingerprint": "Fingerprints",
       "power": "Power",
-      "packages": "Additional Packages"
+      "packages": "Additional Packages",
+      "autostart": "Startup",
+      "keybindings": "Keybindings"
     },
     "launcher": {
       "position": {
@@ -364,6 +366,12 @@
           "follows_hint": "Follows wallpaper",
           "none": "No background selected"
         }
+      },
+      "layout_stage": "2D Displays Arrangement",
+      "monitors_detected": "monitor(s)",
+      "resolution": {
+        "title": "Display Resolution",
+        "desc": "Set output display resolution"
       }
     },
     "bar": {
@@ -1428,6 +1436,58 @@
         "nmi_watchdog_title": "Disable NMI Watchdog",
         "nmi_watchdog_desc": "Stop periodic timer interrupts for deeper C-states"
       }
+    },
+    "autostart": {
+      "title": "Autostart",
+      "desc": "Manage programs, binaries, and scripts launched automatically upon session start",
+      "master_switch": {
+        "title": "Enable Autostart",
+        "desc": "Globally execute the configured startup application list on login"
+      },
+      "add_button": "Add Application",
+      "empty_title": "No autostart applications",
+      "empty_desc": "Click 'Add Application' to specify commands, binaries, delays, and repetition counts.",
+      "name_label": "Name",
+      "name_placeholder": "e.g. Discord, EasyEffects, Script",
+      "exec_label": "Executable Command",
+      "exec_placeholder": "Binary path or name with flags (e.g. discord --start-minimized)",
+      "browse_file": "Browse File",
+      "delay_label": "Startup Delay",
+      "delay_desc": "Time in seconds to wait before launching",
+      "delay_unit": "s",
+      "count_label": "Launch Count",
+      "count_desc": "Number of instances to execute upon startup",
+      "repeat_delay_label": "Repeat Interval",
+      "repeat_delay_desc": "Delay between repeated executions",
+      "workspace_label": "Workspace",
+      "workspace_default": "Default",
+      "silent_label": "Silent Launch",
+      "silent_desc": "Do not steal focus when window opens",
+      "condition_label": "Launch Condition",
+      "condition_always": "Always",
+      "condition_ac_only": "AC Power Only",
+      "condition_battery_only": "Battery Only",
+      "condition_multi_monitor": "Multi-Monitor Only",
+      "restart_crash_label": "Keep-Alive / Watchdog",
+      "restart_crash_desc": "Automatically respawn process if it crashes",
+      "status_running": "Running",
+      "status_success": "Success",
+      "status_failed": "Failed",
+      "status_idle": "Idle",
+      "view_log": "Log",
+      "no_log": "Log is currently empty",
+      "run_now": "Run Now",
+      "delete": "Delete",
+      "toggle": "Enable / Disable"
+    },
+    "keybindings": {
+      "title": "Keybindings",
+      "subtitle": "Full cheatsheet of shortcuts synchronized across all 5 WMs",
+      "close_editor": "Close",
+      "add_custom": "+ Custom bind",
+      "search_placeholder": "Search by key or action (e.g. Super + I, terminal, close)...",
+      "editor_title": "Add custom keybinding (userprefs)",
+      "save": "Save"
     }
   },
   "sysnotif": {
