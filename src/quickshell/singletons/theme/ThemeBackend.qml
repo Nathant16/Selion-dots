@@ -320,12 +320,23 @@ Item {
         if (queue.length > 0) {
             root._flushColorQueue();
             if (root._colorQueue.length > 0) colorStepTimer.restart();
+        } else {
+            root.syncCompositors(c);
         }
     }
 
-    function syncCompositors() {
+    function syncCompositors(c) {
         let script = ((typeof Caching !== "undefined" && Caching.serpantinumDir) ? Caching.serpantinumDir : (Quickshell.env("HOME") + "/.local/share/serpantinum/src")) + "/scripts/theming/sync_compositor_theme.py";
-        Quickshell.execDetached(["python3", script]);
+        let colors = {
+            mauve: (c && c.mauve) ? c.mauve.toString() : (root.mauve ? root.mauve.toString() : "#cba6f7"),
+            blue: (c && c.blue) ? c.blue.toString() : (root.blue ? root.blue.toString() : "#89b4fa"),
+            surface0: (c && c.surface0) ? c.surface0.toString() : (root.surface0 ? root.surface0.toString() : "#313244"),
+            base: (c && c.base) ? c.base.toString() : (root.base ? root.base.toString() : "#1e1e2e"),
+            text: (c && c.text) ? c.text.toString() : (root.text ? root.text.toString() : "#cdd6f4"),
+            subtext0: (c && c.subtext0) ? c.subtext0.toString() : (root.subtext0 ? root.subtext0.toString() : "#a6adc8"),
+            red: (c && c.red) ? c.red.toString() : (root.red ? root.red.toString() : "#f38ba8")
+        };
+        Quickshell.execDetached(["python3", script, JSON.stringify(colors)]);
     }
 
     function _flushColorQueue() {

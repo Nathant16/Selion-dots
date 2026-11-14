@@ -19,8 +19,9 @@ hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "wind", 
 
 local home = os.getenv("HOME") or ""
 local theme_file = home .. "/.local/state/serpantinum/theme_hyprland.lua"
-local active_border = "rgba(cba6f7ee) rgba(89b4faee) 45deg"
-local inactive_border = "rgba(313244aa)"
+local active_1 = "rgba(cba6f7ee)"
+local active_2 = "rgba(89b4faee)"
+local inactive = "rgba(313244aa)"
 local rounding = 12
 
 local ok, theme = pcall(function()
@@ -30,8 +31,9 @@ local ok, theme = pcall(function()
 end)
 
 if ok and type(theme) == "table" then
-    if theme.active_border then active_border = theme.active_border end
-    if theme.inactive_border then inactive_border = theme.inactive_border end
+    if theme.active_border_1 then active_1 = theme.active_border_1 end
+    if theme.active_border_2 then active_2 = theme.active_border_2 end
+    if theme.inactive_border then inactive = theme.inactive_border end
     if theme.rounding then rounding = theme.rounding end
 end
 
@@ -43,8 +45,11 @@ hl.config({
         float_gaps = 6,
         resize_on_border = true,
         extend_border_grab_area = 30,
-        "col.active_border = " .. active_border,
-        "col.inactive_border = " .. inactive_border,
+        ["col.active_border"] = {
+            colors = { active_1, active_2 },
+            angle = 45,
+        },
+        ["col.inactive_border"] = inactive,
     },
     decoration = {
         rounding = rounding,

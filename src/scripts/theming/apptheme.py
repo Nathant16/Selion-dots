@@ -1290,6 +1290,12 @@ def _apply(ctx, enabled_override, mode, force, only, color_scheme=False):
             state["results"].pop(app_id)
     state["results"].update(results)
     save_state(ctx, state)
+    try:
+        comp_sync = Path(__file__).parent / "sync_compositor_theme.py"
+        if comp_sync.is_file():
+            subprocess.run([sys.executable, str(comp_sync)], capture_output=True, timeout=2)
+    except Exception:
+        pass
     return {"ok": all(r.get("ok") for r in results.values()), "mode": mode, "apps": results}
 
 

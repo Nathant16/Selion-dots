@@ -141,8 +141,17 @@ return {{
         pass
 
     if is_running or os.environ.get("HYPRLAND_INSTANCE_SIGNATURE"):
+        eval_cmd = (
+            f'hl.config({{ '
+            f'general = {{ '
+            f'["col.active_border"] = {{ colors = {{ "{active_1}", "{active_2}" }}, angle = 45 }}, '
+            f'["col.inactive_border"] = "{inactive}" '
+            f'}}, '
+            f'decoration = {{ rounding = {rounding} }} '
+            f'}})'
+        )
         try:
-            subprocess.run(["hyprctl", "reload"], capture_output=True, timeout=2)
+            subprocess.run(["hyprctl", "eval", eval_cmd], capture_output=True, timeout=2)
         except Exception:
             pass
 
