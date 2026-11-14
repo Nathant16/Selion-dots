@@ -606,16 +606,16 @@ category_items_menu() {
     local cat_title="$1"
     local -n cat_pkgs="$2"
     local cursor=0
+
+    draw_banner
+    draw_status_bar " Additional packages > $cat_title " " Toggle packages, then select Back "
+    stty -echo 2>/dev/null || true
+    printf "\e[?25l"
+    printf "\n%s%s=== $cat_title ===%s\n\n" "$BOLD" "$C_CYAN" "$RESET"
+
     local rendered_lines=0
 
     while true; do
-        draw_banner
-        draw_status_bar " Additional packages > $cat_title " " Toggle packages, then select Done "
-        stty -echo 2>/dev/null || true
-        printf "\e[?25l"
-
-        echo -e "\n${BOLD}${C_BLUE}=== $cat_title ===${RESET}\n"
-
         local items=()
         for idx in "${!cat_pkgs[@]}"; do
             local entry="${cat_pkgs[$idx]}"
@@ -692,97 +692,98 @@ category_items_menu() {
 
 additional_packages_menu() {
     local cursor=0
-    local rendered_lines=0
 
     while true; do
         draw_banner
         draw_status_bar "$(t "installer.ui.additional_pkgs_prompt" " Additional packages > ")" "$(t "installer.ui.additional_pkgs_header" " Select category, then choose packages ")"
         stty -echo 2>/dev/null || true
         printf "\e[?25l"
+        printf "\n%s%s$(t "installer.ui.additional_pkgs_title" "=== Select package categories ===")%s\n\n" "$BOLD" "$C_CYAN" "$RESET"
 
-        echo -e "\n${BOLD}${C_BLUE}$(t "installer.ui.additional_pkgs_title" "=== Select package categories ===")${RESET}\n"
+        local rendered_lines=0
 
-        local c_dev; c_dev=$(count_selected_in_category PKGS_DEVELOPMENT)
-        local c_soc; c_soc=$(count_selected_in_category PKGS_SOCIAL)
-        local c_brw; c_brw=$(count_selected_in_category PKGS_BROWSERS)
-        local c_gam; c_gam=$(count_selected_in_category PKGS_GAMES)
-        local c_off; c_off=$(count_selected_in_category PKGS_OFFICE)
-        local c_med; c_med=$(count_selected_in_category PKGS_MEDIA)
+        while true; do
+            local c_dev; c_dev=$(count_selected_in_category PKGS_DEVELOPMENT)
+            local c_soc; c_soc=$(count_selected_in_category PKGS_SOCIAL)
+            local c_brw; c_brw=$(count_selected_in_category PKGS_BROWSERS)
+            local c_gam; c_gam=$(count_selected_in_category PKGS_GAMES)
+            local c_off; c_off=$(count_selected_in_category PKGS_OFFICE)
+            local c_med; c_med=$(count_selected_in_category PKGS_MEDIA)
 
-        local s_dev="${DIM}[None]${RESET}"; [ "$c_dev" -gt 0 ] && s_dev="${C_GREEN}[$c_dev Selected]${RESET}"
-        local s_soc="${DIM}[None]${RESET}"; [ "$c_soc" -gt 0 ] && s_soc="${C_GREEN}[$c_soc Selected]${RESET}"
-        local s_brw="${DIM}[None]${RESET}"; [ "$c_brw" -gt 0 ] && s_brw="${C_GREEN}[$c_brw Selected]${RESET}"
-        local s_gam="${DIM}[None]${RESET}"; [ "$c_gam" -gt 0 ] && s_gam="${C_GREEN}[$c_gam Selected]${RESET}"
-        local s_off="${DIM}[None]${RESET}"; [ "$c_off" -gt 0 ] && s_off="${C_GREEN}[$c_off Selected]${RESET}"
-        local s_med="${DIM}[None]${RESET}"; [ "$c_med" -gt 0 ] && s_med="${C_GREEN}[$c_med Selected]${RESET}"
+            local s_dev="${DIM}[None]${RESET}"; [ "$c_dev" -gt 0 ] && s_dev="${C_GREEN}[$c_dev Selected]${RESET}"
+            local s_soc="${DIM}[None]${RESET}"; [ "$c_soc" -gt 0 ] && s_soc="${C_GREEN}[$c_soc Selected]${RESET}"
+            local s_brw="${DIM}[None]${RESET}"; [ "$c_brw" -gt 0 ] && s_brw="${C_GREEN}[$c_brw Selected]${RESET}"
+            local s_gam="${DIM}[None]${RESET}"; [ "$c_gam" -gt 0 ] && s_gam="${C_GREEN}[$c_gam Selected]${RESET}"
+            local s_off="${DIM}[None]${RESET}"; [ "$c_off" -gt 0 ] && s_off="${C_GREEN}[$c_off Selected]${RESET}"
+            local s_med="${DIM}[None]${RESET}"; [ "$c_med" -gt 0 ] && s_med="${C_GREEN}[$c_med Selected]${RESET}"
 
-        local items=()
-        items+=("1. Development $s_dev")
-        items+=("2. Social Media $s_soc")
-        items+=("3. Web Browsers $s_brw")
-        items+=("4. Games $s_gam")
-        items+=("5. Office $s_off")
-        items+=("6. Media & Entertainment $s_med")
-        items+=("7. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Done")${RESET}")
+            local items=()
+            items+=("1. Development $s_dev")
+            items+=("2. Social Media $s_soc")
+            items+=("3. Web Browsers $s_brw")
+            items+=("4. Games $s_gam")
+            items+=("5. Office $s_off")
+            items+=("6. Media & Entertainment $s_med")
+            items+=("7. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Done")${RESET}")
 
-        if [ "$rendered_lines" -gt 0 ]; then
-            printf "\033[%dA" "$rendered_lines"
-        fi
-
-        for i in "${!items[@]}"; do
-            if [ "$i" -eq "$cursor" ]; then
-                printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
-            else
-                printf "\r\033[K    %s\n" "${items[$i]}"
+            if [ "$rendered_lines" -gt 0 ]; then
+                printf "\033[%dA" "$rendered_lines"
             fi
+
+            for i in "${!items[@]}"; do
+                if [ "$i" -eq "$cursor" ]; then
+                    printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
+                else
+                    printf "\r\033[K    %s\n" "${items[$i]}"
+                fi
+            done
+            rendered_lines=${#items[@]}
+
+            local key
+            key=$(read_key)
+
+            case "$key" in
+                UP|[kK])
+                    if [ "$cursor" -gt 0 ]; then
+                        cursor=$(( cursor - 1 ))
+                    else
+                        cursor=$(( ${#items[@]} - 1 ))
+                    fi
+                    ;;
+                DOWN|[jJ])
+                    if [ "$cursor" -lt $(( ${#items[@]} - 1 )) ]; then
+                        cursor=$(( cursor + 1 ))
+                    else
+                        cursor=0
+                    fi
+                    ;;
+                ESC|[qQ])
+                    return 0
+                    ;;
+                ENTER|SPACE)
+                    case "$cursor" in
+                        0) category_items_menu "Development Packages" PKGS_DEVELOPMENT; break ;;
+                        1) category_items_menu "Social Media Packages" PKGS_SOCIAL; break ;;
+                        2) category_items_menu "Web Browsers" PKGS_BROWSERS; break ;;
+                        3) category_items_menu "Game Packages" PKGS_GAMES; break ;;
+                        4) category_items_menu "Office Packages" PKGS_OFFICE; break ;;
+                        5) category_items_menu "Media & Entertainment" PKGS_MEDIA; break ;;
+                        6) return 0 ;;
+                    esac
+                    ;;
+                *)
+                    case "$key" in
+                        1) category_items_menu "Development Packages" PKGS_DEVELOPMENT; break ;;
+                        2) category_items_menu "Social Media Packages" PKGS_SOCIAL; break ;;
+                        3) category_items_menu "Web Browsers" PKGS_BROWSERS; break ;;
+                        4) category_items_menu "Game Packages" PKGS_GAMES; break ;;
+                        5) category_items_menu "Office Packages" PKGS_OFFICE; break ;;
+                        6) category_items_menu "Media & Entertainment" PKGS_MEDIA; break ;;
+                        7) return 0 ;;
+                    esac
+                    ;;
+            esac
         done
-        rendered_lines=${#items[@]}
-
-        local key
-        key=$(read_key)
-
-        case "$key" in
-            UP|[kK])
-                if [ "$cursor" -gt 0 ]; then
-                    cursor=$(( cursor - 1 ))
-                else
-                    cursor=$(( ${#items[@]} - 1 ))
-                fi
-                ;;
-            DOWN|[jJ])
-                if [ "$cursor" -lt $(( ${#items[@]} - 1 )) ]; then
-                    cursor=$(( cursor + 1 ))
-                else
-                    cursor=0
-                fi
-                ;;
-            ESC|[qQ])
-                break
-                ;;
-            ENTER|SPACE)
-                case "$cursor" in
-                    0) category_items_menu "Development Packages" PKGS_DEVELOPMENT ;;
-                    1) category_items_menu "Social Media Packages" PKGS_SOCIAL ;;
-                    2) category_items_menu "Web Browsers" PKGS_BROWSERS ;;
-                    3) category_items_menu "Game Packages" PKGS_GAMES ;;
-                    4) category_items_menu "Office Packages" PKGS_OFFICE ;;
-                    5) category_items_menu "Media & Entertainment" PKGS_MEDIA ;;
-                    6) break ;;
-                esac
-                rendered_lines=0
-                ;;
-            *)
-                case "$key" in
-                    1) category_items_menu "Development Packages" PKGS_DEVELOPMENT; rendered_lines=0 ;;
-                    2) category_items_menu "Social Media Packages" PKGS_SOCIAL; rendered_lines=0 ;;
-                    3) category_items_menu "Web Browsers" PKGS_BROWSERS; rendered_lines=0 ;;
-                    4) category_items_menu "Game Packages" PKGS_GAMES; rendered_lines=0 ;;
-                    5) category_items_menu "Office Packages" PKGS_OFFICE; rendered_lines=0 ;;
-                    6) category_items_menu "Media & Entertainment" PKGS_MEDIA; rendered_lines=0 ;;
-                    7) break ;;
-                esac
-                ;;
-        esac
     done
 }
 
