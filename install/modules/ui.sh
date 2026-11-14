@@ -531,21 +531,37 @@ PKGS_BROWSERS=(
     "google-chrome:Google Chrome"
 )
 
+PKGS_GAMES=(
+    "steam:Steam (Official gaming client) [Recommended, Default]"
+    "gamemode:GameMode (Game performance optimization service) [Recommended, Default]"
+    "mangohud:MangoHud (Overlay for FPS, temperatures & hardware stats)"
+    "portproton:PortProton (Windows games launcher & presets) [Recommended]"
+    "prismlauncher:Prism Launcher (Custom Minecraft launcher with instance manager)"
+)
+
+PKGS_OFFICE=(
+    "onlyoffice-bin:ONLYOFFICE Desktop (Collaborative office suite) [Recommended]"
+    "libreoffice-fresh:LibreOffice Fresh (Comprehensive open-source office suite)"
+    "wordcraft-bin:WordCraft (Native Microsoft Word alternative)"
+    "gridcraft-bin:GridCraft (Native Microsoft Excel alternative)"
+    "deckcraft:DeckCraft (Native Microsoft PowerPoint alternative)"
+)
+
 PKGS_MEDIA=(
     "spotify:Spotify Music"
-    "obsidian:Obsidian (Markdown notes)"
-    "steam:Steam Gaming Platform"
-    "prismlauncher:Prism Launcher (Minecraft)"
-    "obs-studio:OBS Studio (Screen recorder & streaming)"
+    "obsidian:Obsidian (Markdown notes & knowledge base)"
+    "obs-studio:OBS Studio (Screen recorder & live streaming)"
 )
 
 AVAILABLE_ADDITIONAL_PKGS=(
     "${PKGS_DEVELOPMENT[@]}"
     "${PKGS_SOCIAL[@]}"
     "${PKGS_BROWSERS[@]}"
+    "${PKGS_GAMES[@]}"
+    "${PKGS_OFFICE[@]}"
     "${PKGS_MEDIA[@]}"
 )
-SELECTED_ADDITIONAL_PKGS=()
+SELECTED_ADDITIONAL_PKGS=("steam" "gamemode")
 
 toggle_additional_pkg() {
     local target="$1"
@@ -679,19 +695,25 @@ additional_packages_menu() {
         local c_dev; c_dev=$(count_selected_in_category PKGS_DEVELOPMENT)
         local c_soc; c_soc=$(count_selected_in_category PKGS_SOCIAL)
         local c_brw; c_brw=$(count_selected_in_category PKGS_BROWSERS)
+        local c_gam; c_gam=$(count_selected_in_category PKGS_GAMES)
+        local c_off; c_off=$(count_selected_in_category PKGS_OFFICE)
         local c_med; c_med=$(count_selected_in_category PKGS_MEDIA)
 
         local s_dev="${DIM}[None]${RESET}"; [ "$c_dev" -gt 0 ] && s_dev="${C_GREEN}[$c_dev Selected]${RESET}"
         local s_soc="${DIM}[None]${RESET}"; [ "$c_soc" -gt 0 ] && s_soc="${C_GREEN}[$c_soc Selected]${RESET}"
         local s_brw="${DIM}[None]${RESET}"; [ "$c_brw" -gt 0 ] && s_brw="${C_GREEN}[$c_brw Selected]${RESET}"
+        local s_gam="${DIM}[None]${RESET}"; [ "$c_gam" -gt 0 ] && s_gam="${C_GREEN}[$c_gam Selected]${RESET}"
+        local s_off="${DIM}[None]${RESET}"; [ "$c_off" -gt 0 ] && s_off="${C_GREEN}[$c_off Selected]${RESET}"
         local s_med="${DIM}[None]${RESET}"; [ "$c_med" -gt 0 ] && s_med="${C_GREEN}[$c_med Selected]${RESET}"
 
         local items=()
         items+=("1. 🛠️  Development $s_dev")
         items+=("2. 💬 Social Media $s_soc")
         items+=("3. 🌐 Web Browsers $s_brw")
-        items+=("4. 🎮 Gaming & Media $s_med")
-        items+=("5. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Done")${RESET}")
+        items+=("4. 🎮 Games $s_gam")
+        items+=("5. 📄 Office $s_off")
+        items+=("6. 🎵 Media & Entertainment $s_med")
+        items+=("7. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Done")${RESET}")
 
         if [ "$rendered_lines" -gt 0 ]; then
             printf "\033[%dA" "$rendered_lines"
@@ -732,8 +754,10 @@ additional_packages_menu() {
                     0) category_items_menu "Development Packages" PKGS_DEVELOPMENT ;;
                     1) category_items_menu "Social Media Packages" PKGS_SOCIAL ;;
                     2) category_items_menu "Web Browsers" PKGS_BROWSERS ;;
-                    3) category_items_menu "Gaming & Media Packages" PKGS_MEDIA ;;
-                    4) break ;;
+                    3) category_items_menu "Game Packages" PKGS_GAMES ;;
+                    4) category_items_menu "Office Packages" PKGS_OFFICE ;;
+                    5) category_items_menu "Media & Entertainment" PKGS_MEDIA ;;
+                    6) break ;;
                 esac
                 rendered_lines=0
                 ;;
@@ -742,8 +766,10 @@ additional_packages_menu() {
                     1) category_items_menu "Development Packages" PKGS_DEVELOPMENT; rendered_lines=0 ;;
                     2) category_items_menu "Social Media Packages" PKGS_SOCIAL; rendered_lines=0 ;;
                     3) category_items_menu "Web Browsers" PKGS_BROWSERS; rendered_lines=0 ;;
-                    4) category_items_menu "Gaming & Media Packages" PKGS_MEDIA; rendered_lines=0 ;;
-                    5) break ;;
+                    4) category_items_menu "Game Packages" PKGS_GAMES; rendered_lines=0 ;;
+                    5) category_items_menu "Office Packages" PKGS_OFFICE; rendered_lines=0 ;;
+                    6) category_items_menu "Media & Entertainment" PKGS_MEDIA; rendered_lines=0 ;;
+                    7) break ;;
                 esac
                 ;;
         esac
