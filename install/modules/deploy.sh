@@ -644,6 +644,7 @@ deploy_package() {
                                     driftwm) target_config_name="driftwm" ;;
                                     niri) target_config_name="niri" ;;
                                     sway) target_config_name="sway" ;;
+                                    mango) target_config_name="mango" ;;
                                     *) target_config_name="$comp" ;;
                                 esac
                                 rm -f "$HOME/.config/$target_config_name/$comp_file"
@@ -664,7 +665,7 @@ deploy_package() {
                 elif [[ "$file" == src/* ]]; then
                     mkdir -p "$(dirname "$TARGET_BASE/$file")"
                     cp "$REPO_ROOT/$file" "$TARGET_BASE/$file"
-                    if [[ "$file" == *.sh ]]; then
+                    if [[ "$file" == *.sh || "$file" == *.py ]]; then
                         chmod +x "$TARGET_BASE/$file" 2>/dev/null || true
                     fi
                 elif [[ "$file" == config/* ]]; then

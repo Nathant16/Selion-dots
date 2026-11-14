@@ -1,3 +1,18 @@
+### 2.7.0
+
+- feat(display): persist monitor resolutions, modes and scaling dynamically across all 5 compositors (DriftWM, Hyprland, Sway, Niri, Mango) via `monitor_manager.py` (`serpantinum-monitor`)
+- feat(display): prevent display resolution from reverting back to 1080p, integrate optimistic mode updates and multi-backend DRM detection
+- feat(display): align UI scale slider design, position and percent-based UX (50%-250%, step 5%) to match Element Opacity slider
+- feat(theming): synchronize element opacity and blur live to Kitty terminal, Ski file manager, and window compositors
+- feat(bar): hide workspaces module and its settings card automatically when running under DriftWM
+- feat(calendar): restore 3D orbital weather clock with revolving hourly weather strip, radial tilt and mouse wheel scroll
+- feat(power): set default target brightness for battery saver mode to 60% across battery daemon and power profile handler
+- feat(installer): add "Games" (Steam, GameMode, MangoHud, PortProton, Prism Launcher) and "Office" (ONLYOFFICE, LibreOffice, WordCraft, GridCraft, DeckCraft) package categories
+- refactor(installer): remove emojis from category names and clear default package selections so nothing is selected by default
+- fix(sddm): ensure autologin configuration is cleared during install/update so standard SDDM login screen with password is always displayed
+- refactor(settings): remove obsolete keybindings and autostart tabs and clean up associated code
+- fix(i18n): unify location auto_detect key and complete 100% translation coverage across all 23 locales
+
 ### 2.6.2
 
 - feat(upstream): merge upstream Serpantinum v2.5.1 updates:
