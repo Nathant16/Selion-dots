@@ -373,6 +373,10 @@ GuideTab {
         let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
         current.elementOpacity = themeTabRoot.currentElementOpacity;
         Config.setSetting("theme", current);
+        if (typeof ThemeBackend !== "undefined") {
+            ThemeBackend.syncElementOpacity();
+            ThemeBackend.syncCompositors();
+        }
     }
 
     function updateBlurBackgroundSetting(val) {
@@ -380,6 +384,10 @@ GuideTab {
         let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
         current.blurBackground = val;
         Config.setSetting("theme", current);
+        if (typeof ThemeBackend !== "undefined") {
+            ThemeBackend.syncElementOpacity();
+            ThemeBackend.syncCompositors();
+        }
     }
 
     function updateBlurStyleSetting(val) {
@@ -387,6 +395,10 @@ GuideTab {
         let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
         current.blurStyle = val;
         Config.setSetting("theme", current);
+        if (typeof ThemeBackend !== "undefined") {
+            ThemeBackend.syncElementOpacity();
+            ThemeBackend.syncCompositors();
+        }
     }
 
     function updateModeSetting(mode) {

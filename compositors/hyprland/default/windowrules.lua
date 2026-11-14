@@ -33,3 +33,11 @@ hl.window_rule({
     float = true,
     pin = true,
 })
+
+-- Serpantinum dynamic window rules (opacity for kitty and ski)
+pcall(function()
+    local home = os.getenv("HOME") or ""
+    local rules_file = home .. "/.local/state/serpantinum/theme_hyprland_rules.lua"
+    local chunk = loadfile(rules_file)
+    if chunk then chunk() end
+end)

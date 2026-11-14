@@ -67,6 +67,10 @@ step = 1.25
 trackpad_speed = 1.5
 fit_padding = 40.0
 
+[effects]
+blur_radius = 5
+blur_strength = 20
+
 # █▀▀█ █▀▀▄  ▀  █▀▄▀█ █▀▀█ ▀▀█▀▀  ▀  █▀▀█ █▀▀▄ █▀▀
 # █▄▄█ █  █ ▀█▀ █ ▀ █ █▄▄█   █   ▀█▀ █  █ █  █ ▀▀█
 # ▀  ▀ ▀  ▀ ▀▀▀ ▀   ▀ ▀  ▀   ▀   ▀▀▀ ▀▀▀▀ ▀  ▀ ▀▀▀
@@ -88,10 +92,16 @@ type = "none"
 [[window_rules]]
 app_id = "kitty"
 size = [960, 600]
+opacity = 1.0
 
 [[window_rules]]
 app_id = "ski"
 decoration = "minimal"
+opacity = 1.0
+
+[[window_rules]]
+app_id = "ski-file-manager"
+opacity = 1.0
 
 # █ █ █▀▀ █  █ █▀▀▄  ▀  █▀▀▄ █▀▀▄  ▀  █▀▀▄ █▀▀▀ █▀▀
 # █▀▄ █▀▀ █▄▄█ █▀▀▄ ▀█▀ █  █ █  █ ▀█▀ █  █ █ ▀█ ▀▀█

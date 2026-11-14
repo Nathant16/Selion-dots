@@ -29,6 +29,7 @@ local ok, theme = pcall(function()
     return nil
 end)
 
+local blur_enabled = true
 if ok and type(theme) == "table" then
     if theme.active_border then
         active = theme.active_border
@@ -37,6 +38,7 @@ if ok and type(theme) == "table" then
     end
     if theme.inactive_border then inactive = theme.inactive_border end
     if theme.rounding then rounding = theme.rounding end
+    if theme.blur_enabled ~= nil then blur_enabled = theme.blur_enabled end
 end
 
 hl.config({
@@ -61,7 +63,7 @@ hl.config({
             color = "rgba(00000055)",
         },
         blur = {
-            enabled = true,
+            enabled = blur_enabled,
             size = 6,
             passes = 2,
             new_optimizations = true,
