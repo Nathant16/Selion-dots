@@ -47,9 +47,9 @@ pm_install_pkg() {
     if pacman -Si "$pkg" &>/dev/null; then
         sudo pacman -S --noconfirm --needed "$pkg"
     elif command -v yay &>/dev/null; then
-        env CARGO_BUILD_JOBS="$safe_jobs" MAKEFLAGS="-j$safe_jobs" yay -S --noconfirm --needed "$pkg"
+        env CARGO_BUILD_JOBS="$safe_jobs" MAKEFLAGS="-j$safe_jobs" yay -S --noconfirm --needed --answerclean None --answerdiff None --answeredit None --answerupgrade None "$pkg"
     elif command -v paru &>/dev/null; then
-        env CARGO_BUILD_JOBS="$safe_jobs" MAKEFLAGS="-j$safe_jobs" paru -S --noconfirm --needed "$pkg"
+        env CARGO_BUILD_JOBS="$safe_jobs" MAKEFLAGS="-j$safe_jobs" paru -S --noconfirm --needed --skipreview "$pkg"
     else
         sudo pacman -S --noconfirm --needed "$pkg"
     fi
@@ -63,7 +63,11 @@ pm_upgrade_quickshell() {
     local helper
     for helper in yay paru; do
         command -v "$helper" &>/dev/null || continue
-        "$helper" -S --noconfirm --needed --ask=4 quickshell-git && quickshell_is_current && return 0
+        if [ "$helper" = "yay" ]; then
+            "$helper" -S --noconfirm --needed --ask=4 --answerclean None --answerdiff None --answeredit None --answerupgrade None quickshell-git && quickshell_is_current && return 0
+        else
+            "$helper" -S --noconfirm --needed --ask=4 --skipreview quickshell-git && quickshell_is_current && return 0
+        fi
         break
     done
     return 0
