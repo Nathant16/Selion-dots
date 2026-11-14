@@ -52,7 +52,10 @@
       "general_weather": "날씨",
       "bar_side_modules": "사이드 모듈",
       "fingerprint": "지문",
-      "power": "전원"
+      "power": "전원",
+      "autostart": "자동 시작",
+      "keybindings": "단축키",
+      "packages": "추가 패키지"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "배경화면을 따라갑니다",
           "none": "선택된 배경 없음"
         }
+      },
+      "layout_stage": "2D 디스플레이 배치",
+      "monitors_detected": "개 모니터",
+      "resolution": {
+        "title": "화면 해상도",
+        "desc": "디스플레이 해상도 설정"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "배터리 사용 시 48Hz 화면 주사율",
         "display_refresh_save_desc": "Hyprland 및 Sway에서 배터리 사용 시 화면 주사율을 48Hz로 낮춤"
       }
+    },
+    "keybindings": {
+      "title": "단축키",
+      "subtitle": "5개 WM 전체에 동기화된 전체 단축키 모음",
+      "close_editor": "닫기",
+      "add_custom": "+ 사용자 정의 단축키",
+      "search_placeholder": "키 또는 동작으로 검색 (예: Super + I, 터미널)...",
+      "editor_title": "사용자 정의 단축키 추가 (userprefs)",
+      "save": "저장"
+    },
+    "autostart": {
+      "title": "자동 시작",
+      "desc": "세션 시작 시 자동으로 실행되는 프로그램 및 스크립트 관리",
+      "master_switch": {
+        "title": "자동 시작 활성화",
+        "desc": "로그인 시 설정된 자동 시작 목록 실행"
+      },
+      "add_button": "앱 추가",
+      "empty_title": "자동 시작 앱 없음",
+      "empty_desc": "앱 추가를 클릭하여 명령어 및 지연 시간을 설정하세요.",
+      "name_label": "이름",
+      "name_placeholder": "예: Discord, EasyEffects, Script",
+      "exec_label": "실행 명령",
+      "exec_placeholder": "경로 또는 옵션 포함 명령 (예: discord --start-minimized)",
+      "browse_file": "파일 찾아보기",
+      "delay_label": "시작 지연",
+      "delay_desc": "실행 전 대기 시간(초)",
+      "delay_unit": "초",
+      "count_label": "실행 횟수",
+      "count_desc": "시작 시 실행할 인스턴스 수",
+      "repeat_delay_label": "반복 간격",
+      "repeat_delay_desc": "반복 실행 간격 지연",
+      "workspace_label": "작업 공간",
+      "workspace_default": "기본값",
+      "silent_label": "백그라운드 실행",
+      "silent_desc": "창 열릴 때 포커스를 뺏지 않음",
+      "condition_label": "실행 조건",
+      "condition_always": "항상",
+      "condition_ac_only": "전원 연결 시에만",
+      "condition_battery_only": "배터리 사용 시에만",
+      "condition_multi_monitor": "다중 모니터 시에만",
+      "restart_crash_label": "Keep-Alive / 감시견",
+      "restart_crash_desc": "프로세스 충돌 시 자동 재시작",
+      "status_running": "실행 중",
+      "status_success": "성공",
+      "status_failed": "실패",
+      "status_idle": "대기 중",
+      "view_log": "로그",
+      "no_log": "로그가 비어 있습니다",
+      "run_now": "지금 실행",
+      "delete": "삭제",
+      "toggle": "활성화 / 비활성화"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " SDDM 설정 > ",
       "sddm_header": " 옵션을 선택한 뒤 완료를 고르세요 ",
       "main_menu_prompt": " 메인 메뉴 > ",
-      "main_menu_header": " 방향키로 이동하고 enter로 선택하세요 "
+      "main_menu_header": " 방향키로 이동하고 enter로 선택하세요 ",
+      "additional_pkgs_header": "  추가 패키지를 선택한 후 완료를 누르세요  ",
+      "additional_pkgs_prompt": "  추가 패키지 > ",
+      "additional_pkgs_title": "=== 추가 패키지 선택 ===",
+      "menu_additional_pkgs": "추가 패키지"
     },
     "deps": {
       "syncing": "시스템 패키지를 동기화하고 업데이트하는 중 (pacman -syyu)...",

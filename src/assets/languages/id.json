@@ -52,7 +52,10 @@
       "general_weather": "Cuaca",
       "bar_side_modules": "Modul samping",
       "fingerprint": "Sidik jari",
-      "power": "Daya"
+      "power": "Daya",
+      "autostart": "Mulai Otomatis",
+      "keybindings": "Tombol Pintas",
+      "packages": "Paket Tambahan"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "Mengikuti wallpaper",
           "none": "Tidak ada latar belakang dipilih"
         }
+      },
+      "layout_stage": "Pengaturan Layar 2D",
+      "monitors_detected": "monitor",
+      "resolution": {
+        "title": "Resolusi Layar",
+        "desc": "Atur resolusi tampilan layar"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "Refresh Layar 48 Hz pada Baterai",
         "display_refresh_save_desc": "Turunkan refresh rate layar internal ke 48 Hz saat memakai baterai"
       }
+    },
+    "keybindings": {
+      "title": "Tombol Pintas",
+      "subtitle": "Lembar contekan pintasan lengkap disinkronkan di semua 5 WM",
+      "close_editor": "Tutup",
+      "add_custom": "+ Pintasan Khusus",
+      "search_placeholder": "Cari berdasarkan tombol atau tindakan (mis. Super + I, terminal)...",
+      "editor_title": "Tambah pintasan kustom (userprefs)",
+      "save": "Simpan"
+    },
+    "autostart": {
+      "title": "Mulai Otomatis",
+      "desc": "Kelola program dan skrip yang diluncurkan secara otomatis saat sesi dimulai",
+      "master_switch": {
+        "title": "Aktifkan Mulai Otomatis",
+        "desc": "Jalankan daftar aplikasi startup yang dikonfigurasi saat login"
+      },
+      "add_button": "Tambah Aplikasi",
+      "empty_title": "Tidak ada aplikasi mulai otomatis",
+      "empty_desc": "Klik Tambah Aplikasi untuk menentukan perintah dan penundaan.",
+      "name_label": "Nama",
+      "name_placeholder": "mis. Discord, EasyEffects, Script",
+      "exec_label": "Perintah yang Dapat Dieksekusi",
+      "exec_placeholder": "Jalur biner atau perintah dengan parameter (mis. discord --start-minimized)",
+      "browse_file": "Jelajahi File",
+      "delay_label": "Penundaan Startup",
+      "delay_desc": "Waktu dalam detik untuk menunggu sebelum peluncuran",
+      "delay_unit": "d",
+      "count_label": "Jumlah Peluncuran",
+      "count_desc": "Jumlah instans untuk dijalankan saat startup",
+      "repeat_delay_label": "Interval Pengulangan",
+      "repeat_delay_desc": "Penundaan antara eksekusi berulang",
+      "workspace_label": "Ruang Kerja",
+      "workspace_default": "Default",
+      "silent_label": "Peluncuran Senyap",
+      "silent_desc": "Jangan mencuri fokus saat jendela terbuka",
+      "condition_label": "Kondisi Peluncuran",
+      "condition_always": "Selalu",
+      "condition_ac_only": "Hanya Daya Listrik (AC)",
+      "condition_battery_only": "Hanya Baterai",
+      "condition_multi_monitor": "Hanya Multi-Monitor",
+      "restart_crash_label": "Keep-Alive / Watchdog",
+      "restart_crash_desc": "Spawn ulang proses secara otomatis jika macet",
+      "status_running": "Berjalan",
+      "status_success": "Sukses",
+      "status_failed": "Gagal",
+      "status_idle": "Diam",
+      "view_log": "Log",
+      "no_log": "Log saat ini kosong",
+      "run_now": "Jalankan Sekarang",
+      "delete": "Hapus",
+      "toggle": "Aktifkan / Nonaktifkan"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " Penyiapan SDDM > ",
       "sddm_header": " Alihkan opsi, lalu pilih selesai ",
       "main_menu_prompt": " Menu utama > ",
-      "main_menu_header": " Gunakan tombol panah untuk menavigasi, Enter untuk memilih "
+      "main_menu_header": " Gunakan tombol panah untuk menavigasi, Enter untuk memilih ",
+      "additional_pkgs_header": "  Pilih paket opsional lalu klik selesai  ",
+      "additional_pkgs_prompt": "  Paket tambahan > ",
+      "additional_pkgs_title": "=== Pilih paket tambahan ===",
+      "menu_additional_pkgs": "Paket tambahan"
     },
     "deps": {
       "syncing": "Menyinkronkan dan memperbarui paket sistem (pacman -Syyu)...",

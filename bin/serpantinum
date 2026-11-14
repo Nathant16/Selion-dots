@@ -70,11 +70,14 @@ get_installed_version() {
 }
 
 current_lang_setting="$(get_setting "general" '{}' | jq -r '.language // empty')"
-if [ -z "$current_lang_setting" ]; then
-    env_lang="${LANGUAGE:-${LANG:-en}}"
-    env_lang_short="${env_lang:0:2}"
+if [ -z "$current_lang_setting" ] || [ "$current_lang_setting" = "C." ] || [ "$current_lang_setting" = "C" ]; then
+    source "$SCRIPT_DIR/i18n.sh" 2>/dev/null || true
+    detected_lang="$(detect_system_language 2>/dev/null || echo "en")"
+    if [ -z "$detected_lang" ] || [ "$detected_lang" = "C." ] || [ "$detected_lang" = "C" ]; then
+        detected_lang="en"
+    fi
     current_general="$(get_setting "general" '{}')"
-    new_general="$(printf '%s' "$current_general" | jq -c --arg lang "$env_lang_short" '. + {language: $lang}')"
+    new_general="$(printf '%s' "$current_general" | jq -c --arg lang "$detected_lang" '. + {language: $lang}')"
     set_setting "general" "$new_general"
 fi
 

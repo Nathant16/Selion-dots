@@ -548,39 +548,47 @@ deploy_package() {
             fi
         done
 
-        if [ "$is_update" != "true" ]; then
-            for comp in "${COMPOSITORS[@]}"; do
-                local target_config_name
-                case "$comp" in
-                    hyprland) target_config_name="hypr" ;;
-                    driftwm) target_config_name="driftwm" ;;
-                    niri) target_config_name="niri" ;;
-                    sway) target_config_name="sway" ;;
-                    *) target_config_name="$comp" ;;
-                esac
+        for comp in "${COMPOSITORS[@]}"; do
+            local target_config_name
+            case "$comp" in
+                hyprland) target_config_name="hypr" ;;
+                driftwm) target_config_name="driftwm" ;;
+                niri) target_config_name="niri" ;;
+                sway) target_config_name="sway" ;;
+                mango) target_config_name="mango" ;;
+                *) target_config_name="$comp" ;;
+            esac
 
-                local TARGET_CONFIG_DIR="$HOME/.config/$target_config_name"
-                local BACKUP_BASE="$HOME/.config/${target_config_name}_backup"
-                local BACKUP_DIR="$BACKUP_BASE/backup_$(date +%Y%m%d_%H%M%S)"
+            local TARGET_CONFIG_DIR="$HOME/.config/$target_config_name"
+            local SRC_COMP_DIR=""
+            if [ -d "$REPO_ROOT/compositors/$comp" ] && [ "$(ls -A "$REPO_ROOT/compositors/$comp" 2>/dev/null)" ]; then
+                SRC_COMP_DIR="$REPO_ROOT/compositors/$comp"
+            elif [ -d "$REPO_ROOT/compositor/$comp" ] && [ "$(ls -A "$REPO_ROOT/compositor/$comp" 2>/dev/null)" ]; then
+                SRC_COMP_DIR="$REPO_ROOT/compositor/$comp"
+            fi
 
-                local SRC_COMP_DIR=""
-                if [ -d "$REPO_ROOT/compositors/$comp" ] && [ "$(ls -A "$REPO_ROOT/compositors/$comp" 2>/dev/null)" ]; then
-                    SRC_COMP_DIR="$REPO_ROOT/compositors/$comp"
-                elif [ -d "$REPO_ROOT/compositor/$comp" ] && [ "$(ls -A "$REPO_ROOT/compositor/$comp" 2>/dev/null)" ]; then
-                    SRC_COMP_DIR="$REPO_ROOT/compositor/$comp"
-                fi
+            if [ -n "$SRC_COMP_DIR" ]; then
+                mkdir -p "$TARGET_CONFIG_DIR"
 
-                if [ -n "$SRC_COMP_DIR" ]; then
-                    if [ -d "$TARGET_CONFIG_DIR" ] && [ "$(ls -A "$TARGET_CONFIG_DIR" 2>/dev/null)" ]; then
-                        mkdir -p "$BACKUP_DIR"
-                        cp -a "$TARGET_CONFIG_DIR/." "$BACKUP_DIR/" 2>/dev/null || true
-                    fi
-
-                    mkdir -p "$TARGET_CONFIG_DIR"
+                if [ "$is_update" = "true" ]; then
+                    # During update: copy updated repo files, strictly preserving userprefs
+                    find "$SRC_COMP_DIR" -type f | while IFS= read -r src_file; do
+                        local rel_path="${src_file#$SRC_COMP_DIR/}"
+                        if [[ "$rel_path" == *userprefs* ]]; then
+                            continue
+                        fi
+                        mkdir -p "$(dirname "$TARGET_CONFIG_DIR/$rel_path")"
+                        cp "$src_file" "$TARGET_CONFIG_DIR/$rel_path"
+                    done
+                else
+                    # Fresh install or reinstall:
                     cp -r "$SRC_COMP_DIR/." "$TARGET_CONFIG_DIR/"
 
                     find "$TARGET_CONFIG_DIR" -type f -o -type l | while IFS= read -r dest_file; do
                         local rel_path="${dest_file#$TARGET_CONFIG_DIR/}"
+                        if [[ "$rel_path" == *userprefs* || "$rel_path" == *custom* ]]; then
+                            continue
+                        fi
                         if [ ! -e "$SRC_COMP_DIR/$rel_path" ] && [ ! -L "$SRC_COMP_DIR/$rel_path" ]; then
                             rm -f "$dest_file"
                         fi
@@ -588,8 +596,8 @@ deploy_package() {
 
                     find "$TARGET_CONFIG_DIR" -depth -type d -empty ! -path "$TARGET_CONFIG_DIR" -delete 2>/dev/null || true
                 fi
-            done
-        fi
+            fi
+        done
     else
         mkdir -p "$TARGET_BASE/bin" "$TARGET_BASE/src" "$BIN_DIR"
 
@@ -667,10 +675,10 @@ deploy_package() {
                         fi
                     done
                 elif [[ "$file" == compositors/* || "$file" == compositor/* ]]; then
-                    if [ "$is_update" != "true" ]; then
-                        local comp_part="${file#compositor*/}"
-                        local comp_name="${comp_part%%/*}"
-                        local comp_file="${comp_part#*/}"
+                    local comp_part="${file#compositor*/}"
+                    local comp_name="${comp_part%%/*}"
+                    local comp_file="${comp_part#*/}"
+                    if [[ "$comp_file" != *userprefs* ]]; then
                         for comp in "${COMPOSITORS[@]}"; do
                             if [[ "$comp" == "$comp_name" ]]; then
                                 local target_config_name
@@ -679,6 +687,7 @@ deploy_package() {
                                     driftwm) target_config_name="driftwm" ;;
                                     niri) target_config_name="niri" ;;
                                     sway) target_config_name="sway" ;;
+                                    mango) target_config_name="mango" ;;
                                     *) target_config_name="$comp" ;;
                                 esac
                                 mkdir -p "$(dirname "$HOME/.config/$target_config_name/$comp_file")"

@@ -52,7 +52,10 @@
       "general_weather": "Clima",
       "bar_side_modules": "Módulos laterais",
       "fingerprint": "Impressões digitais",
-      "power": "Energia"
+      "power": "Energia",
+      "autostart": "Inicialização",
+      "keybindings": "Atalhos de teclado",
+      "packages": "Pacotes adicionais"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "Segue o papel de parede",
           "none": "Nenhum plano de fundo selecionado"
         }
+      },
+      "layout_stage": "Disposição 2D de telas",
+      "monitors_detected": "monitor(es)",
+      "resolution": {
+        "title": "Resolução da tela",
+        "desc": "Definir resolução da tela"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "Taxa de atualização de 48 Hz na bateria",
         "display_refresh_save_desc": "Reduzir a taxa de atualização para 48 Hz na bateria no Hyprland e Sway"
       }
+    },
+    "keybindings": {
+      "title": "Atalhos de teclado",
+      "subtitle": "Lista completa de atalhos sincronizados em todos os 5 WMs",
+      "close_editor": "Fechar",
+      "add_custom": "+ Atalho personalizado",
+      "search_placeholder": "Buscar por tecla ou ação (ex: Super + I, terminal)...",
+      "editor_title": "Adicionar atalho personalizado (userprefs)",
+      "save": "Salvar"
+    },
+    "autostart": {
+      "title": "Inicialização",
+      "desc": "Gerenciar programas e scripts iniciados automaticamente ao iniciar a sessão",
+      "master_switch": {
+        "title": "Ativar inicialização automática",
+        "desc": "Executar globalmente os aplicativos configurados ao iniciar sessão"
+      },
+      "add_button": "Adicionar aplicativo",
+      "empty_title": "Nenhum aplicativo na inicialização",
+      "empty_desc": "Clique em Adicionar aplicativo para configurar comandos e atrasos.",
+      "name_label": "Nome",
+      "name_placeholder": "ex: Discord, EasyEffects, Script",
+      "exec_label": "Comando executável",
+      "exec_placeholder": "Caminho ou comando com parâmetros (ex: discord --start-minimized)",
+      "browse_file": "Procurar arquivo",
+      "delay_label": "Atraso na inicialização",
+      "delay_desc": "Tempo em segundos antes de iniciar",
+      "delay_unit": "s",
+      "count_label": "Contagem de execuções",
+      "count_desc": "Número de instâncias a executar na inicialização",
+      "repeat_delay_label": "Intervalo de repetição",
+      "repeat_delay_desc": "Atraso entre execuções repetidas",
+      "workspace_label": "Área de trabalho",
+      "workspace_default": "Padrão",
+      "silent_label": "Inicialização silenciosa",
+      "silent_desc": "Não roubar o foco ao abrir a janela",
+      "condition_label": "Condição de inicialização",
+      "condition_always": "Sempre",
+      "condition_ac_only": "Apenas na tomada",
+      "condition_battery_only": "Apenas na bateria",
+      "condition_multi_monitor": "Apenas com múltiplos monitores",
+      "restart_crash_label": "Keep-Alive / Watchdog",
+      "restart_crash_desc": "Reiniciar processo automaticamente em caso de falha",
+      "status_running": "Em execução",
+      "status_success": "Sucesso",
+      "status_failed": "Falhou",
+      "status_idle": "Inativo",
+      "view_log": "Registro",
+      "no_log": "O registro está vazio",
+      "run_now": "Executar agora",
+      "delete": "Excluir",
+      "toggle": "Ativar / Desativar"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " Configurar SDDM > ",
       "sddm_header": " Alterne as opções, depois selecione concluir ",
       "main_menu_prompt": " Menu principal > ",
-      "main_menu_header": " Use as setas para navegar, enter para selecionar "
+      "main_menu_header": " Use as setas para navegar, enter para selecionar ",
+      "additional_pkgs_header": "  Selecione os pacotes opcionais e finalize  ",
+      "additional_pkgs_prompt": "  Pacotes adicionais > ",
+      "additional_pkgs_title": "=== Selecionar pacotes adicionais ===",
+      "menu_additional_pkgs": "Pacotes adicionais"
     },
     "deps": {
       "syncing": "Sincronizando e atualizando pacotes do sistema (pacman -syyu)...",

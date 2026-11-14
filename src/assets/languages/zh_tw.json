@@ -52,7 +52,10 @@
       "general_weather": "天氣",
       "bar_side_modules": "側邊模組",
       "fingerprint": "指紋",
-      "power": "電源"
+      "power": "電源",
+      "autostart": "自動啟動",
+      "keybindings": "快捷鍵",
+      "packages": "附加套件"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "跟隨桌布",
           "none": "未選擇背景"
         }
+      },
+      "layout_stage": "2D 螢幕排列",
+      "monitors_detected": "台螢幕",
+      "resolution": {
+        "title": "螢幕解析度",
+        "desc": "設定螢幕解析度"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "使用電池時48 Hz螢幕更新率",
         "display_refresh_save_desc": "在Hyprland與Sway中使用電池時將更新率降至48 Hz"
       }
+    },
+    "keybindings": {
+      "title": "快捷鍵",
+      "subtitle": "適用於所有 5 個 WM 的同步快速鍵速查表",
+      "close_editor": "關閉",
+      "add_custom": "+ 自訂快速鍵",
+      "search_placeholder": "依按鍵或動作搜尋 (例如 Super + I, 終端機)...",
+      "editor_title": "新增自訂快速鍵 (userprefs)",
+      "save": "儲存"
+    },
+    "autostart": {
+      "title": "自動啟動",
+      "desc": "管理登入時自動啟動的程式和指令碼",
+      "master_switch": {
+        "title": "啟用自動啟動",
+        "desc": "登入時全域執行已設定的啟動應用程式清單"
+      },
+      "add_button": "新增應用程式",
+      "empty_title": "沒有自動啟動應用程式",
+      "empty_desc": "按一下「新增應用程式」以設定指令與延遲。",
+      "name_label": "名稱",
+      "name_placeholder": "例如 Discord, EasyEffects, Script",
+      "exec_label": "可執行指令",
+      "exec_placeholder": "程式路徑或帶參數的指令 (例如 discord --start-minimized)",
+      "browse_file": "瀏覽檔案",
+      "delay_label": "啟動延遲",
+      "delay_desc": "啟動前等待的秒數",
+      "delay_unit": "秒",
+      "count_label": "啟動次數",
+      "count_desc": "啟動時執行的執行個體數量",
+      "repeat_delay_label": "重複間隔",
+      "repeat_delay_desc": "重複執行之間的延遲",
+      "workspace_label": "工作區",
+      "workspace_default": "預設",
+      "silent_label": "無訊息啟動",
+      "silent_desc": "開啟視窗時不取得焦點",
+      "condition_label": "啟動條件",
+      "condition_always": "一律",
+      "condition_ac_only": "僅使用電源",
+      "condition_battery_only": "僅使用電池",
+      "condition_multi_monitor": "僅多螢幕",
+      "restart_crash_label": "處理程序守護 / 自動重啟",
+      "restart_crash_desc": "當處理程序損毀時自動重新啟動",
+      "status_running": "執行中",
+      "status_success": "成功",
+      "status_failed": "失敗",
+      "status_idle": "閒置",
+      "view_log": "記錄",
+      "no_log": "目前無記錄",
+      "run_now": "立即執行",
+      "delete": "刪除",
+      "toggle": "啟用 / 停用"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " SDDM 設定 > ",
       "sddm_header": " 切換選項，然後選取完成 ",
       "main_menu_prompt": " 主選單 > ",
-      "main_menu_header": " 使用方向鍵導覽，按 Enter 選取 "
+      "main_menu_header": " 使用方向鍵導覽，按 Enter 選取 ",
+      "additional_pkgs_header": "  選擇選用套件，然後選擇完成  ",
+      "additional_pkgs_prompt": "  附加套件 > ",
+      "additional_pkgs_title": "=== 選擇附加套件 ===",
+      "menu_additional_pkgs": "附加套件"
     },
     "deps": {
       "syncing": "正在同步並更新系統套件 (pacman -syyu)...",

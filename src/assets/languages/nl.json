@@ -52,7 +52,10 @@
       "general_weather": "Weer",
       "bar_side_modules": "Zijmodules",
       "fingerprint": "Vingerafdrukken",
-      "power": "Energie"
+      "power": "Energie",
+      "autostart": "Automatisch opstarten",
+      "keybindings": "Sneltoetsen",
+      "packages": "Extra pakketten"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "Volgt de achtergrond",
           "none": "Geen achtergrond geselecteerd"
         }
+      },
+      "layout_stage": "2D-schermindeling",
+      "monitors_detected": "monitor(en)",
+      "resolution": {
+        "title": "Schermresolutie",
+        "desc": "Schermresolutie instellen"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "48 Hz vernieuwingsfrequentie op batterij",
         "display_refresh_save_desc": "Verlaag schermverversingssnelheid naar 48 Hz op batterij in Hyprland en Sway"
       }
+    },
+    "keybindings": {
+      "title": "Sneltoetsen",
+      "subtitle": "Compleet overzicht van sneltoetsen voor alle 5 WMs",
+      "close_editor": "Sluiten",
+      "add_custom": "+ Aangepaste sneltoets",
+      "search_placeholder": "Zoek op toets of actie (bijv. Super + I, terminal)...",
+      "editor_title": "Aangepaste sneltoets toevoegen (userprefs)",
+      "save": "Opslaan"
+    },
+    "autostart": {
+      "title": "Automatisch opstarten",
+      "desc": "Beheer programma s en scripts die automatisch starten bij aanmelden",
+      "master_switch": {
+        "title": "Automatisch opstarten inschakelen",
+        "desc": "Startlijst globaal uitvoeren bij aanmelden"
+      },
+      "add_button": "Applicatie toevoegen",
+      "empty_title": "Geen autostart-applicaties",
+      "empty_desc": "Klik op Applicatie toevoegen om opdrachten en vertragingen in te stellen.",
+      "name_label": "Naam",
+      "name_placeholder": "bijv. Discord, EasyEffects, Script",
+      "exec_label": "Uitvoerbare opdracht",
+      "exec_placeholder": "Pad of opdracht met parameters (bijv. discord --start-minimized)",
+      "browse_file": "Bestand kiezen",
+      "delay_label": "Startvertraging",
+      "delay_desc": "Wachttijd in seconden voor het starten",
+      "delay_unit": "s",
+      "count_label": "Aantal starten",
+      "count_desc": "Aantal instanties om uit te voeren bij opstarten",
+      "repeat_delay_label": "Herhalingsinterval",
+      "repeat_delay_desc": "Vertraging tussen herhaalde uitvoeringen",
+      "workspace_label": "Werkblad",
+      "workspace_default": "Standaard",
+      "silent_label": "Stille start",
+      "silent_desc": "Geen focus stelen bij openen venster",
+      "condition_label": "Startvoorwaarde",
+      "condition_always": "Altijd",
+      "condition_ac_only": "Alleen netstroom",
+      "condition_battery_only": "Alleen batterij",
+      "condition_multi_monitor": "Alleen meerdere monitoren",
+      "restart_crash_label": "Keep-Alive / Watchdog",
+      "restart_crash_desc": "Proces automatisch herstarten bij crash",
+      "status_running": "Actief",
+      "status_success": "Geslaagd",
+      "status_failed": "Mislukt",
+      "status_idle": "Inactief",
+      "view_log": "Logboek",
+      "no_log": "Logboek is leeg",
+      "run_now": "Nu uitvoeren",
+      "delete": "Verwijderen",
+      "toggle": "Inschakelen / Uitschakelen"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " SDDM-configuratie > ",
       "sddm_header": " Schakel opties om, selecteer daarna Klaar ",
       "main_menu_prompt": " Hoofdmenu > ",
-      "main_menu_header": " Gebruik pijltjestoetsen om te navigeren, enter om te selecteren "
+      "main_menu_header": " Gebruik pijltjestoetsen om te navigeren, enter om te selecteren ",
+      "additional_pkgs_header": "  Schakel optionele pakketten in en klik op klaar  ",
+      "additional_pkgs_prompt": "  Extra pakketten > ",
+      "additional_pkgs_title": "=== Extra pakketten selecteren ===",
+      "menu_additional_pkgs": "Extra pakketten"
     },
     "deps": {
       "syncing": "Systeempakketten synchroniseren en bijwerken (pacman -syyu)...",

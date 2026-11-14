@@ -836,7 +836,11 @@
       "sddm_prompt": " SDDM 設定 > ",
       "sddm_header": " オプションを切り替え、「完了」を選択 ",
       "main_menu_prompt": " メインメニュー > ",
-      "main_menu_header": " 矢印キーで移動、Enter で選択 "
+      "main_menu_header": " 矢印キーで移動、Enter で選択 ",
+      "additional_pkgs_header": "  追加パッケージを選択して完了を押してください  ",
+      "additional_pkgs_prompt": "  追加パッケージ > ",
+      "additional_pkgs_title": "=== 追加パッケージの選択 == ガ",
+      "menu_additional_pkgs": "追加パッケージ"
     },
     "deps": {
       "syncing": "システムパッケージを同期および更新中 (pacman -Syyu)...",
@@ -957,7 +961,10 @@
       "general_weather": "天気",
       "bar_side_modules": "サイドモジュール",
       "fingerprint": "指紋",
-      "power": "電源"
+      "power": "電源",
+      "autostart": "自動起動",
+      "keybindings": "キーバインド",
+      "packages": "追加パッケージ"
     },
     "launcher": {
       "position": {
@@ -1268,6 +1275,12 @@
           "follows_hint": "壁紙に従います",
           "none": "背景が選択されていません"
         }
+      },
+      "layout_stage": "2D ディスプレイ配置",
+      "monitors_detected": "台のモニター",
+      "resolution": {
+        "title": "画面解像度",
+        "desc": "ディスプレイ解像度を設定"
       }
     },
     "bar": {
@@ -2332,6 +2345,58 @@
         "display_refresh_save_title": "バッテリー駆動時の48Hzディスプレイリフレッシュレート",
         "display_refresh_save_desc": "HyprlandおよびSwayでバッテリー時にリフレッシュレートを48Hzに低下"
       }
+    },
+    "keybindings": {
+      "title": "キーバインド",
+      "subtitle": "全5つのWMで同期されたショートカットチートシート",
+      "close_editor": "閉じる",
+      "add_custom": "+ カスタムキーバインド",
+      "search_placeholder": "キーまたは操作で検索 (例: Super + I, ターミナル)...",
+      "editor_title": "カスタムキーバインドを追加 (userprefs)",
+      "save": "保存"
+    },
+    "autostart": {
+      "title": "自動起動",
+      "desc": "セッション開始時に自動起動するプログラムやスクリプトを管理",
+      "master_switch": {
+        "title": "自動起動を有効化",
+        "desc": "ログイン時に設定された自動起動リストを一括実行"
+      },
+      "add_button": "アプリを追加",
+      "empty_title": "自動起動アプリはありません",
+      "empty_desc": "「アプリを追加」をクリックしてコマンドや遅延を設定します。",
+      "name_label": "名前",
+      "name_placeholder": "例: Discord, EasyEffects, Script",
+      "exec_label": "実行コマンド",
+      "exec_placeholder": "パスまたはオプション付きコマンド (例: discord --start-minimized)",
+      "browse_file": "ファイルを参照",
+      "delay_label": "起動遅延",
+      "delay_desc": "起動前に待機する秒数",
+      "delay_unit": "秒",
+      "count_label": "起動回数",
+      "count_desc": "起動時に実行するインスタンス数",
+      "repeat_delay_label": "繰り返し間隔",
+      "repeat_delay_desc": "繰り返し実行の間隔",
+      "workspace_label": "ワークスペース",
+      "workspace_default": "デフォルト",
+      "silent_label": "バックグラウンド起動",
+      "silent_desc": "ウィンドウ起動時にフォーカスを奪わない",
+      "condition_label": "起動条件",
+      "condition_always": "常に",
+      "condition_ac_only": "電源接続時のみ",
+      "condition_battery_only": "バッテリー駆動時のみ",
+      "condition_multi_monitor": "マルチモニター時のみ",
+      "restart_crash_label": "Keep-Alive / ウォッチドッグ",
+      "restart_crash_desc": "クラッシュ時にプロセスを自動再起動",
+      "status_running": "実行中",
+      "status_success": "成功",
+      "status_failed": "失敗",
+      "status_idle": "待機中",
+      "view_log": "ログ",
+      "no_log": "ログは現在空です",
+      "run_now": "今すぐ実行",
+      "delete": "削除",
+      "toggle": "有効 / 無効"
     }
   },
   "gov_alerts": {

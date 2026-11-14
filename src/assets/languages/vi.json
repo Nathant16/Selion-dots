@@ -52,7 +52,10 @@
       "general_weather": "Thời tiết",
       "bar_side_modules": "Mô-đun bên cạnh",
       "fingerprint": "Vân tay",
-      "power": "Nguồn điện"
+      "power": "Nguồn điện",
+      "autostart": "Tự khởi động",
+      "keybindings": "Phím tắt",
+      "packages": "Gói bổ sung"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "Đang theo hình nền",
           "none": "Chưa chọn nền"
         }
+      },
+      "layout_stage": "Sắp xếp màn hình 2D",
+      "monitors_detected": "màn hình",
+      "resolution": {
+        "title": "Độ phân giải màn hình",
+        "desc": "Đặt độ phân giải hiển thị"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "Tần số quét màn hình 48 Hz khi dùng pin",
         "display_refresh_save_desc": "Giảm tần số quét xuống 48 Hz khi dùng pin trong Hyprland và Sway"
       }
+    },
+    "keybindings": {
+      "title": "Phím tắt",
+      "subtitle": "Bảng tra cứu phím tắt đồng bộ trên cả 5 WM",
+      "close_editor": "Đóng",
+      "add_custom": "+ Phím tắt tùy chỉnh",
+      "search_placeholder": "Tìm theo phím hoặc hành động (vd: Super + I, terminal)...",
+      "editor_title": "Thêm phím tắt tùy chỉnh (userprefs)",
+      "save": "Lưu"
+    },
+    "autostart": {
+      "title": "Tự khởi động",
+      "desc": "Quản lý các ứng dụng và tập lệnh tự động chạy khi bắt đầu phiên làm việc",
+      "master_switch": {
+        "title": "Bật tự khởi động",
+        "desc": "Tự động chạy danh sách ứng dụng đã cấu hình khi đăng nhập"
+      },
+      "add_button": "Thêm ứng dụng",
+      "empty_title": "Không có ứng dụng tự khởi động",
+      "empty_desc": "Nhấp vào Thêm ứng dụng để cấu hình lệnh và độ trễ.",
+      "name_label": "Tên",
+      "name_placeholder": "vd: Discord, EasyEffects, Script",
+      "exec_label": "Lệnh thực thi",
+      "exec_placeholder": "Đường dẫn hoặc lệnh có tham số (vd: discord --start-minimized)",
+      "browse_file": "Duyệt tệp",
+      "delay_label": "Độ trễ khởi động",
+      "delay_desc": "Thời gian chờ tính bằng giây trước khi chạy",
+      "delay_unit": "giây",
+      "count_label": "Số lần chạy",
+      "count_desc": "Số phiên bản cần chạy khi khởi động",
+      "repeat_delay_label": "Khoảng thời gian lặp",
+      "repeat_delay_desc": "Độ trễ giữa các lần chạy lặp lại",
+      "workspace_label": "Không gian làm việc",
+      "workspace_default": "Mặc định",
+      "silent_label": "Chạy ngầm",
+      "silent_desc": "Không chiếm tiêu điểm khi cửa sổ mở",
+      "condition_label": "Điều kiện khởi chạy",
+      "condition_always": "Luôn luôn",
+      "condition_ac_only": "Chỉ khi cắm nguồn",
+      "condition_battery_only": "Chỉ khi dùng pin",
+      "condition_multi_monitor": "Chỉ khi có nhiều màn hình",
+      "restart_crash_label": "Keep-Alive / Tự khởi động lại",
+      "restart_crash_desc": "Tự động chạy lại quy trình nếu bị lỗi sập",
+      "status_running": "Đang chạy",
+      "status_success": "Thành công",
+      "status_failed": "Thất bại",
+      "status_idle": "Chờ",
+      "view_log": "Nhật ký",
+      "no_log": "Nhật ký hiện đang trống",
+      "run_now": "Chạy ngay",
+      "delete": "Xóa",
+      "toggle": "Bật / Tắt"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " Cài đặt SDDM > ",
       "sddm_header": " Bật/tắt các tùy chọn, sau đó chọn hoàn tất ",
       "main_menu_prompt": " Menu chính > ",
-      "main_menu_header": " Sử dụng phím mũi tên để điều hướng, enter để chọn "
+      "main_menu_header": " Sử dụng phím mũi tên để điều hướng, enter để chọn ",
+      "additional_pkgs_header": "  Chọn các gói tùy chọn rồi chọn hoàn tất  ",
+      "additional_pkgs_prompt": "  Gói bổ sung > ",
+      "additional_pkgs_title": "=== Chọn gói bổ sung ===",
+      "menu_additional_pkgs": "Gói bổ sung"
     },
     "deps": {
       "syncing": "Đang đồng bộ hóa và cập nhật các gói hệ thống (pacman -syyu)...",

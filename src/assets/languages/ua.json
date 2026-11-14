@@ -52,7 +52,10 @@
       "bar_modules": "Модулі",
       "bar_side_modules": "Бічні модулі",
       "fingerprint": "Відбитки пальців",
-      "power": "Живлення"
+      "power": "Живлення",
+      "autostart": "Автозапуск",
+      "keybindings": "Гарячі клавіші",
+      "packages": "Додаткові пакети"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "Слідує шпалерам",
           "none": "Тло не вибрано"
         }
+      },
+      "layout_stage": "2D Розташування моніторів",
+      "monitors_detected": "монітор(ів)",
+      "resolution": {
+        "title": "Роздільна здатність",
+        "desc": "Встановити роздільну здатність екрана"
       }
     },
     "bar": {
@@ -975,7 +984,49 @@
       "screen_time": "Екранний час"
     },
     "update_available": "Доступні оновлення",
-    "autostart": {},
+    "autostart": {
+      "title": "Автозапуск",
+      "desc": "Керування програмами та скриптами, що запускаються під час входу",
+      "master_switch": {
+        "title": "Увімкнути автозапуск",
+        "desc": "Автоматично виконувати список програм під час входу"
+      },
+      "add_button": "Додати програму",
+      "empty_title": "Немає програм в автозапуску",
+      "empty_desc": "Натисніть «Додати програму», щоб налаштувати команди, затримки та кількість запусків.",
+      "name_label": "Назва",
+      "name_placeholder": "наприклад, Discord, EasyEffects, Скрипт",
+      "exec_label": "Команда запуску",
+      "exec_placeholder": "Шлях до файлу або команда з прапорцями (наприклад, discord --start-minimized)",
+      "browse_file": "Обрати файл",
+      "delay_label": "Затримка запуску",
+      "delay_desc": "Час очікування в секундах перед запуском",
+      "delay_unit": "с",
+      "count_label": "Кількість запусків",
+      "count_desc": "Кількість екземплярів для запуску під час старту",
+      "repeat_delay_label": "Інтервал повтору",
+      "repeat_delay_desc": "Затримка між повторними запусками",
+      "workspace_label": "Робочий простір",
+      "workspace_default": "За замовчуванням",
+      "silent_label": "Тихий запуск",
+      "silent_desc": "Не перехоплювати фокус під час відкриття вікна",
+      "condition_label": "Умова запуску",
+      "condition_always": "Завжди",
+      "condition_ac_only": "Лише від мережі",
+      "condition_battery_only": "Лише від батареї",
+      "condition_multi_monitor": "Лише за наявності моніторів",
+      "restart_crash_label": "Автоперезапуск / Watchdog",
+      "restart_crash_desc": "Автоматично перезапускати процес у разі збою",
+      "status_running": "Працює",
+      "status_success": "Успішно",
+      "status_failed": "Помилка",
+      "status_idle": "Очікування",
+      "view_log": "Журнал",
+      "no_log": "Журнал порожній",
+      "run_now": "Запустити зараз",
+      "delete": "Видалити",
+      "toggle": "Увімкнути / Вимкнути"
+    },
     "osd": {
       "capslock": {
         "title": "Показувати під час Caps Lock"
@@ -1428,6 +1479,15 @@
         "display_refresh_save_title": "Частота екрана 48 Гц на батареї",
         "display_refresh_save_desc": "Зниження частоти оновлення дисплея до 48 Гц у Hyprland та Sway"
       }
+    },
+    "keybindings": {
+      "title": "Гарячі клавіші",
+      "subtitle": "Повна шпаргалка комбінацій, синхронізованих між усіма 5 WM",
+      "close_editor": "Закрити",
+      "add_custom": "+ Власний бінд",
+      "search_placeholder": "Пошук за комбінацією або дією (наприклад, Super + I, термінал)...",
+      "editor_title": "Додати власну комбінацію (userprefs)",
+      "save": "Зберегти"
     }
   },
   "sysnotif": {
@@ -2267,7 +2327,11 @@
       "sddm_prompt": " Налаштування SDDM > ",
       "sddm_header": " Оберіть параметри, потім натисніть «готово» ",
       "main_menu_prompt": " Головне меню > ",
-      "main_menu_header": " Використовуйте стрілки для навігації, enter для вибору "
+      "main_menu_header": " Використовуйте стрілки для навігації, enter для вибору ",
+      "additional_pkgs_header": "  Оберіть додаткові пакети, потім натисніть готово  ",
+      "additional_pkgs_prompt": "  Додаткові пакети > ",
+      "additional_pkgs_title": "=== Вибір додаткових пакетів ===",
+      "menu_additional_pkgs": "Додаткові пакети"
     },
     "deps": {
       "syncing": "Синхронізація та оновлення системних пакетів (pacman -syyu)...",

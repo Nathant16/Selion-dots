@@ -842,7 +842,11 @@
       "sddm_prompt": " Konfiguracja SDDM > ",
       "sddm_header": " Przełącz opcje, a następnie wybierz gotowe ",
       "main_menu_prompt": " Menu główne > ",
-      "main_menu_header": " Użyj strzałek do nawigacji, Enter aby wybrać "
+      "main_menu_header": " Użyj strzałek do nawigacji, Enter aby wybrać ",
+      "additional_pkgs_header": "  Wybierz opcjonalne pakiety, a następnie wybierz gotowe  ",
+      "additional_pkgs_prompt": "  Dodatkowe pakiety > ",
+      "additional_pkgs_title": "=== Wybór dodatkowych pakietów ===",
+      "menu_additional_pkgs": "Dodatkowe pakiety"
     },
     "deps": {
       "syncing": "Synchronizacja i aktualizacja pakietów systemowych (pacman -Syyu)...",
@@ -957,7 +961,10 @@
       "general_weather": "Pogoda",
       "bar_side_modules": "Moduły boczne",
       "fingerprint": "Odciski palców",
-      "power": "Zasilanie"
+      "power": "Zasilanie",
+      "autostart": "Autostart",
+      "keybindings": "Skróty klawiszowe",
+      "packages": "Dodatkowe pakiety"
     },
     "launcher": {
       "position": {
@@ -1268,6 +1275,12 @@
           "follows_hint": "Podąża za tapetą",
           "none": "Nie wybrano tła"
         }
+      },
+      "layout_stage": "Rozmieszczenie monitorów 2D",
+      "monitors_detected": "monitor(y)",
+      "resolution": {
+        "title": "Rozdzielczość ekranu",
+        "desc": "Ustaw rozdzielczość ekranu"
       }
     },
     "bar": {
@@ -2332,6 +2345,58 @@
         "display_refresh_save_title": "Odświeżanie ekranu 48 Hz na baterii",
         "display_refresh_save_desc": "Zmniejszenie odświeżania ekranu do 48 Hz na baterii w Hyprland i Sway"
       }
+    },
+    "keybindings": {
+      "title": "Skróty klawiszowe",
+      "subtitle": "Kompletna ściągawka skrótów zsynchronizowanych dla wszystkich 5 WM",
+      "close_editor": "Zamknij",
+      "add_custom": "+ Własny skrót",
+      "search_placeholder": "Szukaj po klawiszu lub akcji (np. Super + I, terminal)...",
+      "editor_title": "Dodaj własny skrót klawiszowy (userprefs)",
+      "save": "Zapisz"
+    },
+    "autostart": {
+      "title": "Autostart",
+      "desc": "Zarządzaj programami i skryptami uruchamianymi automatycznie przy logowaniu",
+      "master_switch": {
+        "title": "Włącz autostart",
+        "desc": "Automatycznie uruchamiaj skonfigurowaną listę aplikacji przy logowaniu"
+      },
+      "add_button": "Dodaj aplikację",
+      "empty_title": "Brak aplikacji w autostarcie",
+      "empty_desc": "Kliknij Dodaj aplikację, aby skonfigurować polecenia i opóźnienia.",
+      "name_label": "Nazwa",
+      "name_placeholder": "np. Discord, EasyEffects, Skrypt",
+      "exec_label": "Polecenie wykonywalne",
+      "exec_placeholder": "Ścieżka lub polecenie z flagami (np. discord --start-minimized)",
+      "browse_file": "Przeglądaj pliki",
+      "delay_label": "Opóźnienie uruchomienia",
+      "delay_desc": "Czas oczekiwania w sekundach przed uruchomieniem",
+      "delay_unit": "s",
+      "count_label": "Liczba uruchomień",
+      "count_desc": "Liczba instancji do uruchomienia przy starcie",
+      "repeat_delay_label": "Interwał powtórzeń",
+      "repeat_delay_desc": "Opóźnienie między kolejnymi uruchomieniami",
+      "workspace_label": "Obszar roboczy",
+      "workspace_default": "Domyślny",
+      "silent_label": "Ciche uruchomienie",
+      "silent_desc": "Nie przejmuj fokusu przy otwieraniu okna",
+      "condition_label": "Warunek uruchomienia",
+      "condition_always": "Zawsze",
+      "condition_ac_only": "Tylko zasilanie sieciowe",
+      "condition_battery_only": "Tylko zasilanie bateryjne",
+      "condition_multi_monitor": "Tylko z wieloma monitorami",
+      "restart_crash_label": "Keep-Alive / Watchdog",
+      "restart_crash_desc": "Automatycznie wznawiaj proces w przypadku awarii",
+      "status_running": "Uruchomiony",
+      "status_success": "Zakończono pomyślnie",
+      "status_failed": "Niepowodzenie",
+      "status_idle": "Bezczynny",
+      "view_log": "Dziennik",
+      "no_log": "Dziennik jest obecnie pusty",
+      "run_now": "Uruchom teraz",
+      "delete": "Usuń",
+      "toggle": "Włącz / Wyłącz"
     }
   },
   "gov_alerts": {

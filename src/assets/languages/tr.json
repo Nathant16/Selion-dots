@@ -52,7 +52,10 @@
       "general_weather": "Hava durumu",
       "bar_side_modules": "Yan modüller",
       "fingerprint": "Parmak izleri",
-      "power": "Güç"
+      "power": "Güç",
+      "autostart": "Otomatik Başlatma",
+      "keybindings": "Klavye Kısayolları",
+      "packages": "Ek Paketler"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "Duvar kâğıdını izler",
           "none": "Arka plan seçilmedi"
         }
+      },
+      "layout_stage": "2D Ekran Düzeni",
+      "monitors_detected": "monitör",
+      "resolution": {
+        "title": "Ekran Çözünürlüğü",
+        "desc": "Ekran çözünürlüğünü ayarla"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "Pilde 48 Hz Ekran Yenileme Hızı",
         "display_refresh_save_desc": "Hyprland ve Sway içinde pilde ekran yenileme hızını 48 Hz'e düşür"
       }
+    },
+    "keybindings": {
+      "title": "Klavye Kısayolları",
+      "subtitle": "Tüm 5 WM genelinde senkronize kısayolların tam listesi",
+      "close_editor": "Kapat",
+      "add_custom": "+ Özel kısayol",
+      "search_placeholder": "Tuş veya eyleme göre ara (ör. Super + I, terminal)...",
+      "editor_title": "Özel klavye kısayolu ekle (userprefs)",
+      "save": "Kaydet"
+    },
+    "autostart": {
+      "title": "Otomatik Başlatma",
+      "desc": "Oturum açıldığında otomatik başlatılan programları ve betikleri yönetin",
+      "master_switch": {
+        "title": "Otomatik Başlatmayı Etkinleştir",
+        "desc": "Giriş yapıldığında yapılandırılmış uygulamaları genel olarak başlat"
+      },
+      "add_button": "Uygulama Ekle",
+      "empty_title": "Otomatik başlatılan uygulama yok",
+      "empty_desc": "Komutları ve gecikmeleri yapılandırmak için Uygulama Ekle ye tıklayın.",
+      "name_label": "Ad",
+      "name_placeholder": "ör. Discord, EasyEffects, Betik",
+      "exec_label": "Yürütülebilir Komut",
+      "exec_placeholder": "Dosya yolu veya parametreli komut (ör. discord --start-minimized)",
+      "browse_file": "Dosyaya Göz At",
+      "delay_label": "Başlangıç Gecikmesi",
+      "delay_desc": "Başlatılmadan önce beklenecek süre (saniye)",
+      "delay_unit": "sn",
+      "count_label": "Başlatma Sayısı",
+      "count_desc": "Başlangıçta çalıştırılacak kopya sayısı",
+      "repeat_delay_label": "Tekrarlama Aralığı",
+      "repeat_delay_desc": "Tekrarlanan yürütmeler arasındaki gecikme",
+      "workspace_label": "Çalışma Alanı",
+      "workspace_default": "Varsayılan",
+      "silent_label": "Sessiz Başlatma",
+      "silent_desc": "Pencere açılırken odağı çalma",
+      "condition_label": "Başlatma Koşulu",
+      "condition_always": "Her Zaman",
+      "condition_ac_only": "Yalnızca Prizde",
+      "condition_battery_only": "Yalnızca Pilde",
+      "condition_multi_monitor": "Yalnızca Çoklu Monitör",
+      "restart_crash_label": "Keep-Alive / Watchdog",
+      "restart_crash_desc": "Çökme durumunda işlemi otomatik yeniden başlat",
+      "status_running": "Çalışıyor",
+      "status_success": "Başarılı",
+      "status_failed": "Başarısız",
+      "status_idle": "Boşta",
+      "view_log": "Günlük",
+      "no_log": "Günlük şu anda boş",
+      "run_now": "Şimdi Çalıştır",
+      "delete": "Sil",
+      "toggle": "Etkinleştir / Devre Dışı Bırak"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " SDDM kurulumu > ",
       "sddm_header": " Seçenekleri belirleyin, ardından tamama basın ",
       "main_menu_prompt": " Ana menü > ",
-      "main_menu_header": " Gezinmek için ok tuşlarını, seçmek için enter'ı kullanın "
+      "main_menu_header": " Gezinmek için ok tuşlarını, seçmek için enter'ı kullanın ",
+      "additional_pkgs_header": "  İsteğe bağlı paketleri seçin ve ardından tamamlandı seçin  ",
+      "additional_pkgs_prompt": "  Ek paketler > ",
+      "additional_pkgs_title": "=== Ek paketleri seçin ===",
+      "menu_additional_pkgs": "Ek paketler"
     },
     "deps": {
       "syncing": "Sistem paketleri senkronize ediliyor ve güncelleniyor (pacman -syyu)...",

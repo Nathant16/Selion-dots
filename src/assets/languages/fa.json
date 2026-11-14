@@ -52,7 +52,10 @@
       "general_weather": "آب‌وهوا",
       "bar_side_modules": "ماژول‌های جانبی",
       "fingerprint": "اثر انگشت",
-      "power": "باتری و انرژی"
+      "power": "باتری و انرژی",
+      "autostart": "راه‌اندازی خودکار",
+      "keybindings": "کلیدهای میانبر",
+      "packages": "بسته‌های اضافی"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "از تصویر زمینه پیروی می‌کند",
           "none": "پس‌زمینه‌ای انتخاب نشده"
         }
+      },
+      "layout_stage": "چیدمان دوبعدی نمایشگرها",
+      "monitors_detected": "نمایشگر",
+      "resolution": {
+        "title": "رزولوشن نمایشگر",
+        "desc": "تنظیم رزولوشن تصویر نمایشگر"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "نرخ نوسازی صفحه ۴۸ هرتز روی باتری",
         "display_refresh_save_desc": "کاهش نرخ نوسازی به ۴۸ هرتز در حالت باتری در Hyprland و Sway"
       }
+    },
+    "keybindings": {
+      "title": "کلیدهای میانبر",
+      "subtitle": "برگه راهنمای کامل کلیدهای میانبر همگام‌شده در تمام ۵ مدیر پنجره",
+      "close_editor": "بستن",
+      "add_custom": "+ میانبر سفارشی",
+      "search_placeholder": "جستجو با کلید یا عملیات (مثلا Super + I، ترمینال)...",
+      "editor_title": "افزودن میانبر سفارشی (userprefs)",
+      "save": "ذخیره"
+    },
+    "autostart": {
+      "title": "راه‌اندازی خودکار",
+      "desc": "مدیریت برنامه‌ها و اسکریپت‌هایی که در زمان شروع نشست به صورت خودکار اجرا می‌شوند",
+      "master_switch": {
+        "title": "فعال‌سازی راه‌اندازی خودکار",
+        "desc": "اجرای سراسری برنامه‌های تنظیم‌شده هنگام ورود"
+      },
+      "add_button": "افزودن برنامه",
+      "empty_title": "برنامه‌ای برای راه‌اندازی خودکار وجود ندارد",
+      "empty_desc": "روی افزودن برنامه کلیک کنید تا دستورات و زمان تاخیر را مشخص نمایید.",
+      "name_label": "نام",
+      "name_placeholder": "مثلا Discord, EasyEffects, Script",
+      "exec_label": "دستور اجرایی",
+      "exec_placeholder": "مسیر فایل یا دستور به همراه فلگ‌ها (مثلا discord --start-minimized)",
+      "browse_file": "انتخاب فایل",
+      "delay_label": "تاخیر در شروع",
+      "delay_desc": "زمان به ثانیه برای انتظار قبل از راه‌اندازی",
+      "delay_unit": "ثانیه",
+      "count_label": "تعداد اجرا",
+      "count_desc": "تعداد نمونه‌های اجرایی در زمان شروع",
+      "repeat_delay_label": "فاصله تکرار",
+      "repeat_delay_desc": "تاخیر بین اجراهای مکرر",
+      "workspace_label": "میز کار",
+      "workspace_default": "پیش‌فرض",
+      "silent_label": "اجرای بی‌صدا",
+      "silent_desc": "عدم جلب تمرکز هنگام باز شدن پنجره",
+      "condition_label": "شرط اجرا",
+      "condition_always": "همیشه",
+      "condition_ac_only": "فقط متصل به برق",
+      "condition_battery_only": "فقط با باتری",
+      "condition_multi_monitor": "فقط با چند نمایشگر",
+      "restart_crash_label": "راه‌اندازی مجدد خودکار در صورت خرابی",
+      "restart_crash_desc": "اجرای مجدد خودکار پردازش در صورت کرش",
+      "status_running": "در حال اجرا",
+      "status_success": "موفق",
+      "status_failed": "ناموفق",
+      "status_idle": "آماده به کار",
+      "view_log": "گزارش",
+      "no_log": "گزارش در حال حاضر خالی است",
+      "run_now": "اجرا کن",
+      "delete": "حذف",
+      "toggle": "فعال / غیرفعال"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " راه‌اندازی SDDM > ",
       "sddm_header": " گزینه‌ها را تغییر وضعیت دهید، سپس انجام شد را انتخاب کنید ",
       "main_menu_prompt": " منوی اصلی > ",
-      "main_menu_header": " از کلیدهای جهت‌نما برای پیمایش و اینتر برای انتخاب استفاده کنید "
+      "main_menu_header": " از کلیدهای جهت‌نما برای پیمایش و اینتر برای انتخاب استفاده کنید ",
+      "additional_pkgs_header": "  بسته‌های اختیاری را انتخاب کرده و سپس تایید را بزنید  ",
+      "additional_pkgs_prompt": "  بسته‌های اضافی > ",
+      "additional_pkgs_title": "=== انتخاب بسته‌های اضافی ===",
+      "menu_additional_pkgs": "بسته‌های اضافی"
     },
     "deps": {
       "syncing": "در حال همگام‌سازی و به‌روزرسانی بسته‌های سیستم (pacman -syyu)...",

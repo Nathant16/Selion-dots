@@ -52,7 +52,10 @@
       "general_weather": "मौसम",
       "bar_side_modules": "साइड मॉड्यूल्स",
       "fingerprint": "फ़िंगरप्रिंट",
-      "power": "पावर"
+      "power": "पावर",
+      "autostart": "ऑटोस्टार्ट",
+      "keybindings": "कीबाइंडिंग्स",
+      "packages": "अतिरिक्त पैकेज"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "वॉलपेपर का अनुसरण करता है",
           "none": "कोई पृष्ठभूमि चयनित नहीं"
         }
+      },
+      "layout_stage": "2D डिस्प्ले व्यवस्था",
+      "monitors_detected": "मॉनिटर",
+      "resolution": {
+        "title": "डिस्प्ले रेजोल्यूशन",
+        "desc": "डिस्प्ले आउटपुट रेजोल्यूशन सेट करें"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "बैटरी पर 48 Hz स्क्रीन रिफ्रेश रेट",
         "display_refresh_save_desc": "Hyprland और Sway में बैटरी पर डिस्प्ले रिफ्रेश रेट को 48 Hz तक घटाएं"
       }
+    },
+    "keybindings": {
+      "title": "कीबाइंडिंग्स",
+      "subtitle": "सभी 5 WM में सिंक्रनाइज़ किए गए शॉर्टकट की पूरी चीटशीट",
+      "close_editor": "बंद करें",
+      "add_custom": "+ कस्टम बाइंड",
+      "search_placeholder": "की या क्रिया से खोजें (उदा. Super + I, टर्मिनल)...",
+      "editor_title": "कस्टम कीबाइंडिंग जोड़ें (userprefs)",
+      "save": "सहेजें"
+    },
+    "autostart": {
+      "title": "ऑटोस्टार्ट",
+      "desc": "सत्र शुरू होने पर स्वचालित रूप से शुरू होने वाले प्रोग्राम और स्क्रिप्ट प्रबंधित करें",
+      "master_switch": {
+        "title": "ऑटोस्टार्ट सक्षम करें",
+        "desc": "लॉगिन पर कॉन्फ़िगर किए गए स्टार्टअप एप्लिकेशन निष्पादित करें"
+      },
+      "add_button": "एप्लिकेशन जोड़ें",
+      "empty_title": "कोई ऑटोस्टार्ट एप्लिकेशन नहीं है",
+      "empty_desc": "कमांड और विलंब कॉन्फ़िगर करने के लिए एप्लिकेशन जोड़ें पर क्लिक करें।",
+      "name_label": "नाम",
+      "name_placeholder": "उदा. Discord, EasyEffects, Script",
+      "exec_label": "निष्पादन योग्य कमांड",
+      "exec_placeholder": "बाइनरी पाथ या कमांड (उदा. discord --start-minimized)",
+      "browse_file": "फ़ाइल ब्राउज़ करें",
+      "delay_label": "स्टार्टअप विलंब",
+      "delay_desc": "लॉन्च करने से पहले प्रतीक्षा समय (सेकंड में)",
+      "delay_unit": "सेकंड",
+      "count_label": "लॉन्च संख्या",
+      "count_desc": "स्टार्टअप पर निष्पादित किए जाने वाले उदाहरणों की संख्या",
+      "repeat_delay_label": "दोहराव अंतराल",
+      "repeat_delay_desc": "दोहराए जाने वाले निष्पादन के बीच विलंब",
+      "workspace_label": "कार्यक्षेत्र",
+      "workspace_default": "डिफ़ॉल्ट",
+      "silent_label": "मूक लॉन्च",
+      "silent_desc": "विंडो खुलने पर फोकस न चुराएं",
+      "condition_label": "लॉन्च स्थिति",
+      "condition_always": "हमेशा",
+      "condition_ac_only": "केवल AC पावर पर",
+      "condition_battery_only": "केवल बैटरी पर",
+      "condition_multi_monitor": "केवल मल्टी-मॉनिटर पर",
+      "restart_crash_label": "Keep-Alive / वॉचडॉग",
+      "restart_crash_desc": "क्रैश होने पर प्रक्रिया को स्वतः पुनः आरंभ करें",
+      "status_running": "चल रहा है",
+      "status_success": "सफल",
+      "status_failed": "विफल",
+      "status_idle": "निष्क्रिय",
+      "view_log": "लॉग",
+      "no_log": "लॉग वर्तमान में खाली है",
+      "run_now": "अभी चलाएं",
+      "delete": "हटाएं",
+      "toggle": "सक्षम / अक्षम करें"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " SDDM सेटअप > ",
       "sddm_header": " विकल्प टॉगल करें, फिर 'हो गया' चुनें ",
       "main_menu_prompt": " मुख्य मेनू > ",
-      "main_menu_header": " नेविगेट करने के लिए तीर कुंजियों का उपयोग करें, चुनने के लिए enter दबाएं "
+      "main_menu_header": " नेविगेट करने के लिए तीर कुंजियों का उपयोग करें, चुनने के लिए enter दबाएं ",
+      "additional_pkgs_header": "  वैकल्पिक पैकेज चुनें और पूर्ण चुनें  ",
+      "additional_pkgs_prompt": "  अतिरिक्त पैकेज > ",
+      "additional_pkgs_title": "=== अतिरिक्त पैकेज चुनें ===",
+      "menu_additional_pkgs": "अतिरिक्त पैकेज"
     },
     "deps": {
       "syncing": "सिस्टम पैकेज सिंक्रनाइज़ और अपडेट किए जा रहे हैं (pacman -syyu)...",

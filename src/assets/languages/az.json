@@ -52,7 +52,10 @@
       "general_weather": "Hava",
       "bar_side_modules": "Yan modullar",
       "fingerprint": "Barmaq izləri",
-      "power": "Qida"
+      "power": "Qida",
+      "autostart": "Avto-başlanğıc",
+      "keybindings": "Qısayollar",
+      "packages": "Əlavə Paketlər"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "Divar kağızını izləyir",
           "none": "Fon seçilməyib"
         }
+      },
+      "layout_stage": "2D Monitor Düzülüşü",
+      "monitors_detected": "monitor",
+      "resolution": {
+        "title": "Ekran Qətnaməsi",
+        "desc": "Ekran çıxış qətnaməsini təyin edin"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "Batareyada 48 Hz Ekran Yeniləmə Tezliyi",
         "display_refresh_save_desc": "Hyprland və Sway-də batareyada ekran tezliyini 48 Hz-ə endirmək"
       }
+    },
+    "keybindings": {
+      "title": "Qısayollar",
+      "subtitle": "Bütün 5 WM arasında sinxronlaşdırılmış qısayollar cədvəli",
+      "close_editor": "Bağla",
+      "add_custom": "+ Xüsusi Qısayol",
+      "search_placeholder": "Düymə və ya əməliyyatla axtar (məs. Super + I, terminal)...",
+      "editor_title": "Xüsusi qısayol əlavə et (userprefs)",
+      "save": "Yadda saxla"
+    },
+    "autostart": {
+      "title": "Avto-başlanğıc",
+      "desc": "Sessiya başlayanda avtomatik işə düşən proqramları və skriptləri idarə edin",
+      "master_switch": {
+        "title": "Avto-başlanğıcı Aktivləşdir",
+        "desc": "Daxil olarkən tənzimlənmiş proqram siyahısını başladın"
+      },
+      "add_button": "Tətbiq Əlavə Et",
+      "empty_title": "Avto-başlanğıc tətbiqi yoxdur",
+      "empty_desc": "Komandaları və gecikmələri təyin etmək üçün Tətbiq Əlavə Et düyməsinə klikləyin.",
+      "name_label": "Ad",
+      "name_placeholder": "məs. Discord, EasyEffects, Skript",
+      "exec_label": "İcra Olunan Komanda",
+      "exec_placeholder": "Fayl yolu və ya komanda (məs. discord --start-minimized)",
+      "browse_file": "Faylı Seç",
+      "delay_label": "Başlanğıc Gecikməsi",
+      "delay_desc": "Başlamazdan əvvəl saniyələrlə gözləmə vaxtı",
+      "delay_unit": "san",
+      "count_label": "Başlama Sayı",
+      "count_desc": "Başlanğıcda işə salınacaq nüsxələrin sayı",
+      "repeat_delay_label": "Təkrar İntervalı",
+      "repeat_delay_desc": "Təkrarlanan icralar arasındakı gecikmə",
+      "workspace_label": "İş Sahəsi",
+      "workspace_default": "Defolt",
+      "silent_label": "Səssiz Başlatma",
+      "silent_desc": "Pəncərə açılanda fokusu oğurlama",
+      "condition_label": "Başlama Şərti",
+      "condition_always": "Həmişə",
+      "condition_ac_only": "Yalnız Şəbəkə Enerjisi",
+      "condition_battery_only": "Yalnız Batareya ilə",
+      "condition_multi_monitor": "Yalnız Çox-Monitorlu",
+      "restart_crash_label": "Keep-Alive / Qəza Mühafizəsi",
+      "restart_crash_desc": "Qəza baş verərsə prosesi avtomatik yenidən başlat",
+      "status_running": "İşləyir",
+      "status_success": "Uğurlu",
+      "status_failed": "Uğursuz",
+      "status_idle": "Gözləmədə",
+      "view_log": "Jurnal",
+      "no_log": "Jurnal hazırda boşdur",
+      "run_now": "İndi Başlat",
+      "delete": "Sil",
+      "toggle": "Aktiv / Deaktiv"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " SDDM quraşdırılması > ",
       "sddm_header": " Seçimləri açın və ya söndürün, sonra «Hazırdır» seçin ",
       "main_menu_prompt": " Əsas menyu > ",
-      "main_menu_header": " Menyuda hərəkət etmək üçün ox düymələrindən istifadə edin, seçmək üçün Enter düyməsini basın "
+      "main_menu_header": " Menyuda hərəkət etmək üçün ox düymələrindən istifadə edin, seçmək üçün Enter düyməsini basın ",
+      "additional_pkgs_header": "  Əlavə paketləri seçin və tamamlayın  ",
+      "additional_pkgs_prompt": "  Əlavə paketlər > ",
+      "additional_pkgs_title": "=== Əlavə paketləri seçin ===",
+      "menu_additional_pkgs": "Əlavə paketlər"
     },
     "deps": {
       "syncing": "Sistem paketləri sinxronlaşdırılır və yenilənir (pacman -syyu)...",

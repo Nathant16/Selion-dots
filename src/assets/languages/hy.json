@@ -52,7 +52,10 @@
       "general_weather": "Եղանակ",
       "bar_side_modules": "Կողային մոդուլներ",
       "fingerprint": "Մատնահետքեր",
-      "power": "Սնուցում"
+      "power": "Սնուցում",
+      "autostart": "Ինքնագործարկում",
+      "keybindings": "Ստեղնաշարի դյուրանցումներ",
+      "packages": "Լրացուցիչ փաթեթներ"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "Հետևում է պաստառին",
           "none": "Ֆոն ընտրված չէ"
         }
+      },
+      "layout_stage": "Էկրանների 2D դասավորություն",
+      "monitors_detected": "էկրան",
+      "resolution": {
+        "title": "Էկրանի լուծաչափ",
+        "desc": "Սահմանել էկրանի լուծաչափը"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "Էկրանի 48 Հց թարմացում մարտկոցի վրա",
         "display_refresh_save_desc": "Էկրանի թարմացման հաճախականության իջեցում մինչև 48 Հց Hyprland-ում և Sway-ում"
       }
+    },
+    "keybindings": {
+      "title": "Ստեղնաշարի դյուրանցումներ",
+      "subtitle": "Բոլոր 5 WM-ների համար համաժամեցված դյուրանցումների ամբողջական ցանկ",
+      "close_editor": "Փակել",
+      "add_custom": "+ Օգտատիրոջ դյուրանցում",
+      "search_placeholder": "Որոնել ըստ ստեղնի կամ գործողության (օր. Super + I, տերմինալ)...",
+      "editor_title": "Ավելացնել սեփական դյուրանցում (userprefs)",
+      "save": "Պահպանել"
+    },
+    "autostart": {
+      "title": "Ինքնագործարկում",
+      "desc": "Համակարգ մուտք գործելիս ավտոմատ մեկնարկող ծրագրերի և սկրիպտների կառավարում",
+      "master_switch": {
+        "title": "Միացնել ինքնագործարկումը",
+        "desc": "Մուտք գործելիս գործարկել նախատեսված ծրագրերի ցանկը"
+      },
+      "add_button": "Ավելացնել հավելված",
+      "empty_title": "Ինքնագործարկվող հավելվածներ չկան",
+      "empty_desc": "Սեղմեք «Ավելացնել հավելված»՝ հրամաններ և ուշացումներ սահմանելու համար:",
+      "name_label": "Անվանում",
+      "name_placeholder": "օր. Discord, EasyEffects, Script",
+      "exec_label": "Գործարկման հրաման",
+      "exec_placeholder": "Ծրագրի ուղին կամ հրամանը (օր. discord --start-minimized)",
+      "browse_file": "Ընտրել ֆայլը",
+      "delay_label": "Գործարկման ուշացում",
+      "delay_desc": "Սպասման ժամանակը վայրկյաններով",
+      "delay_unit": "վրկ",
+      "count_label": "Գործարկումների քանակ",
+      "count_desc": "Մեկնարկային նմուշների քանակը",
+      "repeat_delay_label": "Կրկնության միջակայք",
+      "repeat_delay_desc": "Ուշացում կրկնվող գործարկումների միջև",
+      "workspace_label": "Աշխատանքային տարածք",
+      "workspace_default": "Լռելյայն",
+      "silent_label": "Լուռ մեկնարկ",
+      "silent_desc": "Չվերցնել ֆոկուսը պատուհանը բացելիս",
+      "condition_label": "Գործարկման պայման",
+      "condition_always": "Միշտ",
+      "condition_ac_only": "Միայն սնուցման ցանցից",
+      "condition_battery_only": "Միայն մարտկոցով",
+      "condition_multi_monitor": "Միայն բազմաէկրան ռեժիմում",
+      "restart_crash_label": "Keep-Alive / Ինքնավերագործարկում",
+      "restart_crash_desc": "Խափանման դեպքում գործընթացի ավտոմատ վերագործարկում",
+      "status_running": "Աշխատում է",
+      "status_success": "Հաջողված",
+      "status_failed": "Ձախողված",
+      "status_idle": "Սպասման մեջ",
+      "view_log": "Մատյան",
+      "no_log": "Մատյանը ներկայումս դատարկ է",
+      "run_now": "Գործարկել հիմա",
+      "delete": "Ջնջել",
+      "toggle": "Միացնել / Անջատել"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " SDDM-ի կարգավորում > ",
       "sddm_header": " Փոխարկեք ընտրանքները, ապա ընտրեք «Պատրաստ է» ",
       "main_menu_prompt": " Գլխավոր ընտրացանկ > ",
-      "main_menu_header": " Նավարկեք սլաքներով, ընտրելու համար սեղմեք enter "
+      "main_menu_header": " Նավարկեք սլաքներով, ընտրելու համար սեղմեք enter ",
+      "additional_pkgs_header": "  Ընտրեք լրացուցիչ փաթեթները և սեղմեք պատրաստ է  ",
+      "additional_pkgs_prompt": "  Լրացուցիչ փաթեթներ > ",
+      "additional_pkgs_title": "=== Լրացուցիչ փաթեթների ընտրություն ===",
+      "menu_additional_pkgs": "Լրացուցիչ փաթեթներ"
     },
     "deps": {
       "syncing": "Համակարգային փաթեթների համաժամացում և թարմացում (pacman -syyu)...",

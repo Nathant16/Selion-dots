@@ -52,7 +52,10 @@
       "general_weather": "Meteo",
       "bar_side_modules": "Moduli laterali",
       "fingerprint": "Impronte digitali",
-      "power": "Alimentazione"
+      "power": "Alimentazione",
+      "autostart": "Avvio automatico",
+      "keybindings": "Scorciatoie da tastiera",
+      "packages": "Pacchetti aggiuntivi"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "Segue lo sfondo",
           "none": "Nessuno sfondo selezionato"
         }
+      },
+      "layout_stage": "Disposizione 2D dei monitor",
+      "monitors_detected": "monitor",
+      "resolution": {
+        "title": "Risoluzione schermo",
+        "desc": "Imposta la risoluzione dello schermo"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "Frequenza schermo a 48 Hz a batteria",
         "display_refresh_save_desc": "Riduce la frequenza di aggiornamento a 48 Hz a batteria in Hyprland e Sway"
       }
+    },
+    "keybindings": {
+      "title": "Scorciatoie da tastiera",
+      "subtitle": "Foglio di riepilogo completo delle scorciatoie sincronizzate per tutti i 5 WM",
+      "close_editor": "Chiudi",
+      "add_custom": "+ Scorciatoia personalizzata",
+      "search_placeholder": "Cerca per tasto o azione (es: Super + I, terminale)...",
+      "editor_title": "Aggiungi scorciatoia personalizzata (userprefs)",
+      "save": "Salva"
+    },
+    "autostart": {
+      "title": "Avvio automatico",
+      "desc": "Gestisci programmi e script avviati automaticamente all inizio della sessione",
+      "master_switch": {
+        "title": "Abilita avvio automatico",
+        "desc": "Esegui le applicazioni configurate all avvio della sessione"
+      },
+      "add_button": "Aggiungi applicazione",
+      "empty_title": "Nessuna applicazione all avvio",
+      "empty_desc": "Fai clic su Aggiungi applicazione per impostare comandi e ritardi.",
+      "name_label": "Nome",
+      "name_placeholder": "es: Discord, EasyEffects, Script",
+      "exec_label": "Comando eseguibile",
+      "exec_placeholder": "Percorso o comando con parametri (es: discord --start-minimized)",
+      "browse_file": "Sfoglia file",
+      "delay_label": "Ritardo di avvio",
+      "delay_desc": "Tempo in secondi da attendere prima dell avvio",
+      "delay_unit": "s",
+      "count_label": "Numero di avvii",
+      "count_desc": "Numero di istanze da avviare all accesso",
+      "repeat_delay_label": "Intervallo di ripetizione",
+      "repeat_delay_desc": "Ritardo tra esecuzioni ripetute",
+      "workspace_label": "Area di lavoro",
+      "workspace_default": "Predefinito",
+      "silent_label": "Avvio silenzioso",
+      "silent_desc": "Non rubare il focus all apertura della finestra",
+      "condition_label": "Condizione di avvio",
+      "condition_always": "Sempre",
+      "condition_ac_only": "Solo alimentazione da rete",
+      "condition_battery_only": "Solo a batteria",
+      "condition_multi_monitor": "Solo monitor multipli",
+      "restart_crash_label": "Keep-Alive / Watchdog",
+      "restart_crash_desc": "Riavvia automaticamente il processo in caso di arresto anomalo",
+      "status_running": "In esecuzione",
+      "status_success": "Riuscito",
+      "status_failed": "Non riuscito",
+      "status_idle": "Inattivo",
+      "view_log": "Log",
+      "no_log": "Il log è attualmente vuoto",
+      "run_now": "Esegui ora",
+      "delete": "Elimina",
+      "toggle": "Abilita / Disabilita"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " Configurazione SDDM > ",
       "sddm_header": " Modifica le opzioni, poi seleziona Fatto ",
       "main_menu_prompt": " Menu principale > ",
-      "main_menu_header": " Usa le frecce per navigare, Invio per selezionare "
+      "main_menu_header": " Usa le frecce per navigare, Invio per selezionare ",
+      "additional_pkgs_header": "  Seleziona i pacchetti opzionali, quindi seleziona fatto  ",
+      "additional_pkgs_prompt": "  Pacchetti aggiuntivi > ",
+      "additional_pkgs_title": "=== Selezione pacchetti aggiuntivi ===",
+      "menu_additional_pkgs": "Pacchetti aggiuntivi"
     },
     "deps": {
       "syncing": "Sincronizzazione e aggiornamento dei pacchetti di sistema (pacman -syyu)...",

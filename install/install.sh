@@ -85,10 +85,11 @@ run_installer_ui
 TARGET_VERSION=$(get_target_version "$PROJECT_ROOT" "$REPO_SLUG")
 TARGET_COMMIT=$(get_target_commit "$PROJECT_ROOT" "$REPO_SLUG")
 
+# Always backup managed configs unconditionally to ~/Update/Backups/<date>/.config
+backup_managed_configs "${SELECTED_COMPOSITORS[@]}"
+
 if [[ "$INSTALL_STATE" == "legacy" ]]; then
     migrate_legacy "${SELECTED_COMPOSITORS[@]}"
-elif [[ "$INSTALL_STATE" == "fresh" || "$IS_REINSTALL" == true ]]; then
-    backup_compositors "${SELECTED_COMPOSITORS[@]}"
 fi
 
 install_dependencies "$INSTALL_STATE" "$IS_REINSTALL" "${SELECTED_COMPOSITORS[@]}"

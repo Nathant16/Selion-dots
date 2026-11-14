@@ -52,7 +52,10 @@
       "general_weather": "天气",
       "bar_side_modules": "侧边模块",
       "fingerprint": "指纹",
-      "power": "电源"
+      "power": "电源",
+      "autostart": "自启动",
+      "keybindings": "快捷键",
+      "packages": "附加软件包"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "跟随壁纸",
           "none": "未选择背景"
         }
+      },
+      "layout_stage": "2D 显示器排列",
+      "monitors_detected": "台显示器",
+      "resolution": {
+        "title": "显示分辨率",
+        "desc": "设置显示输出分辨率"
       }
     },
     "bar": {
@@ -1427,6 +1436,58 @@
         "display_refresh_save_title": "使用电池时48 Hz屏幕刷新率",
         "display_refresh_save_desc": "在Hyprland和Sway中使用电池时将刷新率降至48 Hz"
       }
+    },
+    "keybindings": {
+      "title": "快捷键",
+      "subtitle": "适用于所有 5 种 WM 的同步快捷键速查表",
+      "close_editor": "关闭",
+      "add_custom": "+ 自定义快捷键",
+      "search_placeholder": "按按键或操作搜索 (例如 Super + I, 终端)...",
+      "editor_title": "添加自定义快捷键 (userprefs)",
+      "save": "保存"
+    },
+    "autostart": {
+      "title": "自启动",
+      "desc": "管理会话启动时自动运行的程序和脚本",
+      "master_switch": {
+        "title": "启用自启动",
+        "desc": "登录时全局执行已配置的自启动应用列表"
+      },
+      "add_button": "添加应用程序",
+      "empty_title": "没有自启动程序",
+      "empty_desc": "点击“添加应用程序”以配置启动命令和延迟。",
+      "name_label": "名称",
+      "name_placeholder": "例如 Discord, EasyEffects, Script",
+      "exec_label": "可执行命令",
+      "exec_placeholder": "程序路径或带参数的命令 (例如 discord --start-minimized)",
+      "browse_file": "浏览文件",
+      "delay_label": "启动延迟",
+      "delay_desc": "启动前等待的秒数",
+      "delay_unit": "秒",
+      "count_label": "启动次数",
+      "count_desc": "启动时执行的实例数量",
+      "repeat_delay_label": "重复间隔",
+      "repeat_delay_desc": "重复执行之间的延迟",
+      "workspace_label": "工作区",
+      "workspace_default": "默认",
+      "silent_label": "静默启动",
+      "silent_desc": "窗口打开时不抢占焦点",
+      "condition_label": "启动条件",
+      "condition_always": "始终",
+      "condition_ac_only": "仅接通电源",
+      "condition_battery_only": "仅使用电池",
+      "condition_multi_monitor": "仅多显示器",
+      "restart_crash_label": "进程守护 / 自动重启",
+      "restart_crash_desc": "进程崩溃时自动重新启动",
+      "status_running": "运行中",
+      "status_success": "成功",
+      "status_failed": "失败",
+      "status_idle": "空闲",
+      "view_log": "日志",
+      "no_log": "当前日志为空",
+      "run_now": "立即运行",
+      "delete": "删除",
+      "toggle": "启用 / 禁用"
     }
   },
   "sysnotif": {
@@ -2266,7 +2327,11 @@
       "sddm_prompt": " SDDM 设置 > ",
       "sddm_header": " 切换选项，然后选择完成 ",
       "main_menu_prompt": " 主菜单 > ",
-      "main_menu_header": " 使用方向键导航，Enter 键选择 "
+      "main_menu_header": " 使用方向键导航，Enter 键选择 ",
+      "additional_pkgs_header": "  选择可选软件包，然后选择完成  ",
+      "additional_pkgs_prompt": "  附加软件包 > ",
+      "additional_pkgs_title": "=== 选择附加软件包 ===",
+      "menu_additional_pkgs": "附加软件包"
     },
     "deps": {
       "syncing": "正在同步并更新系统软件包 (pacman -Syyu)...",

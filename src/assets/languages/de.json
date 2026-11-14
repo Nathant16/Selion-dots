@@ -52,7 +52,10 @@
       "general_weather": "Wetter",
       "bar_side_modules": "Seitenmodule",
       "fingerprint": "Fingerabdrücke",
-      "power": "Energie"
+      "power": "Energie",
+      "autostart": "Autostart",
+      "keybindings": "Tastenkombinationen",
+      "packages": "Zusatzpakete"
     },
     "launcher": {
       "position": {
@@ -363,6 +366,12 @@
           "follows_hint": "Folgt dem Hintergrundbild",
           "none": "Kein Hintergrund ausgewählt"
         }
+      },
+      "layout_stage": "2D-Bildschirmanordnung",
+      "monitors_detected": "Monitor(e)",
+      "resolution": {
+        "title": "Bildschirmauflösung",
+        "desc": "Bildschirmauflösung festlegen"
       }
     },
     "bar": {
@@ -975,7 +984,49 @@
       "screen_time": "Bildschirmzeit"
     },
     "update_available": "Update verfügbar",
-    "autostart": {},
+    "autostart": {
+      "title": "Autostart",
+      "desc": "Programme und Skripte verwalten, die beim Sitzungsstart automatisch ausgeführt werden",
+      "master_switch": {
+        "title": "Autostart aktivieren",
+        "desc": "Konfigurierte Autostart-Liste bei der Anmeldung global ausführen"
+      },
+      "add_button": "Anwendung hinzufügen",
+      "empty_title": "Keine Autostart-Anwendungen",
+      "empty_desc": "Klicken Sie auf Anwendung hinzufügen, um Befehle, Verzögerungen und Anzahl festzulegen.",
+      "name_label": "Name",
+      "name_placeholder": "z.B. Discord, EasyEffects, Skript",
+      "exec_label": "Ausführbarer Befehl",
+      "exec_placeholder": "Pfad oder Befehl mit Parametern (z.B. discord --start-minimized)",
+      "browse_file": "Datei durchsuchen",
+      "delay_label": "Startverzögerung",
+      "delay_desc": "Wartezeit in Sekunden vor dem Start",
+      "delay_unit": "s",
+      "count_label": "Startanzahl",
+      "count_desc": "Anzahl der beim Start auszuführenden Instanzen",
+      "repeat_delay_label": "Wiederholungsintervall",
+      "repeat_delay_desc": "Verzögerung zwischen wiederholten Ausführungen",
+      "workspace_label": "Arbeitsbereich",
+      "workspace_default": "Standard",
+      "silent_label": "Lautloser Start",
+      "silent_desc": "Fokus beim Öffnen des Fensters nicht stehlen",
+      "condition_label": "Startbedingung",
+      "condition_always": "Immer",
+      "condition_ac_only": "Nur bei Netzbetrieb",
+      "condition_battery_only": "Nur bei Akkubetrieb",
+      "condition_multi_monitor": "Nur bei mehreren Monitoren",
+      "restart_crash_label": "Keep-Alive / Watchdog",
+      "restart_crash_desc": "Prozess bei Absturz automatisch neu starten",
+      "status_running": "Läuft",
+      "status_success": "Erfolgreich",
+      "status_failed": "Fehlgeschlagen",
+      "status_idle": "Inaktiv",
+      "view_log": "Protokoll",
+      "no_log": "Protokoll ist derzeit leer",
+      "run_now": "Jetzt starten",
+      "delete": "Löschen",
+      "toggle": "Aktivieren / Deaktivieren"
+    },
     "osd": {
       "capslock": {
         "title": "Bei Feststelltaste anzeigen"
@@ -1428,6 +1479,15 @@
         "display_refresh_save_title": "48 Hz Display-Bildwiederholrate bei Akkubetrieb",
         "display_refresh_save_desc": "Bildwiederholfrequenz des internen Displays im Akkubetrieb auf 48 Hz senken"
       }
+    },
+    "keybindings": {
+      "title": "Tastenkombinationen",
+      "subtitle": "Vollständige Übersicht der Tastenkombinationen für alle 5 WMs",
+      "close_editor": "Schließen",
+      "add_custom": "+ Eigene Tastenkombination",
+      "search_placeholder": "Nach Taste oder Aktion suchen (z.B. Super + I, Terminal)...",
+      "editor_title": "Benutzerdefinierte Tastenkombination hinzufügen (userprefs)",
+      "save": "Speichern"
     }
   },
   "sysnotif": {
@@ -2267,7 +2327,11 @@
       "sddm_prompt": " SDDM-Setup > ",
       "sddm_header": " Optionen wählen, dann Fertig drücken ",
       "main_menu_prompt": " Hauptmenü > ",
-      "main_menu_header": " Pfeiltasten zur Navigation, Enter zur Auswahl "
+      "main_menu_header": " Pfeiltasten zur Navigation, Enter zur Auswahl ",
+      "additional_pkgs_header": "  Optionale Pakete auswählen und fertigstellen  ",
+      "additional_pkgs_prompt": "  Zusatzpakete > ",
+      "additional_pkgs_title": "=== Zusatzpakete auswählen ===",
+      "menu_additional_pkgs": "Zusatzpakete"
     },
     "deps": {
       "syncing": "Systempakete werden synchronisiert und aktualisiert (pacman -Syyu)...",
