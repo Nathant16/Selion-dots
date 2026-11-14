@@ -15,10 +15,14 @@ TARGET="$2"
 SUBTARGET="$3"
 
 send_qs_ipc() {
-    if [[ -n "$MAIN_QML" ]]; then
-        quickshell -p "$MAIN_QML" ipc call main handleCommand "$@" >/dev/null 2>&1
+    local target_qml="${MAIN_QML:-${QS_DIR:-}/Shell.qml}"
+    local cmd="${1:-}"
+    local widget="${2:-}"
+    local arg="${3:-}"
+    if [[ -f "$target_qml" ]]; then
+        quickshell -p "$target_qml" ipc call main handleCommand "$cmd" "$widget" "$arg" >/dev/null 2>&1
     else
-        quickshell ipc call main handleCommand "$@" >/dev/null 2>&1
+        quickshell ipc call main handleCommand "$cmd" "$widget" "$arg" >/dev/null 2>&1
     fi
 }
 

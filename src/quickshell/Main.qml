@@ -224,8 +224,8 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
 
     exclusionMode: ExclusionMode.Ignore
-    focusable: masterWindow.isVisible
-    WlrLayershell.keyboardFocus: masterWindow.isVisible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    focusable: true
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
 
     implicitWidth: masterWindow.screen ? masterWindow.screen.width : 0
     implicitHeight: masterWindow.screen ? masterWindow.screen.height : 0

@@ -19,9 +19,9 @@ PanelWindow {
 
     WlrLayershell.namespace: "qs-applauncher"
     WlrLayershell.layer: WlrLayer.Overlay
-    focusable: launcherWindow.isVisible
+    focusable: true
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.keyboardFocus: launcherWindow.isVisible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
     color: "transparent"
 
     mask: Region { item: topBarHole; intersection: Intersection.Xor }
