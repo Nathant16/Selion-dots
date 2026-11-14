@@ -1884,7 +1884,6 @@ Item {
         preferredHighlightEnd: (width / 2) + ((window.itemWidth * 1.5 + window.s(4)) / 2) + window.selectedCenterOffset
 
         highlightMoveDuration: (window.isFilterAnimating || window.isModelChanging) ? 0 : 400
-        focus: true
 
         onCurrentIndexChanged: {
             window.isItemAnimating = true; itemAnimationTimer.restart();
