@@ -6,6 +6,7 @@ import "../../../reusables/guide"
 
 BarModuleCard {
     id: card
+    visible: Compositor.name !== "driftwm"
     title: I18n.t("guide.bar.modules.workspaces.name", "Workspaces")
     moduleId: "workspaces"
     showPreview: false

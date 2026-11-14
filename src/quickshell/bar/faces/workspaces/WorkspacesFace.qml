@@ -17,7 +17,10 @@ Item {
 
     readonly property bool isCompact: module ? module.isCompact : false
     readonly property var barWindow: module ? module.barWindow : null
-    readonly property bool moduleActive: module ? module.moduleActive : true
+    readonly property bool isDriftWM: Compositor.name === "driftwm"
+    readonly property bool moduleActive: !isDriftWM && (module ? module.moduleActive : true)
+    readonly property bool isFaceVisible: !isDriftWM
+    visible: !isDriftWM
 
     readonly property string myOutput: (barWindow && barWindow.screen && barWindow.screen.name) ? barWindow.screen.name : ""
     readonly property int niriActiveIndex: NiriState.activeIndexFor(myOutput)
@@ -290,9 +293,9 @@ Item {
         function onNameChanged() { root.syncSwaySubscription(); root.syncDriftSubscription(); }
     }
 
-    property real targetLength: (moduleActive && workspaceCount > 0 && faceLoader.item) ? (isVertical ? faceLoader.item.implicitHeight : faceLoader.item.implicitWidth) + s(isCompact ? 18 : 22) : 0
-    implicitWidth: isVertical ? (parent ? parent.width : 0) : targetLength
-    implicitHeight: isVertical ? targetLength : (parent ? parent.height : 0)
+    property real targetLength: (!isDriftWM && moduleActive && workspaceCount > 0 && faceLoader.item) ? (isVertical ? faceLoader.item.implicitHeight : faceLoader.item.implicitWidth) + s(isCompact ? 18 : 22) : 0
+    implicitWidth: isDriftWM ? 0 : (isVertical ? (parent ? parent.width : 0) : targetLength)
+    implicitHeight: isDriftWM ? 0 : (isVertical ? targetLength : (parent ? parent.height : 0))
 
     property real wheelAccumulator: 0
     Timer {
