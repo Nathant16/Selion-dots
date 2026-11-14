@@ -64,8 +64,7 @@ ShellRoot {
     LockRedactor {}
 
     Launcher {}
-    Clipboard {}    
-    Dashboard {}
+    Clipboard {}
 
     Polkit {}
     WellbeingLimitOverlay {}

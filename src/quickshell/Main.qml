@@ -140,22 +140,6 @@ PanelWindow {
                 return;
             }
 
-            if (cmd === "calendar" || targetWidget === "calendar") {
-                if (cmd === "close") {
-                    DashboardController.hide();
-                } else {
-                    LauncherController.hide();
-                    ClipboardController.hide();
-                    if (masterWindow.targetActive !== "hidden") switchWidget("hidden", "");
-                    if (cmd === "open") {
-                        DashboardController.show();
-                    } else {
-                        DashboardController.toggle();
-                    }
-                }
-                return;
-            }
-
             if (cmd === "network" && targetWidget === "airplane") {
                 let isAirplane = !Networking.wifiEnabled && !(Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled);
                 if (isAirplane) {
@@ -500,9 +484,9 @@ PanelWindow {
                 adjusted.ry = Math.max(Math.round(6 * scale), result.ry - offsetAdjustment);
             } else if (bp === "bottom") {
                 adjusted.ry = Math.min(masterWindow.height - result.h - Math.round(6 * scale), result.ry + offsetAdjustment);
-            } else if (bp === "left") {
+            } else if (bp === "left" && name !== "calendar") {
                 adjusted.rx = Math.max(Math.round(6 * scale), result.rx - offsetAdjustment);
-            } else if (bp === "right") {
+            } else if (bp === "right" && name !== "calendar") {
                 adjusted.rx = Math.min(masterWindow.width - result.w - Math.round(6 * scale), result.rx + offsetAdjustment);
             }
 
