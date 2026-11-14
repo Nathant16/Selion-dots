@@ -243,7 +243,7 @@ GuideTab {
                             RowLayout {
                                 spacing: s(8)
                                 Text {
-                                    text: I18n.t("guide.keybindings.title", "Горячие клавиши")
+                                    text: I18n.t("guide.keybindings.title", "Keybindings")
                                     font.family: ThemeBackend.fontFamily
                                     font.pixelSize: s(16)
                                     font.bold: true
@@ -269,7 +269,7 @@ GuideTab {
                             }
 
                             Text {
-                                text: I18n.t("guide.keybindings.subtitle", "Полная шпаргалка комбинаций, синхронизированных между всеми 5 WM")
+                                text: I18n.t("guide.keybindings.subtitle", "Complete cheatsheet of keybindings synchronized across all 5 WMs")
                                 font.family: ThemeBackend.fontFamily
                                 font.pixelSize: s(11)
                                 color: ThemeBackend.subtext0
@@ -280,7 +280,7 @@ GuideTab {
                             implicitHeight: s(32)
                             implicitWidth: s(140)
                             cornerRadius: ThemeBackend.borderRadius
-                            buttonText: editorOpen ? I18n.t("guide.keybindings.close_editor", "Закрыть") : I18n.t("guide.keybindings.add_custom", "+ Свой бинд")
+                            buttonText: editorOpen ? I18n.t("guide.keybindings.close_editor", "Close") : I18n.t("guide.keybindings.add_custom", "+ Custom Binding")
                             textFontSize: s(11)
                             accentColor: editorOpen ? ThemeBackend.surface2 : ThemeBackend.mauve
                             textColor: editorOpen ? ThemeBackend.text : ThemeBackend.crust
@@ -302,7 +302,7 @@ GuideTab {
                         baseColor: Qt.alpha(ThemeBackend.surface1, 0.5)
                         accentColor: ThemeBackend.mauve
                         textColor: ThemeBackend.text
-                        placeholderText: I18n.t("guide.keybindings.search_placeholder", "Поиск по комбинации или названию (например, Super + I, терминал, закрыть)...")
+                        placeholderText: I18n.t("guide.keybindings.search_placeholder", "Search keybinding or action (e.g. Super + I, terminal, close)...")
                         text: keybindingsTabRoot.searchQuery
                         onTextChanged: keybindingsTabRoot.searchQuery = text
                     }
@@ -330,10 +330,10 @@ GuideTab {
                         Text {
                             Layout.fillWidth: true
                             text: isEditingStandard
-                                ? I18n.t("guide.keybindings.edit_standard_title", "Изменить стандартную комбинацию") + " (" + newTitle + ")"
+                                ? I18n.t("guide.keybindings.edit_standard_title", "Edit Standard Keybinding") + " (" + newTitle + ")"
                                 : (editingId !== ""
-                                    ? I18n.t("guide.keybindings.edit_custom_title", "Редактировать комбинацию")
-                                    : I18n.t("guide.keybindings.editor_title", "Добавить пользовательскую комбинацию (userprefs)"))
+                                    ? I18n.t("guide.keybindings.edit_custom_title", "Edit Keybinding")
+                                    : I18n.t("guide.keybindings.editor_title", "Add Custom Keybinding (userprefs)"))
                             font.family: ThemeBackend.fontFamily
                             font.pixelSize: s(13)
                             font.bold: true
@@ -371,7 +371,7 @@ GuideTab {
                             implicitHeight: s(34)
                             cornerRadius: s(6)
                             baseColor: Qt.alpha(ThemeBackend.surface1, 0.6)
-                            placeholderText: I18n.t("guide.keybindings.action_cmd", "Команда (напр. zen-browser)")
+                            placeholderText: I18n.t("guide.keybindings.action_cmd", "Command / Action (e.g. zen-browser)")
                             text: newExec
                             onTextChanged: newExec = text
                         }
@@ -382,7 +382,7 @@ GuideTab {
                             implicitHeight: s(34)
                             cornerRadius: s(6)
                             baseColor: Qt.alpha(ThemeBackend.surface1, 0.6)
-                            placeholderText: I18n.t("guide.keybindings.name", "Название (опционально)")
+                            placeholderText: I18n.t("guide.keybindings.name", "Name (optional)")
                             text: newTitle
                             onTextChanged: newTitle = text
                         }
@@ -391,7 +391,7 @@ GuideTab {
                             implicitHeight: s(34)
                             implicitWidth: s(100)
                             cornerRadius: s(6)
-                            buttonText: I18n.t("guide.keybindings.save", "Сохранить")
+                            buttonText: I18n.t("guide.keybindings.save", "Save")
                             textFontSize: s(11)
                             accentColor: ThemeBackend.mauve
                             textColor: ThemeBackend.crust
@@ -408,12 +408,12 @@ GuideTab {
 
                 Repeater {
                     model: [
-                        { key: "all", label: I18n.t("guide.keybindings.cat_all", "Все") },
-                        { key: "shell", label: I18n.t("guide.keybindings.cat_shell", "Оболочка") },
-                        { key: "windows", label: I18n.t("guide.keybindings.cat_windows", "Окна") },
-                        { key: "apps", label: I18n.t("guide.keybindings.cat_apps", "Приложения") },
-                        { key: "media", label: I18n.t("guide.keybindings.cat_media", "Медиа") },
-                        { key: "custom", label: I18n.t("guide.keybindings.cat_custom", "Свои") + " (" + customList.length + ")" }
+                        { key: "all", label: I18n.t("guide.keybindings.cat_all", "All") },
+                        { key: "shell", label: I18n.t("guide.keybindings.cat_shell", "Shell") },
+                        { key: "windows", label: I18n.t("guide.keybindings.cat_windows", "Windows") },
+                        { key: "apps", label: I18n.t("guide.keybindings.cat_apps", "Apps") },
+                        { key: "media", label: I18n.t("guide.keybindings.cat_media", "Media") },
+                        { key: "custom", label: I18n.t("guide.keybindings.cat_custom", "Custom") + " (" + customList.length + ")" }
                     ]
                     delegate: Rectangle {
                         implicitHeight: s(28)
@@ -503,7 +503,7 @@ GuideTab {
                                         Text {
                                             id: overriddenBadgeText
                                             anchors.centerIn: parent
-                                            text: I18n.t("guide.keybindings.overridden", "Изменен")
+                                            text: I18n.t("guide.keybindings.overridden", "Modified")
                                             font.family: ThemeBackend.fontFamily
                                             font.pixelSize: s(9)
                                             font.bold: true
@@ -522,7 +522,7 @@ GuideTab {
                                         Text {
                                             id: customBadgeText
                                             anchors.centerIn: parent
-                                            text: I18n.t("guide.keybindings.custom_badge", "Свой")
+                                            text: I18n.t("guide.keybindings.custom_badge", "Custom")
                                             font.family: ThemeBackend.fontFamily
                                             font.pixelSize: s(9)
                                             font.bold: true

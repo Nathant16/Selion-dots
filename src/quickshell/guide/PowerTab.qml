@@ -299,8 +299,8 @@ GuideTab {
                         searchKeywords: "cpu frequency limit clock speed underclock downclock eco max freq"
                         rootObj: powerTabRoot.rootObj
                         icon: "󰍛"
-                        title: I18n.t("guide.power.cpu_freq.title", "Лимит частоты процессора")
-                        description: I18n.t("guide.power.cpu_freq.desc", "Ограничение максимальной частоты ядер для режима энергосбережения")
+                        title: I18n.t("guide.power.cpu_freq.title", "CPU Frequency Limit")
+                        description: I18n.t("guide.power.cpu_freq.desc", "Cap maximum core frequency for power saving mode")
                         expanded: powerTabRoot.cpuFreqMode === "manual"
 
                         Switch {
@@ -327,8 +327,8 @@ GuideTab {
                                 rootObj: powerTabRoot.rootObj
                                 baseColor: "transparent"
                                 showIcon: false
-                                title: I18n.t("guide.power.cpu_freq_value.title", "Максимальная частота")
-                                description: I18n.t("guide.power.cpu_freq_value.desc", "Выбранный предел частоты для энергосбережения")
+                                title: I18n.t("guide.power.cpu_freq_value.title", "Maximum Frequency")
+                                description: I18n.t("guide.power.cpu_freq_value.desc", "Chosen frequency limit for power saving mode")
 
                                 Dropdown {
                                     id: cpuFreqDropdown
@@ -363,8 +363,8 @@ GuideTab {
                         searchKeywords: "auto brightness reduce drop dim battery saver"
                         rootObj: powerTabRoot.rootObj
                         icon: "󰃟"
-                        title: I18n.t("guide.power.auto_brightness.title", "Автопонижение яркости")
-                        description: I18n.t("guide.power.auto_brightness.desc", "Снижать яркость экрана при переходе в режим энергосбережения")
+                        title: I18n.t("guide.power.auto_brightness.title", "Auto Lower Brightness")
+                        description: I18n.t("guide.power.auto_brightness.desc", "Lower screen brightness when entering power saving mode")
                         expanded: powerTabRoot.autoBrightnessEnabled
 
                         Toggle {
@@ -385,8 +385,8 @@ GuideTab {
                                 rootObj: powerTabRoot.rootObj
                                 baseColor: "transparent"
                                 showIcon: false
-                                title: I18n.t("guide.power.saver_brightness.title", "Целевой уровень яркости")
-                                description: I18n.t("guide.power.saver_brightness.desc", "Уровень яркости экрана в режиме энергосбережения")
+                                title: I18n.t("guide.power.saver_brightness.title", "Target Brightness Level")
+                                description: I18n.t("guide.power.saver_brightness.desc", "Screen brightness level in power saving mode")
 
                                 NumberSelector {
                                     id: saverBriSelector

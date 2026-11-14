@@ -90,7 +90,7 @@ Item {
                         contentAlignment: Qt.AlignLeft
                         buttonIcon: ""
                         iconFontSize: Scaler.s(15)
-                        buttonText: I18n.t("lock.title", "Заблокировать")
+                        buttonText: I18n.t("lock.title", "Lock")
                         textFontSize: Scaler.s(12)
                         accentColor: ThemeBackend.surface1
                         bgOpacity: ThemeBackend.elementOpacity

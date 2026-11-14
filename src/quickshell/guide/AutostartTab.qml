@@ -1308,7 +1308,7 @@ GuideTab {
                         implicitHeight: rootObj.s(30)
                         horizontalPadding: rootObj.s(16)
                         cornerRadius: rootObj.s(6)
-                        buttonText: I18n.t("guide.autostart.close", "Закрыть")
+                        buttonText: I18n.t("guide.autostart.close", "Close")
                         accentColor: ThemeBackend.surface0
                         textColor: ThemeBackend.text
                         onClicked: autostartTabRoot.logModalVisible = false

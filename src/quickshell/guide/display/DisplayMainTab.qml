@@ -58,7 +58,7 @@ DisplayMainState {
                     RowLayout {
                         Layout.fillWidth: true
                         Text {
-                            text: I18n.t("guide.display.layout_stage", "2D Расположение мониторов")
+                            text: I18n.t("guide.display.layout_stage", "2D Monitor Layout")
                             font.family: ThemeBackend.fontFamily
                             font.pixelSize: rootObj.s(13)
                             font.bold: true
@@ -66,7 +66,7 @@ DisplayMainState {
                         }
                         Item { Layout.fillWidth: true }
                         Text {
-                            text: displayTabRoot.monitorsList.length + " " + I18n.t("guide.display.monitors_detected", "монитор(ов)")
+                            text: displayTabRoot.monitorsList.length + " " + I18n.t("guide.display.monitors_detected", "monitor(s)")
                             font.family: ThemeBackend.fontFamily
                             font.pixelSize: rootObj.s(11)
                             color: ThemeBackend.subtext0

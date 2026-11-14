@@ -76,7 +76,7 @@ DisplayLockscreenState {
                     implicitHeight: rootObj.s(28)
                     horizontalPadding: rootObj.s(10)
                     cornerRadius: ThemeBackend.borderRadius
-                    buttonText: I18n.t("guide.display.lockscreen.fingerprint.manage", "Настроить...")
+                    buttonText: I18n.t("guide.display.lockscreen.fingerprint.manage", "Configure...")
                     buttonIcon: "󰈷"
                     iconFontSize: rootObj.s(13)
                     textFontSize: rootObj.s(11)

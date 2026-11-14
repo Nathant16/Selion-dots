@@ -264,8 +264,8 @@ Rectangle {
             rootObj: monDelegate.rootObj
             baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
             icon: "󰍹"
-            title: I18n.t("guide.display.resolution.title", "Разрешение экрана")
-            description: I18n.t("guide.display.resolution.desc", "Установить разрешение монитора")
+            title: I18n.t("guide.display.resolution.title", "Screen Resolution")
+            description: I18n.t("guide.display.resolution.desc", "Set monitor resolution")
 
             Dropdown {
                 id: resDropdown

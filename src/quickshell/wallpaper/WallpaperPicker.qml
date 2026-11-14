@@ -857,14 +857,14 @@ Item {
         if (window.currentFilter === "Favorites") return I18n.t("wallpaper.notifications.favorites", "Favorites");
         if (window.currentFilter === "Video") return I18n.t("wallpaper.notifications.videos");
         let colorKeys = {
-            "Red": I18n.t("colors.red", "Красный"),
-            "Orange": I18n.t("colors.orange", "Оранжевый"),
-            "Yellow": I18n.t("colors.yellow", "Желтый"),
-            "Green": I18n.t("colors.green", "Зеленый"),
-            "Blue": I18n.t("colors.blue", "Синий"),
-            "Purple": I18n.t("colors.purple", "Фиолетовый"),
-            "Pink": I18n.t("colors.pink", "Розовый"),
-            "Monochrome": I18n.t("colors.monochrome", "Монохром")
+            "Red": I18n.t("colors.red", "Red"),
+            "Orange": I18n.t("colors.orange", "Orange"),
+            "Yellow": I18n.t("colors.yellow", "Yellow"),
+            "Green": I18n.t("colors.green", "Green"),
+            "Blue": I18n.t("colors.blue", "Blue"),
+            "Purple": I18n.t("colors.purple", "Purple"),
+            "Pink": I18n.t("colors.pink", "Pink"),
+            "Monochrome": I18n.t("colors.monochrome", "Monochrome")
         };
         if (colorKeys[window.currentFilter]) return colorKeys[window.currentFilter];
         return window.currentFilter;
