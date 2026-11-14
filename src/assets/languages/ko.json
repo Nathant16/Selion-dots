@@ -42,7 +42,6 @@
       "dock": "도크",
       "bar_general": "일반",
       "bar_modules": "모듈",
-      "bar_side_modules": "사이드 모듈",
       "display_lockscreen": "잠금 화면",
       "screenshot": "스크린샷",
       "theme_appearance": "모양",
@@ -50,9 +49,10 @@
       "theme_wallpapers": "배경화면",
       "general_main": "일반",
       "general_presets": "프리셋",
+      "general_weather": "날씨",
+      "bar_side_modules": "사이드 모듈",
       "fingerprint": "지문",
-      "power": "전원",
-      "general_weather": "날씨"
+      "power": "전원"
     },
     "launcher": {
       "position": {
@@ -192,13 +192,13 @@
     "welcome": {
       "by_author": "@{author} 제작",
       "about": "정보",
-      "hold_for_tutorial": "길게 눌러 튜토리얼 보기",
-      "start_tutorial": "튜토리얼 시작"
+      "start_tutorial": "튜토리얼 시작",
+      "hold_for_tutorial": "길게 눌러 튜토리얼 보기"
     },
     "tutorial": {
+      "start": "시작",
       "section_title": "{section} 튜토리얼",
-      "default_desc": "클릭하면 튜토리얼이 시작됩니다",
-      "start": "시작"
+      "default_desc": "클릭하면 튜토리얼이 시작됩니다"
     },
     "general": {
       "language": {
@@ -231,10 +231,10 @@
         "title": "위치",
         "desc": "자동 일출·일몰 일정과 날씨에 사용할 위치를 설정합니다",
         "popup_title": "위치 상세 정보",
-        "autodetect": "자동 감지",
         "latitude": "위도",
         "longitude": "경도",
-        "apply": "적용"
+        "apply": "적용",
+        "autodetect": "자동 감지"
       },
       "weatherinterval": {
         "title": "날씨 갱신 주기",
@@ -269,6 +269,17 @@
           "dont_show": "다시 표시하지 않기",
           "apply": "적용",
           "cancel": "취소"
+        },
+        "export": {
+          "button": "내보내기",
+          "dialog": "프리셋 내보내기",
+          "title": "프리셋 내보내기"
+        },
+        "import": {
+          "button": "가져오기",
+          "desc": "JSON 파일에서 프리셋을 추가합니다. 프리셋의 내보내기 버튼으로 공유할 수 있는 사본을 저장하세요",
+          "picker": "프리셋 파일 선택",
+          "title": "프리셋 가져오기 및 내보내기"
         }
       }
     },
@@ -395,9 +406,9 @@
         },
         "info": "녹화/타이머",
         "weather": "날씨",
+        "clock": "시계",
         "notifications": "알림",
-        "usage": "시스템 사용량",
-        "clock": "시계"
+        "usage": "시스템 사용량"
       },
       "position": {
         "title": "바 위치",
@@ -424,17 +435,17 @@
           "title": "빈 작업 공간 숨기기",
           "desc": "사용 중인 작업 공간과 현재 작업 공간만 표시"
         },
-        "per_monitor": {
-          "title": "모니터별 번호 지정",
-          "desc": "Hyprland 전용. 각 모니터에서 작업 공간 번호를 1부터 시작하고 모니터당 할당할 작업 공간 개수를 설정합니다",
-          "unavailable": "Hyprland에서만 사용 가능"
+        "style": {
+          "title": "스타일",
+          "desc": "워크스페이스 표시기의 시각적 스타일을 선택합니다"
         },
         "monitor_count": {
           "desc": "이 모니터에 할당된 작업 공간 수"
         },
-        "style": {
-          "title": "스타일",
-          "desc": "워크스페이스 표시기의 시각적 스타일을 선택합니다"
+        "per_monitor": {
+          "desc": "Hyprland 전용. 각 모니터에서 작업 공간 번호를 1부터 시작하고 모니터당 할당할 작업 공간 개수를 설정합니다",
+          "title": "모니터별 번호 지정",
+          "unavailable": "Hyprland에서만 사용 가능"
         }
       },
       "style": {
@@ -689,30 +700,16 @@
         "title": "모서리 반경",
         "desc": "UI 요소의 모서리 둥글기"
       },
-      "element_opacity": {
-        "title": "요소 불투명도",
-        "desc": "바, 독, 위젯 및 기타 모든 셸 요소의 불투명도"
-      },
-      "blur_background": {
-        "title": "흐린 배경화면 배경 추가",
-        "desc": "투명도를 사용하는 모든 요소 뒤의 배경화면을 흐리게 합니다",
-        "style": {
-          "blur": "흐림",
-          "liquid": "리퀴드 글라스"
-        }
-      },
       "colors": {
         "title": "색상 테마",
         "desc": "미리 정의된 색상 팔레트를 선택하거나 직접 테마를 만들 수 있습니다.",
         "search": "테마 검색..."
       },
-      "delete_theme": "삭제",
       "wallpaper": {
         "title": "배경화면 디렉터리",
         "desc": "배경화면을 검색할 디렉터리",
         "select_dir": "디렉터리 선택...",
         "select_wallpaper": "배경화면 선택",
-        "no_wallpaper_selected": "선택된 배경화면 없음",
         "select": "배경화면",
         "transition": {
           "mode": {
@@ -769,9 +766,22 @@
             "bottom_right": "오른쪽 아래에서"
           }
         },
+        "no_wallpaper_selected": "선택된 배경화면 없음",
         "show_selion": {
           "title": "Selion 배경화면 표시",
           "desc": "사용자 지정 배경화면과 함께 기본 내장 Selion 배경화면 팩을 포함합니다"
+        }
+      },
+      "element_opacity": {
+        "title": "요소 불투명도",
+        "desc": "바, 독, 위젯 및 기타 모든 셸 요소의 불투명도"
+      },
+      "blur_background": {
+        "title": "흐린 배경화면 배경 추가",
+        "desc": "투명도를 사용하는 모든 요소 뒤의 배경화면을 흐리게 합니다",
+        "style": {
+          "blur": "흐림",
+          "liquid": "리퀴드 글라스"
         }
       },
       "apps": {
@@ -810,7 +820,15 @@
           "title": "앱 추가"
         },
         "empty": "아직 테마가 적용된 앱이 없습니다. 목록에서 추가하세요"
-      }
+      },
+      "mode": {
+        "title": "색상 모드",
+        "desc": "셸, GTK, Qt 및 기타 테마 적용 앱을 라이트와 다크 사이에서 전환합니다",
+        "light": "라이트",
+        "dark": "다크",
+        "fixed": "선택한 색상 테마에 의해 고정됩니다. 모드를 전환하려면 Matugen을 선택하세요"
+      },
+      "delete_theme": "삭제"
     },
     "file_picker": {
       "title": "이미지 선택",
@@ -889,7 +907,6 @@
       "week_overview": "주간 요약",
       "daily_average": "일 평균",
       "no_data": "데이터 없음",
-      "same_time": "동일",
       "daily_usage": "일일 사용량",
       "peak_hours": "최다 사용 시간대",
       "time_hm": "{h}시간 {m}분",
@@ -926,26 +943,14 @@
         "excluded_apps": "제외된 앱",
         "excluded_apps_desc": "앞으로 전체 사용량 집계에서 제외할 앱을 지정합니다",
         "overall_limit_desc": "총 화면 시간이 이 값에 도달하면 알림",
-        "add_app": "앱 추가",
         "no_limits": "설정된 앱 제한이 없습니다",
         "no_excluded": "제외된 앱이 없습니다",
         "picker_search": "앱 검색...",
         "picker_empty": "일치하는 앱이 없습니다",
         "picker_apply": "적용",
-        "picker_cancel": "취소"
+        "picker_cancel": "취소",
+        "add_app": "앱 추가"
       },
-      "day": "일",
-      "week": "주",
-      "screen_time": "화면 시간",
-      "less_than_prev": "전날보다 {time} 적음",
-      "more_than_prev": "전날보다 {time} 많음",
-      "same_as_prev": "전날과 동일",
-      "limit_progress": "일일 한도 {limit} 중 {used}",
-      "limit_reached": "일일 한도({limit})에 도달함",
-      "peak_hour": "최다 사용 시간",
-      "week_total": "주간 합계",
-      "less": "적음",
-      "more": "많음",
       "notify": {
         "title": "디지털 웰빙",
         "overall_reached": "전체 일일 한도에 도달했습니다",
@@ -954,7 +959,20 @@
       "limit_overlay": {
         "title": "일일 한도 도달",
         "hold": "길게 눌러 계속"
-      }
+      },
+      "day": "일",
+      "less": "적음",
+      "less_than_prev": "전날보다 {time} 적음",
+      "limit_progress": "일일 한도 {limit} 중 {used}",
+      "limit_reached": "일일 한도({limit})에 도달함",
+      "more": "많음",
+      "more_than_prev": "전날보다 {time} 많음",
+      "peak_hour": "최다 사용 시간",
+      "same_as_prev": "전날과 동일",
+      "week": "주",
+      "week_total": "주간 합계",
+      "same_time": "동일",
+      "screen_time": "화면 시간"
     },
     "update_available": "업데이트 있음",
     "osd": {
@@ -1029,10 +1047,6 @@
         "title": "플로팅 독",
         "desc": "모서리를 둥글게 하여 화면 가장자리에서 독 분리"
       },
-      "background": {
-        "title": "앱 뒤에 배경 그리기",
-        "desc": "앱 아이콘 뒤에 독 패널 표시"
-      },
       "transparency": {
         "title": "독 투명도",
         "desc": "독 배경 불투명도 조절"
@@ -1105,10 +1119,14 @@
         "workspace": "활성 작업 공간만"
       },
       "window_menu": {
+        "untitled": "제목 없음",
         "new_window": "새 창",
         "pin": "도크에 고정",
-        "unpin": "도크에서 고정 해제",
-        "untitled": "제목 없음"
+        "unpin": "도크에서 고정 해제"
+      },
+      "background": {
+        "title": "앱 뒤에 배경 그리기",
+        "desc": "앱 아이콘 뒤에 독 패널 표시"
       }
     },
     "lyrics_picker": {
@@ -1140,6 +1158,97 @@
         "title": "스크린샷 폴더",
         "desc": "스크린샷이 저장되는 폴더",
         "select_dir": "디렉터리 선택..."
+      }
+    },
+    "weather": {
+      "enabled": {
+        "title": "날씨 알림",
+        "desc": "날씨가 바뀌거나 경보가 발령되면 알림을 보냅니다"
+      },
+      "daily": {
+        "title": "하루 두 번 예보",
+        "desc": "그날 날씨의 아침과 저녁 요약을 보냅니다"
+      },
+      "government": {
+        "title": "정부 기상 경보",
+        "desc": "내 위치에 대한 공식 기상 특보를 보냅니다",
+        "never": "없음",
+        "last_success": "마지막 성공",
+        "sources": "연결 가능한 출처",
+        "status": {
+          "title": "경보 출처 상태",
+          "ok": "연결됨",
+          "partial": "일부 연결됨",
+          "unavailable": "사용 불가",
+          "disabled": "사용 안 함",
+          "unknown": "알 수 없음"
+        }
+      },
+      "quiet": {
+        "title": "방해 금지 시간",
+        "desc": "이 시간에는 긴급하지 않은 알림을 보류합니다. 심각한 정부 경보, 뇌우, 결빙 알림은 계속 전달됩니다",
+        "range": {
+          "desc": "핸들을 드래그하여 알림을 보류할 시간을 선택하세요",
+          "title": "방해 금지 시간대"
+        }
+      },
+      "kinds": {
+        "rain_soon": {
+          "title": "곧 비",
+          "desc": "앞으로 몇 시간 안에 비가 올 것으로 예상됩니다"
+        },
+        "snow_soon": {
+          "title": "곧 눈",
+          "desc": "앞으로 몇 시간 안에 눈이 올 것으로 예상됩니다"
+        },
+        "heavy_rain": {
+          "title": "폭우",
+          "desc": "폭우가 예보되어 있습니다"
+        },
+        "heavy_snow": {
+          "title": "폭설",
+          "desc": "폭설이 예보되어 있습니다"
+        },
+        "thunderstorm": {
+          "title": "천둥번개",
+          "desc": "천둥번개가 예보되어 있습니다"
+        },
+        "ice": {
+          "title": "결빙",
+          "desc": "결빙 상태가 예보되어 있습니다"
+        },
+        "fog": {
+          "title": "안개",
+          "desc": "안개가 예보되어 있습니다"
+        },
+        "temp_rise": {
+          "title": "기온 상승",
+          "desc": "기온이 급격히 오를 것으로 예상됩니다"
+        },
+        "temp_drop": {
+          "title": "기온 하락",
+          "desc": "기온이 급격히 떨어질 것으로 예상됩니다"
+        },
+        "hot": {
+          "title": "폭염",
+          "desc": "매우 높은 기온이 예보되어 있습니다"
+        },
+        "cold": {
+          "title": "한파",
+          "desc": "매우 낮은 기온이 예보되어 있습니다"
+        },
+        "wind": {
+          "title": "강풍",
+          "desc": "강풍이 예보되어 있습니다"
+        },
+        "uv": {
+          "title": "자외선 지수",
+          "desc": "자외선 지수가 높을 것으로 예상됩니다"
+        },
+        "air_quality": {
+          "title": "대기질",
+          "desc": "대기질이 나쁠 것으로 예보되어 있습니다"
+        }
       }
     },
     "fingerprint": {
@@ -1318,97 +1427,6 @@
         "display_refresh_save_title": "배터리 사용 시 48Hz 화면 주사율",
         "display_refresh_save_desc": "Hyprland 및 Sway에서 배터리 사용 시 화면 주사율을 48Hz로 낮춤"
       }
-    },
-    "weather": {
-      "enabled": {
-        "title": "날씨 알림",
-        "desc": "날씨가 바뀌거나 경보가 발령되면 알림을 보냅니다"
-      },
-      "daily": {
-        "title": "하루 두 번 예보",
-        "desc": "그날 날씨의 아침과 저녁 요약을 보냅니다"
-      },
-      "government": {
-        "title": "정부 기상 경보",
-        "desc": "내 위치에 대한 공식 기상 특보를 보냅니다",
-        "never": "없음",
-        "last_success": "마지막 성공",
-        "sources": "연결 가능한 출처",
-        "status": {
-          "title": "경보 출처 상태",
-          "ok": "연결됨",
-          "partial": "일부 연결됨",
-          "unavailable": "사용 불가",
-          "disabled": "사용 안 함",
-          "unknown": "알 수 없음"
-        }
-      },
-      "quiet": {
-        "title": "방해 금지 시간",
-        "desc": "이 시간에는 긴급하지 않은 알림을 보류합니다. 심각한 정부 경보, 뇌우, 결빙 알림은 계속 전달됩니다",
-        "range": {
-          "title": "방해 금지 시간대",
-          "desc": "핸들을 드래그하여 알림을 보류할 시간을 선택하세요"
-        }
-      },
-      "kinds": {
-        "rain_soon": {
-          "title": "곧 비",
-          "desc": "앞으로 몇 시간 안에 비가 올 것으로 예상됩니다"
-        },
-        "snow_soon": {
-          "title": "곧 눈",
-          "desc": "앞으로 몇 시간 안에 눈이 올 것으로 예상됩니다"
-        },
-        "heavy_rain": {
-          "title": "폭우",
-          "desc": "폭우가 예보되어 있습니다"
-        },
-        "heavy_snow": {
-          "title": "폭설",
-          "desc": "폭설이 예보되어 있습니다"
-        },
-        "thunderstorm": {
-          "title": "천둥번개",
-          "desc": "천둥번개가 예보되어 있습니다"
-        },
-        "ice": {
-          "title": "결빙",
-          "desc": "결빙 상태가 예보되어 있습니다"
-        },
-        "fog": {
-          "title": "안개",
-          "desc": "안개가 예보되어 있습니다"
-        },
-        "temp_rise": {
-          "title": "기온 상승",
-          "desc": "기온이 급격히 오를 것으로 예상됩니다"
-        },
-        "temp_drop": {
-          "title": "기온 하락",
-          "desc": "기온이 급격히 떨어질 것으로 예상됩니다"
-        },
-        "hot": {
-          "title": "폭염",
-          "desc": "매우 높은 기온이 예보되어 있습니다"
-        },
-        "cold": {
-          "title": "한파",
-          "desc": "매우 낮은 기온이 예보되어 있습니다"
-        },
-        "wind": {
-          "title": "강풍",
-          "desc": "강풍이 예보되어 있습니다"
-        },
-        "uv": {
-          "title": "자외선 지수",
-          "desc": "자외선 지수가 높을 것으로 예상됩니다"
-        },
-        "air_quality": {
-          "title": "대기질",
-          "desc": "대기질이 나쁠 것으로 예보되어 있습니다"
-        }
-      }
     }
   },
   "sysnotif": {
@@ -1435,8 +1453,8 @@
     "default_message": "한 애플리케이션이 관리자 권한을 요청하고 있습니다.",
     "default_description": "이 작업을 관리자 권한으로 실행하려면 인증이 필요합니다.",
     "password_placeholder": "비밀번호",
-    "fingerprint_waiting": "지문을 스캔하거나 비밀번호 입력을 기다리는 중...",
-    "error_failed": "인증에 실패했습니다. 다시 시도해 주세요."
+    "error_failed": "인증에 실패했습니다. 다시 시도해 주세요.",
+    "fingerprint_waiting": "지문을 스캔하거나 비밀번호 입력을 기다리는 중..."
   },
   "applauncher": {
     "search": "검색",
@@ -1455,9 +1473,6 @@
   },
   "calendar": {
     "loading": "불러오는 중...",
-    "loading_schedule": "일정을 불러오는 중...",
-    "no_events": "예정된 일정이 없습니다.",
-    "open_web": "웹에서 열기",
     "weather": {
       "wind": "바람",
       "humid": "습도",
@@ -1472,7 +1487,10 @@
       "fr": "금",
       "sa": "토",
       "su": "일"
-    }
+    },
+    "loading_schedule": "일정을 불러오는 중...",
+    "no_events": "예정된 일정이 없습니다.",
+    "open_web": "웹에서 열기"
   },
   "clipboard": {
     "search": "검색",
@@ -1699,7 +1717,6 @@
       }
     },
     "draw": {
-      "hex": "16진수",
       "notification": {
         "app_name": "DrawAction",
         "saved_title": "그림 저장됨",
@@ -1708,6 +1725,7 @@
         "failed_title": "내보내기 실패",
         "failed_body": "그림을 저장할 수 없습니다"
       },
+      "hex": "16진수",
       "palette": "팔레트",
       "palette_default": "기본"
     },
@@ -1717,27 +1735,26 @@
       "new_note_title": "새 메모",
       "edit_note": "편집",
       "preview_note": "마크다운 미리보기",
-      "delete_selected": "선택 삭제 ({count})",
       "no_notes": "메모가 없습니다. «메모 추가»를 클릭하세요.",
-      "search_placeholder": "메모 검색...",
       "title_placeholder": "메모 제목...",
       "content_placeholder": "마크다운으로 작성하세요...",
       "back": "뒤로",
       "save": "완료",
       "cancel": "취소",
       "delete": "삭제",
-      "select_all": "모두 선택",
-      "deselect_all": "선택 해제",
       "selected_count": "{count}개 선택됨",
       "pinned": "고정됨",
       "recent": "최근",
       "pin": "고정",
-      "unpin": "고정 해제"
+      "unpin": "고정 해제",
+      "delete_selected": "선택 삭제 ({count})",
+      "search_placeholder": "메모 검색...",
+      "select_all": "모두 선택",
+      "deselect_all": "선택 해제"
     },
     "calculator": {
       "history": "기록",
       "no_history": "아직 계산 내역이 없습니다",
-      "clear_history": "기록 지우기",
       "copied": "복사됨",
       "deg": "도",
       "rad": "라디안",
@@ -1768,7 +1785,8 @@
         "updated": "환율 업데이트됨 {time}",
         "updating": "환율 업데이트 중...",
         "offline": "환율을 사용할 수 없음"
-      }
+      },
+      "clear_history": "기록 지우기"
     },
     "tabs": {
       "draw": "그리기",
@@ -1973,7 +1991,6 @@
       "done": "완료",
       "widget_singular": "개 위젯",
       "widgets_plural": "개 위젯",
-      "widgets_short": "개",
       "category": {
         "time": "시간 및 텍스트",
         "media": "미디어",
@@ -1983,7 +2000,8 @@
       },
       "search": "위젯 검색",
       "results": "결과",
-      "no_results": "찾을 수 없음"
+      "no_results": "찾을 수 없음",
+      "widgets_short": "개"
     },
     "types": {
       "clock": "시계",
@@ -2029,6 +2047,12 @@
       },
       "dashboard": {
         "name": "대시보드"
+      },
+      "desk_clock": {
+        "name": "데스크 시계"
+      },
+      "system_monitor": {
+        "name": "시스템 모니터"
       }
     },
     "github": {
@@ -2045,26 +2069,27 @@
     "settings": {
       "lyricsLines": "줄 수",
       "lyricsAlignment": "정렬",
-      "usageStyle": "스타일",
+      "textContent": "텍스트",
+      "hideText": "텍스트 숨기기",
       "lineThickness": "두께",
+      "usageStyle": "스타일",
       "visualizerStyle": "비주얼라이저 스타일",
-      "showNoLyrics": "\"가사 없음\" 텍스트 표시",
-      "textContent": "텍스트"
+      "showNoLyrics": "\"가사 없음\" 텍스트 표시"
     },
     "align": {
       "left": "왼쪽",
       "center": "가운데",
       "right": "오른쪽"
     },
-    "style": {
-      "wave": "웨이브",
-      "circle": "원형"
-    },
     "notes": {
       "empty": "아직 메모가 없습니다"
     },
     "text": {
       "placeholder": "텍스트 입력"
+    },
+    "style": {
+      "circle": "원형",
+      "wave": "웨이브"
     }
   },
   "cli": {
@@ -2173,11 +2198,11 @@
   },
   "installer": {
     "auth": {
+      "error_failed": "인증에 실패했습니다.",
       "enter_code": "설치 액세스 코드를 입력하세요: ",
       "error_interactive": "오류: 인증하려면 대화형 터미널이 필요합니다.",
       "error_empty": "인증 실패: 액세스 코드는 비워 둘 수 없습니다.",
       "error_default": "인증 실패: 액세스 코드가 유효하지 않거나 모두 사용되었습니다.",
-      "error_failed": "인증에 실패했습니다.",
       "access_granted": "액세스가 허용되었습니다. (이 코드로 {active}/{max}명이 활성화됨)"
     },
     "os": {
@@ -2209,16 +2234,12 @@
       "installed": " (설치됨)",
       "not_installed": " (설치되지 않음)",
       "done": "완료",
-      "compositors_prompt": " 컴포지터 설정 > ",
-      "compositors_header": " 지원되는 컴포지터를 선택한 뒤 완료를 고르세요 ",
       "sddm_title": "=== 디스플레이 관리자(SDDM) 설정 ===",
       "sddm_detected_active": "활성/사용 설정된 디스플레이 관리자 감지: {dm}",
       "sddm_detected_none": "활성/사용 설정된 디스플레이 관리자 감지: 없음",
       "sddm_opt_install": "SDDM 설치 및 설정 (material you 테마)",
       "sddm_opt_disable": "'{dm}' 비활성화 및 제거",
       "sddm_opt_wayland": "wayland 백엔드 강제 사용",
-      "sddm_prompt": " SDDM 설정 > ",
-      "sddm_header": " 옵션을 선택한 뒤 완료를 고르세요 ",
       "target_compositor_none": "대상 컴포지터 [필수 - 선택되지 않음]",
       "target_compositor_selected": "대상 컴포지터 [{comps}]",
       "target_compositor_req": "대상 컴포지터 ({label}) [필수]",
@@ -2232,8 +2253,6 @@
       "menu_reinstall": "재설치",
       "menu_install": "설치",
       "menu_exit": "종료",
-      "main_menu_prompt": " 메인 메뉴 > ",
-      "main_menu_header": " 방향키로 이동하고 enter로 선택하세요 ",
       "error_no_compositor": "계속하려면 지원되는 컴포지터를 최소 하나 선택해야 합니다.",
       "tagline": "당신을 위해 만든 데스크톱 셸",
       "support_creator": "제작자 후원하기:",
@@ -2241,39 +2260,27 @@
       "installed_success": "✔ Selion {ver} ({commit}) 설치가 완료되었습니다.",
       "failed_packages": "다음 패키지를 설치하는 중 오류가 발생했습니다:",
       "restart_prompt": "컴포지터를 다시 시작하거나 'serpantinumd start'를 실행해 시작하세요.",
-      "ask_reboot": "다시 시작하시겠습니까? [y/n] "
+      "ask_reboot": "다시 시작하시겠습니까? [y/n] ",
+      "compositors_prompt": " 컴포지터 설정 > ",
+      "compositors_header": " 지원되는 컴포지터를 선택한 뒤 완료를 고르세요 ",
+      "sddm_prompt": " SDDM 설정 > ",
+      "sddm_header": " 옵션을 선택한 뒤 완료를 고르세요 ",
+      "main_menu_prompt": " 메인 메뉴 > ",
+      "main_menu_header": " 방향키로 이동하고 enter로 선택하세요 "
     },
     "deps": {
       "syncing": "시스템 패키지를 동기화하고 업데이트하는 중 (pacman -syyu)...",
-      "enabling_copr": "COPR 저장소 {repo} 활성화 중...",
-      "enabling_terra": "Terra 저장소 활성화 중...",
-      "enabling_repo": "저장소 {repo} 활성화 중...",
       "all_installed": "-> 모든 패키지가 이미 설치되어 있습니다! 패키지 다운로드 단계를 건너뜁니다.",
       "missing_count": "-> 설치할 패키지 {count}개를 찾았습니다.",
       "installing_title": "시스템 패키지와 의존성을 설치하는 중...",
       "installing_pkg": "{pkg} 설치 중...",
       "install_ok": "{pkg} 설치 완료",
       "install_failed": "{pkg} 설치 실패",
+      "enabling_copr": "COPR 저장소 {repo} 활성화 중...",
+      "enabling_repo": "저장소 {repo} 활성화 중...",
+      "enabling_terra": "Terra 저장소 활성화 중...",
       "quickshell_outdated": "Quickshell {version} 버전이 너무 오래되어 {minimum} 이상이 필요합니다. 업그레이드 중...",
       "quickshell_still_old": "Quickshell이 여전히 {minimum}보다 이전 버전입니다. 수동으로 업데이트하지 않으면 설정이 열리지 않습니다."
-    },
-    "ski": {
-      "installing": "Ski 파일 관리자 설치 중...",
-      "up_to_date": "-> Ski {version}이(가) 이미 설치되어 있습니다.",
-      "installed": "Ski {version} 설치됨",
-      "install_failed": "Ski 설치 실패",
-      "download_failed": "Ski를 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/Ski에서 설치할 수 있습니다.",
-      "checksum_failed": "Ski 다운로드의 체크섬 검사에 실패하여 건너뜁니다.",
-      "unsupported_arch": "사전 빌드된 Ski 패키지는 x86_64 아키텍처만 지원하므로 건너뜁니다."
-    },
-    "audio": {
-      "installing": "Serpantinum 오디오 엔진 설치 중...",
-      "up_to_date": "-> Serpantinum 오디오 엔진 {version}이(가) 이미 설치되어 있습니다.",
-      "installed": "Serpantinum 오디오 엔진 {version} 설치됨",
-      "building": "이 시스템용으로 사전 빌드된 오디오 엔진이 없어 소스에서 빌드하는 중...",
-      "install_failed": "Serpantinum 오디오 엔진 설치에 실패했습니다. github.com/ilyamiro/serpantinum-audio에서 설치하기 전까지 이퀄라이저가 작동하지 않습니다.",
-      "download_failed": "Serpantinum 오디오 엔진을 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/serpantinum-audio에서 설치할 수 있습니다.",
-      "checksum_failed": "오디오 엔진 다운로드의 체크섬 검사에 실패하여 건너뜁니다."
     },
     "deploy": {
       "configuring_sddm": "SDDM 디스플레이 관리자를 설정하는 중...",
@@ -2284,53 +2291,48 @@
       "sddm_no_backend": "/usr/local/bin, /usr/bin, /bin에서 Xorg와 로그인 화면용으로 지원되는 Wayland 컴포지터(kwin_wayland/weston)를 모두 찾을 수 없습니다.",
       "sddm_skipped": "SDDM 설정을 건너뜁니다. 사용 가능한 디스플레이 서버 또는 로그인 컴포지터를 찾을 수 없습니다. 현재 디스플레이 매니저는 변경되지 않습니다."
     },
-    "gamma": {
-      "installing": "Serpantinum 블루라이트 필터 설치 중...",
-      "up_to_date": "-> Serpantinum 블루라이트 필터 {version}이(가) 이미 설치되어 있습니다.",
-      "installed": "Serpantinum 블루라이트 필터 {version} 설치됨",
-      "install_failed": "Serpantinum 블루라이트 필터 설치에 실패했습니다. github.com/ilyamiro/serpantinum-gamma에서 설치하기 전까지 작동하지 않습니다.",
-      "download_failed": "Serpantinum 블루라이트 필터를 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/serpantinum-gamma에서 설치할 수 있습니다.",
-      "checksum_failed": "블루라이트 필터 다운로드의 체크섬 검사에 실패하여 건너뜁니다.",
-      "unsupported_arch": "사전 빌드된 블루라이트 필터 패키지는 x86_64 아키텍처만 지원하므로 건너뜁니다."
+    "audio": {
+      "building": "이 시스템용으로 사전 빌드된 오디오 엔진이 없어 소스에서 빌드하는 중...",
+      "checksum_failed": "오디오 엔진 다운로드의 체크섬 검사에 실패하여 건너뜁니다.",
+      "download_failed": "Serpantinum 오디오 엔진을 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/serpantinum-audio에서 설치할 수 있습니다.",
+      "installed": "Serpantinum 오디오 엔진 {version} 설치됨",
+      "install_failed": "Serpantinum 오디오 엔진 설치에 실패했습니다. github.com/ilyamiro/serpantinum-audio에서 설치하기 전까지 이퀄라이저가 작동하지 않습니다.",
+      "installing": "Serpantinum 오디오 엔진 설치 중...",
+      "up_to_date": "-> Serpantinum 오디오 엔진 {version}이(가) 이미 설치되어 있습니다."
     },
     "core": {
-      "installing": "Serpantinum 핵심 서비스 설치 중...",
-      "up_to_date": "-> Serpantinum 핵심 서비스 {version}이(가) 이미 설치되어 있습니다.",
+      "checksum_failed": "핵심 서비스 다운로드의 체크섬 검사에 실패하여 건너뜁니다.",
+      "download_failed": "Serpantinum 핵심 서비스를 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/serpantinum-core에서 설치할 수 있습니다.",
       "installed": "Serpantinum 핵심 서비스 {version} 설치됨",
       "install_failed": "Serpantinum 핵심 서비스 설치에 실패했습니다. github.com/ilyamiro/serpantinum-core에서 설치하기 전까지 시스템 사용량, 키보드 잠금 표시기 및 클립보드가 작동하지 않습니다.",
-      "download_failed": "Serpantinum 핵심 서비스를 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/serpantinum-core에서 설치할 수 있습니다.",
-      "checksum_failed": "핵심 서비스 다운로드의 체크섬 검사에 실패하여 건너뜁니다.",
-      "unsupported_arch": "사전 빌드된 핵심 서비스 패키지는 x86_64 아키텍처만 지원하므로 건너뜁니다."
+      "installing": "Serpantinum 핵심 서비스 설치 중...",
+      "unsupported_arch": "사전 빌드된 핵심 서비스 패키지는 x86_64 아키텍처만 지원하므로 건너뜁니다.",
+      "up_to_date": "-> Serpantinum 핵심 서비스 {version}이(가) 이미 설치되어 있습니다."
+    },
+    "gamma": {
+      "checksum_failed": "블루라이트 필터 다운로드의 체크섬 검사에 실패하여 건너뜁니다.",
+      "download_failed": "Serpantinum 블루라이트 필터를 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/serpantinum-gamma에서 설치할 수 있습니다.",
+      "installed": "Serpantinum 블루라이트 필터 {version} 설치됨",
+      "install_failed": "Serpantinum 블루라이트 필터 설치에 실패했습니다. github.com/ilyamiro/serpantinum-gamma에서 설치하기 전까지 작동하지 않습니다.",
+      "installing": "Serpantinum 블루라이트 필터 설치 중...",
+      "unsupported_arch": "사전 빌드된 블루라이트 필터 패키지는 x86_64 아키텍처만 지원하므로 건너뜁니다.",
+      "up_to_date": "-> Serpantinum 블루라이트 필터 {version}이(가) 이미 설치되어 있습니다."
+    },
+    "ski": {
+      "checksum_failed": "Ski 다운로드의 체크섬 검사에 실패하여 건너뜁니다.",
+      "download_failed": "Ski를 다운로드할 수 없어 건너뜁니다. 나중에 github.com/ilyamiro/Ski에서 설치할 수 있습니다.",
+      "installed": "Ski {version} 설치됨",
+      "install_failed": "Ski 설치 실패",
+      "installing": "Ski 파일 관리자 설치 중...",
+      "unsupported_arch": "사전 빌드된 Ski 패키지는 x86_64 아키텍처만 지원하므로 건너뜁니다.",
+      "up_to_date": "-> Ski {version}이(가) 이미 설치되어 있습니다."
     }
-  },
-  "translator": {
-    "title": "번역기",
-    "status_translating": "번역 중...",
-    "speed": "속도: ",
-    "detected": "감지된 언어: ",
-    "input_label": "원문",
-    "placeholder": "여기에 입력하거나 붙여넣거나 말하세요...",
-    "chars": "자",
-    "translation_label": "번역",
-    "empty_prompt": "번역 결과가 바로 여기에 표시됩니다...",
-    "recent": "최근:",
-    "failed": "번역 결과가 없습니다",
-    "quick_settings": "빠른 치환 설정",
-    "replace_settings_title": "선택 영역 빠른 치환",
-    "replace_settings_desc": "선택한 텍스트를 번역해 그 자리에 바꿔 넣습니다",
-    "auto_paste": "번역문 자동 붙여넣기",
-    "auto_paste_sub": "끄면 번역문이 클립보드에만 복사됩니다",
-    "keep_clipboard": "번역문을 클립보드에 유지",
-    "keep_clipboard_sub": "끄면 붙여넣기 후 원래 클립보드 내용이 복원됩니다"
   },
   "datetime": {
     "full_date": "MMMM d일 dddd",
     "just_now": "방금 전",
     "minutes_ago": "{mins}분 전",
     "yesterday": "어제 {time}"
-  },
-  "common": {
-    "select": "선택..."
   },
   "gov_alerts": {
     "status": {
@@ -2466,5 +2468,28 @@
       "today": "오늘은 안개. 최고 {max}, 최저 {min}.",
       "tomorrow": "내일은 안개. 최고 {max}, 최저 {min}."
     }
+  },
+  "common": {
+    "select": "선택..."
+  },
+  "translator": {
+    "title": "번역기",
+    "status_translating": "번역 중...",
+    "speed": "속도: ",
+    "detected": "감지된 언어: ",
+    "input_label": "원문",
+    "placeholder": "여기에 입력하거나 붙여넣거나 말하세요...",
+    "chars": "자",
+    "translation_label": "번역",
+    "empty_prompt": "번역 결과가 바로 여기에 표시됩니다...",
+    "recent": "최근:",
+    "failed": "번역 결과가 없습니다",
+    "quick_settings": "빠른 치환 설정",
+    "replace_settings_title": "선택 영역 빠른 치환",
+    "replace_settings_desc": "선택한 텍스트를 번역해 그 자리에 바꿔 넣습니다",
+    "auto_paste": "번역문 자동 붙여넣기",
+    "auto_paste_sub": "끄면 번역문이 클립보드에만 복사됩니다",
+    "keep_clipboard": "번역문을 클립보드에 유지",
+    "keep_clipboard_sub": "끄면 붙여넣기 후 원래 클립보드 내용이 복원됩니다"
   }
 }

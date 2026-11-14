@@ -42,7 +42,6 @@
       "dock": "Rıhtım",
       "bar_general": "Genel",
       "bar_modules": "Modüller",
-      "bar_side_modules": "Yan modüller",
       "display_lockscreen": "Kilit ekranı",
       "screenshot": "Ekran görüntüsü",
       "theme_appearance": "Görünüm",
@@ -50,9 +49,10 @@
       "theme_wallpapers": "Duvar kâğıtları",
       "general_main": "Genel",
       "general_presets": "Ön ayarlar",
+      "general_weather": "Hava durumu",
+      "bar_side_modules": "Yan modüller",
       "fingerprint": "Parmak izleri",
-      "power": "Güç",
-      "general_weather": "Hava durumu"
+      "power": "Güç"
     },
     "launcher": {
       "position": {
@@ -192,13 +192,13 @@
     "welcome": {
       "by_author": "@{author} tarafından",
       "about": "Hakkında",
-      "hold_for_tutorial": "Tanıtım için basılı tutun",
-      "start_tutorial": "Tanıtımı başlat"
+      "start_tutorial": "Tanıtımı başlat",
+      "hold_for_tutorial": "Tanıtım için basılı tutun"
     },
     "tutorial": {
+      "start": "Başlat",
       "section_title": "{section} tanıtımı",
-      "default_desc": "Tanıtımı başlatmak için tıklayın",
-      "start": "Başlat"
+      "default_desc": "Tanıtımı başlatmak için tıklayın"
     },
     "general": {
       "language": {
@@ -231,10 +231,10 @@
         "title": "Konum",
         "desc": "Otomatik güneş takvimi ve hava durumu için konumu yapılandırın",
         "popup_title": "Konum ayrıntıları",
-        "autodetect": "Otomatik algıla",
         "latitude": "Enlem",
         "longitude": "Boylam",
-        "apply": "Uygula"
+        "apply": "Uygula",
+        "autodetect": "Otomatik algıla"
       },
       "weatherinterval": {
         "title": "Hava durumu yoklama aralığı",
@@ -269,6 +269,17 @@
           "dont_show": "Bunu bir daha gösterme",
           "apply": "Uygula",
           "cancel": "İptal"
+        },
+        "export": {
+          "button": "Dışa aktar",
+          "dialog": "Ön ayarı dışa aktar",
+          "title": "Ön ayarı dışa aktar"
+        },
+        "import": {
+          "button": "İçe aktar",
+          "desc": "Bir JSON dosyasından ön ayar ekleyin. Paylaşılabilir bir kopya kaydetmek için ön ayarın dışa aktar düğmesini kullanın",
+          "picker": "Ön ayar dosyası seç",
+          "title": "Ön ayarları içe ve dışa aktar"
         }
       }
     },
@@ -395,9 +406,9 @@
         },
         "info": "Kayıt/zamanlayıcı",
         "weather": "Hava Durumu",
+        "clock": "Saat",
         "notifications": "Bildirimler",
-        "usage": "Sistem kullanımı",
-        "clock": "Saat"
+        "usage": "Sistem kullanımı"
       },
       "position": {
         "title": "Çubuk konumu",
@@ -424,17 +435,17 @@
           "title": "Boş çalışma alanlarını gizle",
           "desc": "Yalnızca dolu olan çalışma alanlarını ve etkin olanı gösterin"
         },
-        "per_monitor": {
-          "title": "Monitör başına numaralandırma",
-          "desc": "Yalnızca Hyprland. Her monitörde çalışma alanlarını 1'den başlayarak numaralandırın ve her monitörün sahip olacağı çalışma alanı sayısını belirleyin",
-          "unavailable": "Yalnızca Hyprland'de kullanılabilir"
+        "style": {
+          "title": "Stil",
+          "desc": "Çalışma alanı göstergeleri için görsel stili seçin"
         },
         "monitor_count": {
           "desc": "Bu monitöre ait çalışma alanları"
         },
-        "style": {
-          "title": "Stil",
-          "desc": "Çalışma alanı göstergeleri için görsel stili seçin"
+        "per_monitor": {
+          "desc": "Yalnızca Hyprland. Her monitörde çalışma alanlarını 1'den başlayarak numaralandırın ve her monitörün sahip olacağı çalışma alanı sayısını belirleyin",
+          "title": "Monitör başına numaralandırma",
+          "unavailable": "Yalnızca Hyprland'de kullanılabilir"
         }
       },
       "style": {
@@ -689,30 +700,16 @@
         "title": "Kenarlık yarıçapı",
         "desc": "Arayüz ögeleri için köşe yarıçapı"
       },
-      "element_opacity": {
-        "title": "Öğe opaklığı",
-        "desc": "Çubuğun, dock'un, widget'ların ve diğer tüm kabuk öğelerinin opaklığı"
-      },
-      "blur_background": {
-        "title": "Bulanık duvar kağıdı arka planı ekle",
-        "desc": "Saydamlık kullanan her öğenin arkasındaki duvar kağıdını bulanıklaştırır",
-        "style": {
-          "blur": "Bulanıklık",
-          "liquid": "Sıvı cam"
-        }
-      },
       "colors": {
         "title": "Renk temaları",
         "desc": "Önceden tanımlanmış bir renk paleti ön ayarı seçin veya kendi özel temanızı oluşturun.",
         "search": "Temalarda ara..."
       },
-      "delete_theme": "Sil",
       "wallpaper": {
         "title": "Duvar kâğıdı dizini",
         "desc": "Duvar kâğıtlarının aranacağı dizin",
         "select_dir": "Dizin seçin...",
         "select_wallpaper": "Duvar kâğıdı seç",
-        "no_wallpaper_selected": "Duvar kâğıdı seçilmedi",
         "select": "Duvar Kâğıdı",
         "transition": {
           "mode": {
@@ -769,9 +766,22 @@
             "bottom_right": "Sağ alttan"
           }
         },
+        "no_wallpaper_selected": "Duvar kâğıdı seçilmedi",
         "show_selion": {
           "title": "Selion duvar kâğıtlarını göster",
           "desc": "Özel duvar kâğıtlarınızın yanında yerleşik Selion duvar kâğıdı paketini de dahil edin"
+        }
+      },
+      "element_opacity": {
+        "title": "Öğe opaklığı",
+        "desc": "Çubuğun, dock'un, widget'ların ve diğer tüm kabuk öğelerinin opaklığı"
+      },
+      "blur_background": {
+        "title": "Bulanık duvar kağıdı arka planı ekle",
+        "desc": "Saydamlık kullanan her öğenin arkasındaki duvar kağıdını bulanıklaştırır",
+        "style": {
+          "blur": "Bulanıklık",
+          "liquid": "Sıvı cam"
         }
       },
       "apps": {
@@ -810,7 +820,15 @@
           "title": "Uygulama ekle"
         },
         "empty": "Henüz temalı uygulama yok. Listeden bir tane ekleyin"
-      }
+      },
+      "mode": {
+        "title": "Renk modu",
+        "desc": "Kabuğu, GTK, Qt ve temalı diğer uygulamaları açık ve koyu arasında değiştirin",
+        "light": "Açık",
+        "dark": "Koyu",
+        "fixed": "Seçilen renk teması tarafından belirlenir. Modu değiştirmek için Matugen'i seçin"
+      },
+      "delete_theme": "Sil"
     },
     "file_picker": {
       "title": "Görsel seçin",
@@ -889,7 +907,6 @@
       "week_overview": "Haftalık genel bakış",
       "daily_average": "Günlük ortalama",
       "no_data": "Veri yok",
-      "same_time": "Aynı saatte",
       "daily_usage": "Günlük kullanım",
       "peak_hours": "En yoğun saatler",
       "time_hm": "{h} sa {m} dk",
@@ -926,26 +943,14 @@
         "excluded_apps": "Hariç tutulan uygulamalar",
         "excluded_apps_desc": "Bundan sonra uygulamaları genel takipten hariç tutun",
         "overall_limit_desc": "Toplam ekran süresi bu değere ulaştığında bildir",
-        "add_app": "Uygulama ekle",
         "no_limits": "Uygulama sınırı ayarlanmadı",
         "no_excluded": "Hariç tutulan uygulama yok",
         "picker_search": "Uygulama ara...",
         "picker_empty": "Eşleşen uygulama yok",
         "picker_apply": "Uygula",
-        "picker_cancel": "İptal"
+        "picker_cancel": "İptal",
+        "add_app": "Uygulama ekle"
       },
-      "day": "Gün",
-      "week": "Hafta",
-      "screen_time": "Ekran süresi",
-      "less_than_prev": "Önceki günden {time} daha az",
-      "more_than_prev": "Önceki günden {time} daha fazla",
-      "same_as_prev": "Önceki günle aynı",
-      "limit_progress": "{used} / {limit} günlük sınır",
-      "limit_reached": "Günlük {limit} sınırına ulaşıldı",
-      "peak_hour": "En yoğun saat",
-      "week_total": "Haftalık toplam",
-      "less": "Daha az",
-      "more": "Daha fazla",
       "notify": {
         "title": "Dijital refah",
         "overall_reached": "Genel günlük sınırınıza ulaşıldı",
@@ -954,7 +959,20 @@
       "limit_overlay": {
         "title": "Günlük sınıra ulaşıldı",
         "hold": "Devam etmek için basılı tutun"
-      }
+      },
+      "day": "Gün",
+      "less": "Daha az",
+      "less_than_prev": "Önceki günden {time} daha az",
+      "limit_progress": "{used} / {limit} günlük sınır",
+      "limit_reached": "Günlük {limit} sınırına ulaşıldı",
+      "more": "Daha fazla",
+      "more_than_prev": "Önceki günden {time} daha fazla",
+      "peak_hour": "En yoğun saat",
+      "same_as_prev": "Önceki günle aynı",
+      "week": "Hafta",
+      "week_total": "Haftalık toplam",
+      "same_time": "Aynı saatte",
+      "screen_time": "Ekran süresi"
     },
     "update_available": "Güncelleme mevcut",
     "osd": {
@@ -1029,10 +1047,6 @@
         "title": "Kayan dock",
         "desc": "Yuvarlatılmış köşelerle dock'ı ekran kenarından ayırın"
       },
-      "background": {
-        "title": "Uygulamaların arkasına arka plan çiz",
-        "desc": "Dok panelini uygulama simgelerinin arkasında göster"
-      },
       "transparency": {
         "title": "Dock saydamlığı",
         "desc": "Dock arka planı opaklık seviyesini ayarlayın"
@@ -1105,10 +1119,14 @@
         "workspace": "Yalnızca etkin çalışma alanı"
       },
       "window_menu": {
+        "untitled": "Adsız",
         "new_window": "Yeni pencere",
         "pin": "Dock'a sabitle",
-        "unpin": "Dock'tan kaldır",
-        "untitled": "Adsız"
+        "unpin": "Dock'tan kaldır"
+      },
+      "background": {
+        "title": "Uygulamaların arkasına arka plan çiz",
+        "desc": "Dok panelini uygulama simgelerinin arkasında göster"
       }
     },
     "lyrics_picker": {
@@ -1140,6 +1158,97 @@
         "title": "Ekran görüntüsü klasörü",
         "desc": "Ekran görüntülerinin kaydedildiği klasör",
         "select_dir": "Dizin seçin..."
+      }
+    },
+    "weather": {
+      "enabled": {
+        "title": "Hava durumu uyarıları",
+        "desc": "Hava durumu değiştiğinde veya uyarı yayınlandığında bildirim gönder"
+      },
+      "daily": {
+        "title": "Günde iki kez tahmin",
+        "desc": "Günün koşullarına dair sabah ve akşam özeti gönder"
+      },
+      "government": {
+        "title": "Resmi uyarılar",
+        "desc": "Konumun için resmi şiddetli hava uyarılarını gönder",
+        "never": "Hiçbir zaman",
+        "last_success": "Son başarılı kontrol",
+        "sources": "Erişilebilir kaynaklar",
+        "status": {
+          "title": "Uyarı kaynağı durumu",
+          "ok": "Bağlı",
+          "partial": "Kısmen bağlı",
+          "unavailable": "Kullanılamıyor",
+          "disabled": "Devre dışı",
+          "unknown": "Bilinmiyor"
+        }
+      },
+      "quiet": {
+        "title": "Sessiz saatler",
+        "desc": "Bu saatlerde acil olmayan uyarıları beklet. Şiddetli resmi uyarılar, fırtınalar ve buzlanma yine de iletilir",
+        "range": {
+          "desc": "Uyarıların ne zaman bekletileceğini seçmek için tutamaçları sürükleyin",
+          "title": "Sessiz dönem"
+        }
+      },
+      "kinds": {
+        "rain_soon": {
+          "title": "Yakında yağmur",
+          "desc": "Önümüzdeki birkaç saat içinde yağmur bekleniyor"
+        },
+        "snow_soon": {
+          "title": "Yakında kar",
+          "desc": "Önümüzdeki birkaç saat içinde kar bekleniyor"
+        },
+        "heavy_rain": {
+          "title": "Şiddetli yağmur",
+          "desc": "Şiddetli yağış tahmin ediliyor"
+        },
+        "heavy_snow": {
+          "title": "Yoğun kar",
+          "desc": "Yoğun kar yağışı tahmin ediliyor"
+        },
+        "thunderstorm": {
+          "title": "Fırtınalar",
+          "desc": "Fırtına tahmin ediliyor"
+        },
+        "ice": {
+          "title": "Buzlanma",
+          "desc": "Buzlanma koşulları tahmin ediliyor"
+        },
+        "fog": {
+          "title": "Sis",
+          "desc": "Sis tahmin ediliyor"
+        },
+        "temp_rise": {
+          "title": "Sıcaklık artışı",
+          "desc": "Sıcaklığın keskin biçimde artması bekleniyor"
+        },
+        "temp_drop": {
+          "title": "Sıcaklık düşüşü",
+          "desc": "Sıcaklığın keskin biçimde düşmesi bekleniyor"
+        },
+        "hot": {
+          "title": "Sıcak hava",
+          "desc": "Çok yüksek sıcaklıklar tahmin ediliyor"
+        },
+        "cold": {
+          "title": "Soğuk hava",
+          "desc": "Çok düşük sıcaklıklar tahmin ediliyor"
+        },
+        "wind": {
+          "title": "Kuvvetli rüzgâr",
+          "desc": "Kuvvetli rüzgâr tahmin ediliyor"
+        },
+        "uv": {
+          "title": "UV indeksi",
+          "desc": "UV indeksinin yüksek olması bekleniyor"
+        },
+        "air_quality": {
+          "title": "Hava kalitesi",
+          "desc": "Kötü hava kalitesi tahmin ediliyor"
+        }
       }
     },
     "fingerprint": {
@@ -1318,97 +1427,6 @@
         "display_refresh_save_title": "Pilde 48 Hz Ekran Yenileme Hızı",
         "display_refresh_save_desc": "Hyprland ve Sway içinde pilde ekran yenileme hızını 48 Hz'e düşür"
       }
-    },
-    "weather": {
-      "enabled": {
-        "title": "Hava durumu uyarıları",
-        "desc": "Hava durumu değiştiğinde veya uyarı yayınlandığında bildirim gönder"
-      },
-      "daily": {
-        "title": "Günde iki kez tahmin",
-        "desc": "Günün koşullarına dair sabah ve akşam özeti gönder"
-      },
-      "government": {
-        "title": "Resmi uyarılar",
-        "desc": "Konumun için resmi şiddetli hava uyarılarını gönder",
-        "never": "Hiçbir zaman",
-        "last_success": "Son başarılı kontrol",
-        "sources": "Erişilebilir kaynaklar",
-        "status": {
-          "title": "Uyarı kaynağı durumu",
-          "ok": "Bağlı",
-          "partial": "Kısmen bağlı",
-          "unavailable": "Kullanılamıyor",
-          "disabled": "Devre dışı",
-          "unknown": "Bilinmiyor"
-        }
-      },
-      "quiet": {
-        "title": "Sessiz saatler",
-        "desc": "Bu saatlerde acil olmayan uyarıları beklet. Şiddetli resmi uyarılar, fırtınalar ve buzlanma yine de iletilir",
-        "range": {
-          "title": "Sessiz dönem",
-          "desc": "Uyarıların ne zaman bekletileceğini seçmek için tutamaçları sürükleyin"
-        }
-      },
-      "kinds": {
-        "rain_soon": {
-          "title": "Yakında yağmur",
-          "desc": "Önümüzdeki birkaç saat içinde yağmur bekleniyor"
-        },
-        "snow_soon": {
-          "title": "Yakında kar",
-          "desc": "Önümüzdeki birkaç saat içinde kar bekleniyor"
-        },
-        "heavy_rain": {
-          "title": "Şiddetli yağmur",
-          "desc": "Şiddetli yağış tahmin ediliyor"
-        },
-        "heavy_snow": {
-          "title": "Yoğun kar",
-          "desc": "Yoğun kar yağışı tahmin ediliyor"
-        },
-        "thunderstorm": {
-          "title": "Fırtınalar",
-          "desc": "Fırtına tahmin ediliyor"
-        },
-        "ice": {
-          "title": "Buzlanma",
-          "desc": "Buzlanma koşulları tahmin ediliyor"
-        },
-        "fog": {
-          "title": "Sis",
-          "desc": "Sis tahmin ediliyor"
-        },
-        "temp_rise": {
-          "title": "Sıcaklık artışı",
-          "desc": "Sıcaklığın keskin biçimde artması bekleniyor"
-        },
-        "temp_drop": {
-          "title": "Sıcaklık düşüşü",
-          "desc": "Sıcaklığın keskin biçimde düşmesi bekleniyor"
-        },
-        "hot": {
-          "title": "Sıcak hava",
-          "desc": "Çok yüksek sıcaklıklar tahmin ediliyor"
-        },
-        "cold": {
-          "title": "Soğuk hava",
-          "desc": "Çok düşük sıcaklıklar tahmin ediliyor"
-        },
-        "wind": {
-          "title": "Kuvvetli rüzgâr",
-          "desc": "Kuvvetli rüzgâr tahmin ediliyor"
-        },
-        "uv": {
-          "title": "UV indeksi",
-          "desc": "UV indeksinin yüksek olması bekleniyor"
-        },
-        "air_quality": {
-          "title": "Hava kalitesi",
-          "desc": "Kötü hava kalitesi tahmin ediliyor"
-        }
-      }
     }
   },
   "sysnotif": {
@@ -1435,8 +1453,8 @@
     "default_message": "Bir uygulama yönetici yetkileri istiyor.",
     "default_description": "Bu eylemi yetkili kullanıcı olarak çalıştırmak için kimlik doğrulaması gereklidir.",
     "password_placeholder": "Parola",
-    "fingerprint_waiting": "Parmak izini taratın veya parola için bekleyin...",
-    "error_failed": "Kimlik doğrulama başarısız oldu. Lütfen tekrar deneyin."
+    "error_failed": "Kimlik doğrulama başarısız oldu. Lütfen tekrar deneyin.",
+    "fingerprint_waiting": "Parmak izini taratın veya parola için bekleyin..."
   },
   "applauncher": {
     "search": "Ara",
@@ -1455,9 +1473,6 @@
   },
   "calendar": {
     "loading": "Yükleniyor...",
-    "loading_schedule": "Program yükleniyor...",
-    "no_events": "Planlanmış etkinlik yok.",
-    "open_web": "Web'i aç",
     "weather": {
       "wind": "Rüzgâr",
       "humid": "Nem",
@@ -1472,7 +1487,10 @@
       "fr": "Cu",
       "sa": "Ct",
       "su": "Pz"
-    }
+    },
+    "loading_schedule": "Program yükleniyor...",
+    "no_events": "Planlanmış etkinlik yok.",
+    "open_web": "Web'i aç"
   },
   "clipboard": {
     "search": "Ara",
@@ -1569,6 +1587,21 @@
       "dynamic": "Dinamik",
       "dynamic_active": "Sesinize uyum sağlıyor"
     },
+    "presets": {
+      "flat": "Düz",
+      "bass": "Bas",
+      "treble": "Tiz",
+      "vocal": "Vokal",
+      "pop": "Pop",
+      "rock": "Rock",
+      "jazz": "Caz",
+      "classic": "Klasik",
+      "custom": "Özel"
+    },
+    "searching_lyrics": "Şarkı sözleri aranıyor...",
+    "no_lyrics": "Şarkı sözü bulunamadı",
+    "select_local_file": "Yerel bir dosya seçin",
+    "lyrics": "Şarkı Sözleri",
     "audio": {
       "title": "Ses",
       "balance": "Kanal dengesi",
@@ -1588,22 +1621,7 @@
       "off": "Kapalı",
       "balanced": "Dengeli",
       "night": "Gece"
-    },
-    "presets": {
-      "flat": "Düz",
-      "bass": "Bas",
-      "treble": "Tiz",
-      "vocal": "Vokal",
-      "pop": "Pop",
-      "rock": "Rock",
-      "jazz": "Caz",
-      "classic": "Klasik",
-      "custom": "Özel"
-    },
-    "searching_lyrics": "Şarkı sözleri aranıyor...",
-    "no_lyrics": "Şarkı sözü bulunamadı",
-    "select_local_file": "Yerel bir dosya seçin",
-    "lyrics": "Şarkı Sözleri"
+    }
   },
   "network": {
     "tabs": {
@@ -1717,27 +1735,26 @@
       "new_note_title": "Yeni not",
       "edit_note": "Notu düzenle",
       "preview_note": "Markdown önizleme",
-      "delete_selected": "Seçilenleri sil ({count})",
       "no_notes": "Henüz not yok. Bir tane oluşturmak için \"Not ekle\"ye tıklayın.",
-      "search_placeholder": "Notlarda ara...",
       "title_placeholder": "Not başlığı...",
       "content_placeholder": "Notunuzu buraya markdown olarak yazın...",
       "back": "Geri",
       "save": "Tamam",
       "cancel": "İptal",
       "delete": "Sil",
-      "select_all": "Tümünü seç",
-      "deselect_all": "Seçimi kaldır",
       "selected_count": "{count} seçildi",
       "pinned": "Sabitlenenler",
       "recent": "Son kullanılanlar",
       "pin": "Sabitle",
-      "unpin": "Sabitlemeyi kaldır"
+      "unpin": "Sabitlemeyi kaldır",
+      "delete_selected": "Seçilenleri sil ({count})",
+      "search_placeholder": "Notlarda ara...",
+      "select_all": "Tümünü seç",
+      "deselect_all": "Seçimi kaldır"
     },
     "calculator": {
       "history": "Geçmiş",
       "no_history": "Henüz hesaplama yok",
-      "clear_history": "Geçmişi temizle",
       "copied": "Kopyalandı",
       "deg": "Der",
       "rad": "Rad",
@@ -1768,7 +1785,8 @@
         "updated": "Kurlar güncellendi {time}",
         "updating": "Kurlar güncelleniyor...",
         "offline": "Kurlar kullanılamıyor"
-      }
+      },
+      "clear_history": "Geçmişi temizle"
     },
     "tabs": {
       "draw": "Çizim",
@@ -1973,7 +1991,6 @@
       "done": "Tamam",
       "widget_singular": "widget",
       "widgets_plural": "widget",
-      "widgets_short": "w",
       "category": {
         "time": "Saat ve metin",
         "media": "Medya",
@@ -1983,7 +2000,8 @@
       },
       "search": "Widget ara",
       "results": "Sonuçlar",
-      "no_results": "Hiçbir şey bulunamadı"
+      "no_results": "Hiçbir şey bulunamadı",
+      "widgets_short": "w"
     },
     "types": {
       "clock": "Saat",
@@ -2029,6 +2047,12 @@
       },
       "dashboard": {
         "name": "Kontrol paneli"
+      },
+      "desk_clock": {
+        "name": "Masa saati"
+      },
+      "system_monitor": {
+        "name": "Sistem monitörü"
       }
     },
     "github": {
@@ -2045,26 +2069,27 @@
     "settings": {
       "lyricsLines": "Satırlar",
       "lyricsAlignment": "Hizalama",
-      "usageStyle": "Stil",
+      "textContent": "Metin",
+      "hideText": "Metni gizle",
       "lineThickness": "Kalınlık",
+      "usageStyle": "Stil",
       "visualizerStyle": "Görselleştirici stili",
-      "showNoLyrics": "\"Şarkı sözü yok\" metnini göster",
-      "textContent": "Metin"
+      "showNoLyrics": "\"Şarkı sözü yok\" metnini göster"
     },
     "align": {
       "left": "Sol",
       "center": "Orta",
       "right": "Sağ"
     },
-    "style": {
-      "wave": "Dalga",
-      "circle": "Daire"
-    },
     "notes": {
       "empty": "Henüz not yok"
     },
     "text": {
       "placeholder": "Metin girin"
+    },
+    "style": {
+      "circle": "Daire",
+      "wave": "Dalga"
     }
   },
   "cli": {
@@ -2173,11 +2198,11 @@
   },
   "installer": {
     "auth": {
+      "error_failed": "Kimlik doğrulama başarısız oldu.",
       "enter_code": "Kurulum erişim kodunu girin: ",
       "error_interactive": "Hata: Kimlik doğrulama için etkileşimli uçbirim gereklidir.",
       "error_empty": "Kimlik doğrulama başarısız oldu: Erişim kodu boş olamaz.",
       "error_default": "Kimlik doğrulama başarısız oldu: Geçersiz veya tükenmiş erişim kodu.",
-      "error_failed": "Kimlik doğrulama başarısız oldu.",
       "access_granted": "Erişim izni verildi. ({active}/{max} kullanıcı bu kodu etkinleştirdi)"
     },
     "os": {
@@ -2209,16 +2234,12 @@
       "installed": " (yüklendi)",
       "not_installed": " (yüklenmedi)",
       "done": "Tamam",
-      "compositors_prompt": " Birleştirici kurulumu > ",
-      "compositors_header": " Desteklenen birleştiricileri seçin, ardından tamama basın ",
       "sddm_title": "=== Giriş yöneticisi (SDDM) kurulumu ===",
       "sddm_detected_active": "Algılanan etkin/etkinleştirilmiş giriş yöneticisi: {dm}",
       "sddm_detected_none": "Algılanan etkin/etkinleştirilmiş giriş yöneticisi: Yok",
       "sddm_opt_install": "SDDM'yi kur ve yapılandır (material you teması)",
       "sddm_opt_disable": "'{dm}' yöneticisini devre dışı bırak ve kaldır",
       "sddm_opt_wayland": "Wayland arka ucunu zorla",
-      "sddm_prompt": " SDDM kurulumu > ",
-      "sddm_header": " Seçenekleri belirleyin, ardından tamama basın ",
       "target_compositor_none": "Hedef birleştirici [gerekli - hiçbiri seçilmedi]",
       "target_compositor_selected": "Hedef birleştirici [{comps}]",
       "target_compositor_req": "Hedef birleştirici ({label}) [gerekli]",
@@ -2232,8 +2253,6 @@
       "menu_reinstall": "Yeniden yükle",
       "menu_install": "Yükle",
       "menu_exit": "Çıkış",
-      "main_menu_prompt": " Ana menü > ",
-      "main_menu_header": " Gezinmek için ok tuşlarını, seçmek için enter'ı kullanın ",
       "error_no_compositor": "Devam etmeden önce desteklenen en az bir birleştirici seçmelisiniz.",
       "tagline": "Sizin için oluşturulmuş bir masaüstü kabuğu",
       "support_creator": "Geliştiriciyi destekleyin:",
@@ -2241,39 +2260,27 @@
       "installed_success": "✔ Selion {ver} ({commit}) başarıyla kuruldu.",
       "failed_packages": "Aşağıdaki paketler kurulum sırasında hatalarla karşılaştı:",
       "restart_prompt": "Başlamak için birleştiricinizi yeniden başlatın veya 'serpantinumd start' komutunu çalıştırın.",
-      "ask_reboot": "Yeniden başlatmak istiyor musunuz? [y/n] "
+      "ask_reboot": "Yeniden başlatmak istiyor musunuz? [y/n] ",
+      "compositors_prompt": " Birleştirici kurulumu > ",
+      "compositors_header": " Desteklenen birleştiricileri seçin, ardından tamama basın ",
+      "sddm_prompt": " SDDM kurulumu > ",
+      "sddm_header": " Seçenekleri belirleyin, ardından tamama basın ",
+      "main_menu_prompt": " Ana menü > ",
+      "main_menu_header": " Gezinmek için ok tuşlarını, seçmek için enter'ı kullanın "
     },
     "deps": {
       "syncing": "Sistem paketleri senkronize ediliyor ve güncelleniyor (pacman -syyu)...",
-      "enabling_copr": "{repo} COPR deposu etkinleştiriliyor...",
-      "enabling_terra": "Terra deposu etkinleştiriliyor...",
-      "enabling_repo": "{repo} deposu etkinleştiriliyor...",
       "all_installed": "-> Tüm paketler zaten yüklü! Paket indirme aşaması atlanıyor.",
       "missing_count": "-> Yüklenecek {count} eksik paket bulundu.",
       "installing_title": "Sistem paketleri ve bağımlılıklar yükleniyor...",
       "installing_pkg": "{pkg} yükleniyor...",
       "install_ok": "{pkg} başarıyla yüklendi",
       "install_failed": "{pkg} yüklenemedi",
+      "enabling_copr": "{repo} COPR deposu etkinleştiriliyor...",
+      "enabling_repo": "{repo} deposu etkinleştiriliyor...",
+      "enabling_terra": "Terra deposu etkinleştiriliyor...",
       "quickshell_outdated": "Quickshell {version} çok eski, {minimum} veya daha yeni bir sürüm gerekiyor. Yükseltiliyor...",
       "quickshell_still_old": "Quickshell hâlâ {minimum} sürümünden daha eski. Manuel olarak güncelleyin, aksi takdirde ayarlar açılmayacaktır."
-    },
-    "ski": {
-      "installing": "Ski dosya yöneticisi yükleniyor...",
-      "up_to_date": "-> Ski {version} zaten yüklü.",
-      "installed": "Ski {version} yüklendi",
-      "install_failed": "Ski yüklenemedi",
-      "download_failed": "Ski indirilemedi, atlanıyor. Daha sonra github.com/ilyamiro/Ski adresinden yükleyebilirsiniz.",
-      "checksum_failed": "Ski indirmesinin sağlama toplamı doğrulaması başarısız oldu, atlanıyor.",
-      "unsupported_arch": "Önceden derlenmiş Ski paketleri yalnızca x86_64 için mevcuttur, atlanıyor."
-    },
-    "audio": {
-      "installing": "Serpantinum ses motoru yükleniyor...",
-      "up_to_date": "-> Serpantinum ses motoru {version} zaten yüklü.",
-      "installed": "Serpantinum ses motoru {version} yüklendi",
-      "building": "Bu sistem için önceden derlenmiş ses motoru yok, kaynaktan derleniyor...",
-      "install_failed": "Serpantinum ses motoru yüklenemedi. Ekolayzer, github.com/ilyamiro/serpantinum-audio adresinden yüklenene kadar çalışmayacaktır.",
-      "download_failed": "Serpantinum ses motoru indirilemedi, atlanıyor. Daha sonra github.com/ilyamiro/serpantinum-audio adresinden yükleyebilirsiniz.",
-      "checksum_failed": "Ses motoru indirmesinin sağlama toplamı doğrulaması başarısız oldu, atlanıyor."
     },
     "deploy": {
       "configuring_sddm": "SDDM giriş yöneticisi yapılandırılıyor...",
@@ -2284,53 +2291,48 @@
       "sddm_no_backend": "/usr/local/bin, /usr/bin veya /bin içinde ne Xorg ne de giriş ekranı için desteklenen bir Wayland kompozitörü (kwin_wayland/weston) bulundu.",
       "sddm_skipped": "SDDM kurulumu atlandı: kullanılabilir bir ekran sunucusu veya giriş kompozitörü bulunamadı. Mevcut ekran yöneticisi değiştirilmedi."
     },
-    "gamma": {
-      "installing": "Serpantinum mavi ışık filtresi yükleniyor...",
-      "up_to_date": "-> Serpantinum mavi ışık filtresi {version} zaten yüklü.",
-      "installed": "Serpantinum mavi ışık filtresi {version} yüklendi",
-      "install_failed": "Serpantinum mavi ışık filtresi yüklenemedi. github.com/ilyamiro/serpantinum-gamma adresinden yüklenene kadar çalışmayacaktır.",
-      "download_failed": "Serpantinum mavi ışık filtresi indirilemedi, atlanıyor. Daha sonra github.com/ilyamiro/serpantinum-gamma adresinden yükleyebilirsiniz.",
-      "checksum_failed": "Mavi ışık filtresi indirmesinin sağlama toplamı doğrulaması başarısız oldu, atlanıyor.",
-      "unsupported_arch": "Önceden derlenmiş mavi ışık filtresi paketleri yalnızca x86_64 için mevcuttur, atlanıyor."
+    "audio": {
+      "building": "Bu sistem için önceden derlenmiş ses motoru yok, kaynaktan derleniyor...",
+      "checksum_failed": "Ses motoru indirmesinin sağlama toplamı doğrulaması başarısız oldu, atlanıyor.",
+      "download_failed": "Serpantinum ses motoru indirilemedi, atlanıyor. Daha sonra github.com/ilyamiro/serpantinum-audio adresinden yükleyebilirsiniz.",
+      "installed": "Serpantinum ses motoru {version} yüklendi",
+      "install_failed": "Serpantinum ses motoru yüklenemedi. Ekolayzer, github.com/ilyamiro/serpantinum-audio adresinden yüklenene kadar çalışmayacaktır.",
+      "installing": "Serpantinum ses motoru yükleniyor...",
+      "up_to_date": "-> Serpantinum ses motoru {version} zaten yüklü."
     },
     "core": {
-      "installing": "Serpantinum çekirdek hizmetleri yükleniyor...",
-      "up_to_date": "-> Serpantinum çekirdek hizmetleri {version} zaten yüklü.",
+      "checksum_failed": "Çekirdek hizmetler indirmesinin sağlama toplamı doğrulaması başarısız oldu, atlanıyor.",
+      "download_failed": "Serpantinum çekirdek hizmetleri indirilemedi, atlanıyor. Daha sonra github.com/ilyamiro/serpantinum-core adresinden yükleyebilirsiniz.",
       "installed": "Serpantinum çekirdek hizmetleri {version} yüklendi",
       "install_failed": "Serpantinum çekirdek hizmetleri yüklenemedi. Sistem kullanımı, klavye kilit göstergeleri ve pano, github.com/ilyamiro/serpantinum-core adresinden yüklenene kadar çalışmayacaktır.",
-      "download_failed": "Serpantinum çekirdek hizmetleri indirilemedi, atlanıyor. Daha sonra github.com/ilyamiro/serpantinum-core adresinden yükleyebilirsiniz.",
-      "checksum_failed": "Çekirdek hizmetler indirmesinin sağlama toplamı doğrulaması başarısız oldu, atlanıyor.",
-      "unsupported_arch": "Önceden derlenmiş çekirdek hizmet paketleri yalnızca x86_64 için mevcuttur, atlanıyor."
+      "installing": "Serpantinum çekirdek hizmetleri yükleniyor...",
+      "unsupported_arch": "Önceden derlenmiş çekirdek hizmet paketleri yalnızca x86_64 için mevcuttur, atlanıyor.",
+      "up_to_date": "-> Serpantinum çekirdek hizmetleri {version} zaten yüklü."
+    },
+    "gamma": {
+      "checksum_failed": "Mavi ışık filtresi indirmesinin sağlama toplamı doğrulaması başarısız oldu, atlanıyor.",
+      "download_failed": "Serpantinum mavi ışık filtresi indirilemedi, atlanıyor. Daha sonra github.com/ilyamiro/serpantinum-gamma adresinden yükleyebilirsiniz.",
+      "installed": "Serpantinum mavi ışık filtresi {version} yüklendi",
+      "install_failed": "Serpantinum mavi ışık filtresi yüklenemedi. github.com/ilyamiro/serpantinum-gamma adresinden yüklenene kadar çalışmayacaktır.",
+      "installing": "Serpantinum mavi ışık filtresi yükleniyor...",
+      "unsupported_arch": "Önceden derlenmiş mavi ışık filtresi paketleri yalnızca x86_64 için mevcuttur, atlanıyor.",
+      "up_to_date": "-> Serpantinum mavi ışık filtresi {version} zaten yüklü."
+    },
+    "ski": {
+      "checksum_failed": "Ski indirmesinin sağlama toplamı doğrulaması başarısız oldu, atlanıyor.",
+      "download_failed": "Ski indirilemedi, atlanıyor. Daha sonra github.com/ilyamiro/Ski adresinden yükleyebilirsiniz.",
+      "installed": "Ski {version} yüklendi",
+      "install_failed": "Ski yüklenemedi",
+      "installing": "Ski dosya yöneticisi yükleniyor...",
+      "unsupported_arch": "Önceden derlenmiş Ski paketleri yalnızca x86_64 için mevcuttur, atlanıyor.",
+      "up_to_date": "-> Ski {version} zaten yüklü."
     }
-  },
-  "translator": {
-    "title": "Çevirmen",
-    "status_translating": "Çevriliyor...",
-    "speed": "Hız: ",
-    "detected": "Algılanan: ",
-    "input_label": "Kaynak metin",
-    "placeholder": "Metni buraya yazın, yapıştırın veya sesle söyleyin...",
-    "chars": "karakter",
-    "translation_label": "Çeviri",
-    "empty_prompt": "Çeviri anında burada görünecektir...",
-    "recent": "Son kullanılanlar:",
-    "failed": "Çeviri bulunamadı",
-    "quick_settings": "Hızlı değiştirme ayarları",
-    "replace_settings_title": "Hızlı seçim değiştirme",
-    "replace_settings_desc": "Seçilen metni çevirir ve yerinde değiştirir",
-    "auto_paste": "Çevrilen metni otomatik yapıştır",
-    "auto_paste_sub": "Devre dışı bırakılırsa — çeviri yalnızca panoya kopyalanır",
-    "keep_clipboard": "Çeviriyi panoda tut",
-    "keep_clipboard_sub": "Devre dışı bırakılırsa — yapıştırmadan sonra orijinal pano içeriği geri yüklenir"
   },
   "datetime": {
     "full_date": "dddd, MMMM dd",
     "just_now": "Az önce",
     "minutes_ago": "{mins} dk önce",
     "yesterday": "Dün {time}"
-  },
-  "common": {
-    "select": "Seçin..."
   },
   "gov_alerts": {
     "status": {
@@ -2466,5 +2468,28 @@
       "today": "Bugün sis. En yüksek {max}, en düşük {min}.",
       "tomorrow": "Yarın sis. En yüksek {max}, en düşük {min}."
     }
+  },
+  "common": {
+    "select": "Seçin..."
+  },
+  "translator": {
+    "title": "Çevirmen",
+    "status_translating": "Çevriliyor...",
+    "speed": "Hız: ",
+    "detected": "Algılanan: ",
+    "input_label": "Kaynak metin",
+    "placeholder": "Metni buraya yazın, yapıştırın veya sesle söyleyin...",
+    "chars": "karakter",
+    "translation_label": "Çeviri",
+    "empty_prompt": "Çeviri anında burada görünecektir...",
+    "recent": "Son kullanılanlar:",
+    "failed": "Çeviri bulunamadı",
+    "quick_settings": "Hızlı değiştirme ayarları",
+    "replace_settings_title": "Hızlı seçim değiştirme",
+    "replace_settings_desc": "Seçilen metni çevirir ve yerinde değiştirir",
+    "auto_paste": "Çevrilen metni otomatik yapıştır",
+    "auto_paste_sub": "Devre dışı bırakılırsa — çeviri yalnızca panoya kopyalanır",
+    "keep_clipboard": "Çeviriyi panoda tut",
+    "keep_clipboard_sub": "Devre dışı bırakılırsa — yapıştırmadan sonra orijinal pano içeriği geri yüklenir"
   }
 }

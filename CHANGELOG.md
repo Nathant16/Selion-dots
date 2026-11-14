@@ -1,3 +1,17 @@
+### 2.6.2
+
+- feat(upstream): merge upstream Serpantinum v2.5.1 updates:
+  - SurfaceField unified surface union architecture & liquid glass joined fillets
+  - Reworked calendar & attached bar dashboard with spring reveal, hourly forecast & sun arc
+  - Modularized widget redactor (`widgets/redactor`) with desk clock and system monitor presets
+  - Light/dark mode theme switch with static preset mode detection and color-scheme sync
+  - Import/export presets via native file picker dialog
+  - Notes panel lag reduction with large note sets and optimized weather polling intervals
+- feat(compositors): full modular configuration across all 5 WMs (Hyprland, Sway, Niri, Mango, DriftWM)
+- feat(theming): adaptive window border color and 12px rounding synchronization across all 5 WMs in real-time
+- feat(keys): unified keybindings across all compositors (floating window, restart shell, terminal, etc.)
+- feat(installer): categorized additional packages (Development, Social Media) and automatic Bluetooth stack setup
+
 ### 2.6.1
 
 - feat(shell): default to customized Fish shell with dynamic Selion prompt, color sync and session logout helper
@@ -25,6 +39,7 @@
 - fix(welcome): dynamically calculate title length in WelcomeTab instead of hardcoding length 11
 - feat(power): bidirectional side panel power profile sync, 5s smooth brightness fade, hardware-adaptive CPU frequency selector
 - feat(polkit): show fingerprint scan waiting prompt while PAM fprintd is active
+- feat(upstream-2.5.1): merged upstream 2.5.1 features including liquid glass fillets, surface fields, attached dashboard, and light/dark mode switch
 
 ### 2.5.0
 

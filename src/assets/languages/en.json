@@ -42,7 +42,6 @@
       "dock": "Dock",
       "bar_general": "General",
       "bar_modules": "Modules",
-      "bar_side_modules": "Side modules",
       "display_lockscreen": "Lock screen",
       "screenshot": "Screenshot",
       "theme_appearance": "Appearance",
@@ -50,9 +49,10 @@
       "theme_wallpapers": "Wallpapers",
       "general_main": "General",
       "general_presets": "Presets",
+      "general_weather": "Weather",
+      "bar_side_modules": "Side modules",
       "fingerprint": "Fingerprints",
       "power": "Power",
-      "general_weather": "Weather",
       "packages": "Additional Packages"
     },
     "launcher": {
@@ -193,13 +193,13 @@
     "welcome": {
       "by_author": "by @{author}",
       "about": "About",
-      "hold_for_tutorial": "Hold for tutorial",
-      "start_tutorial": "Start tutorial"
+      "start_tutorial": "Start tutorial",
+      "hold_for_tutorial": "Hold for tutorial"
     },
     "tutorial": {
+      "start": "Start",
       "section_title": "{section} tutorial",
-      "default_desc": "Click to launch tutorial",
-      "start": "Start"
+      "default_desc": "Click to launch tutorial"
     },
     "general": {
       "language": {
@@ -232,10 +232,10 @@
         "title": "Location",
         "desc": "Configure location for automatic sun schedule and weather",
         "popup_title": "Location details",
-        "autodetect": "Auto-detect",
         "latitude": "Latitude",
         "longitude": "Longitude",
-        "apply": "Apply"
+        "apply": "Apply",
+        "autodetect": "Auto-detect"
       },
       "weatherinterval": {
         "title": "Weather polling interval",
@@ -270,6 +270,17 @@
           "dont_show": "Do not show me this again",
           "apply": "Apply",
           "cancel": "Cancel"
+        },
+        "import": {
+          "title": "Import and export presets",
+          "desc": "Add a preset from a JSON file. Use the export button on a preset to save a shareable copy",
+          "button": "Import",
+          "picker": "Select preset file"
+        },
+        "export": {
+          "title": "Export preset",
+          "button": "Export",
+          "dialog": "Export preset"
         }
       }
     },
@@ -707,13 +718,11 @@
         "desc": "Select a predefined color palette preset or create your own custom theme.",
         "search": "Search themes..."
       },
-      "delete_theme": "Delete",
       "wallpaper": {
         "title": "Wallpaper directory",
         "desc": "Directory to search for wallpapers",
         "select_dir": "Select directory...",
         "select_wallpaper": "Select wallpaper",
-        "no_wallpaper_selected": "No wallpaper selected",
         "select": "Wallpaper",
         "transition": {
           "mode": {
@@ -770,6 +779,7 @@
             "bottom_right": "From bottom right"
           }
         },
+        "no_wallpaper_selected": "No wallpaper selected",
         "show_selion": {
           "title": "Show Selion wallpapers",
           "desc": "Include the built-in Selion wallpaper pack alongside your custom wallpapers"
@@ -811,7 +821,15 @@
           "title": "Add app"
         },
         "empty": "No apps are themed yet. Add one from the list"
-      }
+      },
+      "mode": {
+        "title": "Color mode",
+        "desc": "Switch the shell, GTK, Qt and other themed apps between light and dark",
+        "light": "Light",
+        "dark": "Dark",
+        "fixed": "Fixed by the selected color theme. Choose Matugen to switch modes"
+      },
+      "delete_theme": "Delete"
     },
     "file_picker": {
       "title": "Choose image",
@@ -890,7 +908,6 @@
       "week_overview": "Week overview",
       "daily_average": "Daily average",
       "no_data": "No data",
-      "same_time": "Same time",
       "daily_usage": "Daily usage",
       "peak_hours": "Peak hours",
       "time_hm": "{h}h {m}m",
@@ -927,17 +944,16 @@
         "excluded_apps": "Excluded apps",
         "excluded_apps_desc": "Exclude apps from overall tracking going forward",
         "overall_limit_desc": "Notify me when total screen time reaches this amount",
-        "add_app": "Add app",
         "no_limits": "No app limits set",
         "no_excluded": "No excluded apps",
         "picker_search": "Search apps...",
         "picker_empty": "No matching applications",
         "picker_apply": "Apply",
-        "picker_cancel": "Cancel"
+        "picker_cancel": "Cancel",
+        "add_app": "Add app"
       },
       "day": "Day",
       "week": "Week",
-      "screen_time": "Screen time",
       "less_than_prev": "{time} less than the day before",
       "more_than_prev": "{time} more than the day before",
       "same_as_prev": "Same as the day before",
@@ -955,7 +971,9 @@
       "limit_overlay": {
         "title": "Daily limit reached",
         "hold": "Hold to continue"
-      }
+      },
+      "same_time": "Same time",
+      "screen_time": "Screen time"
     },
     "update_available": "Update available",
     "osd": {
@@ -1143,6 +1161,97 @@
         "select_dir": "Select directory..."
       }
     },
+    "weather": {
+      "enabled": {
+        "title": "Weather alerts",
+        "desc": "Send notifications when the weather changes or warnings are issued"
+      },
+      "daily": {
+        "title": "Twice-daily forecast",
+        "desc": "Send a morning and evening summary of the day's conditions"
+      },
+      "government": {
+        "title": "Government warnings",
+        "desc": "Send official severe weather warnings for your location",
+        "never": "Never",
+        "last_success": "Last success",
+        "sources": "Sources reachable",
+        "status": {
+          "title": "Warning source status",
+          "ok": "Connected",
+          "partial": "Partially connected",
+          "unavailable": "Unavailable",
+          "disabled": "Disabled",
+          "unknown": "Unknown"
+        }
+      },
+      "quiet": {
+        "title": "Quiet hours",
+        "desc": "Hold back non-urgent alerts during these hours. Severe government warnings, thunderstorms and ice still arrive",
+        "range": {
+          "title": "Quiet period",
+          "desc": "Drag the handles to choose when alerts are held back"
+        }
+      },
+      "kinds": {
+        "rain_soon": {
+          "title": "Rain soon",
+          "desc": "Rain is expected within the next few hours"
+        },
+        "snow_soon": {
+          "title": "Snow soon",
+          "desc": "Snow is expected within the next few hours"
+        },
+        "heavy_rain": {
+          "title": "Heavy rain",
+          "desc": "Heavy rainfall is forecast"
+        },
+        "heavy_snow": {
+          "title": "Heavy snow",
+          "desc": "Heavy snowfall is forecast"
+        },
+        "thunderstorm": {
+          "title": "Thunderstorms",
+          "desc": "Thunderstorms are forecast"
+        },
+        "ice": {
+          "title": "Ice",
+          "desc": "Icy conditions are forecast"
+        },
+        "fog": {
+          "title": "Fog",
+          "desc": "Fog is forecast"
+        },
+        "temp_rise": {
+          "title": "Temperature rise",
+          "desc": "The temperature is expected to rise sharply"
+        },
+        "temp_drop": {
+          "title": "Temperature drop",
+          "desc": "The temperature is expected to fall sharply"
+        },
+        "hot": {
+          "title": "Heat",
+          "desc": "Very high temperatures are forecast"
+        },
+        "cold": {
+          "title": "Cold",
+          "desc": "Very low temperatures are forecast"
+        },
+        "wind": {
+          "title": "Strong wind",
+          "desc": "Strong winds are forecast"
+        },
+        "uv": {
+          "title": "UV index",
+          "desc": "The UV index is expected to be high"
+        },
+        "air_quality": {
+          "title": "Air quality",
+          "desc": "Poor air quality is forecast"
+        }
+      }
+    },
     "fingerprint": {
       "refresh": "Refresh",
       "cancel": "Cancel",
@@ -1319,97 +1428,6 @@
         "nmi_watchdog_title": "Disable NMI Watchdog",
         "nmi_watchdog_desc": "Stop periodic timer interrupts for deeper C-states"
       }
-    },
-    "weather": {
-      "enabled": {
-        "title": "Weather alerts",
-        "desc": "Send notifications when the weather changes or warnings are issued"
-      },
-      "daily": {
-        "title": "Twice-daily forecast",
-        "desc": "Send a morning and evening summary of the day's conditions"
-      },
-      "government": {
-        "title": "Government warnings",
-        "desc": "Send official severe weather warnings for your location",
-        "never": "Never",
-        "last_success": "Last success",
-        "sources": "Sources reachable",
-        "status": {
-          "title": "Warning source status",
-          "ok": "Connected",
-          "partial": "Partially connected",
-          "unavailable": "Unavailable",
-          "disabled": "Disabled",
-          "unknown": "Unknown"
-        }
-      },
-      "quiet": {
-        "title": "Quiet hours",
-        "desc": "Hold back non-urgent alerts during these hours. Severe government warnings, thunderstorms and ice still arrive",
-        "range": {
-          "title": "Quiet period",
-          "desc": "Drag the handles to choose when alerts are held back"
-        }
-      },
-      "kinds": {
-        "rain_soon": {
-          "title": "Rain soon",
-          "desc": "Rain is expected within the next few hours"
-        },
-        "snow_soon": {
-          "title": "Snow soon",
-          "desc": "Snow is expected within the next few hours"
-        },
-        "heavy_rain": {
-          "title": "Heavy rain",
-          "desc": "Heavy rainfall is forecast"
-        },
-        "heavy_snow": {
-          "title": "Heavy snow",
-          "desc": "Heavy snowfall is forecast"
-        },
-        "thunderstorm": {
-          "title": "Thunderstorms",
-          "desc": "Thunderstorms are forecast"
-        },
-        "ice": {
-          "title": "Ice",
-          "desc": "Icy conditions are forecast"
-        },
-        "fog": {
-          "title": "Fog",
-          "desc": "Fog is forecast"
-        },
-        "temp_rise": {
-          "title": "Temperature rise",
-          "desc": "The temperature is expected to rise sharply"
-        },
-        "temp_drop": {
-          "title": "Temperature drop",
-          "desc": "The temperature is expected to fall sharply"
-        },
-        "hot": {
-          "title": "Heat",
-          "desc": "Very high temperatures are forecast"
-        },
-        "cold": {
-          "title": "Cold",
-          "desc": "Very low temperatures are forecast"
-        },
-        "wind": {
-          "title": "Strong wind",
-          "desc": "Strong winds are forecast"
-        },
-        "uv": {
-          "title": "UV index",
-          "desc": "The UV index is expected to be high"
-        },
-        "air_quality": {
-          "title": "Air quality",
-          "desc": "Poor air quality is forecast"
-        }
-      }
     }
   },
   "sysnotif": {
@@ -1436,8 +1454,8 @@
     "default_message": "An application is requesting administrative rights.",
     "default_description": "Authentication is needed to run this action as superuser.",
     "password_placeholder": "Password",
-    "fingerprint_waiting": "Scan fingerprint or wait for password...",
-    "error_failed": "Authentication failed. Please try again."
+    "error_failed": "Authentication failed. Please try again.",
+    "fingerprint_waiting": "Scan fingerprint or wait for password..."
   },
   "applauncher": {
     "search": "Search",
@@ -1456,9 +1474,6 @@
   },
   "calendar": {
     "loading": "Loading...",
-    "loading_schedule": "Loading schedule...",
-    "no_events": "No scheduled events.",
-    "open_web": "Open web",
     "weather": {
       "wind": "Wind",
       "humid": "Humid",
@@ -1473,7 +1488,10 @@
       "fr": "Fr",
       "sa": "Sa",
       "su": "Su"
-    }
+    },
+    "loading_schedule": "Loading schedule...",
+    "no_events": "No scheduled events.",
+    "open_web": "Open web"
   },
   "clipboard": {
     "search": "Search",
@@ -1718,27 +1736,26 @@
       "new_note_title": "New note",
       "edit_note": "Edit note",
       "preview_note": "Preview markdown",
-      "delete_selected": "Delete selected ({count})",
       "no_notes": "No notes yet. Click \"Add note\" to create one.",
-      "search_placeholder": "Search notes...",
       "title_placeholder": "Note title...",
       "content_placeholder": "Write your note here in markdown...",
       "back": "Back",
       "save": "Done",
       "cancel": "Cancel",
       "delete": "Delete",
-      "select_all": "Select all",
-      "deselect_all": "Deselect",
       "selected_count": "{count} selected",
       "pinned": "Pinned",
       "recent": "Recent",
       "pin": "Pin",
-      "unpin": "Unpin"
+      "unpin": "Unpin",
+      "delete_selected": "Delete selected ({count})",
+      "search_placeholder": "Search notes...",
+      "select_all": "Select all",
+      "deselect_all": "Deselect"
     },
     "calculator": {
       "history": "History",
       "no_history": "No calculations yet",
-      "clear_history": "Clear history",
       "copied": "Copied",
       "deg": "Deg",
       "rad": "Rad",
@@ -1769,7 +1786,8 @@
         "updated": "Rates updated {time}",
         "updating": "Updating rates...",
         "offline": "Rates unavailable"
-      }
+      },
+      "clear_history": "Clear history"
     },
     "tabs": {
       "draw": "Draw",
@@ -1974,7 +1992,6 @@
       "done": "Done",
       "widget_singular": "widget",
       "widgets_plural": "widgets",
-      "widgets_short": "w",
       "category": {
         "time": "Time and text",
         "media": "Media",
@@ -1984,7 +2001,8 @@
       },
       "search": "Search widgets",
       "results": "Results",
-      "no_results": "Nothing found"
+      "no_results": "Nothing found",
+      "widgets_short": "w"
     },
     "types": {
       "clock": "Clock",
@@ -2030,6 +2048,12 @@
       },
       "dashboard": {
         "name": "Dashboard"
+      },
+      "desk_clock": {
+        "name": "Desk clock"
+      },
+      "system_monitor": {
+        "name": "System monitor"
       }
     },
     "github": {
@@ -2049,8 +2073,9 @@
       "usageStyle": "Style",
       "lineThickness": "Thickness",
       "visualizerStyle": "Visualizer style",
-      "showNoLyrics": "Show \"no lyrics\" text",
-      "textContent": "Text"
+      "hideText": "Hide text",
+      "textContent": "Text",
+      "showNoLyrics": "Show \"no lyrics\" text"
     },
     "align": {
       "left": "Left",
@@ -2174,11 +2199,11 @@
   },
   "installer": {
     "auth": {
+      "error_failed": "Authentication failed.",
       "enter_code": "Enter installation access code: ",
       "error_interactive": "Error: Interactive terminal required for authentication.",
       "error_empty": "Authentication failed: Access code cannot be empty.",
       "error_default": "Authentication failed: Invalid or exhausted access code.",
-      "error_failed": "Authentication failed.",
       "access_granted": "Access granted. ({active}/{max} users activated this code)"
     },
     "os": {
@@ -2210,16 +2235,12 @@
       "installed": " (installed)",
       "not_installed": " (not installed)",
       "done": "Done",
-      "compositors_prompt": " Compositor setup > ",
-      "compositors_header": " Toggle supported compositors, then select done ",
       "sddm_title": "=== Display manager (SDDM) setup ===",
       "sddm_detected_active": "Detected active/enabled display manager: {dm}",
       "sddm_detected_none": "Detected active/enabled display manager: None",
       "sddm_opt_install": "Install and configure SDDM (material you theme)",
       "sddm_opt_disable": "Disable and remove '{dm}'",
       "sddm_opt_wayland": "Force wayland backend",
-      "sddm_prompt": " SDDM setup > ",
-      "sddm_header": " Toggle options, then select done ",
       "target_compositor_none": "Target compositor [required - none selected]",
       "target_compositor_selected": "Target compositor [{comps}]",
       "target_compositor_req": "Target compositor ({label}) [required]",
@@ -2228,17 +2249,11 @@
       "menu_overview": "Package installation overview ({count} core packages)",
       "menu_sddm": "SDDM login manager",
       "menu_wallpapers": "Wallpaper pack",
-      "menu_additional_pkgs": "Additional packages",
-      "additional_pkgs_title": "=== Select additional packages ===",
-      "additional_pkgs_header": " Toggle optional packages, then select done ",
-      "additional_pkgs_prompt": " Additional packages > ",
       "menu_telemetry": "Anonymous telemetry",
       "menu_update": "Update",
       "menu_reinstall": "Reinstall",
       "menu_install": "Install",
       "menu_exit": "Exit",
-      "main_menu_prompt": " Main menu > ",
-      "main_menu_header": " Use arrow keys to navigate, enter to select ",
       "error_no_compositor": "You must choose at least one supported compositor before proceeding.",
       "tagline": "A desktop shell built for you",
       "support_creator": "Support the creator:",
@@ -2246,7 +2261,17 @@
       "installed_success": "✔ Selion {ver} ({commit}) installed successfully.",
       "failed_packages": "The following packages encountered errors during installation:",
       "restart_prompt": "Restart your compositor or run 'serpantinumd start' to begin.",
-      "ask_reboot": "Do you want to restart? [y/n] "
+      "ask_reboot": "Do you want to restart? [y/n] ",
+      "compositors_prompt": " Compositor setup > ",
+      "compositors_header": " Toggle supported compositors, then select done ",
+      "sddm_prompt": " SDDM setup > ",
+      "sddm_header": " Toggle options, then select done ",
+      "menu_additional_pkgs": "Additional packages",
+      "additional_pkgs_title": "=== Select additional packages ===",
+      "additional_pkgs_header": " Toggle optional packages, then select done ",
+      "additional_pkgs_prompt": " Additional packages > ",
+      "main_menu_prompt": " Main menu > ",
+      "main_menu_header": " Use arrow keys to navigate, enter to select "
     },
     "deps": {
       "syncing": "Synchronizing and updating system packages (pacman -syyu)...",
@@ -2307,26 +2332,6 @@
       "checksum_failed": "The core services download failed its checksum check, skipping.",
       "unsupported_arch": "Prebuilt core services packages exist only for x86_64, skipping."
     }
-  },
-  "translator": {
-    "title": "Translator",
-    "status_translating": "Translating...",
-    "speed": "Speed: ",
-    "detected": "Detected: ",
-    "input_label": "Source text",
-    "placeholder": "Type, paste, or speak text here...",
-    "chars": "chars",
-    "translation_label": "Translation",
-    "empty_prompt": "Translation will appear here instantly...",
-    "recent": "Recent:",
-    "failed": "No translation available",
-    "quick_settings": "Quick replace settings",
-    "replace_settings_title": "Quick selection replace",
-    "replace_settings_desc": "Translates selected text and replaces in-place",
-    "auto_paste": "Auto-paste translated text",
-    "auto_paste_sub": "If disabled — translation is only copied to clipboard",
-    "keep_clipboard": "Keep translation in clipboard",
-    "keep_clipboard_sub": "If disabled — original clipboard content is restored after paste"
   },
   "datetime": {
     "full_date": "dddd, MMMM dd",
@@ -2471,5 +2476,25 @@
       "today": "Fog today. High {max}, low {min}.",
       "tomorrow": "Fog tomorrow. High {max}, low {min}."
     }
+  },
+  "translator": {
+    "title": "Translator",
+    "status_translating": "Translating...",
+    "speed": "Speed: ",
+    "detected": "Detected: ",
+    "input_label": "Source text",
+    "placeholder": "Type, paste, or speak text here...",
+    "chars": "chars",
+    "translation_label": "Translation",
+    "empty_prompt": "Translation will appear here instantly...",
+    "recent": "Recent:",
+    "failed": "No translation available",
+    "quick_settings": "Quick replace settings",
+    "replace_settings_title": "Quick selection replace",
+    "replace_settings_desc": "Translates selected text and replaces in-place",
+    "auto_paste": "Auto-paste translated text",
+    "auto_paste_sub": "If disabled — translation is only copied to clipboard",
+    "keep_clipboard": "Keep translation in clipboard",
+    "keep_clipboard_sub": "If disabled — original clipboard content is restored after paste"
   }
 }

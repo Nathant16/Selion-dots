@@ -42,7 +42,6 @@
       "dock": "Dock",
       "bar_general": "Allgemein",
       "bar_modules": "Module",
-      "bar_side_modules": "Seitenmodule",
       "display_lockscreen": "Sperrbildschirm",
       "screenshot": "Bildschirmfoto",
       "theme_appearance": "Darstellung",
@@ -50,9 +49,10 @@
       "theme_wallpapers": "Hintergründe",
       "general_main": "Allgemein",
       "general_presets": "Voreinstellungen",
+      "general_weather": "Wetter",
+      "bar_side_modules": "Seitenmodule",
       "fingerprint": "Fingerabdrücke",
-      "power": "Energie",
-      "general_weather": "Wetter"
+      "power": "Energie"
     },
     "launcher": {
       "position": {
@@ -192,13 +192,13 @@
     "welcome": {
       "by_author": "von @{author}",
       "about": "Über",
-      "hold_for_tutorial": "Für Tutorial gedrückt halten",
-      "start_tutorial": "Tutorial starten"
+      "start_tutorial": "Tutorial starten",
+      "hold_for_tutorial": "Für Tutorial gedrückt halten"
     },
     "tutorial": {
+      "start": "Starten",
       "section_title": "Tutorial: {section}",
-      "default_desc": "Klicken, um das Tutorial zu starten",
-      "start": "Starten"
+      "default_desc": "Klicken, um das Tutorial zu starten"
     },
     "general": {
       "language": {
@@ -231,10 +231,10 @@
         "title": "Standort",
         "desc": "Standort für automatischen Sonnenzeitplan und Wetter konfigurieren",
         "popup_title": "Standortdetails",
-        "autodetect": "Automatisch erkennen",
         "latitude": "Breitengrad",
         "longitude": "Längengrad",
-        "apply": "Anwenden"
+        "apply": "Anwenden",
+        "autodetect": "Automatisch erkennen"
       },
       "weatherinterval": {
         "title": "Wetter-Aktualisierungsintervall",
@@ -269,6 +269,17 @@
           "dont_show": "Nicht mehr anzeigen",
           "apply": "Anwenden",
           "cancel": "Abbrechen"
+        },
+        "export": {
+          "button": "Exportieren",
+          "dialog": "Voreinstellung exportieren",
+          "title": "Voreinstellung exportieren"
+        },
+        "import": {
+          "button": "Importieren",
+          "desc": "Fügt eine Voreinstellung aus einer JSON-Datei hinzu. Nutze die Export-Schaltfläche einer Voreinstellung, um eine teilbare Kopie zu speichern",
+          "picker": "Voreinstellungsdatei auswählen",
+          "title": "Voreinstellungen importieren und exportieren"
         }
       }
     },
@@ -395,9 +406,9 @@
         },
         "info": "Aufnahme/Timer",
         "weather": "Wetter",
+        "clock": "Uhr",
         "notifications": "Benachrichtigungen",
-        "usage": "Systemauslastung",
-        "clock": "Uhr"
+        "usage": "Systemauslastung"
       },
       "position": {
         "title": "Leistenposition",
@@ -424,17 +435,17 @@
           "title": "Leere Arbeitsbereiche ausblenden",
           "desc": "Nur belegte und den aktiven Arbeitsbereich anzeigen"
         },
-        "per_monitor": {
-          "title": "Nummerierung pro Monitor",
-          "desc": "Nur Hyprland. Arbeitsbereiche auf jedem Monitor ab 1 nummerieren und festlegen, wie viele Arbeitsbereiche jeder Monitor besitzt",
-          "unavailable": "Nur unter Hyprland verfügbar"
+        "style": {
+          "title": "Stil",
+          "desc": "Wählen Sie das visuelle Design der Arbeitsflächen-Indikatoren"
         },
         "monitor_count": {
           "desc": "Arbeitsbereiche dieses Monitors"
         },
-        "style": {
-          "title": "Stil",
-          "desc": "Wählen Sie das visuelle Design der Arbeitsflächen-Indikatoren"
+        "per_monitor": {
+          "desc": "Nur Hyprland. Arbeitsbereiche auf jedem Monitor ab 1 nummerieren und festlegen, wie viele Arbeitsbereiche jeder Monitor besitzt",
+          "title": "Nummerierung pro Monitor",
+          "unavailable": "Nur unter Hyprland verfügbar"
         }
       },
       "style": {
@@ -689,30 +700,16 @@
         "title": "Eckenradius",
         "desc": "Eckenradius für UI-Elemente"
       },
-      "element_opacity": {
-        "title": "Elementdeckkraft",
-        "desc": "Deckkraft von Leiste, Dock, Widgets und allen anderen Shell-Elementen"
-      },
-      "blur_background": {
-        "title": "Unscharfen Hintergrundbild-Hintergrund hinzufügen",
-        "desc": "Weichzeichnet das Hintergrundbild hinter jedem Element mit Transparenz",
-        "style": {
-          "blur": "Weichzeichnen",
-          "liquid": "Liquid Glass"
-        }
-      },
       "colors": {
         "title": "Farbdesigns",
         "desc": "Vordefinierte Farbpalette wählen oder eigenes Design erstellen.",
         "search": "Designs suchen..."
       },
-      "delete_theme": "Löschen",
       "wallpaper": {
         "title": "Hintergrundbild-Ordner",
         "desc": "Ordner für die Suche nach Hintergrundbildern",
         "select_dir": "Ordner auswählen...",
         "select_wallpaper": "Hintergrundbild auswählen",
-        "no_wallpaper_selected": "Kein Hintergrundbild ausgewählt",
         "select": "Hintergrundbild",
         "transition": {
           "mode": {
@@ -769,9 +766,22 @@
             "bottom_right": "Von unten rechts"
           }
         },
+        "no_wallpaper_selected": "Kein Hintergrundbild ausgewählt",
         "show_selion": {
           "title": "Selion-Hintergründe anzeigen",
           "desc": "Integriertes Selion-Hintergrundbild-Paket zusammen mit eigenen Hintergründen einbeziehen"
+        }
+      },
+      "element_opacity": {
+        "title": "Elementdeckkraft",
+        "desc": "Deckkraft von Leiste, Dock, Widgets und allen anderen Shell-Elementen"
+      },
+      "blur_background": {
+        "title": "Unscharfen Hintergrundbild-Hintergrund hinzufügen",
+        "desc": "Weichzeichnet das Hintergrundbild hinter jedem Element mit Transparenz",
+        "style": {
+          "blur": "Weichzeichnen",
+          "liquid": "Liquid Glass"
         }
       },
       "apps": {
@@ -810,7 +820,15 @@
           "title": "App hinzufügen"
         },
         "empty": "Noch keine Apps angepasst. Füge eine aus der Liste hinzu"
-      }
+      },
+      "mode": {
+        "title": "Farbmodus",
+        "desc": "Shell, GTK, Qt und andere Apps zwischen hell und dunkel umschalten",
+        "light": "Hell",
+        "dark": "Dunkel",
+        "fixed": "Vom gewählten Farbthema vorgegeben. Wähle Matugen, um den Modus zu wechseln"
+      },
+      "delete_theme": "Löschen"
     },
     "file_picker": {
       "title": "Bild auswählen",
@@ -889,7 +907,6 @@
       "week_overview": "Wochenübersicht",
       "daily_average": "Tagesdurchschnitt",
       "no_data": "Keine Daten",
-      "same_time": "Unverändert",
       "daily_usage": "Tägliche Nutzung",
       "peak_hours": "Spitzenzeiten",
       "time_hm": "{h} Std. {m} Min.",
@@ -926,26 +943,14 @@
         "excluded_apps": "Ausgenommene Apps",
         "excluded_apps_desc": "Apps künftig von der Gesamterfassung ausschließen",
         "overall_limit_desc": "Benachrichtige mich, wenn die gesamte Bildschirmzeit diesen Wert erreicht",
-        "add_app": "App hinzufügen",
         "no_limits": "Keine App-Limits festgelegt",
         "no_excluded": "Keine ausgeschlossenen Apps",
         "picker_search": "Apps suchen...",
         "picker_empty": "Keine passenden Apps",
         "picker_apply": "Anwenden",
-        "picker_cancel": "Abbrechen"
+        "picker_cancel": "Abbrechen",
+        "add_app": "App hinzufügen"
       },
-      "day": "Tag",
-      "week": "Woche",
-      "screen_time": "Bildschirmzeit",
-      "less_than_prev": "{time} weniger als am Vortag",
-      "more_than_prev": "{time} mehr als am Vortag",
-      "same_as_prev": "Genauso viel wie am Vortag",
-      "limit_progress": "{used} von {limit} Tageslimit",
-      "limit_reached": "Tageslimit von {limit} erreicht",
-      "peak_hour": "Spitzenstunde",
-      "week_total": "Wochensumme",
-      "less": "Weniger",
-      "more": "Mehr",
       "notify": {
         "title": "Digitales Wohlbefinden",
         "overall_reached": "Dein gesamtes Tageslimit ist erreicht",
@@ -954,9 +959,23 @@
       "limit_overlay": {
         "title": "Tageslimit erreicht",
         "hold": "Gedrückt halten zum Fortfahren"
-      }
+      },
+      "day": "Tag",
+      "less": "Weniger",
+      "less_than_prev": "{time} weniger als am Vortag",
+      "limit_progress": "{used} von {limit} Tageslimit",
+      "limit_reached": "Tageslimit von {limit} erreicht",
+      "more": "Mehr",
+      "more_than_prev": "{time} mehr als am Vortag",
+      "peak_hour": "Spitzenstunde",
+      "same_as_prev": "Genauso viel wie am Vortag",
+      "week": "Woche",
+      "week_total": "Wochensumme",
+      "same_time": "Unverändert",
+      "screen_time": "Bildschirmzeit"
     },
     "update_available": "Update verfügbar",
+    "autostart": {},
     "osd": {
       "capslock": {
         "title": "Bei Feststelltaste anzeigen"
@@ -1028,10 +1047,6 @@
       "floating": {
         "title": "Schwebendes Dock",
         "desc": "Dock mit abgerundeten Ecken vom Bildschirmrand lösen"
-      },
-      "background": {
-        "title": "Hintergrund hinter Apps zeichnen",
-        "desc": "Dock-Leiste hinter den App-Symbolen anzeigen"
       },
       "transparency": {
         "title": "Dock-Transparenz",
@@ -1105,10 +1120,14 @@
         "workspace": "Nur aktive Arbeitsfläche"
       },
       "window_menu": {
+        "untitled": "Unbenannt",
         "new_window": "Neues Fenster",
         "pin": "An Dock anheften",
-        "unpin": "Vom Dock lösen",
-        "untitled": "Unbenannt"
+        "unpin": "Vom Dock lösen"
+      },
+      "background": {
+        "title": "Hintergrund hinter Apps zeichnen",
+        "desc": "Dock-Leiste hinter den App-Symbolen anzeigen"
       }
     },
     "lyrics_picker": {
@@ -1140,6 +1159,97 @@
         "title": "Screenshot-Ordner",
         "desc": "Ordner, in dem Screenshots gespeichert werden",
         "select_dir": "Ordner auswählen..."
+      }
+    },
+    "weather": {
+      "enabled": {
+        "title": "Wetterwarnungen",
+        "desc": "Benachrichtigungen senden, wenn sich das Wetter ändert oder Warnungen ausgegeben werden"
+      },
+      "daily": {
+        "title": "Zweimal täglich Vorhersage",
+        "desc": "Morgens und abends eine Zusammenfassung der Wetterlage senden"
+      },
+      "government": {
+        "title": "Amtliche Warnungen",
+        "desc": "Amtliche Unwetterwarnungen für deinen Standort senden",
+        "never": "Nie",
+        "last_success": "Letzte Abfrage erfolgreich",
+        "sources": "Erreichbare Quellen",
+        "status": {
+          "title": "Status der Warnquellen",
+          "ok": "Verbunden",
+          "partial": "Teilweise verbunden",
+          "unavailable": "Nicht verfügbar",
+          "disabled": "Deaktiviert",
+          "unknown": "Unbekannt"
+        }
+      },
+      "quiet": {
+        "title": "Ruhezeiten",
+        "desc": "Nicht dringende Warnungen in diesen Zeiten zurückhalten. Schwere amtliche Warnungen, Gewitter und Glätte kommen trotzdem an",
+        "range": {
+          "desc": "Regler ziehen, um festzulegen, wann Warnungen zurückgehalten werden",
+          "title": "Ruhezeitraum"
+        }
+      },
+      "kinds": {
+        "rain_soon": {
+          "title": "Bald Regen",
+          "desc": "In den nächsten Stunden wird Regen erwartet"
+        },
+        "snow_soon": {
+          "title": "Bald Schnee",
+          "desc": "In den nächsten Stunden wird Schnee erwartet"
+        },
+        "heavy_rain": {
+          "title": "Starkregen",
+          "desc": "Starker Regen wird vorhergesagt"
+        },
+        "heavy_snow": {
+          "title": "Starker Schneefall",
+          "desc": "Starker Schneefall wird vorhergesagt"
+        },
+        "thunderstorm": {
+          "title": "Gewitter",
+          "desc": "Gewitter werden vorhergesagt"
+        },
+        "ice": {
+          "title": "Glätte",
+          "desc": "Glatte Verhältnisse werden vorhergesagt"
+        },
+        "fog": {
+          "title": "Nebel",
+          "desc": "Nebel wird vorhergesagt"
+        },
+        "temp_rise": {
+          "title": "Temperaturanstieg",
+          "desc": "Die Temperatur wird voraussichtlich stark ansteigen"
+        },
+        "temp_drop": {
+          "title": "Temperatursturz",
+          "desc": "Die Temperatur wird voraussichtlich stark fallen"
+        },
+        "hot": {
+          "title": "Hitze",
+          "desc": "Sehr hohe Temperaturen werden vorhergesagt"
+        },
+        "cold": {
+          "title": "Kälte",
+          "desc": "Sehr niedrige Temperaturen werden vorhergesagt"
+        },
+        "wind": {
+          "title": "Starker Wind",
+          "desc": "Starker Wind wird vorhergesagt"
+        },
+        "uv": {
+          "title": "UV-Index",
+          "desc": "Der UV-Index wird voraussichtlich hoch sein"
+        },
+        "air_quality": {
+          "title": "Luftqualität",
+          "desc": "Schlechte Luftqualität wird vorhergesagt"
+        }
       }
     },
     "fingerprint": {
@@ -1318,97 +1428,6 @@
         "display_refresh_save_title": "48 Hz Display-Bildwiederholrate bei Akkubetrieb",
         "display_refresh_save_desc": "Bildwiederholfrequenz des internen Displays im Akkubetrieb auf 48 Hz senken"
       }
-    },
-    "weather": {
-      "enabled": {
-        "title": "Wetterwarnungen",
-        "desc": "Benachrichtigungen senden, wenn sich das Wetter ändert oder Warnungen ausgegeben werden"
-      },
-      "daily": {
-        "title": "Zweimal täglich Vorhersage",
-        "desc": "Morgens und abends eine Zusammenfassung der Wetterlage senden"
-      },
-      "government": {
-        "title": "Amtliche Warnungen",
-        "desc": "Amtliche Unwetterwarnungen für deinen Standort senden",
-        "never": "Nie",
-        "last_success": "Letzte Abfrage erfolgreich",
-        "sources": "Erreichbare Quellen",
-        "status": {
-          "title": "Status der Warnquellen",
-          "ok": "Verbunden",
-          "partial": "Teilweise verbunden",
-          "unavailable": "Nicht verfügbar",
-          "disabled": "Deaktiviert",
-          "unknown": "Unbekannt"
-        }
-      },
-      "quiet": {
-        "title": "Ruhezeiten",
-        "desc": "Nicht dringende Warnungen in diesen Zeiten zurückhalten. Schwere amtliche Warnungen, Gewitter und Glätte kommen trotzdem an",
-        "range": {
-          "title": "Ruhezeitraum",
-          "desc": "Regler ziehen, um festzulegen, wann Warnungen zurückgehalten werden"
-        }
-      },
-      "kinds": {
-        "rain_soon": {
-          "title": "Bald Regen",
-          "desc": "In den nächsten Stunden wird Regen erwartet"
-        },
-        "snow_soon": {
-          "title": "Bald Schnee",
-          "desc": "In den nächsten Stunden wird Schnee erwartet"
-        },
-        "heavy_rain": {
-          "title": "Starkregen",
-          "desc": "Starker Regen wird vorhergesagt"
-        },
-        "heavy_snow": {
-          "title": "Starker Schneefall",
-          "desc": "Starker Schneefall wird vorhergesagt"
-        },
-        "thunderstorm": {
-          "title": "Gewitter",
-          "desc": "Gewitter werden vorhergesagt"
-        },
-        "ice": {
-          "title": "Glätte",
-          "desc": "Glatte Verhältnisse werden vorhergesagt"
-        },
-        "fog": {
-          "title": "Nebel",
-          "desc": "Nebel wird vorhergesagt"
-        },
-        "temp_rise": {
-          "title": "Temperaturanstieg",
-          "desc": "Die Temperatur wird voraussichtlich stark ansteigen"
-        },
-        "temp_drop": {
-          "title": "Temperatursturz",
-          "desc": "Die Temperatur wird voraussichtlich stark fallen"
-        },
-        "hot": {
-          "title": "Hitze",
-          "desc": "Sehr hohe Temperaturen werden vorhergesagt"
-        },
-        "cold": {
-          "title": "Kälte",
-          "desc": "Sehr niedrige Temperaturen werden vorhergesagt"
-        },
-        "wind": {
-          "title": "Starker Wind",
-          "desc": "Starker Wind wird vorhergesagt"
-        },
-        "uv": {
-          "title": "UV-Index",
-          "desc": "Der UV-Index wird voraussichtlich hoch sein"
-        },
-        "air_quality": {
-          "title": "Luftqualität",
-          "desc": "Schlechte Luftqualität wird vorhergesagt"
-        }
-      }
     }
   },
   "sysnotif": {
@@ -1435,8 +1454,8 @@
     "default_message": "Eine Anwendung fordert Administratorrechte an.",
     "default_description": "Zur Ausführung als Superuser ist eine Authentifizierung erforderlich.",
     "password_placeholder": "Passwort",
-    "fingerprint_waiting": "Fingerabdruck scannen oder auf Passwort warten...",
-    "error_failed": "Authentifizierung fehlgeschlagen. Bitte erneut versuchen."
+    "error_failed": "Authentifizierung fehlgeschlagen. Bitte erneut versuchen.",
+    "fingerprint_waiting": "Fingerabdruck scannen oder auf Passwort warten..."
   },
   "applauncher": {
     "search": "Suchen",
@@ -1455,9 +1474,6 @@
   },
   "calendar": {
     "loading": "Laden...",
-    "loading_schedule": "Termine werden geladen...",
-    "no_events": "Keine Termine geplant.",
-    "open_web": "Im Web öffnen",
     "weather": {
       "wind": "Wind",
       "humid": "Feuchtigkeit",
@@ -1472,7 +1488,10 @@
       "fr": "Fr",
       "sa": "Sa",
       "su": "So"
-    }
+    },
+    "loading_schedule": "Termine werden geladen...",
+    "no_events": "Keine Termine geplant.",
+    "open_web": "Im Web öffnen"
   },
   "clipboard": {
     "search": "Suchen",
@@ -1717,27 +1736,26 @@
       "new_note_title": "Neue Notiz",
       "edit_note": "Bearbeiten",
       "preview_note": "Markdown-Vorschau",
-      "delete_selected": "Ausgewählte löschen ({count})",
       "no_notes": "Noch keine Notizen. Klicken Sie auf „Notiz hinzufügen“.",
-      "search_placeholder": "Notizen suchen...",
       "title_placeholder": "Notiztitel...",
       "content_placeholder": "Notizinhalt in Markdown...",
       "back": "Zurück",
       "save": "Fertig",
       "cancel": "Abbrechen",
       "delete": "Löschen",
-      "select_all": "Alle auswählen",
-      "deselect_all": "Auswahl aufheben",
       "selected_count": "{count} ausgewählt",
       "pinned": "Angeheftet",
       "recent": "Zuletzt verwendet",
       "pin": "Anheften",
-      "unpin": "Lösen"
+      "unpin": "Lösen",
+      "delete_selected": "Ausgewählte löschen ({count})",
+      "search_placeholder": "Notizen suchen...",
+      "select_all": "Alle auswählen",
+      "deselect_all": "Auswahl aufheben"
     },
     "calculator": {
       "history": "Verlauf",
       "no_history": "Noch keine Berechnungen",
-      "clear_history": "Verlauf löschen",
       "copied": "Kopiert",
       "deg": "Deg",
       "rad": "Rad",
@@ -1768,7 +1786,8 @@
         "updated": "Kurse aktualisiert {time}",
         "updating": "Kurse werden aktualisiert...",
         "offline": "Kurse nicht verfügbar"
-      }
+      },
+      "clear_history": "Verlauf löschen"
     },
     "tabs": {
       "draw": "Zeichnen",
@@ -1973,7 +1992,6 @@
       "done": "Fertig",
       "widget_singular": "Widget",
       "widgets_plural": "Widgets",
-      "widgets_short": "W",
       "category": {
         "time": "Zeit und Text",
         "media": "Medien",
@@ -1983,7 +2001,8 @@
       },
       "search": "Widgets suchen",
       "results": "Ergebnisse",
-      "no_results": "Nichts gefunden"
+      "no_results": "Nichts gefunden",
+      "widgets_short": "W"
     },
     "types": {
       "clock": "Uhr",
@@ -2003,9 +2022,9 @@
       "digital": "Digital",
       "analog": "Analog",
       "full": "Vollständig",
-      "minimal": "Minimalistisch",
       "round": "Rund",
       "compact": "Kompakt",
+      "minimal": "Minimalistisch",
       "rect": "Rechteckig",
       "rounded": "Abgerundet",
       "bars": "Balken",
@@ -2029,6 +2048,12 @@
       },
       "dashboard": {
         "name": "Dashboard"
+      },
+      "desk_clock": {
+        "name": "Tischuhr"
+      },
+      "system_monitor": {
+        "name": "Systemmonitor"
       }
     },
     "github": {
@@ -2045,26 +2070,27 @@
     "settings": {
       "lyricsLines": "Zeilen",
       "lyricsAlignment": "Ausrichtung",
-      "usageStyle": "Stil",
+      "textContent": "Text",
+      "hideText": "Text ausblenden",
       "lineThickness": "Dicke",
+      "usageStyle": "Stil",
       "visualizerStyle": "Visualisierer-Stil",
-      "showNoLyrics": "Text „Kein Songtext“ anzeigen",
-      "textContent": "Text"
+      "showNoLyrics": "Text „Kein Songtext“ anzeigen"
     },
     "align": {
       "left": "Links",
       "center": "Mitte",
       "right": "Rechts"
     },
-    "style": {
-      "wave": "Welle",
-      "circle": "Kreis"
-    },
     "notes": {
       "empty": "Noch keine Notizen"
     },
     "text": {
       "placeholder": "Text eingeben"
+    },
+    "style": {
+      "circle": "Kreis",
+      "wave": "Welle"
     }
   },
   "cli": {
@@ -2173,11 +2199,11 @@
   },
   "installer": {
     "auth": {
+      "error_failed": "Authentifizierung fehlgeschlagen.",
       "enter_code": "Installations-Zugangscode eingeben: ",
       "error_interactive": "Fehler: Interaktives Terminal für die Authentifizierung erforderlich.",
       "error_empty": "Authentifizierung fehlgeschlagen: Zugangscode darf nicht leer sein.",
       "error_default": "Authentifizierung fehlgeschlagen: Ungültiger oder abgelaufener Zugangscode.",
-      "error_failed": "Authentifizierung fehlgeschlagen.",
       "access_granted": "Zugriff gewährt. ({active}/{max} Benutzer haben diesen Code aktiviert)"
     },
     "os": {
@@ -2209,16 +2235,12 @@
       "installed": " (installiert)",
       "not_installed": " (nicht installiert)",
       "done": "Fertig",
-      "compositors_prompt": " Compositor-Setup > ",
-      "compositors_header": " Unterstützte Compositoren umschalten, dann Fertig wählen ",
       "sddm_title": "=== Display-Manager-Setup (SDDM) ===",
       "sddm_detected_active": "Aktiver/aktivierter Display-Manager erkannt: {dm}",
       "sddm_detected_none": "Aktiver/aktivierter Display-Manager erkannt: Keiner",
       "sddm_opt_install": "SDDM installieren und konfigurieren (Material-You-Design)",
       "sddm_opt_disable": "'{dm}' deaktivieren und entfernen",
       "sddm_opt_wayland": "Wayland-Backend erzwingen",
-      "sddm_prompt": " SDDM-Setup > ",
-      "sddm_header": " Optionen wählen, dann Fertig drücken ",
       "target_compositor_none": "Ziel-Compositor [erforderlich – keiner ausgewählt]",
       "target_compositor_selected": "Ziel-Compositor [{comps}]",
       "target_compositor_req": "Ziel-Compositor ({label}) [erforderlich]",
@@ -2232,8 +2254,6 @@
       "menu_reinstall": "Neu installieren",
       "menu_install": "Installieren",
       "menu_exit": "Beenden",
-      "main_menu_prompt": " Hauptmenü > ",
-      "main_menu_header": " Pfeiltasten zur Navigation, Enter zur Auswahl ",
       "error_no_compositor": "Sie müssen mindestens einen unterstützten Compositor auswählen, bevor Sie fortfahren können.",
       "tagline": "Eine Desktop-Shell, gemacht für dich",
       "support_creator": "Entwickler unterstützen:",
@@ -2241,39 +2261,27 @@
       "installed_success": "✔ Selion {ver} ({commit}) erfolgreich installiert.",
       "failed_packages": "Bei den folgenden Paketen sind während der Installation Fehler aufgetreten:",
       "restart_prompt": "Compositor neu starten oder 'serpantinumd start' ausführen, um zu beginnen.",
-      "ask_reboot": "Möchten Sie jetzt neu starten? [y/n] "
+      "ask_reboot": "Möchten Sie jetzt neu starten? [y/n] ",
+      "compositors_prompt": " Compositor-Setup > ",
+      "compositors_header": " Unterstützte Compositoren umschalten, dann Fertig wählen ",
+      "sddm_prompt": " SDDM-Setup > ",
+      "sddm_header": " Optionen wählen, dann Fertig drücken ",
+      "main_menu_prompt": " Hauptmenü > ",
+      "main_menu_header": " Pfeiltasten zur Navigation, Enter zur Auswahl "
     },
     "deps": {
       "syncing": "Systempakete werden synchronisiert und aktualisiert (pacman -Syyu)...",
-      "enabling_copr": "COPR-Repository {repo} wird aktiviert...",
-      "enabling_terra": "Terra-Repository wird aktiviert...",
-      "enabling_repo": "Repository {repo} wird aktiviert...",
       "all_installed": "-> Alle Pakete sind bereits installiert! Paket-Download übersprungen.",
       "missing_count": "-> {count} fehlende Pakete zur Installation gefunden.",
       "installing_title": "Systempakete und Abhängigkeiten werden installiert...",
       "installing_pkg": "{pkg} wird installiert...",
       "install_ok": "{pkg} erfolgreich installiert",
       "install_failed": "Installation von {pkg} fehlgeschlagen",
+      "enabling_copr": "COPR-Repository {repo} wird aktiviert...",
+      "enabling_repo": "Repository {repo} wird aktiviert...",
+      "enabling_terra": "Terra-Repository wird aktiviert...",
       "quickshell_outdated": "Quickshell {version} ist zu alt, {minimum} oder neuer wird benötigt. Aktualisierung läuft...",
       "quickshell_still_old": "Quickshell ist immer noch älter als {minimum}. Bitte manuell aktualisieren, sonst lassen sich die Einstellungen nicht öffnen."
-    },
-    "ski": {
-      "installing": "Dateimanager Ski wird installiert...",
-      "up_to_date": "-> Ski {version} ist bereits installiert.",
-      "installed": "Ski {version} installiert",
-      "install_failed": "Installation von Ski fehlgeschlagen",
-      "download_failed": "Ski konnte nicht heruntergeladen werden, wird übersprungen. Du kannst es später von github.com/ilyamiro/Ski installieren.",
-      "checksum_failed": "Prüfsummenprüfung des Ski-Downloads fehlgeschlagen, wird übersprungen.",
-      "unsupported_arch": "Vorgefertigte Ski-Pakete existieren nur für x86_64, wird übersprungen."
-    },
-    "audio": {
-      "installing": "Serpantinum Audio-Engine wird installiert...",
-      "up_to_date": "-> Serpantinum Audio-Engine {version} ist bereits installiert.",
-      "installed": "Serpantinum Audio-Engine {version} installiert",
-      "building": "Keine vorgefertigte Audio-Engine für dieses System, wird aus dem Quellcode kompiliert...",
-      "install_failed": "Installation der Serpantinum Audio-Engine fehlgeschlagen. Der Klangregler funktioniert nicht, bis sie von github.com/ilyamiro/serpantinum-audio installiert wurde.",
-      "download_failed": "Serpantinum Audio-Engine konnte nicht heruntergeladen werden, wird übersprungen. Du kannst sie später von github.com/ilyamiro/serpantinum-audio installieren.",
-      "checksum_failed": "Prüfsummenprüfung des Audio-Engine-Downloads fehlgeschlagen, wird übersprungen."
     },
     "deploy": {
       "configuring_sddm": "SDDM-Display-Manager wird konfiguriert...",
@@ -2284,53 +2292,48 @@
       "sddm_no_backend": "Weder Xorg noch ein unterstützter Wayland-Compositor für den Anmeldebildschirm (kwin_wayland/weston) wurde in /usr/local/bin, /usr/bin oder /bin gefunden.",
       "sddm_skipped": "SDDM-Einrichtung übersprungen: Kein nutzbarer Displayserver oder Anmelde-Compositor gefunden. Der aktuelle Display-Manager bleibt unverändert."
     },
-    "gamma": {
-      "installing": "Serpantinum Blaulichtfilter wird installiert...",
-      "up_to_date": "-> Serpantinum Blaulichtfilter {version} ist bereits installiert.",
-      "installed": "Serpantinum Blaulichtfilter {version} installiert",
-      "install_failed": "Installation des Serpantinum Blaulichtfilters fehlgeschlagen. Er funktioniert nicht, bis er von github.com/ilyamiro/serpantinum-gamma installiert wurde.",
-      "download_failed": "Serpantinum Blaulichtfilter konnte nicht heruntergeladen werden, wird übersprungen. Du kannst ihn später von github.com/ilyamiro/serpantinum-gamma installieren.",
-      "checksum_failed": "Prüfsummenprüfung des Blaulichtfilter-Downloads fehlgeschlagen, wird übersprungen.",
-      "unsupported_arch": "Vorgefertigte Blaulichtfilter-Pakete existieren nur für x86_64, wird übersprungen."
+    "audio": {
+      "building": "Keine vorgefertigte Audio-Engine für dieses System, wird aus dem Quellcode kompiliert...",
+      "checksum_failed": "Prüfsummenprüfung des Audio-Engine-Downloads fehlgeschlagen, wird übersprungen.",
+      "download_failed": "Serpantinum Audio-Engine konnte nicht heruntergeladen werden, wird übersprungen. Du kannst sie später von github.com/ilyamiro/serpantinum-audio installieren.",
+      "installed": "Serpantinum Audio-Engine {version} installiert",
+      "install_failed": "Installation der Serpantinum Audio-Engine fehlgeschlagen. Der Klangregler funktioniert nicht, bis sie von github.com/ilyamiro/serpantinum-audio installiert wurde.",
+      "installing": "Serpantinum Audio-Engine wird installiert...",
+      "up_to_date": "-> Serpantinum Audio-Engine {version} ist bereits installiert."
     },
     "core": {
-      "installing": "Serpantinum Kerndienste werden installiert...",
-      "up_to_date": "-> Serpantinum Kerndienste {version} sind bereits installiert.",
+      "checksum_failed": "Prüfsummenprüfung des Kerndienste-Downloads fehlgeschlagen, wird übersprungen.",
+      "download_failed": "Serpantinum Kerndienste konnten nicht heruntergeladen werden, wird übersprungen. Du kannst sie später von github.com/ilyamiro/serpantinum-core installieren.",
       "installed": "Serpantinum Kerndienste {version} installiert",
       "install_failed": "Installation der Serpantinum Kerndienste fehlgeschlagen. Systemauslastung, Tastatursperr-Indikatoren und die Zwischenablage funktionieren nicht, bis sie von github.com/ilyamiro/serpantinum-core installiert wurden.",
-      "download_failed": "Serpantinum Kerndienste konnten nicht heruntergeladen werden, wird übersprungen. Du kannst sie später von github.com/ilyamiro/serpantinum-core installieren.",
-      "checksum_failed": "Prüfsummenprüfung des Kerndienste-Downloads fehlgeschlagen, wird übersprungen.",
-      "unsupported_arch": "Vorgefertigte Kerndienste-Pakete existieren nur für x86_64, wird übersprungen."
+      "installing": "Serpantinum Kerndienste werden installiert...",
+      "unsupported_arch": "Vorgefertigte Kerndienste-Pakete existieren nur für x86_64, wird übersprungen.",
+      "up_to_date": "-> Serpantinum Kerndienste {version} sind bereits installiert."
+    },
+    "gamma": {
+      "checksum_failed": "Prüfsummenprüfung des Blaulichtfilter-Downloads fehlgeschlagen, wird übersprungen.",
+      "download_failed": "Serpantinum Blaulichtfilter konnte nicht heruntergeladen werden, wird übersprungen. Du kannst ihn später von github.com/ilyamiro/serpantinum-gamma installieren.",
+      "installed": "Serpantinum Blaulichtfilter {version} installiert",
+      "install_failed": "Installation des Serpantinum Blaulichtfilters fehlgeschlagen. Er funktioniert nicht, bis er von github.com/ilyamiro/serpantinum-gamma installiert wurde.",
+      "installing": "Serpantinum Blaulichtfilter wird installiert...",
+      "unsupported_arch": "Vorgefertigte Blaulichtfilter-Pakete existieren nur für x86_64, wird übersprungen.",
+      "up_to_date": "-> Serpantinum Blaulichtfilter {version} ist bereits installiert."
+    },
+    "ski": {
+      "checksum_failed": "Prüfsummenprüfung des Ski-Downloads fehlgeschlagen, wird übersprungen.",
+      "download_failed": "Ski konnte nicht heruntergeladen werden, wird übersprungen. Du kannst es später von github.com/ilyamiro/Ski installieren.",
+      "installed": "Ski {version} installiert",
+      "install_failed": "Installation von Ski fehlgeschlagen",
+      "installing": "Dateimanager Ski wird installiert...",
+      "unsupported_arch": "Vorgefertigte Ski-Pakete existieren nur für x86_64, wird übersprungen.",
+      "up_to_date": "-> Ski {version} ist bereits installiert."
     }
-  },
-  "translator": {
-    "title": "Übersetzer",
-    "status_translating": "Übersetzen...",
-    "speed": "Geschwindigkeit: ",
-    "detected": "Erkannt: ",
-    "input_label": "Quelltext",
-    "placeholder": "Text eingeben, einfügen oder einsprechen...",
-    "chars": "Zeichen",
-    "translation_label": "Übersetzung",
-    "empty_prompt": "Die Übersetzung wird hier sofort angezeigt...",
-    "recent": "Zuletzt verwendet:",
-    "failed": "Keine Übersetzung verfügbar",
-    "quick_settings": "Schnelle Ersetzung",
-    "replace_settings_title": "Schnelle Auswahl-Ersetzung",
-    "replace_settings_desc": "Übersetzt markierten Text und ersetzt ihn direkt",
-    "auto_paste": "Übersetzten Text automatisch einfügen",
-    "auto_paste_sub": "Wenn deaktiviert — nur in die Zwischenablage kopiert",
-    "keep_clipboard": "In Zwischenablage behalten",
-    "keep_clipboard_sub": "Wenn deaktiviert — ursprüngliche Zwischenablage wird wiederhergestellt"
   },
   "datetime": {
     "full_date": "dddd, d. MMMM",
     "just_now": "Gerade eben",
     "minutes_ago": "vor {mins} Min.",
     "yesterday": "Gestern {time}"
-  },
-  "common": {
-    "select": "Auswählen..."
   },
   "gov_alerts": {
     "status": {
@@ -2466,5 +2469,28 @@
       "today": "Heute Nebel. Höchstwert {max}, Tiefstwert {min}.",
       "tomorrow": "Morgen Nebel. Höchstwert {max}, Tiefstwert {min}."
     }
+  },
+  "common": {
+    "select": "Auswählen..."
+  },
+  "translator": {
+    "title": "Übersetzer",
+    "status_translating": "Übersetzen...",
+    "speed": "Geschwindigkeit: ",
+    "detected": "Erkannt: ",
+    "input_label": "Quelltext",
+    "placeholder": "Text eingeben, einfügen oder einsprechen...",
+    "chars": "Zeichen",
+    "translation_label": "Übersetzung",
+    "empty_prompt": "Die Übersetzung wird hier sofort angezeigt...",
+    "recent": "Zuletzt verwendet:",
+    "failed": "Keine Übersetzung verfügbar",
+    "quick_settings": "Schnelle Ersetzung",
+    "replace_settings_title": "Schnelle Auswahl-Ersetzung",
+    "replace_settings_desc": "Übersetzt markierten Text und ersetzt ihn direkt",
+    "auto_paste": "Übersetzten Text automatisch einfügen",
+    "auto_paste_sub": "Wenn deaktiviert — nur in die Zwischenablage kopiert",
+    "keep_clipboard": "In Zwischenablage behalten",
+    "keep_clipboard_sub": "Wenn deaktiviert — ursprüngliche Zwischenablage wird wiederhergestellt"
   }
 }

@@ -65,6 +65,7 @@ ShellRoot {
 
     Launcher {}
     Clipboard {}    
+    Dashboard {}
 
     Polkit {}
     WellbeingLimitOverlay {}
