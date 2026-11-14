@@ -24,8 +24,8 @@ autostart = [
 
 [session]
 suspend_on_close = false
-restore_windows = true
-restore_camera = true
+restore_windows = false
+restore_camera = false
 restore_bookmarks = true
 
 # █▀▀ █▀▀▄ ▀█ █▀  ▀  █▀▀█ █▀▀█ █▀▀▄ █▀▄▀█ █▀▀ █▀▀▄ ▀▀█▀▀

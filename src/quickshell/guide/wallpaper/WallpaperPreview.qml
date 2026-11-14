@@ -255,7 +255,7 @@ Item {
             horizontalPadding: rootObj.s(14)
             buttonIcon: "󰸉"
             iconFontSize: rootObj.s(15)
-            buttonText: "Select wallpaper"
+            buttonText: I18n.t("guide.wallpaper.select_wallpaper", "Выбрать обои")
             textFontSize: rootObj.s(11)
             accentColor: ThemeBackend.mauve
             textColor: ThemeBackend.base

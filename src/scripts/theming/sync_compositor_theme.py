@@ -277,14 +277,33 @@ opacity_focused = 1.0
             with open(config_file, "r", encoding="utf-8") as f:
                 text = f.read()
 
-            pattern = r"(?ms)^\[decorations\].*?(?=^\[[a-zA-Z]|\Z)"
-            if re.search(pattern, text):
-                new_text = re.sub(pattern, decorations_block + "\n", text, count=1)
-            else:
-                new_text = decorations_block + "\n\n" + text
+            lines = text.splitlines()
+            new_lines = []
+            in_decorations = False
+            decorations_found = False
+
+            for line in lines:
+                stripped = line.strip()
+                if stripped == "[decorations]":
+                    in_decorations = True
+                    decorations_found = True
+                    new_lines.extend(decorations_block.strip().splitlines())
+                    continue
+                if in_decorations:
+                    if stripped.startswith("[") and stripped.endswith("]"):
+                        in_decorations = False
+                        new_lines.append(line)
+                    else:
+                        continue
+                else:
+                    new_lines.append(line)
+
+            if not decorations_found:
+                new_lines.append("")
+                new_lines.extend(decorations_block.strip().splitlines())
 
             with open(config_file, "w", encoding="utf-8") as f:
-                f.write(new_text)
+                f.write("\n".join(new_lines) + "\n")
         except Exception:
             pass
 
@@ -297,7 +316,14 @@ opacity_focused = 1.0
 
     if is_running:
         try:
-            subprocess.run(["driftwm", "msg", "action", "reload-config"], capture_output=True, timeout=2)
+            env = dict(os.environ)
+            if not env.get("WAYLAND_DISPLAY"):
+                runtime_dir = Path(env.get("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}"))
+                for sock in runtime_dir.glob("wayland-*"):
+                    if not sock.name.endswith(".lock"):
+                        env["WAYLAND_DISPLAY"] = sock.name
+                        break
+            subprocess.run(["driftwm", "msg", "action", "reload-config"], env=env, capture_output=True, timeout=2)
         except Exception:
             pass
 

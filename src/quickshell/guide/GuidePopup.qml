@@ -995,6 +995,12 @@ Item {
         }
     }
 
+    Shortcut {
+        sequence: "Escape"
+        enabled: root.visible && !root.searchActive
+        onActivated: root.dismissHost()
+    }
+
     Keys.onPressed: (event) => {
         let plain = !(event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier));
         if (event.key === Qt.Key_Escape) {
@@ -1005,8 +1011,6 @@ Item {
                 } else {
                     root.closeSearch();
                 }
-            } else if (root.focusInContent()) {
-                root.forceActiveFocus();
             } else {
                 root.dismissHost();
             }

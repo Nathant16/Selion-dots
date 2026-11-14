@@ -1487,7 +1487,22 @@
       "add_custom": "+ Custom bind",
       "search_placeholder": "Search by key or action (e.g. Super + I, terminal, close)...",
       "editor_title": "Add custom keybinding (userprefs)",
-      "save": "Save"
+      "save": "Save",
+      "edit_standard_title": "Edit Standard Keybinding",
+      "edit_custom_title": "Edit Keybinding",
+      "keys_hint": "Press combination or type (e.g. Super + T)",
+      "action_cmd": "Command / Action (e.g. zen-browser)",
+      "name": "Name",
+      "overridden": "Modified",
+      "custom_badge": "Custom",
+      "reset_default": "Reset to Default",
+      "edit": "Edit Combination",
+      "cat_all": "All",
+      "cat_shell": "Shell",
+      "cat_windows": "Windows",
+      "cat_apps": "Apps",
+      "cat_media": "Media",
+      "cat_custom": "Custom"
     }
   },
   "sysnotif": {
@@ -2556,5 +2571,15 @@
     "auto_paste_sub": "If disabled — translation is only copied to clipboard",
     "keep_clipboard": "Keep translation in clipboard",
     "keep_clipboard_sub": "If disabled — original clipboard content is restored after paste"
+  },
+  "colors": {
+    "red": "Red",
+    "orange": "Orange",
+    "yellow": "Yellow",
+    "green": "Green",
+    "blue": "Blue",
+    "purple": "Purple",
+    "pink": "Pink",
+    "monochrome": "Monochrome"
   }
 }

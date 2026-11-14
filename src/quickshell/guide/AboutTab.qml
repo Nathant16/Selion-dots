@@ -148,7 +148,7 @@ GuideTab {
                         Text {
                             Layout.alignment: Qt.AlignLeft
                             Layout.bottomMargin: rootObj.s(4)
-                            text: "Update available v" + Updater.remoteVersion
+                            text: I18n.t("guide.about.update_available_v", "Доступно обновление v") + Updater.remoteVersion
                             font.family: ThemeBackend.fontFamily
                             font.weight: Font.Bold
                             font.pixelSize: rootObj.s(18)
@@ -160,7 +160,7 @@ GuideTab {
                             Layout.preferredHeight: rootObj.s(36)
                             horizontalPadding: rootObj.s(14)
                             cornerRadius: ThemeBackend.borderRadius
-                            buttonText: "Changelog"
+                            buttonText: I18n.t("guide.about.changelog", "Список изменений")
                             textFontSize: rootObj.s(12)
                             buttonIcon: "󰈙"
                             iconFontSize: rootObj.s(16)
@@ -173,7 +173,7 @@ GuideTab {
                         FillButton {
                             Layout.fillWidth: true
                             Layout.preferredHeight: rootObj.s(38)
-                            buttonText: "Update"
+                            buttonText: I18n.t("guide.about.update_btn", "Обновить")
                             buttonIcon: "󰚰"
                             accentColor: ThemeBackend.green
                             baseColor: ThemeBackend.surface0

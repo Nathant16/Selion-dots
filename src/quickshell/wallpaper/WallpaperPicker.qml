@@ -15,6 +15,25 @@ Item {
     width: Screen.width
     focus: true
 
+    function dismissHost() {
+        if (typeof masterWindow !== "undefined" && masterWindow.switchWidget) {
+            masterWindow.switchWidget("hidden", "");
+        } else {
+            Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/qs_manager.sh", "close"]);
+        }
+    }
+
+    Shortcut {
+        sequence: "Escape"
+        enabled: window.visible
+        onActivated: window.dismissHost()
+    }
+
+    Keys.onEscapePressed: (event) => {
+        window.dismissHost();
+        event.accepted = true;
+    }
+
     function s(val) {
         return Scaler.s(val);
     }
@@ -787,6 +806,17 @@ Item {
         if (window.currentFilter === "All" || window.currentFilter === "History") return "";
         if (window.currentFilter === "Favorites") return I18n.t("wallpaper.notifications.favorites", "Favorites");
         if (window.currentFilter === "Video") return I18n.t("wallpaper.notifications.videos");
+        let colorKeys = {
+            "Red": I18n.t("colors.red", "Красный"),
+            "Orange": I18n.t("colors.orange", "Оранжевый"),
+            "Yellow": I18n.t("colors.yellow", "Желтый"),
+            "Green": I18n.t("colors.green", "Зеленый"),
+            "Blue": I18n.t("colors.blue", "Синий"),
+            "Purple": I18n.t("colors.purple", "Фиолетовый"),
+            "Pink": I18n.t("colors.pink", "Розовый"),
+            "Monochrome": I18n.t("colors.monochrome", "Монохром")
+        };
+        if (colorKeys[window.currentFilter]) return colorKeys[window.currentFilter];
         return window.currentFilter;
     }
 
