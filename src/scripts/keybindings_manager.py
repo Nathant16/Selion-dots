@@ -232,6 +232,7 @@ def sync_userprefs(compositor):
     elif compositor == "driftwm":
         target = home / ".config" / "driftwm" / "config.toml"
         lines = []
+        seen_keys = set()
         for b in bindings:
             if not b.get("enabled", True):
                 continue
@@ -241,6 +242,9 @@ def sync_userprefs(compositor):
                 continue
             parts = [("mod" if p in ("super", "mod4") else p) for p in raw_parts]
             drift_key = "+".join(parts)
+            if drift_key in seen_keys:
+                continue
+            seen_keys.add(drift_key)
             lines.append(f'"{drift_key}" = "spawn {cmd}"')
 
         if target.exists():
@@ -309,15 +313,29 @@ def main():
             sys.exit(1)
         s = load_settings()
         custom = s.get("custom_keybindings", [])
-        new_id = f"custom_{int(os.times().system * 1000)}_{len(custom)}"
-        custom.append({
-            "id": new_id,
-            "key": key,
-            "exec": cmd,
-            "title": title,
-            "desc": f"Запуск: {cmd}",
-            "enabled": True
-        })
+        norm_key = "".join(key.split()).lower()
+        existing = False
+        new_id = ""
+        for b in custom:
+            if "".join(b.get("key", "").split()).lower() == norm_key:
+                b["exec"] = cmd
+                b["title"] = title
+                b["desc"] = f"Запуск: {cmd}"
+                b["enabled"] = True
+                new_id = b["id"]
+                existing = True
+                break
+        if not existing:
+            import time
+            new_id = f"custom_{int(time.time() * 1000)}_{len(custom)}"
+            custom.append({
+                "id": new_id,
+                "key": key,
+                "exec": cmd,
+                "title": title,
+                "desc": f"Запуск: {cmd}",
+                "enabled": True
+            })
         s["custom_keybindings"] = custom
         save_settings(s)
         sync_userprefs(comp)
