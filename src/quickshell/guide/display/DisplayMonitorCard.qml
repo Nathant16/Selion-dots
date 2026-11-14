@@ -22,7 +22,7 @@ Rectangle {
     property bool filterEnabled: monSettings && monSettings.enabled !== undefined ? monSettings.enabled : false
     property bool filterAuto: monSettings && monSettings.auto !== undefined ? monSettings.auto : false
     property real currentTemp: monSettings && monSettings.temperature !== undefined ? monSettings.temperature : 50
-    property real currentScale: modelData.scale !== undefined ? modelData.scale : 1.0
+    property real currentScale: (monSettings && monSettings.scale !== undefined) ? monSettings.scale : (modelData.scale !== undefined ? modelData.scale : 1.0)
 
     readonly property color cardTint: monitorPowered ? Qt.alpha(ThemeBackend.surface0, 0.4) : Qt.darker(Qt.alpha(ThemeBackend.surface0, 0.4), 1.1)
     color: monDelegateGlass.active ? "transparent" : cardTint
@@ -50,18 +50,6 @@ Rectangle {
         appeared = true;
     }
 
-    property var resDims: modelData.dimensions ? modelData.dimensions.split("x") : ["1920", "1080"]
-    property int monWidth: parseInt(resDims[0]) || 1920
-    property int monHeight: parseInt(resDims[1]) || 1080
-    property var validScales: monDelegate.tab.validScalesForResolution(monWidth, monHeight)
-    readonly property int currentScaleIndex: {
-        let i = validScales.indexOf(currentScale);
-        if (i >= 0) return i;
-        let nearest = monDelegate.tab.nearestValidScaleFromList(validScales, currentScale);
-        let ni = validScales.indexOf(nearest);
-        return ni >= 0 ? ni : 0;
-    }
-
     onMonSettingsChanged: {
         if (!monSettings) return;
         if (monSettings.powerEnabled !== undefined) {
@@ -72,14 +60,17 @@ Rectangle {
         if (monDelegate.tab.pendingMonName !== monName && !temperatureSlider.pressed) {
             currentTemp = monSettings.temperature !== undefined ? monSettings.temperature : 50;
         }
+        if (monSettings.scale !== undefined && monDelegate.tab.pendingMonScaleName !== monName && !uiScaleSlider.isDragging) {
+            currentScale = monSettings.scale;
+        }
     }
 
     onModelDataChanged: {
         if (monSettings.powerEnabled === undefined && modelData.active !== undefined) {
             monitorPowered = modelData.active;
         }
-        if (monDelegate.tab.pendingMonScaleName !== monName) {
-            currentScale = modelData.scale !== undefined ? modelData.scale : 1.0;
+        if (monDelegate.tab.pendingMonScaleName !== monName && !uiScaleSlider.isDragging) {
+            currentScale = (monSettings && monSettings.scale !== undefined) ? monSettings.scale : (modelData.scale !== undefined ? modelData.scale : 1.0);
         }
     }
 
@@ -292,47 +283,33 @@ Rectangle {
             rootObj: monDelegate.rootObj
             baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
             icon: "󰍍"
-            title: I18n.t("guide.display.uiscale.title")
-            description: I18n.t("guide.display.uiscale.desc")
-            controlSpacing: rootObj.s(4)
-
-            LoaderIcon {
-                id: scaleLoader
-                Layout.preferredWidth: rootObj.s(32)
-                Layout.preferredHeight: rootObj.s(32)
-                Layout.alignment: Qt.AlignVCenter
-                running: monDelegate.tab.scaleDebounceTimer.running && monDelegate.tab.pendingMonScaleName === monDelegate.monName
-                accentColor: ThemeBackend.mauve
-            }
+            title: I18n.t("guide.display.uiscale.title", "UI Scale")
+            description: I18n.t("guide.display.uiscale.desc", "Scale interface size for this display")
 
             Draggable {
                 id: uiScaleSlider
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                Layout.rightMargin: rootObj.s(8)
                 implicitWidth: rootObj.s(220)
                 implicitHeight: rootObj.s(18)
-                from: 0
-                to: Math.max(0, monDelegate.validScales.length - 1)
-                stepSize: 1
-                defaultValue: monDelegate.validScales.indexOf(1.0) >= 0 ? monDelegate.validScales.indexOf(1.0) : 0
+                from: 50
+                to: 250
+                stepSize: 5
+                defaultValue: 100
                 showValueBubble: true
-                showTooltip: true
-                alwaysShowHandle: false
-                valueFormatter: function(idx) {
-                    let i = Math.round(idx);
-                    let s = monDelegate.validScales[i] !== undefined ? monDelegate.validScales[i] : 1.0;
-                    return s.toFixed(3).replace(/0+$/,'').replace(/\.$/,'.0');
-                }
-                value: monDelegate.currentScaleIndex
+                valueFormatter: function(v) { return Math.round(v) + "%" }
+                value: Math.round(monDelegate.currentScale * 100)
                 backgroundColor: ThemeBackend.surface0
                 accentColor: ThemeBackend.mauve
                 handleColor: ThemeBackend.text
                 handleBorderColor: ThemeBackend.mantle
-                onMoved: function(idx) {
-                    let i = Math.round(idx);
-                    let s = monDelegate.validScales[i] !== undefined ? monDelegate.validScales[i] : 1.0;
-                    if (monDelegate.currentScale !== s) {
-                        monDelegate.currentScale = s;
+                onMoved: function(val) {
+                    let rounded = Math.round(val);
+                    let scaleVal = rounded / 100.0;
+                    if (Math.abs(monDelegate.currentScale - scaleVal) > 0.001) {
+                        monDelegate.currentScale = scaleVal;
                         monDelegate.tab.pendingMonScaleName = monDelegate.monName;
-                        monDelegate.tab.pendingMonScaleVal = s;
+                        monDelegate.tab.pendingMonScaleVal = scaleVal;
                         monDelegate.tab.scaleDebounceTimer.restart();
                     }
                 }
