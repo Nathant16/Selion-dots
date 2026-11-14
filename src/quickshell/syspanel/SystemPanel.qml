@@ -665,6 +665,7 @@ Item {
                             implicitWidth: root.isDesktop ? parent.width : (PowerProfiles.hasPerformanceProfile ? root.s(240) : root.s(162))
                             implicitHeight: root.isDesktop ? root.s(48) : root.s(52)
                             cornerRadius: root.s(15)
+                            fontFamily: root.isDesktop ? ThemeBackend.fontFamily : ThemeBackend.iconFont
                             fontPixelSize: root.isDesktop ? root.s(14) : root.s(22)
                             options: {
                                 if (root.isDesktop) {

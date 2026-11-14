@@ -19,6 +19,7 @@ Item {
 
     property int cornerRadius: 8
     property int smallRadius: 2
+    property string fontFamily: ThemeBackend.fontFamily
     property int fontPixelSize: 11
     property int minFontPixelSize: 7
     property real horizontalPadding: 10
@@ -107,6 +108,7 @@ Item {
 
     onWidthChanged: recalculateLayout()
     onOptionsChanged: recalculateLayout()
+    onFontFamilyChanged: recalculateLayout()
     onFontPixelSizeChanged: recalculateLayout()
 
     property real bgOpacity: 1.0
@@ -229,7 +231,7 @@ Item {
 
                     TextMetrics {
                         id: optMetrics
-                        font.family: ThemeBackend.fontFamily
+                        font.family: root.fontFamily
                         font.weight: Font.Normal
                         font.pixelSize: root.fontPixelSize
                         text: optionItem.modelData
@@ -267,7 +269,7 @@ Item {
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         text: optionItem.modelData
-                        font.family: ThemeBackend.fontFamily
+                        font.family: root.fontFamily
                         font.weight: Font.Normal
                         font.pixelSize: root.fontPixelSize
                         fontSizeMode: Text.Fit
