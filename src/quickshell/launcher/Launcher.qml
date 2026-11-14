@@ -43,7 +43,7 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
-        context: Qt.ApplicationShortcut
+        context: Qt.WindowShortcut
         enabled: launcherWindow.isVisible
         onActivated: launcherWindow.closeLauncher()
     }

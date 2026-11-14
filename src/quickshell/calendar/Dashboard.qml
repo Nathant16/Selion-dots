@@ -83,7 +83,7 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
-        context: Qt.ApplicationShortcut
+        context: Qt.WindowShortcut
         enabled: dashboardWindow.isOpen
         onActivated: dashboardWindow.closeDashboard()
     }

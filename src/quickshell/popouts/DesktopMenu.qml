@@ -22,7 +22,7 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
-        context: Qt.ApplicationShortcut
+        context: Qt.WindowShortcut
         enabled: desktopMenuWindow.isVisible
         onActivated: DesktopMenuController.hide()
     }

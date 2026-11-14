@@ -24,13 +24,6 @@ Item {
         }
     }
 
-    Shortcut {
-        sequence: "Escape"
-        context: Qt.ApplicationShortcut
-        enabled: window.visible
-        onActivated: window.dismissHost()
-    }
-
     Keys.onEscapePressed: (event) => {
         window.dismissHost();
         event.accepted = true;
@@ -1737,13 +1730,13 @@ Item {
         window.isModelChanging = false;
     }
 
-    Shortcut { sequence: "Left"; context: Qt.ApplicationShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(-1) }
-    Shortcut { sequence: "Right"; context: Qt.ApplicationShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(1) }
-    Shortcut { sequence: "Up"; context: Qt.ApplicationShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.cycleFilter(-1) }
-    Shortcut { sequence: "Down"; context: Qt.ApplicationShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.cycleFilter(1) }
+    Shortcut { sequence: "Left"; context: Qt.WindowShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(-1) }
+    Shortcut { sequence: "Right"; context: Qt.WindowShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(1) }
+    Shortcut { sequence: "Up"; context: Qt.WindowShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.cycleFilter(-1) }
+    Shortcut { sequence: "Down"; context: Qt.WindowShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.cycleFilter(1) }
     Shortcut {
         sequence: "Return"
-        context: Qt.ApplicationShortcut
+        context: Qt.WindowShortcut
         enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying
         onActivated: {
             if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
@@ -1757,7 +1750,7 @@ Item {
     }
     Shortcut {
         sequence: "Enter"
-        context: Qt.ApplicationShortcut
+        context: Qt.WindowShortcut
         enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying
         onActivated: {
             if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
@@ -1771,7 +1764,7 @@ Item {
     }
     Shortcut {
         sequence: "F"
-        context: Qt.ApplicationShortcut
+        context: Qt.WindowShortcut
         enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying && window.currentFilter !== "Search"
         onActivated: {
             if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
@@ -1780,8 +1773,8 @@ Item {
             }
         }
     }
-    Shortcut { sequence: "Tab"; context: Qt.ApplicationShortcut; enabled: window.visible && !window.isApplying; onActivated: window.cycleFilter(1) }
-    Shortcut { sequence: "Backtab"; context: Qt.ApplicationShortcut; enabled: window.visible && !window.isApplying; onActivated: window.cycleFilter(-1) }
+    Shortcut { sequence: "Tab"; context: Qt.WindowShortcut; enabled: window.visible && !window.isApplying; onActivated: window.cycleFilter(1) }
+    Shortcut { sequence: "Backtab"; context: Qt.WindowShortcut; enabled: window.visible && !window.isApplying; onActivated: window.cycleFilter(-1) }
 
     ListModel { id: localProxyModel }
     ListModel { id: videoProxyModel }
