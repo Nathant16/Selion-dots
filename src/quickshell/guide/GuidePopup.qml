@@ -997,6 +997,7 @@ Item {
 
     Shortcut {
         sequence: "Escape"
+        context: Qt.ApplicationShortcut
         enabled: root.visible && !root.searchActive
         onActivated: root.dismissHost()
     }

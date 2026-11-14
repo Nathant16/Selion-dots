@@ -21,6 +21,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
     focusable: launcherWindow.isVisible
     exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.keyboardFocus: launcherWindow.isVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     color: "transparent"
 
     mask: Region { item: topBarHole; intersection: Intersection.Xor }
@@ -42,6 +43,7 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
+        context: Qt.ApplicationShortcut
         enabled: launcherWindow.isVisible
         onActivated: launcherWindow.closeLauncher()
     }

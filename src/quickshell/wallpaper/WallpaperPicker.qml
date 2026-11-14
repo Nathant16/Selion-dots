@@ -14,6 +14,13 @@ Item {
     visible: false
     width: Screen.width
     focus: true
+    Keys.forwardTo: [view]
+
+    onVisibleChanged: {
+        if (visible) {
+            view.forceActiveFocus();
+        }
+    }
 
     function dismissHost() {
         if (typeof masterWindow !== "undefined" && masterWindow.switchWidget) {
@@ -25,6 +32,7 @@ Item {
 
     Shortcut {
         sequence: "Escape"
+        context: Qt.ApplicationShortcut
         enabled: window.visible
         onActivated: window.dismissHost()
     }
@@ -32,6 +40,60 @@ Item {
     Keys.onEscapePressed: (event) => {
         window.dismissHost();
         event.accepted = true;
+    }
+
+    Keys.onLeftPressed: (event) => {
+        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
+            window.stepToNextValidIndex(-1);
+            event.accepted = true;
+        }
+    }
+
+    Keys.onRightPressed: (event) => {
+        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
+            window.stepToNextValidIndex(1);
+            event.accepted = true;
+        }
+    }
+
+    Keys.onUpPressed: (event) => {
+        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
+            window.cycleFilter(-1);
+            event.accepted = true;
+        }
+    }
+
+    Keys.onDownPressed: (event) => {
+        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
+            window.cycleFilter(1);
+            event.accepted = true;
+        }
+    }
+
+    Keys.onReturnPressed: (event) => {
+        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
+            if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
+                let item = displayModel.get(view.currentIndex);
+                if (item && item.fileName) {
+                    let fp = item.filePath || (item.fileUrl ? decodeURIComponent(String(item.fileUrl).replace(/^file:\/\//, "")) : "");
+                    window.applyWallpaper(String(item.fileName), !!item.isVideo, fp);
+                }
+            }
+            event.accepted = true;
+        }
+    }
+
+    Keys.onEnterPressed: (event) => {
+        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
+            if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
+                let item = displayModel.get(view.currentIndex);
+                if (item && item.fileName) {
+                    let fp = item.filePath || (item.fileUrl ? decodeURIComponent(String(item.fileUrl).replace(/^file:\/\//, "")) : "");
+                    window.applyWallpaper(String(item.fileName), !!item.isVideo, fp);
+                }
+            }
+            event.accepted = true;
+        }
     }
 
     function s(val) {
@@ -421,14 +483,15 @@ Item {
     function getOriginalFileName(safeFileName) {
         if (!safeFileName) return "";
         let s = String(safeFileName);
-        let slash = s.lastIndexOf("/");
-        if (slash !== -1) s = s.substring(slash + 1);
         if (window.srcNameLookup[s]) return window.srcNameLookup[s];
+        let slash = s.lastIndexOf("/");
+        let sub = slash !== -1 ? s.substring(slash + 1) : s;
+        if (window.srcNameLookup[sub]) return window.srcNameLookup[sub];
         let clean = window.getCleanName(s);
         if (window.srcNameLookup[clean]) return window.srcNameLookup[clean];
         let base = window.getCleanBaseName(s);
         if (window.srcNameLookup[base]) return window.srcNameLookup[base];
-        return clean;
+        return s;
     }
 
     function isVideoTarget(name) {
@@ -558,7 +621,7 @@ Item {
         return true;
     }
 
-    function applyWallpaper(safeFileName, isVideo) {
+    function applyWallpaper(safeFileName, isVideo, explicitFilePath) {
         if (!safeFileName || window.isApplying) return;
 
         let outputs = window.getMonitorOutputs();
@@ -619,7 +682,7 @@ Item {
         }
 
         let lookup = window.thumbLookup[safeFileName] || window.thumbLookup[window.getCleanBaseName(safeFileName)] || {};
-        let finalPath = lookup.filePath || (window.srcDir + "/" + realFileName);
+        let finalPath = explicitFilePath || lookup.filePath || (safeFileName.indexOf("/") !== -1 ? (window.srcDir + "/" + safeFileName) : (window.srcDir + "/" + realFileName));
         let posterPath = lookup.posterPath || "";
 
         window.setWallpaperOnMonitors(finalPath, randomTransition);
@@ -1316,13 +1379,13 @@ Item {
         let localChanged = !window.itemsEqualToModel(localProxyModel, localItems);
         let videoChanged = !window.itemsEqualToModel(videoProxyModel, videoItems);
 
-        if (!localChanged && !videoChanged) return;
-
         window.srcNameLookup = newSrcLookup;
         window.thumbLookup = newThumbLookup;
         window.colorMap = newColorMap;
         window.bucketMap = newBucketMap;
         window.cacheVersion++;
+
+        if (!localChanged && !videoChanged) return;
 
         window.isModelChanging = true;
         let wasAllowing = window.allowAddAnimation;
@@ -1680,20 +1743,41 @@ Item {
         window.isModelChanging = false;
     }
 
-    Shortcut { sequence: "Left"; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(-1) }
-    Shortcut { sequence: "Right"; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(1) }
+    Shortcut { sequence: "Left"; context: Qt.ApplicationShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(-1) }
+    Shortcut { sequence: "Right"; context: Qt.ApplicationShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(1) }
+    Shortcut { sequence: "Up"; context: Qt.ApplicationShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.cycleFilter(-1) }
+    Shortcut { sequence: "Down"; context: Qt.ApplicationShortcut; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.cycleFilter(1) }
     Shortcut {
         sequence: "Return"
+        context: Qt.ApplicationShortcut
         enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying
         onActivated: {
             if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
                 let item = displayModel.get(view.currentIndex);
-                if (item && item.fileName) window.applyWallpaper(String(item.fileName), !!item.isVideo);
+                if (item && item.fileName) {
+                    let fp = item.filePath || (item.fileUrl ? decodeURIComponent(String(item.fileUrl).replace(/^file:\/\//, "")) : "");
+                    window.applyWallpaper(String(item.fileName), !!item.isVideo, fp);
+                }
+            }
+        }
+    }
+    Shortcut {
+        sequence: "Enter"
+        context: Qt.ApplicationShortcut
+        enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying
+        onActivated: {
+            if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
+                let item = displayModel.get(view.currentIndex);
+                if (item && item.fileName) {
+                    let fp = item.filePath || (item.fileUrl ? decodeURIComponent(String(item.fileUrl).replace(/^file:\/\//, "")) : "");
+                    window.applyWallpaper(String(item.fileName), !!item.isVideo, fp);
+                }
             }
         }
     }
     Shortcut {
         sequence: "F"
+        context: Qt.ApplicationShortcut
         enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying && window.currentFilter !== "Search"
         onActivated: {
             if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
@@ -1702,8 +1786,8 @@ Item {
             }
         }
     }
-    Shortcut { sequence: "Tab"; enabled: window.visible && !window.isApplying; onActivated: window.cycleFilter(1) }
-    Shortcut { sequence: "Backtab"; enabled: window.visible && !window.isApplying; onActivated: window.cycleFilter(-1) }
+    Shortcut { sequence: "Tab"; context: Qt.ApplicationShortcut; enabled: window.visible && !window.isApplying; onActivated: window.cycleFilter(1) }
+    Shortcut { sequence: "Backtab"; context: Qt.ApplicationShortcut; enabled: window.visible && !window.isApplying; onActivated: window.cycleFilter(-1) }
 
     ListModel { id: localProxyModel }
     ListModel { id: videoProxyModel }
@@ -1931,6 +2015,7 @@ Item {
 
             readonly property string safeFileName: fileName !== undefined ? String(fileName) : ""
             readonly property string itemFileUrl: fileUrl !== undefined ? String(fileUrl) : ""
+            readonly property string itemFilePath: (typeof filePath !== "undefined" && filePath) ? String(filePath) : (itemFileUrl ? decodeURIComponent(itemFileUrl.replace(/^file:\/\//, "")) : "")
             readonly property string itemPosterUrl: posterUrl !== undefined ? String(posterUrl) : ""
             readonly property bool isVideo: (model.isVideo !== undefined && model.isVideo !== null) ? !!model.isVideo : (safeFileName.toLowerCase().match(/\.(mp4|mkv|mov|webm)$/) !== null || safeFileName.startsWith("000_"))
 
@@ -2011,7 +2096,7 @@ Item {
 
                 MouseArea {
                     anchors.fill: parent; enabled: !window.isScrollingBlocked && !window.isApplying && !delegateRoot.isFailed
-                    onClicked: { window.initialFocusSet = true; view.currentIndex = index; window.applyWallpaper(delegateRoot.safeFileName, delegateRoot.isVideo); }
+                    onClicked: { window.initialFocusSet = true; view.currentIndex = index; window.applyWallpaper(delegateRoot.safeFileName, delegateRoot.isVideo, delegateRoot.itemFilePath); }
                 }
 
                 Item {

@@ -17,7 +17,15 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Bottom
     focusable: desktopMenuWindow.isVisible
     exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.keyboardFocus: desktopMenuWindow.isVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     color: "transparent"
+
+    Shortcut {
+        sequence: "Escape"
+        context: Qt.ApplicationShortcut
+        enabled: desktopMenuWindow.isVisible
+        onActivated: DesktopMenuController.hide()
+    }
 
     onIsVisibleChanged: {
         if (isVisible) {

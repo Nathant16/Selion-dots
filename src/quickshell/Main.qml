@@ -23,7 +23,7 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
-        context: Qt.WindowShortcut
+        context: Qt.ApplicationShortcut
         enabled: masterWindow.isVisible && !masterWindow.isClosing
         onActivated: switchWidget("hidden", "")
     }
@@ -225,6 +225,7 @@ PanelWindow {
 
     exclusionMode: ExclusionMode.Ignore
     focusable: true
+    WlrLayershell.keyboardFocus: masterWindow.isVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
     implicitWidth: masterWindow.screen ? masterWindow.screen.width : 0
     implicitHeight: masterWindow.screen ? masterWindow.screen.height : 0

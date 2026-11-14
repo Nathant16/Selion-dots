@@ -20,6 +20,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
     focusable: clipboardWindow.isVisible
     exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.keyboardFocus: clipboardWindow.isVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     color: "transparent"
 
     mask: Region { item: topBarHole; intersection: Intersection.Xor }
@@ -41,6 +42,7 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
+        context: Qt.ApplicationShortcut
         enabled: clipboardWindow.isVisible
         onActivated: clipboardWindow.closeClipboard()
     }

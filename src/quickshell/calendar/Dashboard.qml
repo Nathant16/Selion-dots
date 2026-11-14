@@ -16,6 +16,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
     focusable: dashboardWindow.isOpen
     exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.keyboardFocus: dashboardWindow.isOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     color: "transparent"
 
     mask: Region { item: topBarHole; intersection: Intersection.Xor }
@@ -82,9 +83,14 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
-        context: Qt.WindowShortcut
+        context: Qt.ApplicationShortcut
         enabled: dashboardWindow.isOpen
         onActivated: dashboardWindow.closeDashboard()
+    }
+
+    Keys.onEscapePressed: (event) => {
+        dashboardWindow.closeDashboard();
+        event.accepted = true;
     }
 
     Connections {
