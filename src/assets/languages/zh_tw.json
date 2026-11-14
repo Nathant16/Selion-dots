@@ -839,7 +839,11 @@
                 "dark": "深色",
                 "fixed": "由所選配色主題決定。選擇 Matugen 以切換模式"
             },
-            "delete_theme": "刪除"
+            "delete_theme": "刪除",
+            "apply_to_windows": {
+                "title": "Apply effects to windows",
+                "desc": "Enable transparency and blur for terminal and file manager windows"
+            }
         },
         "file_picker": {
             "title": "選擇圖片",

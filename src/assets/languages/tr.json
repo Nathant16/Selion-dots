@@ -839,7 +839,11 @@
                 "dark": "Koyu",
                 "fixed": "Seçilen renk teması tarafından belirlenir. Modu değiştirmek için Matugen'i seçin"
             },
-            "delete_theme": "Sil"
+            "delete_theme": "Sil",
+            "apply_to_windows": {
+                "title": "Apply effects to windows",
+                "desc": "Enable transparency and blur for terminal and file manager windows"
+            }
         },
         "file_picker": {
             "title": "Görsel seçin",

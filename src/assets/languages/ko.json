@@ -839,7 +839,11 @@
                 "dark": "다크",
                 "fixed": "선택한 색상 테마에 의해 고정됩니다. 모드를 전환하려면 Matugen을 선택하세요"
             },
-            "delete_theme": "삭제"
+            "delete_theme": "삭제",
+            "apply_to_windows": {
+                "title": "Apply effects to windows",
+                "desc": "Enable transparency and blur for terminal and file manager windows"
+            }
         },
         "file_picker": {
             "title": "이미지 선택",

@@ -69,7 +69,8 @@ fit_padding = 40.0
 
 [effects]
 blur_radius = 5
-blur_strength = 20
+blur_strength = 1.5
+animate_blur_fps = 20
 
 # █▀▀█ █▀▀▄  ▀  █▀▄▀█ █▀▀█ ▀▀█▀▀  ▀  █▀▀█ █▀▀▄ █▀▀
 # █▄▄█ █  █ ▀█▀ █ ▀ █ █▄▄█   █   ▀█▀ █  █ █  █ ▀▀█
@@ -83,6 +84,7 @@ border_color = "#313244"
 border_color_focused = "#cba6f7"
 opacity = 1.0
 opacity_focused = 1.0
+blur = false
 
 [background]
 type = "none"
@@ -93,15 +95,18 @@ type = "none"
 app_id = "kitty"
 size = [960, 600]
 opacity = 1.0
+blur = false
 
 [[window_rules]]
 app_id = "ski"
 decoration = "minimal"
 opacity = 1.0
+blur = false
 
 [[window_rules]]
 app_id = "ski-file-manager"
 opacity = 1.0
+blur = false
 
 # █ █ █▀▀ █  █ █▀▀▄  ▀  █▀▀▄ █▀▀▄  ▀  █▀▀▄ █▀▀▀ █▀▀
 # █▀▄ █▀▀ █▄▄█ █▀▀▄ ▀█▀ █  █ █  █ ▀█▀ █  █ █ ▀█ ▀▀█

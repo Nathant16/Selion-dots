@@ -723,6 +723,10 @@
                     "liquid": "Liquid glass"
                 }
             },
+            "apply_to_windows": {
+                "title": "Apply effects to windows",
+                "desc": "Enable transparency and blur for terminal and file manager windows"
+            },
             "colors": {
                 "title": "Color themes",
                 "desc": "Select a predefined color palette preset or create your own custom theme.",

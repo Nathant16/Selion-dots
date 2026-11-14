@@ -14,6 +14,7 @@ GuideTab {
         "elementOpacity": 100,
         "blurBackground": false,
         "blurStyle": "blur",
+        "applyEffectsToWindows": true,
         "activePreset": "Matugen",
         "matugen": true,
         "mode": "dark",
@@ -29,6 +30,7 @@ GuideTab {
     property int currentElementOpacity: themeSettings.elementOpacity !== undefined ? Number(themeSettings.elementOpacity) : 100
     property string currentBlurStyle: themeSettings.blurStyle === "liquid" ? "liquid" : "blur"
     property bool currentBlurBackground: themeSettings.blurBackground !== undefined ? Boolean(themeSettings.blurBackground) : false
+    property bool currentApplyEffectsToWindows: themeSettings.applyEffectsToWindows !== undefined ? Boolean(themeSettings.applyEffectsToWindows) : true
     property string currentPreset: themeSettings.activePreset !== undefined ? themeSettings.activePreset : "Matugen"
     property bool useMatugen: themeSettings.matugen !== undefined ? themeSettings.matugen : true
     property string currentMode: themeSettings.mode === "light" ? "light" : "dark"
@@ -347,6 +349,7 @@ GuideTab {
             themeTabRoot.currentElementOpacity = ts.elementOpacity !== undefined ? Number(ts.elementOpacity) : 100;
             themeTabRoot.currentBlurBackground = ts.blurBackground !== undefined ? Boolean(ts.blurBackground) : false;
             themeTabRoot.currentBlurStyle = ts.blurStyle === "liquid" ? "liquid" : "blur";
+            themeTabRoot.currentApplyEffectsToWindows = ts.applyEffectsToWindows !== undefined ? Boolean(ts.applyEffectsToWindows) : true;
             themeTabRoot.currentPreset = ts.activePreset !== undefined ? ts.activePreset : "Matugen";
             themeTabRoot.useMatugen = ts.matugen !== undefined ? ts.matugen : true;
             themeTabRoot.currentMode = ts.mode === "light" ? "light" : "dark";
@@ -394,6 +397,17 @@ GuideTab {
         themeTabRoot.currentBlurStyle = val;
         let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
         current.blurStyle = val;
+        Config.setSetting("theme", current);
+        if (typeof ThemeBackend !== "undefined") {
+            ThemeBackend.syncElementOpacity();
+            ThemeBackend.syncCompositors();
+        }
+    }
+
+    function updateApplyEffectsToWindowsSetting(val) {
+        themeTabRoot.currentApplyEffectsToWindows = val;
+        let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
+        current.applyEffectsToWindows = val;
         Config.setSetting("theme", current);
         if (typeof ThemeBackend !== "undefined") {
             ThemeBackend.syncElementOpacity();

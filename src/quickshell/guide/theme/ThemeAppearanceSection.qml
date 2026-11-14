@@ -245,4 +245,25 @@ SettingsBlob {
         }
     }
 
+    SettingsRow {
+        rootObj: section.tab.rootObj
+        settingId: "apply_to_windows"
+        icon: "󰖲"
+        title: I18n.t("guide.theme.apply_to_windows.title", "Apply effects to windows")
+        description: I18n.t("guide.theme.apply_to_windows.desc", "Enable transparency and blur for terminal and file manager windows")
+        searchKeywords: "window effects opacity blur kitty ski windows application transparency"
+
+        Toggle {
+            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+            checked: section.tab.currentApplyEffectsToWindows
+            accentColor: ThemeBackend.mauve
+            baseColor: ThemeBackend.surface1
+            handleColor: ThemeBackend.crust
+            handleOffColor: ThemeBackend.text
+            onToggled: function(val) {
+                section.tab.updateApplyEffectsToWindowsSetting(val);
+            }
+        }
+    }
+
 }

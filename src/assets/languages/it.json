@@ -839,7 +839,11 @@
                 "dark": "Scuro",
                 "fixed": "Fissata dal tema di colori selezionato. Scegli Matugen per cambiare modalità"
             },
-            "delete_theme": "Elimina"
+            "delete_theme": "Elimina",
+            "apply_to_windows": {
+                "title": "Apply effects to windows",
+                "desc": "Enable transparency and blur for terminal and file manager windows"
+            }
         },
         "file_picker": {
             "title": "Scegli immagine",

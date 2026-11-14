@@ -839,7 +839,11 @@
                 "dark": "डार्क",
                 "fixed": "चुनी गई रंग थीम द्वारा तय है। मोड बदलने के लिए Matugen चुनें"
             },
-            "delete_theme": "हटाएं"
+            "delete_theme": "हटाएं",
+            "apply_to_windows": {
+                "title": "Apply effects to windows",
+                "desc": "Enable transparency and blur for terminal and file manager windows"
+            }
         },
         "file_picker": {
             "title": "छवि चुनें",

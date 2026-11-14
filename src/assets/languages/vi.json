@@ -839,7 +839,11 @@
                 "dark": "Tối",
                 "fixed": "Được cố định bởi chủ đề màu đã chọn. Hãy chọn Matugen để đổi chế độ"
             },
-            "delete_theme": "Xóa"
+            "delete_theme": "Xóa",
+            "apply_to_windows": {
+                "title": "Apply effects to windows",
+                "desc": "Enable transparency and blur for terminal and file manager windows"
+            }
         },
         "file_picker": {
             "title": "Chọn hình ảnh",

@@ -839,7 +839,11 @@
                 "dark": "Тъмен",
                 "fixed": "Определя се от избраната цветова тема. Изберете Matugen, за да смените режима"
             },
-            "delete_theme": "Изтриване"
+            "delete_theme": "Изтриване",
+            "apply_to_windows": {
+                "title": "Apply effects to windows",
+                "desc": "Enable transparency and blur for terminal and file manager windows"
+            }
         },
         "file_picker": {
             "title": "Избор на изображение",

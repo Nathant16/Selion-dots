@@ -839,7 +839,11 @@
                 "dark": "Dunkel",
                 "fixed": "Vom gewählten Farbthema vorgegeben. Wähle Matugen, um den Modus zu wechseln"
             },
-            "delete_theme": "Löschen"
+            "delete_theme": "Löschen",
+            "apply_to_windows": {
+                "title": "Apply effects to windows",
+                "desc": "Enable transparency and blur for terminal and file manager windows"
+            }
         },
         "file_picker": {
             "title": "Bild auswählen",
