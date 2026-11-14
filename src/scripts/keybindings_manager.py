@@ -255,11 +255,12 @@ def sync_userprefs(compositor):
                 else:
                     base = cfg_text
                 block_str = f"{begin_marker}\n" + "\n".join(lines) + f"\n{end_marker}"
-                if "[keybinds]" in base:
-                    p1, p2 = base.split("[keybinds]", 1)
-                    updated = p1 + "[keybinds]\n" + block_str + "\n" + p2.lstrip("\n")
+                header = "[keybindings]" if "[keybindings]" in base else ("[keybinds]" if "[keybinds]" in base else None)
+                if header:
+                    p1, p2 = base.split(header, 1)
+                    updated = p1 + header + "\n" + block_str + "\n" + p2.lstrip("\n")
                 else:
-                    updated = base.rstrip() + "\n\n[keybinds]\n" + block_str + "\n"
+                    updated = base.rstrip() + "\n\n[keybindings]\n" + block_str + "\n"
                 target.write_text(updated, encoding="utf-8")
             except Exception:
                 pass
