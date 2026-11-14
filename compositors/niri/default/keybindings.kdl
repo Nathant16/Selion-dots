@@ -53,6 +53,7 @@ binds {
     // Shell, Launcher, Clipboard & System Controls
     Mod+A { spawn "serpantinum" "msg" "toggle" "launcher"; }
     Mod+R { spawn "serpantinum" "reload"; }
+    Mod+I { spawn "serpantinum" "msg" "toggle" "settings"; }
     Mod+V { spawn "serpantinum" "msg" "toggle" "clipboard"; }
     Mod+W { spawn "serpantinum" "msg" "toggle" "wallpaper"; }
     Mod+B { spawn "serpantinum" "msg" "bar" "autohide"; }

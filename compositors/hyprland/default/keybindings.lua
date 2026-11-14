@@ -28,6 +28,7 @@ hl.bind(subMod .. " + O", hl.dsp.exec_cmd("obsidian"), { description = "Open Obs
 -- ==> Shell, Launcher, Clipboard & System
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("serpantinum msg toggle launcher"), { description = "Toggle application launcher" })
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("serpantinum reload"), { description = "Reload desktop shell" })
+hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("serpantinum msg toggle settings"), { description = "Toggle settings" })
 hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("serpantinum msg toggle clipboard"), { description = "Toggle clipboard manager" })
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("serpantinum msg toggle wallpaper"), { description = "Toggle wallpaper picker" })
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("serpantinum msg bar autohide"), { description = "Toggle status bar / shell" })

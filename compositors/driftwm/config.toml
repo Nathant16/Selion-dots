@@ -152,6 +152,7 @@ decoration = "minimal"
 
 # Оболочка, лаунчер, буфер обмена и меню питания
 "mod+a" = "spawn serpantinum msg toggle launcher"
+"mod+i" = "spawn serpantinum msg toggle settings"
 "mod+r" = "spawn serpantinum reload"
 "mod+v" = "spawn serpantinum msg toggle clipboard"
 "mod+w" = "spawn serpantinum msg toggle wallpaper"

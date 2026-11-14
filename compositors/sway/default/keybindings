@@ -58,6 +58,7 @@ bindsym $mod+BackSpace scratchpad show
 # Shell, Launcher, Clipboard & System Controls
 bindsym $mod+A exec serpantinum msg toggle launcher
 bindsym $mod+R exec serpantinum reload
+bindsym $mod+I exec serpantinum msg toggle settings
 bindsym $mod+V exec serpantinum msg toggle clipboard
 bindsym $mod+W exec serpantinum msg toggle wallpaper
 bindsym $mod+B exec serpantinum msg bar autohide
