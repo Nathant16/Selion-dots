@@ -928,6 +928,13 @@ def apply_single_opt(opt_id, enabled):
 
     elif opt_id == "display_refresh_save":
         target_hz = "48.01" if enabled else "60.01"
+        cur_res = "1920x1080"
+        try:
+            with open(os.path.expanduser("~/.config/serpantinum/settings.json"), "r") as f:
+                cfg = json.load(f)
+                cur_res = cfg.get("display", {}).get("monitors", {}).get("eDP-1", {}).get("resolution") or cur_res
+        except Exception:
+            pass
         # Hyprland
         for hypr_dir in glob.glob("/run/user/*/hypr"):
             hypr_socks = glob.glob(f"{hypr_dir}/*/.socket.sock")
@@ -935,12 +942,12 @@ def apply_single_opt(opt_id, enabled):
                 sig = os.path.basename(os.path.dirname(hypr_socks[0]))
                 env = os.environ.copy()
                 env["HYPRLAND_INSTANCE_SIGNATURE"] = sig
-                subprocess.run(["hyprctl", "keyword", "monitor", f"eDP-1,1920x1080@{target_hz},0x0,1"], env=env, capture_output=True)
+                subprocess.run(["hyprctl", "keyword", "monitor", f"eDP-1,{cur_res}@{target_hz},auto,1"], env=env, capture_output=True)
         # Sway
         for sway_sock in glob.glob("/run/user/*/sway-ipc.*.sock"):
             env = os.environ.copy()
             env["SWAYSOCK"] = sway_sock
-            subprocess.run(["swaymsg", "output", "eDP-1", "mode", f"1920x1080@{target_hz}Hz"], env=env, capture_output=True)
+            subprocess.run(["swaymsg", "output", "eDP-1", "mode", f"{cur_res}@{target_hz}Hz"], env=env, capture_output=True)
 
     elif opt_id == "ryzen_tdp":
         ryzenadj_bin = shutil.which("ryzenadj") or ("/usr/local/bin/ryzenadj" if os.path.exists("/usr/local/bin/ryzenadj") else None)

@@ -5,6 +5,31 @@ import glob
 import os
 import sys
 
+def get_wayland_env():
+    env = dict(os.environ)
+    if not env.get("XDG_RUNTIME_DIR"):
+        uid = os.getuid()
+        env["XDG_RUNTIME_DIR"] = f"/run/user/{uid}"
+    runtime_dir = env["XDG_RUNTIME_DIR"]
+
+    if not env.get("WAYLAND_DISPLAY") and os.path.exists(runtime_dir):
+        for sock in sorted(glob.glob(f"{runtime_dir}/wayland-*")):
+            if not sock.endswith(".lock"):
+                env["WAYLAND_DISPLAY"] = os.path.basename(sock)
+                break
+
+    if not env.get("HYPRLAND_INSTANCE_SIGNATURE") and os.path.exists(f"{runtime_dir}/hypr"):
+        socks = glob.glob(f"{runtime_dir}/hypr/*/.socket.sock")
+        if socks:
+            env["HYPRLAND_INSTANCE_SIGNATURE"] = os.path.basename(os.path.dirname(socks[0]))
+
+    if not env.get("SWAYSOCK"):
+        sw_socks = glob.glob(f"{runtime_dir}/sway-ipc.*.sock")
+        if sw_socks:
+            env["SWAYSOCK"] = sw_socks[0]
+
+    return env
+
 def get_drm_modes():
     modes_map = {}
     for p in glob.glob('/sys/class/drm/card*-*/modes'):
@@ -33,9 +58,18 @@ def get_drm_modes():
             pass
     return modes_map
 
-def get_wlr_randr():
+def get_wlr_randr(env):
     try:
-        proc = subprocess.run(['wlr-randr', '--json'], capture_output=True, text=True, timeout=2)
+        proc = subprocess.run(['wlr-randr', '--json'], capture_output=True, text=True, timeout=2, env=env)
+        if proc.returncode == 0 and proc.stdout.strip():
+            return json.loads(proc.stdout)
+    except Exception:
+        pass
+    return None
+
+def get_hyprland_monitors(env):
+    try:
+        proc = subprocess.run(['hyprctl', 'monitors', '-j'], capture_output=True, text=True, timeout=2, env=env)
         if proc.returncode == 0 and proc.stdout.strip():
             return json.loads(proc.stdout)
     except Exception:
@@ -43,10 +77,11 @@ def get_wlr_randr():
     return None
 
 def main():
+    env = get_wayland_env()
     drm_modes = get_drm_modes()
-    wlr_data = get_wlr_randr()
+    wlr_data = get_wlr_randr(env)
 
-    # If wlr-randr is available and returned outputs, build comprehensive list
+    # 1. If wlr-randr is available and returned outputs, build comprehensive list
     if wlr_data and isinstance(wlr_data, list):
         monitors = []
         for out in wlr_data:
@@ -74,9 +109,14 @@ def main():
             if not res_list and name in drm_modes:
                 res_list = drm_modes[name]
 
+            # Ensure current resolution is in modes
+            cur_res = f"{w}x{h}"
+            if cur_res not in res_list:
+                res_list.insert(0, cur_res)
+
             monitors.append({
                 'name': name,
-                'dimensions': f"{w}x{h}",
+                'dimensions': cur_res,
                 'framerate': str(int(round(rate))),
                 'scale': scale,
                 'active': active,
@@ -85,24 +125,41 @@ def main():
         print(json.dumps(monitors))
         return
 
-    # Check driftwm IPC state if running
+    # 2. Check driftwm IPC state if running
     try:
-        proc = subprocess.run(['driftwm', 'msg', 'state', '--json'], capture_output=True, text=True, timeout=2)
-        if proc.returncode == 0:
+        proc = subprocess.run(['driftwm', 'msg', 'state', '--json'], capture_output=True, text=True, timeout=2, env=env)
+        if proc.returncode == 0 and proc.stdout.strip():
             data = json.loads(proc.stdout)
             outputs = data.get('Ok', {}).get('State', {}).get('outputs', [])
             if outputs:
+                # Check saved framerate from settings.json if available
+                saved_cfg = {}
+                try:
+                    s_file = os.path.expanduser('~/.config/serpantinum/settings.json')
+                    if os.path.exists(s_file):
+                        with open(s_file, 'r', encoding='utf-8') as sf:
+                            saved_cfg = json.load(sf).get('display', {}).get('monitors', {})
+                except Exception:
+                    pass
+
                 monitors = []
                 for out in outputs:
                     name = out.get('name', 'eDP-1')
                     sz = out.get('size', [1920, 1080])
                     sc = out.get('zoom', 1.0)
                     active = out.get('active', True)
-                    res_list = drm_modes.get(name, [f"{sz[0]}x{sz[1]}"])
+                    cur_res = f"{sz[0]}x{sz[1]}"
+                    res_list = drm_modes.get(name, [cur_res])
+                    if cur_res not in res_list:
+                        res_list.insert(0, cur_res)
+
+                    saved_m = saved_cfg.get(name, {})
+                    rate = saved_m.get('framerate', '60') if isinstance(saved_m, dict) else '60'
+
                     monitors.append({
                         'name': name,
-                        'dimensions': f"{sz[0]}x{sz[1]}",
-                        'framerate': "60",
+                        'dimensions': cur_res,
+                        'framerate': str(rate),
                         'scale': sc,
                         'active': active,
                         'modes': res_list
@@ -112,15 +169,61 @@ def main():
     except Exception:
         pass
 
-    # Fallback to pure DRM connectors
+    # 3. Check Hyprland native IPC
+    hypr_monitors = get_hyprland_monitors(env)
+    if hypr_monitors and isinstance(hypr_monitors, list):
+        monitors = []
+        for out in hypr_monitors:
+            name = out.get('name', 'eDP-1')
+            w = out.get('width', 1920)
+            h = out.get('height', 1080)
+            rate = out.get('refreshRate', 60.0)
+            scale = out.get('scale', 1.0)
+            active = not out.get('disabled', False)
+            cur_res = f"{w}x{h}"
+            res_list = drm_modes.get(name, [cur_res])
+            if cur_res not in res_list:
+                res_list.insert(0, cur_res)
+            monitors.append({
+                'name': name,
+                'dimensions': cur_res,
+                'framerate': str(int(round(rate))),
+                'scale': scale,
+                'active': active,
+                'modes': res_list
+            })
+        print(json.dumps(monitors))
+        return
+
+    # 4. Fallback to pure DRM connectors with user saved settings preference
     if drm_modes:
+        saved_resolutions = {}
+        saved_rates = {}
+        try:
+            settings_path = os.path.expanduser('~/.config/serpantinum/settings.json')
+            if os.path.exists(settings_path):
+                with open(settings_path, 'r', encoding='utf-8') as sf:
+                    s_data = json.load(sf)
+                    mon_conf = s_data.get('display', {}).get('monitors', {})
+                    for m_name, m_cfg in mon_conf.items():
+                        if isinstance(m_cfg, dict):
+                            if m_cfg.get('resolution'):
+                                saved_resolutions[m_name] = m_cfg.get('resolution')
+                            if m_cfg.get('framerate'):
+                                saved_rates[m_name] = str(m_cfg.get('framerate'))
+        except Exception:
+            pass
+
         monitors = []
         for name, modes in drm_modes.items():
-            top_res = modes[0] if modes else "1920x1080"
+            top_res = saved_resolutions.get(name) or (modes[0] if modes else "1920x1080")
+            if modes and top_res not in modes:
+                modes.insert(0, top_res)
+            rate = saved_rates.get(name, "60")
             monitors.append({
                 'name': name,
                 'dimensions': top_res,
-                'framerate': "60",
+                'framerate': rate,
                 'scale': 1.0,
                 'active': True,
                 'modes': modes
