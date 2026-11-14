@@ -235,14 +235,14 @@ shadows_color=0x00000055
 def write_driftwm_theme(state_dir, colors, rounding):
     decorations_block = f"""[decorations]
 corner_radius = {rounding}
+shadow = true
+default_mode = "minimal"
 border_width = 2
 border_color = "#{colors['surface0']}"
 border_color_focused = "#{colors['mauve']}"
-shadow = true
-shadow_blur = 30.0
-shadow_color = [0.0, 0.0, 0.0, 0.35]
-opacity_unfocused = 0.96
-opacity_focused = 1.0"""
+opacity = 1.0
+opacity_focused = 1.0
+"""
 
     theme_file = state_dir / "theme_driftwm.toml"
     with open(theme_file, "w", encoding="utf-8") as f:
@@ -255,9 +255,9 @@ opacity_focused = 1.0"""
             with open(config_file, "r", encoding="utf-8") as f:
                 text = f.read()
 
-            pattern = r"\[decorations\]\s*\n(?:[^\[]*)"
+            pattern = r"(?ms)^\[decorations\].*?(?=^\[[a-zA-Z]|\Z)"
             if re.search(pattern, text):
-                new_text = re.sub(pattern, decorations_block + "\n\n", text, count=1)
+                new_text = re.sub(pattern, decorations_block + "\n", text, count=1)
             else:
                 new_text = decorations_block + "\n\n" + text
 
