@@ -816,5 +816,10 @@ deploy_package() {
 
     remove_settings_desktop_entry
 
+    # Initial theme and border synchronization for all compositors
+    if [ -f "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" ]; then
+        python3 "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" 2>/dev/null || true
+    fi
+
     setup_pam_service
 }
