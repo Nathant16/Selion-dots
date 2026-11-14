@@ -245,6 +245,7 @@ def sync_userprefs(compositor):
 
         if target.exists():
             try:
+                import re
                 cfg_text = target.read_text(encoding="utf-8")
                 begin_marker = '# BEGIN SERPANTINUM KEYBINDINGS'
                 end_marker = '# END SERPANTINUM KEYBINDINGS'
@@ -254,6 +255,24 @@ def sync_userprefs(compositor):
                     base = before.rstrip() + "\n" + after.lstrip()
                 else:
                     base = cfg_text
+
+                # Restore any previous overrides
+                base = re.sub(r'# \[overridden by userprefs\]\s*', '', base)
+
+                # Comment out any keys that collide with new custom keys to avoid duplicate TOML keys
+                custom_keys = []
+                for b in bindings:
+                    if not b.get("enabled", True):
+                        continue
+                    raw_parts = [p.strip().lower() for p in b.get("key", "").split("+") if p.strip()]
+                    if raw_parts:
+                        parts = [("mod" if p in ("super", "mod4") else p) for p in raw_parts]
+                        custom_keys.append("+".join(parts))
+
+                for k in custom_keys:
+                    pattern = rf'^\s*("{re.escape(k)}"\s*=.*)$'
+                    base = re.sub(pattern, r'# [overridden by userprefs] \1', base, flags=re.MULTILINE)
+
                 block_str = f"{begin_marker}\n" + "\n".join(lines) + f"\n{end_marker}"
                 header = "[keybindings]" if "[keybindings]" in base else ("[keybinds]" if "[keybinds]" in base else None)
                 if header:
