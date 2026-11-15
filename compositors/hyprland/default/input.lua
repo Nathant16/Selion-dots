@@ -9,6 +9,14 @@ hl.gesture({
     action = "workspace",
 })
 
+hl.gesture({
+    fingers = 3,
+    direction = "up",
+    action = function()
+        hl.dispatch(hl.dsp.exec_cmd("serpantinum msg toggle launcher"))
+    end,
+})
+
 hl.config({
     input = {
         kb_layout = "us,ru",
