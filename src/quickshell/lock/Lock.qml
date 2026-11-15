@@ -407,7 +407,7 @@ Scope {
         lockUI.passwordText = "";
         passwordLockoutTimer.stop();
         root.fpBlocked = false;
-        root.fpResumeRetries = 0;
+        root.fpResumeRetries = 5;
         root.stopAuth();
         root.fpUnsupported = false;
         root.fingerprintAvailable = false;

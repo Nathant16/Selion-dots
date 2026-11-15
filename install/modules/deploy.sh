@@ -488,6 +488,17 @@ setup_pam_service() {
         sudo chmod 644 "$target" 2>/dev/null || true
     fi
 
+    # Also deploy serpantinum-nofp as standard password-only PAM service (no biometric hooks)
+    local nofp_target="$pam_dir/serpantinum-nofp"
+    local nofp_content=""
+    nofp_content+="auth        include      $base"$'\n'
+    nofp_content+="account     include      $base"$'\n'
+
+    if [ ! -f "$nofp_target" ] || [ "$(cat "$nofp_target" 2>/dev/null)" != "${nofp_content%$'\n'}" ]; then
+        printf '%s' "$nofp_content" | sudo tee "$nofp_target" >/dev/null 2>&1 || true
+        sudo chmod 644 "$nofp_target" 2>/dev/null || true
+    fi
+
     # Fix existing installations where grosshack was erroneously written to serpantinum
     if [ -f "$target" ] && grep -qs "pam_fprintd_grosshack" "$target"; then
         sudo sed -i 's/pam_fprintd_grosshack\.so/pam_fprintd.so/g' "$target" 2>/dev/null || true

@@ -241,4 +241,5 @@ setup_services() {
 
     enable_system_service "NetworkManager" "$init_sys"
     enable_system_service "power-profiles-daemon" "$init_sys"
+    enable_system_service "fprintd" "$init_sys"
 }
