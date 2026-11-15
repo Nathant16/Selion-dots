@@ -25,8 +25,16 @@ done
 
 pm_prepare_repos() {
     if [ -f /etc/pacman.conf ]; then
+        local changed=false
         if grep -q "^#\[multilib\]" /etc/pacman.conf; then
             sudo sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' /etc/pacman.conf
+            changed=true
+        fi
+        if grep -q "^#ParallelDownloads" /etc/pacman.conf; then
+            sudo sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+            changed=true
+        fi
+        if [ "$changed" = true ]; then
             sudo pacman -Sy --noconfirm >/dev/null 2>&1 || true
         fi
     fi
