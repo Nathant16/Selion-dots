@@ -106,6 +106,12 @@
     "sound": true,
     "soundFile": ""
   },
+  "lockscreen": {
+    "fingerprintEnabled": true,
+    "attemptLimitEnabled": false,
+    "passwordMaxAttempts": 5,
+    "fingerprintMaxAttempts": 5
+  },
   "display": {
     "monitors": {
       "eDP-1": {

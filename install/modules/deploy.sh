@@ -466,7 +466,7 @@ setup_pam_service() {
     [ -d "$pam_dir" ] || return 0
     [ -e /etc/NIXOS ] && return 0
 
-    for candidate in system-auth login; do
+    for candidate in system-auth common-auth login; do
         if [ -f "$pam_dir/$candidate" ]; then
             base="$candidate"
             break
