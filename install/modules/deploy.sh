@@ -426,19 +426,20 @@ EOF
 
     if declare -f pm_enable_display_manager >/dev/null; then
         pm_enable_display_manager "sddm" "$init_sys"
+    elif [[ "$init_sys" == "systemd" ]]; then
+        sudo systemctl enable sddm.service 2>/dev/null || sudo systemctl enable -f sddm.service 2>/dev/null || sudo systemctl enable sddm 2>/dev/null || true
     elif declare -f enable_system_service >/dev/null; then
         enable_system_service "sddm" "$init_sys"
     else
         case "$init_sys" in
             systemd)
-                sudo systemctl enable --now sddm.service 2>/dev/null || sudo systemctl enable -f sddm.service 2>/dev/null || sudo systemctl enable sddm 2>/dev/null || true
+                sudo systemctl enable sddm.service 2>/dev/null || sudo systemctl enable -f sddm.service 2>/dev/null || sudo systemctl enable sddm 2>/dev/null || true
                 ;;
             openrc)
                 sudo rc-update add sddm default 2>/dev/null || true
-                sudo rc-service sddm start 2>/dev/null || true
                 ;;
             dinit)
-                sudo dinitctl enable sddm 2>/dev/null || sudo dinitctl start sddm 2>/dev/null || true
+                sudo dinitctl enable sddm 2>/dev/null || true
                 ;;
             runit)
                 if [ -d "/etc/sv/sddm" ]; then
@@ -511,6 +512,9 @@ setup_pam_service() {
     fi
 
     # Configure polkit-1: allow typing password OR scanning fingerprint simultaneously (always standard pam_fprintd to avoid conversation errors)
+    if [ ! -f "$pam_dir/polkit-1" ] && [ -f "/usr/lib/pam.d/polkit-1" ]; then
+        sudo cp "/usr/lib/pam.d/polkit-1" "$pam_dir/polkit-1" 2>/dev/null || true
+    fi
     if [ -f "$pam_dir/polkit-1" ]; then
         if grep -qs "pam_fprintd" "$pam_dir/polkit-1"; then
             sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/pam_fprintd.so/g" "$pam_dir/polkit-1" 2>/dev/null || true
@@ -520,6 +524,9 @@ setup_pam_service() {
     fi
 
     # Configure system-local-login
+    if [ ! -f "$pam_dir/system-local-login" ] && [ -f "/usr/lib/pam.d/system-local-login" ]; then
+        sudo cp "/usr/lib/pam.d/system-local-login" "$pam_dir/system-local-login" 2>/dev/null || true
+    fi
     if [ -f "$pam_dir/system-local-login" ]; then
         if grep -qs "pam_fprintd" "$pam_dir/system-local-login"; then
             sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/$fp_mod/g" "$pam_dir/system-local-login" 2>/dev/null || true

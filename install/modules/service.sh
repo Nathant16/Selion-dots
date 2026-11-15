@@ -22,11 +22,17 @@ enable_system_service() {
 
     case "$init_sys" in
         systemd)
-            sudo systemctl enable --now "$svc.service" 2>/dev/null || sudo systemctl enable -f "$svc.service" 2>/dev/null || sudo systemctl enable "$svc.service" 2>/dev/null || true
+            if [[ "$svc" =~ ^(sddm|gdm|gdm3|lightdm|lxdm|ly|greetd)$ ]]; then
+                sudo systemctl enable "$svc.service" 2>/dev/null || sudo systemctl enable -f "$svc.service" 2>/dev/null || sudo systemctl enable "$svc" 2>/dev/null || true
+            else
+                sudo systemctl enable --now "$svc.service" 2>/dev/null || sudo systemctl enable -f "$svc.service" 2>/dev/null || sudo systemctl enable "$svc.service" 2>/dev/null || true
+            fi
             ;;
         openrc)
             sudo rc-update add "$svc" default 2>/dev/null || true
-            sudo rc-service "$svc" start 2>/dev/null || true
+            if [[ ! "$svc" =~ ^(sddm|gdm|gdm3|lightdm|lxdm|ly|greetd)$ ]]; then
+                sudo rc-service "$svc" start 2>/dev/null || true
+            fi
             ;;
         dinit)
             sudo dinitctl enable "$svc" 2>/dev/null || sudo dinitctl start "$svc" 2>/dev/null || true
@@ -134,7 +140,11 @@ setup_hibernation() {
     init_sys=$(detect_init_system)
     [[ "$init_sys" == "systemd" ]] || return 0
 
-    echo -e "\n\e[36m[ INFO ]\e[0m $(t "installer.power.hibernation_setup" "Configuring system hibernation and swapfile...")"
+    local msg="Configuring system hibernation and swapfile..."
+    if command -v t &>/dev/null; then
+        msg="$(t "installer.power.hibernation_setup" "$msg")"
+    fi
+    echo -e "\n\e[36m[ INFO ]\e[0m $msg"
 
     local total_ram_mb
     total_ram_mb=$(free -m | awk '/^Mem:/{print $2}')

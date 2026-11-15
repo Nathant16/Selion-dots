@@ -68,7 +68,7 @@ TELEMETRY_ID=$(get_telemetry_id)
 ENABLE_TELEMETRY=$(get_telemetry_enabled)
 OPT_SDDM=$(get_saved_preference OPT_SDDM "$OPT_SDDM")
 SDDM_WAYLAND=$(get_saved_preference SDDM_WAYLAND "$SDDM_WAYLAND")
-INSTALL_FULL_WALLPAPERS=$(get_saved_preference INSTALL_FULL_WALLPAPERS "$INSTALL_FULL_WALLPAPERS")
+INSTALL_FULL_WALLPAPERS=$(get_saved_preference INSTALL_FULL_WALLPAPERS "${INSTALL_FULL_WALLPAPERS:-true}")
 KEYBOARD_LAYOUT=$(get_saved_preference KEYBOARD_LAYOUT "${KEYBOARD_LAYOUT:-us,ru}")
 KEYBOARD_TOGGLE=$(get_saved_preference KEYBOARD_TOGGLE "${KEYBOARD_TOGGLE:-alt_shift}")
 export KEYBOARD_LAYOUT
@@ -116,7 +116,6 @@ install_gamma_daemon
 install_core_daemon
 
 deploy_package "$PROJECT_ROOT" "$OLD_COMMIT" "$TARGET_COMMIT" "$IS_REINSTALL" "$INSTALL_STATE" "${SELECTED_COMPOSITORS[@]}"
-setup_sddm "$PROJECT_ROOT" "$INSTALL_STATE" "$IS_REINSTALL"
 install_wallpapers "$INSTALL_FULL_WALLPAPERS"
 
 WALLPAPER_DIR=$(get_wallpaper_dir)
@@ -126,6 +125,7 @@ configure_ski_defaults
 setup_services
 setup_hibernation
 hand_over_from_easyeffects
+setup_sddm "$PROJECT_ROOT" "$INSTALL_STATE" "$IS_REINSTALL"
 write_version_state "$TARGET_VERSION" "$TARGET_COMMIT" "$TELEMETRY_ID" "$ENABLE_TELEMETRY" "${SELECTED_COMPOSITORS[*]}" "$OPT_SDDM" "$SDDM_WAYLAND" "$INSTALL_FULL_WALLPAPERS" "$KEYBOARD_LAYOUT" "$KEYBOARD_TOGGLE"
 
 if [[ "$INSTALL_STATE" == "legacy" || "$INSTALL_STATE" == "fresh" || "$IS_REINSTALL" == true ]]; then

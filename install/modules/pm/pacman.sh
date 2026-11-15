@@ -105,3 +105,12 @@ pm_remove_conflicting_pkg() {
         yay -R --noconfirm "$pkg" 2>/dev/null || sudo pacman -Rdd --noconfirm "$pkg" 2>/dev/null || true
     fi
 }
+
+pm_enable_display_manager() {
+    local svc="$1" init_sys="$2"
+    if [ "$init_sys" = "systemd" ]; then
+        sudo systemctl enable "$svc.service" 2>/dev/null || sudo systemctl enable "$svc" 2>/dev/null || true
+    else
+        enable_system_service "$svc" "$init_sys"
+    fi
+}
