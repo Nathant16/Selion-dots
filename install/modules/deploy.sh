@@ -867,13 +867,28 @@ deploy_package() {
         python3 "$TARGET_BASE/bin/serpantinum_theme_sync.py" 2>/dev/null || true
     fi
 
-    # Update kitty.conf font and fish shell if needed
-    if [ -f "$HOME/.config/kitty/kitty.conf" ]; then
-        if ! grep -q "JetBrainsMono Nerd Font" "$HOME/.config/kitty/kitty.conf"; then
-            sed -i 's/font_family[[:space:]]\+JetBrains Mono/font_family      JetBrainsMono Nerd Font/' "$HOME/.config/kitty/kitty.conf" 2>/dev/null || true
+    # Ensure kitty.conf base settings (font_size 16.0, JetBrainsMono, fish) are present
+    local kitty_dest="$HOME/.config/kitty/kitty.conf"
+    local kitty_src="$REPO_ROOT/config/kitty/kitty.conf"
+    if [ -f "$kitty_src" ]; then
+        if [ ! -f "$kitty_dest" ] || ! grep -q "font_size" "$kitty_dest"; then
+            mkdir -p "$HOME/.config/kitty"
+            local existing_theme=""
+            if [ -f "$kitty_dest" ]; then
+                existing_theme="$(grep -E "include themes/serpantinum.conf" "$kitty_dest" 2>/dev/null || true)"
+            fi
+            cp "$kitty_src" "$kitty_dest"
+            if [ -n "$existing_theme" ] && ! grep -q "include themes/serpantinum.conf" "$kitty_dest"; then
+                echo -e "\n# >>> serpantinum theme >>>\ninclude themes/serpantinum.conf\n# <<< serpantinum theme <<<" >> "$kitty_dest"
+            fi
         fi
-        if ! grep -q "shell.*fish" "$HOME/.config/kitty/kitty.conf" && command -v fish >/dev/null 2>&1; then
-            echo -e "\nshell $(command -v fish)" >> "$HOME/.config/kitty/kitty.conf"
+    fi
+    if [ -f "$kitty_dest" ]; then
+        if ! grep -q "JetBrainsMono Nerd Font" "$kitty_dest"; then
+            sed -i 's/font_family[[:space:]]\+JetBrains Mono/font_family      JetBrainsMono Nerd Font/' "$kitty_dest" 2>/dev/null || true
+        fi
+        if ! grep -q "shell.*fish" "$kitty_dest" && command -v fish >/dev/null 2>&1; then
+            echo -e "\nshell $(command -v fish)" >> "$kitty_dest"
         fi
     fi
 
