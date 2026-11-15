@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "Résolution de l écran",
                 "desc": "Définir la résolution d affichage"
+            },
+            "framerate": {
+                "title": "Taux de rafraîchissement",
+                "desc": "Définir le taux de rafraîchissement de l'écran (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "Moins de réveils du noyau (désactiver NMI) et écriture différée sur SSD",
                 "display_refresh_save_title": "Fréquence d'écran à 48 Hz sur batterie",
                 "display_refresh_save_desc": "Réduire le taux de rafraîchissement à 48 Hz sur batterie dans Hyprland et Sway"
+            },
+            "display_refresh": {
+                "title": "Réduire le taux de rafraîchissement",
+                "desc": "Baisser le taux de rafraîchissement en mode économie d'énergie"
+            },
+            "display_refresh_target": {
+                "title": "Taux de rafraîchissement cible",
+                "desc": "Taux de rafraîchissement à appliquer en mode économie d'énergie"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  Basculez les paquets optionnels puis sélectionnez terminé  ",
             "additional_pkgs_prompt": "  Paquets supplémentaires > ",
             "additional_pkgs_title": "=== Sélection des paquets supplémentaires ===",
-            "menu_additional_pkgs": "Paquets supplémentaires"
+            "menu_additional_pkgs": "Paquets supplémentaires",
+            "menu_keyboard": "Disposition du clavier et raccourci"
         },
         "deps": {
             "syncing": "Synchronisation et mise à jour des paquets système (pacman -Syyu)...",

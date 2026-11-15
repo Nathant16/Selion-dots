@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "رزولوشن نمایشگر",
                 "desc": "تنظیم رزولوشن تصویر نمایشگر"
+            },
+            "framerate": {
+                "title": "نرخ نوسازی",
+                "desc": "تنظیم نرخ نوسازی نمایشگر (هرتز)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "کاهش بیداری‌های هسته (غیرفعال‌سازی NMI) و نوشتن با تاخیر در SSD",
                 "display_refresh_save_title": "نرخ نوسازی صفحه ۴۸ هرتز روی باتری",
                 "display_refresh_save_desc": "کاهش نرخ نوسازی به ۴۸ هرتز در حالت باتری در Hyprland و Sway"
+            },
+            "display_refresh": {
+                "title": "کاهش نرخ نوسازی",
+                "desc": "کاهش نرخ نوسازی صفحه‌نمایش در حالت ذخیره انرژی"
+            },
+            "display_refresh_target": {
+                "title": "نرخ نوسازی هدف",
+                "desc": "نرخ نوسازی صفحه‌نمایش برای اعمال در حالت ذخیره انرژی"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  بسته‌های اختیاری را انتخاب کرده و سپس تایید را بزنید  ",
             "additional_pkgs_prompt": "  بسته‌های اضافی > ",
             "additional_pkgs_title": "=== انتخاب بسته‌های اضافی ===",
-            "menu_additional_pkgs": "بسته‌های اضافی"
+            "menu_additional_pkgs": "بسته‌های اضافی",
+            "menu_keyboard": "چیدمان صفحه‌کلید و میانبر"
         },
         "deps": {
             "syncing": "در حال همگام‌سازی و به‌روزرسانی بسته‌های سیستم (pacman -syyu)...",

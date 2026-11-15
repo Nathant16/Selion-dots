@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "显示分辨率",
                 "desc": "设置显示输出分辨率"
+            },
+            "framerate": {
+                "title": "刷新率",
+                "desc": "设置显示器刷新率 (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "减少内核唤醒（禁用NMI）并启用延迟SSD写入",
                 "display_refresh_save_title": "使用电池时48 Hz屏幕刷新率",
                 "display_refresh_save_desc": "在Hyprland和Sway中使用电池时将刷新率降至48 Hz"
+            },
+            "display_refresh": {
+                "title": "降低刷新率",
+                "desc": "在省电模式下降低屏幕刷新率"
+            },
+            "display_refresh_target": {
+                "title": "目标刷新率",
+                "desc": "在省电模式下应用的屏幕刷新率"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  选择可选软件包，然后选择完成  ",
             "additional_pkgs_prompt": "  附加软件包 > ",
             "additional_pkgs_title": "=== 选择附加软件包 ===",
-            "menu_additional_pkgs": "附加软件包"
+            "menu_additional_pkgs": "附加软件包",
+            "menu_keyboard": "键盘布局与快捷键"
         },
         "deps": {
             "syncing": "正在同步并更新系统软件包 (pacman -Syyu)...",

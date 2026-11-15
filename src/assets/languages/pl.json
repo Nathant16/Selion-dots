@@ -847,7 +847,8 @@
             "additional_pkgs_header": "  Wybierz opcjonalne pakiety, a następnie wybierz gotowe  ",
             "additional_pkgs_prompt": "  Dodatkowe pakiety > ",
             "additional_pkgs_title": "=== Wybór dodatkowych pakietów ===",
-            "menu_additional_pkgs": "Dodatkowe pakiety"
+            "menu_additional_pkgs": "Dodatkowe pakiety",
+            "menu_keyboard": "Układ klawiatury i skrót"
         },
         "deps": {
             "syncing": "Synchronizacja i aktualizacja pakietów systemowych (pacman -Syyu)...",
@@ -1284,6 +1285,10 @@
             "resolution": {
                 "title": "Rozdzielczość ekranu",
                 "desc": "Ustaw rozdzielczość ekranu"
+            },
+            "framerate": {
+                "title": "Częstotliwość odświeżania",
+                "desc": "Ustaw częstotliwość odświeżania ekranu (Hz)"
             }
         },
         "bar": {
@@ -2362,6 +2367,14 @@
                 "storage_kernel_pm_desc": "Mniej wybudzeń jądra (wyłączony NMI watchdog) i opóźniony zapis na SSD",
                 "display_refresh_save_title": "Odświeżanie ekranu 48 Hz na baterii",
                 "display_refresh_save_desc": "Zmniejszenie odświeżania ekranu do 48 Hz na baterii w Hyprland i Sway"
+            },
+            "display_refresh": {
+                "title": "Zmniejsz częstotliwość odświeżania",
+                "desc": "Obniż częstotliwość odświeżania ekranu w trybie oszczędzania energii"
+            },
+            "display_refresh_target": {
+                "title": "Docelowa częstotliwość odświeżania",
+                "desc": "Częstotliwość odświeżania ekranu w trybie oszczędzania energii"
             }
         },
         "wallpaper": {

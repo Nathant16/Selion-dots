@@ -595,6 +595,10 @@
             "resolution": {
                 "title": "دقة الشاشة",
                 "desc": "تعيين دقة الشاشة"
+            },
+            "framerate": {
+                "title": "معدل التحديث",
+                "desc": "تعيين معدل تحديث الشاشة (هرتز)"
             }
         },
         "dock": {
@@ -1606,6 +1610,14 @@
                 "storage_kernel_pm_desc": "تقليل تنبيهات النواة (تعطيل NMI) وتأخير الكتابة على SSD",
                 "display_refresh_save_title": "معدل تحديث الشاشة 48 هرتز على البطارية",
                 "display_refresh_save_desc": "خفض معدل تحديث الشاشة إلى 48 هرتز على البطارية في Hyprland و Sway"
+            },
+            "display_refresh": {
+                "title": "تقليل معدل التحديث",
+                "desc": "خفض معدل تحديث الشاشة في وضع توفير الطاقة"
+            },
+            "display_refresh_target": {
+                "title": "معدل التحديث المستهدف",
+                "desc": "معدل تحديث الشاشة المطبق في وضع توفير الطاقة"
             }
         },
         "wallpaper": {
@@ -1709,7 +1721,8 @@
             "additional_pkgs_header": "  حدد الحزم الاختيارية ثم اضغط تم  ",
             "additional_pkgs_prompt": "  حزم إضافية > ",
             "additional_pkgs_title": "=== تحديد الحزم الإضافية ===",
-            "menu_additional_pkgs": "حزم إضافية"
+            "menu_additional_pkgs": "حزم إضافية",
+            "menu_keyboard": "تخطيط لوحة المفاتيح والاختصار"
         },
         "audio": {
             "building": "لا يوجد محرك صوت مبني مسبقًا لهذا النظام، جارٍ البناء من المصدر...",

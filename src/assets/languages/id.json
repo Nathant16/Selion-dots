@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "Resolusi Layar",
                 "desc": "Atur resolusi tampilan layar"
+            },
+            "framerate": {
+                "title": "Refresh Rate",
+                "desc": "Atur refresh rate layar (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "Kurangi bangun kernel (matikan NMI) dan tunda penulisan SSD",
                 "display_refresh_save_title": "Refresh Layar 48 Hz pada Baterai",
                 "display_refresh_save_desc": "Turunkan refresh rate layar internal ke 48 Hz saat memakai baterai"
+            },
+            "display_refresh": {
+                "title": "Turunkan Refresh Rate",
+                "desc": "Turunkan refresh rate layar dalam mode hemat daya"
+            },
+            "display_refresh_target": {
+                "title": "Target Refresh Rate",
+                "desc": "Refresh rate layar yang diterapkan dalam mode hemat daya"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  Pilih paket opsional lalu klik selesai  ",
             "additional_pkgs_prompt": "  Paket tambahan > ",
             "additional_pkgs_title": "=== Pilih paket tambahan ===",
-            "menu_additional_pkgs": "Paket tambahan"
+            "menu_additional_pkgs": "Paket tambahan",
+            "menu_keyboard": "Tata letak keyboard & pintasan"
         },
         "deps": {
             "syncing": "Menyinkronkan dan memperbarui paket sistem (pacman -Syyu)...",

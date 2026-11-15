@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "Độ phân giải màn hình",
                 "desc": "Đặt độ phân giải hiển thị"
+            },
+            "framerate": {
+                "title": "Tần số quét",
+                "desc": "Đặt tần số quét màn hình (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "Giảm đánh thức nhân (tắt NMI) và trì hoãn ghi SSD",
                 "display_refresh_save_title": "Tần số quét màn hình 48 Hz khi dùng pin",
                 "display_refresh_save_desc": "Giảm tần số quét xuống 48 Hz khi dùng pin trong Hyprland và Sway"
+            },
+            "display_refresh": {
+                "title": "Giảm tần số quét",
+                "desc": "Hạ tần số quét màn hình trong chế độ tiết kiệm pin"
+            },
+            "display_refresh_target": {
+                "title": "Tần số quét mục tiêu",
+                "desc": "Tần số quét màn hình áp dụng trong chế độ tiết kiệm pin"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  Chọn các gói tùy chọn rồi chọn hoàn tất  ",
             "additional_pkgs_prompt": "  Gói bổ sung > ",
             "additional_pkgs_title": "=== Chọn gói bổ sung ===",
-            "menu_additional_pkgs": "Gói bổ sung"
+            "menu_additional_pkgs": "Gói bổ sung",
+            "menu_keyboard": "Bố cục bàn phím & phím tắt"
         },
         "deps": {
             "syncing": "Đang đồng bộ hóa và cập nhật các gói hệ thống (pacman -syyu)...",

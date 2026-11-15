@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "螢幕解析度",
                 "desc": "設定螢幕解析度"
+            },
+            "framerate": {
+                "title": "更新率",
+                "desc": "設定螢幕更新率 (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "減少核心喚醒（停用NMI）並啟用延遲SSD寫入",
                 "display_refresh_save_title": "使用電池時48 Hz螢幕更新率",
                 "display_refresh_save_desc": "在Hyprland與Sway中使用電池時將更新率降至48 Hz"
+            },
+            "display_refresh": {
+                "title": "降低更新率",
+                "desc": "在省電模式下降低螢幕更新率"
+            },
+            "display_refresh_target": {
+                "title": "目標更新率",
+                "desc": "在省電模式下套用的螢幕更新率"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  選擇選用套件，然後選擇完成  ",
             "additional_pkgs_prompt": "  附加套件 > ",
             "additional_pkgs_title": "=== 選擇附加套件 ===",
-            "menu_additional_pkgs": "附加套件"
+            "menu_additional_pkgs": "附加套件",
+            "menu_keyboard": "鍵盤配置與快捷鍵"
         },
         "deps": {
             "syncing": "正在同步並更新系統套件 (pacman -syyu)...",

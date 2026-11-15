@@ -210,6 +210,9 @@ Item {
             root.enqueue({
                 "id": a.id,
                 "kind": a.kind,
+                "titleKey": a.titleKey,
+                "bodyKey": a.bodyKey,
+                "args": a.args,
                 "title": root.resolveText(a.titleKey, a.args),
                 "body": root.resolveText(a.bodyKey, a.args),
                 "urgency": a.urgency,
@@ -296,6 +299,18 @@ Item {
     Connections {
         target: I18n
         function onLanguageChanged() {
+            let newQueue = [];
+            for (let i = 0; i < root.queue.length; i++) {
+                let a = Object.assign({}, root.queue[i]);
+                if (a.titleKey && a.bodyKey) {
+                    a.title = root.resolveText(a.titleKey, a.args);
+                    a.body = root.resolveText(a.bodyKey, a.args);
+                }
+                newQueue.push(a);
+            }
+            root.queue = newQueue;
+            root.evaluatedFetchedAt = 0;
+            root.pendingFetchedAt = 0;
             root.maybeReload();
         }
     }

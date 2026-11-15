@@ -73,6 +73,13 @@ Item {
     }
 
     Connections {
+        target: typeof I18n !== "undefined" ? I18n : null
+        function onLanguageChanged() {
+            root.refresh(false);
+        }
+    }
+
+    Connections {
         target: typeof Config !== "undefined" ? Config : null
         function onSettingsLoaded() {
             root.checkLocationUpdate();

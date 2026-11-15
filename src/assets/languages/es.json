@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "Resolución de pantalla",
                 "desc": "Establecer la resolución de la pantalla"
+            },
+            "framerate": {
+                "title": "Frecuencia de actualización",
+                "desc": "Establecer la frecuencia de actualización de pantalla (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "Menos interrupciones del kernel (desactivar NMI) y escritura diferida en SSD",
                 "display_refresh_save_title": "Frecuencia de pantalla a 48 Hz en batería",
                 "display_refresh_save_desc": "Reducir la tasa de refresco a 48 Hz en batería en Hyprland y Sway"
+            },
+            "display_refresh": {
+                "title": "Reducir la frecuencia de actualización",
+                "desc": "Bajar la frecuencia de actualización en modo de ahorro de energía"
+            },
+            "display_refresh_target": {
+                "title": "Frecuencia de actualización objetivo",
+                "desc": "Frecuencia de actualización a aplicar en modo de ahorro de energía"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  Seleccione paquetes opcionales y luego pulse hecho  ",
             "additional_pkgs_prompt": "  Paquetes adicionales > ",
             "additional_pkgs_title": "=== Seleccionar paquetes adicionales ===",
-            "menu_additional_pkgs": "Paquetes adicionales"
+            "menu_additional_pkgs": "Paquetes adicionales",
+            "menu_keyboard": "Distribución del teclado y atajo"
         },
         "deps": {
             "syncing": "Sincronizando y actualizando paquetes del sistema (pacman -syyu)...",

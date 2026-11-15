@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "Ekran Çözünürlüğü",
                 "desc": "Ekran çözünürlüğünü ayarla"
+            },
+            "framerate": {
+                "title": "Yenileme Hızı",
+                "desc": "Ekran yenileme hızını ayarlayın (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "Çekirdek uyandırmalarını azaltma (NMI kapatma) ve gecikmeli SSD yazımı",
                 "display_refresh_save_title": "Pilde 48 Hz Ekran Yenileme Hızı",
                 "display_refresh_save_desc": "Hyprland ve Sway içinde pilde ekran yenileme hızını 48 Hz'e düşür"
+            },
+            "display_refresh": {
+                "title": "Yenileme Hızını Düşür",
+                "desc": "Güç tasarrufu modunda ekran yenileme hızını düşür"
+            },
+            "display_refresh_target": {
+                "title": "Hedef Yenileme Hızı",
+                "desc": "Güç tasarrufu modunda uygulanacak ekran yenileme hızı"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  İsteğe bağlı paketleri seçin ve ardından tamamlandı seçin  ",
             "additional_pkgs_prompt": "  Ek paketler > ",
             "additional_pkgs_title": "=== Ek paketleri seçin ===",
-            "menu_additional_pkgs": "Ek paketler"
+            "menu_additional_pkgs": "Ek paketler",
+            "menu_keyboard": "Klavye düzeni ve kısayol"
         },
         "deps": {
             "syncing": "Sistem paketleri senkronize ediliyor ve güncelleniyor (pacman -syyu)...",

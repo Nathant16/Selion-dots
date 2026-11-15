@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "डिस्प्ले रेजोल्यूशन",
                 "desc": "डिस्प्ले आउटपुट रेजोल्यूशन सेट करें"
+            },
+            "framerate": {
+                "title": "रिफ्रेश रेट",
+                "desc": "डिस्प्ले रिफ्रेश रेट सेट करें (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "कर्नेल वेकअप कम करना (NMI वॉचडॉग बंद) और विलंबित SSD राइटिंग",
                 "display_refresh_save_title": "बैटरी पर 48 Hz स्क्रीन रिफ्रेश रेट",
                 "display_refresh_save_desc": "Hyprland और Sway में बैटरी पर डिस्प्ले रिफ्रेश रेट को 48 Hz तक घटाएं"
+            },
+            "display_refresh": {
+                "title": "रिफ्रेश रेट कम करें",
+                "desc": "पावर सेविंग मोड में स्क्रीन रिफ्रेश रेट कम करें"
+            },
+            "display_refresh_target": {
+                "title": "लक्षित रिफ्रेश रेट",
+                "desc": "पावर सेविंग मोड में लागू करने के लिए स्क्रीन रिफ्रेश रेट"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  वैकल्पिक पैकेज चुनें और पूर्ण चुनें  ",
             "additional_pkgs_prompt": "  अतिरिक्त पैकेज > ",
             "additional_pkgs_title": "=== अतिरिक्त पैकेज चुनें ===",
-            "menu_additional_pkgs": "अतिरिक्त पैकेज"
+            "menu_additional_pkgs": "अतिरिक्त पैकेज",
+            "menu_keyboard": "कीबोर्ड लेआउट और शॉर्टकट"
         },
         "deps": {
             "syncing": "सिस्टम पैकेज सिंक्रनाइज़ और अपडेट किए जा रहे हैं (pacman -syyu)...",

@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "Resolução da tela",
                 "desc": "Definir resolução da tela"
+            },
+            "framerate": {
+                "title": "Taxa de atualização",
+                "desc": "Definir taxa de atualização da tela (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "Menos interrupções do kernel (desativar NMI) e escrita diferida em SSD",
                 "display_refresh_save_title": "Taxa de atualização de 48 Hz na bateria",
                 "display_refresh_save_desc": "Reduzir a taxa de atualização para 48 Hz na bateria no Hyprland e Sway"
+            },
+            "display_refresh": {
+                "title": "Reduzir taxa de atualização",
+                "desc": "Reduzir a taxa de atualização da tela no modo de economia de energia"
+            },
+            "display_refresh_target": {
+                "title": "Taxa de atualização alvo",
+                "desc": "Taxa de atualização de tela a aplicar no modo de economia de energia"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  Selecione os pacotes opcionais e finalize  ",
             "additional_pkgs_prompt": "  Pacotes adicionais > ",
             "additional_pkgs_title": "=== Selecionar pacotes adicionais ===",
-            "menu_additional_pkgs": "Pacotes adicionais"
+            "menu_additional_pkgs": "Pacotes adicionais",
+            "menu_keyboard": "Layout do teclado e atalho"
         },
         "deps": {
             "syncing": "Sincronizando e atualizando pacotes do sistema (pacman -syyu)...",

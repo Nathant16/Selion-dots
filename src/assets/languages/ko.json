@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "화면 해상도",
                 "desc": "디스플레이 해상도 설정"
+            },
+            "framerate": {
+                "title": "새로고침 빈도",
+                "desc": "디스플레이 새로고침 빈도 설정 (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "커널 웨이크업 감소 (NMI 비활성화) 및 지연된 SSD 쓰기",
                 "display_refresh_save_title": "배터리 사용 시 48Hz 화면 주사율",
                 "display_refresh_save_desc": "Hyprland 및 Sway에서 배터리 사용 시 화면 주사율을 48Hz로 낮춤"
+            },
+            "display_refresh": {
+                "title": "새로고침 빈도 낮추기",
+                "desc": "절전 모드에서 화면 새로고침 빈도 낮추기"
+            },
+            "display_refresh_target": {
+                "title": "목표 새로고침 빈도",
+                "desc": "절전 모드에 적용할 화면 새로고침 빈도"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  추가 패키지를 선택한 후 완료를 누르세요  ",
             "additional_pkgs_prompt": "  추가 패키지 > ",
             "additional_pkgs_title": "=== 추가 패키지 선택 ===",
-            "menu_additional_pkgs": "추가 패키지"
+            "menu_additional_pkgs": "추가 패키지",
+            "menu_keyboard": "키보드 레이아웃 및 바로가기"
         },
         "deps": {
             "syncing": "시스템 패키지를 동기화하고 업데이트하는 중 (pacman -syyu)...",

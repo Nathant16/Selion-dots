@@ -74,9 +74,8 @@ Item {
     }
 
     function updateTranslations() {
-        if (!root.fallbackData && (root.currentLang === "en" || !root.langData)) {
-            return;
-        }
+        if (!root.fallbackData) return;
+        if (root.currentLang !== "en" && !root.langData) return;
 
         let newTrans = Object.assign({}, root.translations);
         if (root.fallbackData) {
@@ -96,10 +95,14 @@ Item {
     onCurrentLangChanged: {
         root.langData = null;
         if (root.currentLang !== "en") {
+            if (!root.translations || !root.translations[root.currentLang]) {
+                root.isReady = false;
+            }
             langFileView.path = root.i18nDir + "/" + root.currentLang + ".json";
             langFileView.reload();
         } else {
             langFileView.path = "";
+            root.isReady = root.fallbackData !== null;
             root.updateTranslations();
         }
     }

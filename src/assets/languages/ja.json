@@ -841,7 +841,8 @@
             "additional_pkgs_header": "  追加パッケージを選択して完了を押してください  ",
             "additional_pkgs_prompt": "  追加パッケージ > ",
             "additional_pkgs_title": "=== 追加パッケージの選択 == ガ",
-            "menu_additional_pkgs": "追加パッケージ"
+            "menu_additional_pkgs": "追加パッケージ",
+            "menu_keyboard": "キーボードレイアウトとショートカット"
         },
         "deps": {
             "syncing": "システムパッケージを同期および更新中 (pacman -Syyu)...",
@@ -1284,6 +1285,10 @@
             "resolution": {
                 "title": "画面解像度",
                 "desc": "ディスプレイ解像度を設定"
+            },
+            "framerate": {
+                "title": "リフレッシュレート",
+                "desc": "ディスプレイのリフレッシュレートを設定 (Hz)"
             }
         },
         "bar": {
@@ -2362,6 +2367,14 @@
                 "storage_kernel_pm_desc": "カーネル割り込みの低減 (NMI無効化) とSSD書き込みの遅延実行",
                 "display_refresh_save_title": "バッテリー駆動時の48Hzディスプレイリフレッシュレート",
                 "display_refresh_save_desc": "HyprlandおよびSwayでバッテリー時にリフレッシュレートを48Hzに低下"
+            },
+            "display_refresh": {
+                "title": "リフレッシュレートの低減",
+                "desc": "省電力モード時にディスプレイのリフレッシュレートを下げる"
+            },
+            "display_refresh_target": {
+                "title": "目標リフレッシュレート",
+                "desc": "省電力モード時に適用するリフレッシュレート"
             }
         },
         "wallpaper": {

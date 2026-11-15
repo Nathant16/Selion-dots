@@ -356,7 +356,8 @@ Item {
             all = all.concat(r.alerts || []);
             cancels = cancels.concat(r.cancels || []);
         }
-        let merged = Lib.mergeAlerts(all, cancels, { threads: root._threads }, now);
+        let preferredLang = typeof I18n !== "undefined" ? I18n.currentLang : "en";
+        let merged = Lib.mergeAlerts(all, cancels, { threads: root._threads }, now, preferredLang);
         root._threads = merged.threads;
         let sameIds = merged.active.length === root._active.length && merged.active.every((a, i) => a.id === root._active[i].id);
         if (!sameIds) root._active = merged.active;
@@ -378,11 +379,25 @@ Item {
         if (!root._enabled || !root._deliverable) return;
         if (typeof WeatherAlerts === "undefined" || typeof WeatherAlerts.enqueue !== "function") return;
         let now = Date.now();
+        let preferredLang = typeof I18n !== "undefined" ? I18n.currentLang : "en";
         for (let i = 0; i < root._active.length; i++) {
             let a = root._active[i];
             if (a.expires <= now) continue;
+            let title = a.title;
+            let body = a.body;
+            if (preferredLang !== "en" && a.lang !== preferredLang && typeof I18n !== "undefined") {
+                let localizedHazard = I18n.t("gov_alerts.hazard." + a.hazard, "");
+                if (localizedHazard && localizedHazard !== ("gov_alerts.hazard." + a.hazard)) {
+                    let localizedSev = I18n.t("gov_alerts.severity." + a.severity, "");
+                    if (a.severity === "extreme" || a.severity === "severe") {
+                        title = localizedHazard + (localizedSev ? " (" + localizedSev + ")" : "");
+                    } else {
+                        title = localizedHazard;
+                    }
+                }
+            }
             WeatherAlerts.enqueue({
-                id: a.id, kind: a.kind, title: a.title, body: a.body,
+                id: a.id, kind: a.kind, title: title, body: body,
                 urgency: a.urgency, bypassQuiet: a.bypassQuiet, expires: a.expires
             });
         }
@@ -518,6 +533,13 @@ Item {
         target: typeof WeatherAlerts !== "undefined" ? WeatherAlerts : null
         function onStateLoadedChanged() {
             if (WeatherAlerts.stateLoaded) root._deliver();
+        }
+    }
+
+    Connections {
+        target: typeof I18n !== "undefined" ? I18n : null
+        function onLanguageChanged() {
+            root._recompute(false);
         }
     }
 

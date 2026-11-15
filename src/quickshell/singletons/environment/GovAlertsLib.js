@@ -916,14 +916,19 @@ function buildDelivery(a, rootId) {
     };
 }
 
-function rankOf(a, b) {
+function rankOf(a, b, preferredLang) {
+    if (preferredLang) {
+        var aMatch = (a.lang === preferredLang) ? 1 : 0;
+        var bMatch = (b.lang === preferredLang) ? 1 : 0;
+        if (aMatch !== bMatch) return bMatch - aMatch;
+    }
     var sd = SEV_RANK[b.severity] - SEV_RANK[a.severity];
     if (sd !== 0) return sd;
     if (a.rank !== b.rank) return a.rank - b.rank;
     return b.sent - a.sent;
 }
 
-function mergeAlerts(inputs, cancels, state, now) {
+function mergeAlerts(inputs, cancels, state, now, preferredLang) {
     var threads = (state && state.threads ? state.threads : []).filter(function (t) { return t.end + 86400000 > now; });
     var cancelled = {};
     cancels.forEach(function (id) { cancelled[id] = true; });
@@ -952,7 +957,7 @@ function mergeAlerts(inputs, cancels, state, now) {
     var active = [];
     var used = {};
     Object.keys(clusters).forEach(function (k) {
-        var members = clusters[k].slice().sort(rankOf);
+        var members = clusters[k].slice().sort(function (a, b) { return rankOf(a, b, preferredLang); });
         var rep = members[0];
         var thread = null;
         for (var t = 0; t < threads.length && !thread; t++) {

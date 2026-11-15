@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "Bildschirmauflösung",
                 "desc": "Bildschirmauflösung festlegen"
+            },
+            "framerate": {
+                "title": "Bildwiederholfrequenz",
+                "desc": "Bildwiederholfrequenz des Bildschirms einstellen (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "Weniger Kernel-Wakeups (NMI-Watchdog aus) und verzögertes SSD-Schreiben",
                 "display_refresh_save_title": "48 Hz Display-Bildwiederholrate bei Akkubetrieb",
                 "display_refresh_save_desc": "Bildwiederholfrequenz des internen Displays im Akkubetrieb auf 48 Hz senken"
+            },
+            "display_refresh": {
+                "title": "Bildwiederholfrequenz reduzieren",
+                "desc": "Bildwiederholfrequenz im Energiesparmodus senken"
+            },
+            "display_refresh_target": {
+                "title": "Ziel-Bildwiederholfrequenz",
+                "desc": "Bildwiederholfrequenz für den Energiesparmodus"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  Optionale Pakete auswählen und fertigstellen  ",
             "additional_pkgs_prompt": "  Zusatzpakete > ",
             "additional_pkgs_title": "=== Zusatzpakete auswählen ===",
-            "menu_additional_pkgs": "Zusatzpakete"
+            "menu_additional_pkgs": "Zusatzpakete",
+            "menu_keyboard": "Tastaturlayout & Tastenkürzel"
         },
         "deps": {
             "syncing": "Systempakete werden synchronisiert und aktualisiert (pacman -Syyu)...",

@@ -374,6 +374,10 @@
             "resolution": {
                 "title": "Ekran Qətnaməsi",
                 "desc": "Ekran çıxış qətnaməsini təyin edin"
+            },
+            "framerate": {
+                "title": "Yenilənmə tezliyi",
+                "desc": "Ekranın yenilənmə tezliyini təyin edin (Hz)"
             }
         },
         "bar": {
@@ -1452,6 +1456,14 @@
                 "storage_kernel_pm_desc": "Nüvə oyanmalarını azaltmaq (NMI söndürmək) və SSD-yə təxirə salınmış yazı",
                 "display_refresh_save_title": "Batareyada 48 Hz Ekran Yeniləmə Tezliyi",
                 "display_refresh_save_desc": "Hyprland və Sway-də batareyada ekran tezliyini 48 Hz-ə endirmək"
+            },
+            "display_refresh": {
+                "title": "Yenilənmə tezliyini azalt",
+                "desc": "Enerjiyə qənaət rejimində ekranın yenilənmə tezliyini azaldın"
+            },
+            "display_refresh_target": {
+                "title": "Hədəf yenilənmə tezliyi",
+                "desc": "Enerjiyə qənaət rejimində tətbiq ediləcək ekran yenilənmə tezliyi"
             }
         },
         "wallpaper": {
@@ -2300,7 +2312,8 @@
             "additional_pkgs_header": "  Əlavə paketləri seçin və tamamlayın  ",
             "additional_pkgs_prompt": "  Əlavə paketlər > ",
             "additional_pkgs_title": "=== Əlavə paketləri seçin ===",
-            "menu_additional_pkgs": "Əlavə paketlər"
+            "menu_additional_pkgs": "Əlavə paketlər",
+            "menu_keyboard": "Klaviatura düzümü və qısayol"
         },
         "deps": {
             "syncing": "Sistem paketləri sinxronlaşdırılır və yenilənir (pacman -syyu)...",
