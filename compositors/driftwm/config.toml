@@ -108,6 +108,17 @@ app_id = "ski-file-manager"
 opacity = 1.0
 blur = false
 
+[[window_rules]]
+title = "Picture-in-Picture"
+pinned = true
+preserve_aspect_ratio = true
+
+[[window_rules]]
+title = "Picture in picture"
+pinned = true
+preserve_aspect_ratio = true
+
+
 # █ █ █▀▀ █  █ █▀▀▄  ▀  █▀▀▄ █▀▀▄  ▀  █▀▀▄ █▀▀▀ █▀▀
 # █▀▄ █▀▀ █▄▄█ █▀▀▄ ▀█▀ █  █ █  █ ▀█▀ █  █ █ ▀█ ▀▀█
 # ▀ ▀ ▀▀▀ ▄▄▄█ ▀▀▀  ▀▀▀ ▀  ▀ ▀▀▀  ▀▀▀ ▀  ▀ ▀▀▀▀ ▀▀▀

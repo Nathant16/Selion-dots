@@ -21,17 +21,55 @@ hl.window_rule({
     no_focus = true,
 })
 
+-- Dialogs & Tools
 hl.window_rule({
-    name = "float-dialogs",
-    match = { class = "pavucontrol|pwvucontrol|org.gnome.FileRoller|blueman-manager" },
+    name = "float-tools",
+    match = { class = "pavucontrol|pwvucontrol|blueman-manager|org.gnome.FileRoller|gnome-calculator|qalculate-gtk|org.gnome.Loupe|qt5ct|qt6ct|yad" },
+    float = true,
+    center = true,
+})
+
+-- Common File / Dialog Modals
+hl.window_rule({
+    name = "float-modals",
+    match = { title = [=[^(Open|Open File|Choose Files|Save As|Confirm to replace files|File Operation Progress|File Upload.*|Authentication Required|Add Folder to Workspace|Choose wallpaper.*|Library.*|.*dialog.*)$]=] },
     float = true,
 })
 
+-- Picture-in-Picture
 hl.window_rule({
-    name = "picture-in-picture",
-    match = { title = "Picture-in-Picture|Picture in picture" },
+    name = "picture_in_picture",
+    match = { title = [=[^([Pp]icture[-\s]?[Ii]n[-\s]?[Pp]icture|[Кк]артинка в картинке)(.*)$]=] },
     float = true,
+    keep_aspect_ratio = true,
+    move = { "(monitor_w*0.745)", "(monitor_h*0.74)" },
+    size = { "(monitor_w*0.25)", "(monitor_h*0.25)" },
     pin = true,
+})
+
+-- Idle Inhibit for Media and Fullscreen Browsers
+hl.window_rule({
+    name = "idle-inhibit-media",
+    match = { class = "^(.*celluloid.*)$|^(.*mpv.*)$|^(.*vlc.*)$" },
+    idle_inhibit = "fullscreen",
+})
+
+hl.window_rule({
+    name = "idle-inhibit-spotify",
+    match = { class = "^(.*[Ss]potify.*)$" },
+    idle_inhibit = "fullscreen",
+})
+
+hl.window_rule({
+    name = "idle-inhibit-yandex-music",
+    match = { class = "^(yandex-music)$" },
+    idle_inhibit = "fullscreen",
+})
+
+hl.window_rule({
+    name = "idle-inhibit-browsers",
+    match = { class = "^(.*LibreWolf.*)$|^(.*floorp.*)$|^(.*brave-browser.*)$|^(.*firefox.*)$|^(.*chromium.*)$|^(.*zen.*)$|^(.*vivaldi.*)$" },
+    idle_inhibit = "fullscreen",
 })
 
 -- Serpantinum dynamic window rules (opacity for kitty and ski)

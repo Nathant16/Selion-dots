@@ -1,14 +1,28 @@
 # █ █ █ █ █▄ █ █▀▄ █▀█ █ █ █ 　 █▀█ █ █ █   █▀▀ █▀
 # ▀▄▀▄▀ █ █ ▀█ █▄▀ █▄█ ▀▄▀▄▀ 　 █▀▄ █▄█ █▄▄ ██▄ ▄█
 
-# Window rules for Sway
+# Window roles and dialogs
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="bubble"] floating enable
 for_window [window_role="dialog"] floating enable
 for_window [window_type="dialog"] floating enable
-for_window [app_id="org.gnome.FileRoller"] floating enable
-for_window [app_id="pavucontrol"] floating enable
-for_window [app_id="pwvucontrol"] floating enable
-for_window [title="Picture-in-Picture"] floating enable, sticky enable
-for_window [title="Picture in picture"] floating enable, sticky enable
 
+# System dialogs and utilities
+for_window [app_id="org.gnome.FileRoller"] floating enable, move position center
+for_window [app_id="pavucontrol"] floating enable, move position center
+for_window [app_id="pwvucontrol"] floating enable, move position center
+for_window [app_id="blueman-manager"] floating enable, move position center
+for_window [app_id="gnome-calculator"] floating enable, move position center
+for_window [app_id="qalculate-gtk"] floating enable, move position center
+for_window [app_id="org.gnome.Loupe"] floating enable, move position center
+for_window [app_id="qt5ct"] floating enable
+for_window [app_id="qt6ct"] floating enable
+
+# Picture-in-Picture
+for_window [title="^([Pp]icture[-\s]?[Ii]n[-\s]?[Pp]icture|[Кк]артинка в картинке)(.*)$"] floating enable, sticky enable, resize set width 25 ppt height 25 ppt, move position 74 ppt 74 ppt
+
+# Idle inhibition for media players and fullscreen browsers
+for_window [class="^(mpv|vlc|celluloid|Spotify|yandex-music)$"] inhibit_idle fullscreen
+for_window [app_id="^(mpv|vlc|celluloid|Spotify|yandex-music)$"] inhibit_idle fullscreen
+for_window [class="^(zen|firefox|brave-browser|chromium|LibreWolf|floorp|vivaldi)$"] inhibit_idle fullscreen
+for_window [app_id="^(zen-alpha|firefox|brave-browser|chromium|librewolf|floorp|vivaldi)$"] inhibit_idle fullscreen

@@ -1,3 +1,14 @@
 // █ █ █ █ █▄ █ █▀▄ █▀█ █ █ █ 　 █▀█ █ █ █   █▀▀ █▀
 // ▀▄▀▄▀ █ █ ▀█ █▄▀ █▄█ ▀▄▀▄▀ 　 █▀▄ █▄█ █▄▄ ██▄ ▄█
 
+// Picture-in-Picture
+window-rule {
+    match title=r#"^([Pp]icture[-\s]?[Ii]n[-\s]?[Pp]icture|[Кк]артинка в картинке)(.*)$"#
+    open-floating true
+}
+
+// System dialogs & tools
+window-rule {
+    match app-id=r#"^(pavucontrol|pwvucontrol|blueman-manager|org\.gnome\.FileRoller|gnome-calculator|qalculate-gtk|org\.gnome\.Loupe|qt5ct|qt6ct)$"#
+    open-floating true
+}
