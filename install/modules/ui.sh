@@ -556,7 +556,7 @@ PKGS_OFFICE=(
     "libreoffice-fresh:LibreOffice Fresh (Comprehensive open-source office suite)"
     "wordcraft-bin:WordCraft (Native Microsoft Word alternative)"
     "gridcraft-bin:GridCraft (Native Microsoft Excel alternative)"
-    "deckcraft:DeckCraft (Native Microsoft PowerPoint alternative)"
+    "deckcraft-bin:DeckCraft (Native Microsoft PowerPoint alternative)"
 )
 
 PKGS_MEDIA=(
