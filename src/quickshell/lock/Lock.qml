@@ -28,7 +28,7 @@ Scope {
     property int fpResumeRetries: 0
     property bool noFpPamReady: false
     property string defaultPamDir: ""
-    property string defaultPamConfig: ""
+    property string defaultPamConfig: "serpantinum-nofp"
     readonly property string noFpPamDir: Caching.getRunDir("lock") + "/pam"
     readonly property int passwordLockoutMs: 30000
     readonly property var lockscreenSettings: Config.getSetting("lockscreen", { "fingerprintEnabled": true, "attemptLimitEnabled": false, "passwordMaxAttempts": 5, "fingerprintMaxAttempts": 5 })
@@ -133,9 +133,9 @@ Scope {
         ]
         onExited: (exitCode) => {
             if (exitCode !== 0) return;
-            pam.config = "serpantinum";
+            pam.config = "serpantinum-nofp";
             fpPam.config = "serpantinum";
-            root.defaultPamConfig = "serpantinum";
+            root.defaultPamConfig = "serpantinum-nofp";
         }
     }
 
@@ -356,7 +356,7 @@ Scope {
             fingerprintSettleTimer.stop();
             lockUI.fpState = "success";
             fingerprintUnlockTimer.restart();
-        } else if (root.fpGotInfo) {
+        } else if (!root.fpBlocked && root.fingerprintEnabled) {
             fingerprintRestartTimer.restart();
         } else {
             root.markFingerprintUnsupported();
@@ -507,6 +507,7 @@ Scope {
 
     PamContext {
         id: pam
+        config: "serpantinum-nofp"
         user: (typeof SystemInfo !== "undefined" && SystemInfo.username !== "") ? SystemInfo.username : (Quickshell.env("USER") || "")
 
         onResponseRequiredChanged: {

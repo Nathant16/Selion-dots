@@ -475,12 +475,10 @@ setup_pam_service() {
     [ -n "$base" ] || return 0
 
     # Serpantinum lockscreen uses parallel PamContext sessions in Quickshell:
-    # fpPam strictly requires standard pam_fprintd.so (grosshack asks for password, which breaks Quickshell biometric prompt).
+    # fpPam strictly requires dedicated biometric authentication (pam_fprintd + pam_deny, no password prompts).
     local content=""
-    if ! grep -qs "pam_fprintd" "$pam_dir/$base"; then
-        content+="-auth       sufficient   pam_fprintd.so"$'\n'
-    fi
-    content+="auth        include      $base"$'\n'
+    content+="-auth       sufficient   pam_fprintd.so"$'\n'
+    content+="auth        required     pam_deny.so"$'\n'
     content+="account     include      $base"$'\n'
 
     if [ ! -f "$target" ] || [ "$(cat "$target" 2>/dev/null)" != "${content%$'\n'}" ]; then
