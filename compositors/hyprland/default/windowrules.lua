@@ -29,6 +29,15 @@ hl.window_rule({
     center = true,
 })
 
+-- Task Manager (btop)
+hl.window_rule({
+    name = "float-btop",
+    match = { class = "^(btop)$" },
+    float = true,
+    center = true,
+    size = { "(monitor_w*0.65)", "(monitor_h*0.65)" },
+})
+
 -- Common File / Dialog Modals
 hl.window_rule({
     name = "float-modals",

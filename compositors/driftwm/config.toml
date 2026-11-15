@@ -118,6 +118,11 @@ title = "Picture in picture"
 pinned = true
 preserve_aspect_ratio = true
 
+[[window_rules]]
+app_id = "btop"
+pinned = true
+size = [1200, 750]
+
 
 # █ █ █▀▀ █  █ █▀▀▄  ▀  █▀▀▄ █▀▀▄  ▀  █▀▀▄ █▀▀▀ █▀▀
 # █▀▄ █▀▀ █▄▄█ █▀▀▄ ▀█▀ █  █ █  █ ▀█▀ █  █ █ ▀█ ▀▀█
@@ -133,7 +138,8 @@ preserve_aspect_ratio = true
 "mod+return" = "exec kitty"
 "mod+kp_enter" = "exec kitty"
 "mod+e" = "exec ski"
-"ctrl+shift+escape" = "exec kitty -e btop"
+"ctrl+shift+escape" = "exec kitty --class btop -e btop"
+"ctrl+alt+delete" = "exec kitty --class btop -e btop"
 
 # Управление окнами
 "mod+q" = "close-window"
