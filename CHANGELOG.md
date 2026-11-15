@@ -1,3 +1,11 @@
+### 2.7.1
+
+- fix(compositors): fix DriftWM window rules schema (`pinned_to_screen`) and Sway autostart syntax
+- fix(daemon): improve session switching across Wayland displays and add fallback Mango socket auto-detection in `serpantinumd`
+- fix(fish): add native session logout handlers for Niri and Mango
+- fix(wallpaper): remove redundant `~/Pictures/Wallpaper` symlink and eliminate duplicate default wallpaper files
+- fix(updater): add cache busting to GitHub raw version checks
+
 ### 2.7.0
 
 - feat(display): persist monitor resolutions, modes and scaling dynamically across all 5 compositors (DriftWM, Hyprland, Sway, Niri, Mango) via `monitor_manager.py` (`serpantinum-monitor`)

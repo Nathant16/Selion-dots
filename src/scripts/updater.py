@@ -91,7 +91,7 @@ remote_ver = local_ver
 if not package_managed:
     try:
         req = urllib.request.Request(
-            f"https://raw.githubusercontent.com/{REPO}/master/version.txt",
+            f"https://raw.githubusercontent.com/{REPO}/master/version.txt?t={int(time.time())}",
             headers={
                 "User-Agent": "updater-script",
                 "Cache-Control": "no-cache",
