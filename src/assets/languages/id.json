@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  Paket tambahan > ",
             "additional_pkgs_title": "=== Pilih paket tambahan ===",
             "menu_additional_pkgs": "Paket tambahan",
-            "menu_keyboard": "Tata letak keyboard & pintasan"
+            "menu_keyboard": "Tata letak keyboard & pintasan",
+            "menu_fast_mirrors": "Mirror cepat & Chaotic-AUR"
         },
         "deps": {
             "syncing": "Menyinkronkan dan memperbarui paket sistem (pacman -Syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "Mengaktifkan repositori {repo}...",
             "enabling_terra": "Mengaktifkan repositori Terra...",
             "quickshell_outdated": "Quickshell {version} terlalu lama, diperlukan {minimum} atau yang lebih baru. Memperbarui...",
-            "quickshell_still_old": "Quickshell masih lebih lama dari {minimum}. Perbarui secara manual, jika tidak pengaturan tidak akan terbuka."
+            "quickshell_still_old": "Quickshell masih lebih lama dari {minimum}. Perbarui secara manual, jika tidak pengaturan tidak akan terbuka.",
+            "ranking_pacman": "Mencari dan memberi peringkat mirror Pacman tercepat...",
+            "pacman_ok": "Mirror Pacman diperbarui dengan mirror HTTPS tercepat.",
+            "pacman_fallback": "Reflector waktu habis atau gagal, mempertahankan daftar mirror saat ini.",
+            "pacman_skip": "Reflector tidak tersedia, melewati optimasi mirror Pacman.",
+            "ranking_chaotic": "Mengonfigurasi dan memberi peringkat repositori biner Chaotic-AUR...",
+            "chaotic_ok": "Mirror Chaotic-AUR berhasil diberi peringkat."
         },
         "deploy": {
             "configuring_sddm": "Mengonfigurasi manajer tampilan SDDM...",

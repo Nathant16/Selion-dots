@@ -311,7 +311,7 @@
             },
             "resolution": {
                 "title": "Разрешение экрана",
-                "desc": "Выбор разрешения дисплея"
+                "desc": "Установить разрешение монитора"
             },
             "framerate": {
                 "title": "Частота обновления",
@@ -378,11 +378,7 @@
                 }
             },
             "layout_stage": "2D Расположение мониторов",
-            "monitors_detected": "монитор(ов)",
-            "resolution": {
-                "title": "Разрешение экрана",
-                "desc": "Установить разрешение монитора"
-            }
+            "monitors_detected": "монитор(ов)"
         },
         "bar": {
             "modules": {
@@ -2317,7 +2313,8 @@
             "additional_pkgs_header": " Выберите нужные приложения для установки, затем выберите готово ",
             "additional_pkgs_prompt": " Дополнительные пакеты > ",
             "main_menu_prompt": " Главное меню > ",
-            "main_menu_header": " Используйте стрелки для навигации, enter для выбора "
+            "main_menu_header": " Используйте стрелки для навигации, enter для выбора ",
+            "menu_fast_mirrors": "Быстрые зеркала и Chaotic-AUR"
         },
         "deps": {
             "syncing": "Синхронизация и обновление системных пакетов (pacman -syyu)...",
@@ -2331,7 +2328,13 @@
             "quickshell_still_old": "Quickshell всё ещё старше {minimum}. Обновите его вручную, иначе настройки не откроются.",
             "enabling_copr": "Подключение репозитория COPR {repo}...",
             "enabling_repo": "Подключение репозитория {repo}...",
-            "enabling_terra": "Подключение репозитория Terra..."
+            "enabling_terra": "Подключение репозитория Terra...",
+            "ranking_pacman": "Поиск и ранжирование самых быстрых зеркал Pacman...",
+            "pacman_ok": "Список зеркал Pacman обновлен быстрейшими HTTPS-зеркалами.",
+            "pacman_fallback": "Таймаут или ошибка Reflector, сохранен текущий список зеркал.",
+            "pacman_skip": "Reflector недоступен, оптимизация зеркал Pacman пропущена.",
+            "ranking_chaotic": "Настройка и выбор быстрейших зеркал Chaotic-AUR...",
+            "chaotic_ok": "Зеркала Chaotic-AUR успешно ранжированы."
         },
         "deploy": {
             "configuring_sddm": "Настройка дисплейного менеджера SDDM...",

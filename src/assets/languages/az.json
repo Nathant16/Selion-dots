@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  Əlavə paketlər > ",
             "additional_pkgs_title": "=== Əlavə paketləri seçin ===",
             "menu_additional_pkgs": "Əlavə paketlər",
-            "menu_keyboard": "Klaviatura düzümü və qısayol"
+            "menu_keyboard": "Klaviatura düzümü və qısayol",
+            "menu_fast_mirrors": "Sürətli güzgülər və Chaotic-AUR"
         },
         "deps": {
             "syncing": "Sistem paketləri sinxronlaşdırılır və yenilənir (pacman -syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "{repo} repozitoriyası aktivləşdirilir...",
             "enabling_terra": "Terra repozitoriyası aktivləşdirilir...",
             "quickshell_outdated": "Quickshell {version} çox köhnədir, {minimum} və ya daha yeni versiya tələb olunur. Yenilənir...",
-            "quickshell_still_old": "Quickshell hələ də {minimum} versiyasından köhnədir. Onu əl ilə yeniləyin, əks halda ayarlar açılmayacaq."
+            "quickshell_still_old": "Quickshell hələ də {minimum} versiyasından köhnədir. Onu əl ilə yeniləyin, əks halda ayarlar açılmayacaq.",
+            "ranking_pacman": "Ən sürətli Pacman güzgülərinin axtarışı və sıralanması...",
+            "pacman_ok": "Pacman güzgüləri ən sürətli HTTPS güzgüləri ilə yeniləndi.",
+            "pacman_fallback": "Reflector vaxtı bitdi və ya xəta baş verdi, cari siyahı saxlanıldı.",
+            "pacman_skip": "Reflector əlçatan deyil, Pacman güzgülərinin optimallaşdırılması ötürüldü.",
+            "ranking_chaotic": "Chaotic-AUR binar repozitoriyasının sazlanması və sıralanması...",
+            "chaotic_ok": "Chaotic-AUR güzgüləri uğurla sıralandı."
         },
         "deploy": {
             "configuring_sddm": "SDDM giriş ekranı idarəedicisi tənzimlənir...",

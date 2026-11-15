@@ -159,6 +159,7 @@ write_version_state() {
     local full_wallpapers="${8:-true}"
     local kb_layout="${9:-"us,ru"}"
     local kb_toggle="${10:-"alt_shift"}"
+    local opt_fast_repos="${11:-true}"
 
     if [[ -z "$commit" || "$commit" == "null" ]]; then
         commit="unknown"
@@ -183,6 +184,7 @@ SDDM_WAYLAND="$sddm_wayland"
 INSTALL_FULL_WALLPAPERS="$full_wallpapers"
 KEYBOARD_LAYOUT="$kb_layout"
 KEYBOARD_TOGGLE="$kb_toggle"
+OPT_FAST_REPOS="$opt_fast_repos"
 EOF
     mv -f "$tmp_file" "$VERSION_FILE"
 }

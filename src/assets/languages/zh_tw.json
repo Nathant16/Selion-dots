@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  附加套件 > ",
             "additional_pkgs_title": "=== 選擇附加套件 ===",
             "menu_additional_pkgs": "附加套件",
-            "menu_keyboard": "鍵盤配置與快捷鍵"
+            "menu_keyboard": "鍵盤配置與快捷鍵",
+            "menu_fast_mirrors": "快速鏡像與 Chaotic-AUR"
         },
         "deps": {
             "syncing": "正在同步並更新系統套件 (pacman -syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "正在啟用軟體庫 {repo}...",
             "enabling_terra": "正在啟用 Terra 軟體庫...",
             "quickshell_outdated": "Quickshell {version} 版本過舊，需要 {minimum} 或更新版本。正在升級...",
-            "quickshell_still_old": "Quickshell 仍然低於 {minimum}。請手動更新，否則將無法開啟設定視窗。"
+            "quickshell_still_old": "Quickshell 仍然低於 {minimum}。請手動更新，否則將無法開啟設定視窗。",
+            "ranking_pacman": "正在搜尋並對最快的 Pacman 鏡像進行排序...",
+            "pacman_ok": "已使用最快的 HTTPS 鏡像更新 Pacman 鏡像列表。",
+            "pacman_fallback": "Reflector 逾時或失敗，保留目前的鏡像列表。",
+            "pacman_skip": "Reflector 不可用，略過 Pacman 鏡像最佳化。",
+            "ranking_chaotic": "正在設定並最佳化 Chaotic-AUR 二進位軟體源鏡像...",
+            "chaotic_ok": "Chaotic-AUR 鏡像排序成功。"
         },
         "deploy": {
             "configuring_sddm": "正在設定 SDDM 顯示管理器...",

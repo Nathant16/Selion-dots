@@ -71,8 +71,10 @@ SDDM_WAYLAND=$(get_saved_preference SDDM_WAYLAND "$SDDM_WAYLAND")
 INSTALL_FULL_WALLPAPERS=$(get_saved_preference INSTALL_FULL_WALLPAPERS "${INSTALL_FULL_WALLPAPERS:-true}")
 KEYBOARD_LAYOUT=$(get_saved_preference KEYBOARD_LAYOUT "${KEYBOARD_LAYOUT:-us,ru}")
 KEYBOARD_TOGGLE=$(get_saved_preference KEYBOARD_TOGGLE "${KEYBOARD_TOGGLE:-alt_shift}")
+OPT_FAST_REPOS=$(get_saved_preference OPT_FAST_REPOS "${OPT_FAST_REPOS:-true}")
 export KEYBOARD_LAYOUT
 export KEYBOARD_TOGGLE
+export OPT_FAST_REPOS
 
 check_supported_os
 bootstrap_installer_deps
@@ -97,6 +99,10 @@ sudo -v
 ) &
 SUDO_KEEP_ALIVE_PID=$!
 trap 'kill $SUDO_KEEP_ALIVE_PID 2>/dev/null || true' EXIT INT TERM
+
+if [ "$OPT_FAST_REPOS" = true ]; then
+    pm_optimize_repos
+fi
 
 TARGET_VERSION=$(get_target_version "$PROJECT_ROOT" "$REPO_SLUG")
 TARGET_COMMIT=$(get_target_commit "$PROJECT_ROOT" "$REPO_SLUG")
@@ -126,7 +132,7 @@ setup_services
 setup_hibernation
 hand_over_from_easyeffects
 setup_sddm "$PROJECT_ROOT" "$INSTALL_STATE" "$IS_REINSTALL"
-write_version_state "$TARGET_VERSION" "$TARGET_COMMIT" "$TELEMETRY_ID" "$ENABLE_TELEMETRY" "${SELECTED_COMPOSITORS[*]}" "$OPT_SDDM" "$SDDM_WAYLAND" "$INSTALL_FULL_WALLPAPERS" "$KEYBOARD_LAYOUT" "$KEYBOARD_TOGGLE"
+write_version_state "$TARGET_VERSION" "$TARGET_COMMIT" "$TELEMETRY_ID" "$ENABLE_TELEMETRY" "${SELECTED_COMPOSITORS[*]}" "$OPT_SDDM" "$SDDM_WAYLAND" "$INSTALL_FULL_WALLPAPERS" "$KEYBOARD_LAYOUT" "$KEYBOARD_TOGGLE" "$OPT_FAST_REPOS"
 
 if [[ "$INSTALL_STATE" == "legacy" || "$INSTALL_STATE" == "fresh" || "$IS_REINSTALL" == true ]]; then
     rm -f "$HOME/.local/state/serpantinum/first_launch.done" "$HOME/.local/state/quickshell/first_launch.done"

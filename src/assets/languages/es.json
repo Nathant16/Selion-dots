@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  Paquetes adicionales > ",
             "additional_pkgs_title": "=== Seleccionar paquetes adicionales ===",
             "menu_additional_pkgs": "Paquetes adicionales",
-            "menu_keyboard": "Distribución del teclado y atajo"
+            "menu_keyboard": "Distribución del teclado y atajo",
+            "menu_fast_mirrors": "Espejos rápidos y Chaotic-AUR"
         },
         "deps": {
             "syncing": "Sincronizando y actualizando paquetes del sistema (pacman -syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "Habilitando repositorio {repo}...",
             "enabling_terra": "Habilitando el repositorio Terra...",
             "quickshell_outdated": "Quickshell {version} es demasiado antiguo, se requiere {minimum} o superior. Actualizando...",
-            "quickshell_still_old": "Quickshell sigue siendo anterior a {minimum}. Actualízalo manualmente; de lo contrario, los ajustes no se abrirán."
+            "quickshell_still_old": "Quickshell sigue siendo anterior a {minimum}. Actualízalo manualmente; de lo contrario, los ajustes no se abrirán.",
+            "ranking_pacman": "Buscando y clasificando los espejos de Pacman más rápidos...",
+            "pacman_ok": "Espejos de Pacman actualizados con los espejos HTTPS más rápidos.",
+            "pacman_fallback": "Tiempo de espera o error en Reflector, manteniendo la lista actual.",
+            "pacman_skip": "Reflector no disponible, omitiendo optimización de espejos de Pacman.",
+            "ranking_chaotic": "Configurando y clasificando el repositorio binario Chaotic-AUR...",
+            "chaotic_ok": "Espejos de Chaotic-AUR clasificados con éxito."
         },
         "deploy": {
             "configuring_sddm": "Configurando el gestor de pantalla SDDM...",

@@ -1654,7 +1654,13 @@
             "enabling_repo": "جارٍ تفعيل المستودع {repo}...",
             "enabling_terra": "جارٍ تفعيل مستودع Terra...",
             "quickshell_outdated": "إصدار Quickshell {version} قديم جدًا، والمطلوب {minimum} أو أحدث. جارٍ الترقية...",
-            "quickshell_still_old": "لا يزال Quickshell أقدم من {minimum}. قم بتحديثه يدويًا، وإلا فلن تفتح الإعدادات."
+            "quickshell_still_old": "لا يزال Quickshell أقدم من {minimum}. قم بتحديثه يدويًا، وإلا فلن تفتح الإعدادات.",
+            "ranking_pacman": "البحث عن أسرع خوادم متطابقة لـ Pacman وترتيبها...",
+            "pacman_ok": "تم تحديث خوادم Pacman بأسرع خوادم HTTPS.",
+            "pacman_fallback": "انتهت مهلة Reflector أو فشل، مع الاحتفاظ بالقائمة الحالية.",
+            "pacman_skip": "Reflector غير متوفر، تخطي تحسين خوادم Pacman.",
+            "ranking_chaotic": "تهيئة وترتيب مستودع Chaotic-AUR الثنائي...",
+            "chaotic_ok": "تم ترتيب خوادم Chaotic-AUR بنجاح."
         },
         "os": {
             "default_os": "نظام لينكس",
@@ -1722,7 +1728,8 @@
             "additional_pkgs_prompt": "  حزم إضافية > ",
             "additional_pkgs_title": "=== تحديد الحزم الإضافية ===",
             "menu_additional_pkgs": "حزم إضافية",
-            "menu_keyboard": "تخطيط لوحة المفاتيح والاختصار"
+            "menu_keyboard": "تخطيط لوحة المفاتيح والاختصار",
+            "menu_fast_mirrors": "خوادم متطابقة سريعة و Chaotic-AUR"
         },
         "audio": {
             "building": "لا يوجد محرك صوت مبني مسبقًا لهذا النظام، جارٍ البناء من المصدر...",

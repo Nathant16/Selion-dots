@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  Լրացուցիչ փաթեթներ > ",
             "additional_pkgs_title": "=== Լրացուցիչ փաթեթների ընտրություն ===",
             "menu_additional_pkgs": "Լրացուցիչ փաթեթներ",
-            "menu_keyboard": "Ստեղնաշարի դասավորություն և դյուրանցում"
+            "menu_keyboard": "Ստեղնաշարի դասավորություն և դյուրանցում",
+            "menu_fast_mirrors": "Արագ հայելիներ և Chaotic-AUR"
         },
         "deps": {
             "syncing": "Համակարգային փաթեթների համաժամացում և թարմացում (pacman -syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "Ակտիվացվում է {repo} պահոցը...",
             "enabling_terra": "Ակտիվացվում է Terra պահոցը...",
             "quickshell_outdated": "Quickshell {version}-ը չափազանց հին է, պահանջվում է {minimum} կամ ավելի նոր տարբերակ։ Թարմացվում է...",
-            "quickshell_still_old": "Quickshell-ը դեռևս հին է {minimum}-ից։ Թարմացրեք այն ձեռքով, հակառակ դեպքում կարգավորումները չեն բացվի։"
+            "quickshell_still_old": "Quickshell-ը դեռևս հին է {minimum}-ից։ Թարմացրեք այն ձեռքով, հակառակ դեպքում կարգավորումները չեն բացվի։",
+            "ranking_pacman": "Pacman-ի ամենաարագ հայելիների որոնում և դասակարգում...",
+            "pacman_ok": "Pacman հայելիների ցանկը թարմացվել է ամենաարագ HTTPS հայելիներով:",
+            "pacman_fallback": "Reflector-ի սպասման ժամկետը լրացել է, պահպանվել է ընթացիկ ցանկը:",
+            "pacman_skip": "Reflector-ը հասանելի չէ, Pacman հայելիների օպտիմալացումը բաց է թողնված:",
+            "ranking_chaotic": "Chaotic-AUR երկուական պահոցի կարգավորում և դասակարգում...",
+            "chaotic_ok": "Chaotic-AUR հայելիները հաջողությամբ դասակարգվել են:"
         },
         "deploy": {
             "configuring_sddm": "SDDM էկրանի կառավարիչը կարգավորվում է...",

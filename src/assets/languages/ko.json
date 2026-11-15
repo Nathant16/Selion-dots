@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  추가 패키지 > ",
             "additional_pkgs_title": "=== 추가 패키지 선택 ===",
             "menu_additional_pkgs": "추가 패키지",
-            "menu_keyboard": "키보드 레이아웃 및 바로가기"
+            "menu_keyboard": "키보드 레이아웃 및 바로가기",
+            "menu_fast_mirrors": "빠른 미러 및 Chaotic-AUR"
         },
         "deps": {
             "syncing": "시스템 패키지를 동기화하고 업데이트하는 중 (pacman -syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "저장소 {repo} 활성화 중...",
             "enabling_terra": "Terra 저장소 활성화 중...",
             "quickshell_outdated": "Quickshell {version} 버전이 너무 오래되어 {minimum} 이상이 필요합니다. 업그레이드 중...",
-            "quickshell_still_old": "Quickshell이 여전히 {minimum}보다 이전 버전입니다. 수동으로 업데이트하지 않으면 설정이 열리지 않습니다."
+            "quickshell_still_old": "Quickshell이 여전히 {minimum}보다 이전 버전입니다. 수동으로 업데이트하지 않으면 설정이 열리지 않습니다.",
+            "ranking_pacman": "가장 빠른 Pacman 미러를 검색하고 정렬하는 중...",
+            "pacman_ok": "가장 빠른 HTTPS 미러로 Pacman 미러 목록이 업데이트되었습니다.",
+            "pacman_fallback": "Reflector 시간 초과 또는 실패로 현재 미러 목록을 유지합니다.",
+            "pacman_skip": "Reflector를 사용할 수 없어 Pacman 미러 최적화를 건너뜁니다.",
+            "ranking_chaotic": "Chaotic-AUR 바이너리 저장소 구성 및 미러 정렬 중...",
+            "chaotic_ok": "Chaotic-AUR 미러가 성공적으로 정렬되었습니다."
         },
         "deploy": {
             "configuring_sddm": "SDDM 디스플레이 관리자를 설정하는 중...",

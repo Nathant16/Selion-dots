@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  अतिरिक्त पैकेज > ",
             "additional_pkgs_title": "=== अतिरिक्त पैकेज चुनें ===",
             "menu_additional_pkgs": "अतिरिक्त पैकेज",
-            "menu_keyboard": "कीबोर्ड लेआउट और शॉर्टकट"
+            "menu_keyboard": "कीबोर्ड लेआउट और शॉर्टकट",
+            "menu_fast_mirrors": "तेज़ दर्पण और Chaotic-AUR"
         },
         "deps": {
             "syncing": "सिस्टम पैकेज सिंक्रनाइज़ और अपडेट किए जा रहे हैं (pacman -syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "रिपॉज़िटरी {repo} सक्षम की जा रही है...",
             "enabling_terra": "Terra रिपॉज़िटरी सक्षम की जा रही है...",
             "quickshell_outdated": "Quickshell {version} बहुत पुराना है, {minimum} या नया आवश्यक है। अपग्रेड किया जा रहा है...",
-            "quickshell_still_old": "Quickshell अभी भी {minimum} से पुराना है। इसे मैन्युअल रूप से अपडेट करें, अन्यथा सेटिंग्स नहीं खुलेंगी।"
+            "quickshell_still_old": "Quickshell अभी भी {minimum} से पुराना है। इसे मैन्युअल रूप से अपडेट करें, अन्यथा सेटिंग्स नहीं खुलेंगी।",
+            "ranking_pacman": "सबसे तेज़ Pacman दर्पणों की खोज और रैंकिंग...",
+            "pacman_ok": "Pacman दर्पणों को सबसे तेज़ HTTPS दर्पणों के साथ अपडेट किया गया।",
+            "pacman_fallback": "Reflector समय समाप्त या विफल हुआ, वर्तमान सूची बनाए रखी गई।",
+            "pacman_skip": "Reflector उपलब्ध नहीं है, Pacman दर्पण अनुकूलन छोड़ दिया गया।",
+            "ranking_chaotic": "Chaotic-AUR बाइनरी रिपॉजिटरी को कॉन्फ़िगर और रैंक किया जा रहा है...",
+            "chaotic_ok": "Chaotic-AUR दर्पण सफलतापूर्वक रैंक किए गए।"
         },
         "deploy": {
             "configuring_sddm": "SDDM डिस्प्ले मैनेजर कॉन्फ़िगर किया जा रहा है...",

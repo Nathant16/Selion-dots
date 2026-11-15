@@ -842,7 +842,8 @@
             "additional_pkgs_prompt": "  追加パッケージ > ",
             "additional_pkgs_title": "=== 追加パッケージの選択 == ガ",
             "menu_additional_pkgs": "追加パッケージ",
-            "menu_keyboard": "キーボードレイアウトとショートカット"
+            "menu_keyboard": "キーボードレイアウトとショートカット",
+            "menu_fast_mirrors": "高速ミラーと Chaotic-AUR"
         },
         "deps": {
             "syncing": "システムパッケージを同期および更新中 (pacman -Syyu)...",
@@ -856,7 +857,13 @@
             "enabling_repo": "リポジトリ {repo} を有効化中...",
             "enabling_terra": "Terra リポジトリを有効化中...",
             "quickshell_outdated": "Quickshell {version} は古すぎるため、{minimum} 以降が必要です。アップグレード中...",
-            "quickshell_still_old": "Quickshell がまだ {minimum} より古いままです。手動で更新してください。更新しないと設定画面が開きません。"
+            "quickshell_still_old": "Quickshell がまだ {minimum} より古いままです。手動で更新してください。更新しないと設定画面が開きません。",
+            "ranking_pacman": "最速の Pacman ミラーを検索してランク付けしています...",
+            "pacman_ok": "最速の HTTPS ミラーで Pacman ミラーリストを更新しました。",
+            "pacman_fallback": "Reflector がタイムアウトまたは失敗したため、現在のミラーリストを保持します。",
+            "pacman_skip": "Reflector が利用できないため、Pacman ミラーの最適化をスキップします。",
+            "ranking_chaotic": "Chaotic-AUR バイナリリポジトリの設定とランク付けを行っています...",
+            "chaotic_ok": "Chaotic-AUR ミラーのランク付けが正常に完了しました。"
         },
         "deploy": {
             "configuring_sddm": "SDDM ディスプレイマネージャーを設定中...",

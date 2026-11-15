@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  Extra pakketten > ",
             "additional_pkgs_title": "=== Extra pakketten selecteren ===",
             "menu_additional_pkgs": "Extra pakketten",
-            "menu_keyboard": "Toetsenbordindeling & sneltoets"
+            "menu_keyboard": "Toetsenbordindeling & sneltoets",
+            "menu_fast_mirrors": "Snelle mirrors & Chaotic-AUR"
         },
         "deps": {
             "syncing": "Systeempakketten synchroniseren en bijwerken (pacman -syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "Pakketbron {repo} inschakelen...",
             "enabling_terra": "Terra-pakketbron inschakelen...",
             "quickshell_outdated": "Quickshell {version} is te oud, {minimum} of nieuwer is vereist. Bijwerken...",
-            "quickshell_still_old": "Quickshell is nog steeds ouder dan {minimum}. Werk het handmatig bij, anders worden de instellingen niet geopend."
+            "quickshell_still_old": "Quickshell is nog steeds ouder dan {minimum}. Werk het handmatig bij, anders worden de instellingen niet geopend.",
+            "ranking_pacman": "Snelste Pacman-mirrors zoeken en rangschikken...",
+            "pacman_ok": "Pacman-mirrors bijgewerkt met de snelste HTTPS-mirrors.",
+            "pacman_fallback": "Reflector-time-out of fout, huidige mirrorlijst behouden.",
+            "pacman_skip": "Reflector niet beschikbaar, Pacman-mirroroptimalisatie overgeslagen.",
+            "ranking_chaotic": "Chaotic-AUR binaire repository configureren en rangschikken...",
+            "chaotic_ok": "Chaotic-AUR-mirrors succesvol gerangschikt."
         },
         "deploy": {
             "configuring_sddm": "SDDM-inlogbeheerder configureren...",

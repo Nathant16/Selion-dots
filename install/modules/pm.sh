@@ -21,4 +21,6 @@ PM_SDDM_WAYLAND_DEFAULT=false
 PM_SDDM_CURSOR_FIX=false
 PM_AUDIO_BUILD_PKGS=()
 
+pm_optimize_repos() { :; }
+
 source "$PM_MODULES_DIR/$PM_NAME.sh"

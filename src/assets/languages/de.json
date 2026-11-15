@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  Zusatzpakete > ",
             "additional_pkgs_title": "=== Zusatzpakete auswählen ===",
             "menu_additional_pkgs": "Zusatzpakete",
-            "menu_keyboard": "Tastaturlayout & Tastenkürzel"
+            "menu_keyboard": "Tastaturlayout & Tastenkürzel",
+            "menu_fast_mirrors": "Schnelle Spiegelserver & Chaotic-AUR"
         },
         "deps": {
             "syncing": "Systempakete werden synchronisiert und aktualisiert (pacman -Syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "Repository {repo} wird aktiviert...",
             "enabling_terra": "Terra-Repository wird aktiviert...",
             "quickshell_outdated": "Quickshell {version} ist zu alt, {minimum} oder neuer wird benötigt. Aktualisierung läuft...",
-            "quickshell_still_old": "Quickshell ist immer noch älter als {minimum}. Bitte manuell aktualisieren, sonst lassen sich die Einstellungen nicht öffnen."
+            "quickshell_still_old": "Quickshell ist immer noch älter als {minimum}. Bitte manuell aktualisieren, sonst lassen sich die Einstellungen nicht öffnen.",
+            "ranking_pacman": "Suche und Bewertung der schnellsten Pacman-Spiegelserver...",
+            "pacman_ok": "Pacman-Spiegelserver mit den schnellsten HTTPS-Spiegeln aktualisiert.",
+            "pacman_fallback": "Reflector-Zeitüberschreitung oder Fehler, aktuelle Spiegelserver-Liste beibehalten.",
+            "pacman_skip": "Reflector nicht verfügbar, Überspringen der Pacman-Spiegelserver-Optimierung.",
+            "ranking_chaotic": "Konfigurieren und Bewerten des binären Chaotic-AUR-Repositorys...",
+            "chaotic_ok": "Chaotic-AUR-Spiegelserver erfolgreich bewertet."
         },
         "deploy": {
             "configuring_sddm": "SDDM-Display-Manager wird konfiguriert...",

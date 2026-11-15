@@ -310,8 +310,8 @@
                 "desc": "Set the display scale factor for this monitor"
             },
             "resolution": {
-                "title": "Screen Resolution",
-                "desc": "Set monitor display resolution"
+                "title": "Display Resolution",
+                "desc": "Set output display resolution"
             },
             "framerate": {
                 "title": "Refresh Rate",
@@ -378,11 +378,7 @@
                 }
             },
             "layout_stage": "2D Displays Arrangement",
-            "monitors_detected": "monitor(s)",
-            "resolution": {
-                "title": "Display Resolution",
-                "desc": "Set output display resolution"
-            }
+            "monitors_detected": "monitor(s)"
         },
         "bar": {
             "modules": {
@@ -2317,7 +2313,8 @@
             "additional_pkgs_header": " Toggle optional packages, then select done ",
             "additional_pkgs_prompt": " Additional packages > ",
             "main_menu_prompt": " Main menu > ",
-            "main_menu_header": " Use arrow keys to navigate, enter to select "
+            "main_menu_header": " Use arrow keys to navigate, enter to select ",
+            "menu_fast_mirrors": "Fast mirrors & Chaotic-AUR"
         },
         "deps": {
             "syncing": "Synchronizing and updating system packages (pacman -syyu)...",
@@ -2331,7 +2328,13 @@
             "install_ok": "Successfully installed {pkg}",
             "install_failed": "Failed to install {pkg}",
             "quickshell_outdated": "Quickshell {version} is too old, {minimum} or newer is required. Upgrading...",
-            "quickshell_still_old": "Quickshell is still older than {minimum}. Update it manually, otherwise settings will not open."
+            "quickshell_still_old": "Quickshell is still older than {minimum}. Update it manually, otherwise settings will not open.",
+            "ranking_pacman": "Finding and ranking fastest Pacman mirrors...",
+            "pacman_ok": "Pacman mirrors updated with fastest HTTPS mirrors.",
+            "pacman_fallback": "Reflector timed out or failed, keeping current Pacman mirrorlist.",
+            "pacman_skip": "Reflector not available, skipping Pacman mirror optimization.",
+            "ranking_chaotic": "Configuring and ranking Chaotic-AUR binary repository...",
+            "chaotic_ok": "Chaotic-AUR mirrors ranked successfully."
         },
         "ski": {
             "installing": "Installing the Ski file manager...",

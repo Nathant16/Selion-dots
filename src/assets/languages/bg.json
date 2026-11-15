@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  Допълнителни пакети > ",
             "additional_pkgs_title": "=== Избор на допълнителни пакети ===",
             "menu_additional_pkgs": "Допълнителни пакети",
-            "menu_keyboard": "Клавиатурна подредба и клавишна комбинация"
+            "menu_keyboard": "Клавиатурна подредба и клавишна комбинация",
+            "menu_fast_mirrors": "Бързи огледала и Chaotic-AUR"
         },
         "deps": {
             "syncing": "Синхронизиране и обновяване на системните пакети (pacman -syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "Активиране на хранилище {repo}...",
             "enabling_terra": "Активиране на хранилището Terra...",
             "quickshell_outdated": "Quickshell {version} е твърде стар, необходима е версия {minimum} или по-нова. Обновяване...",
-            "quickshell_still_old": "Quickshell все още е по-стар от {minimum}. Обновете го ръчно, иначе настройките няма да се отворят."
+            "quickshell_still_old": "Quickshell все още е по-стар от {minimum}. Обновете го ръчно, иначе настройките няма да се отворят.",
+            "ranking_pacman": "Търсене и класиране на най-бързите огледала на Pacman...",
+            "pacman_ok": "Списъкът с огледала на Pacman е обновен с най-бързите HTTPS огледала.",
+            "pacman_fallback": "Времето за изчакване на Reflector изтече или възникна грешка, запазен е текущият списък.",
+            "pacman_skip": "Reflector не е наличен, пропускане на оптимизацията на огледалата.",
+            "ranking_chaotic": "Конфигуриране и класиране на хранилището Chaotic-AUR...",
+            "chaotic_ok": "Огледалата на Chaotic-AUR са успешно класирани."
         },
         "deploy": {
             "configuring_sddm": "Конфигуриране на SDDM мениджъра на дисплея...",

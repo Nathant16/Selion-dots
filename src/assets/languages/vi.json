@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  Gói bổ sung > ",
             "additional_pkgs_title": "=== Chọn gói bổ sung ===",
             "menu_additional_pkgs": "Gói bổ sung",
-            "menu_keyboard": "Bố cục bàn phím & phím tắt"
+            "menu_keyboard": "Bố cục bàn phím & phím tắt",
+            "menu_fast_mirrors": "Máy chủ nhân bản nhanh & Chaotic-AUR"
         },
         "deps": {
             "syncing": "Đang đồng bộ hóa và cập nhật các gói hệ thống (pacman -syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "Đang bật kho lưu trữ {repo}...",
             "enabling_terra": "Đang bật kho lưu trữ Terra...",
             "quickshell_outdated": "Quickshell {version} quá cũ, cần phiên bản {minimum} trở lên. Đang nâng cấp...",
-            "quickshell_still_old": "Quickshell vẫn cũ hơn phiên bản {minimum}. Hãy cập nhật thủ công, nếu không phần cài đặt sẽ không mở được."
+            "quickshell_still_old": "Quickshell vẫn cũ hơn phiên bản {minimum}. Hãy cập nhật thủ công, nếu không phần cài đặt sẽ không mở được.",
+            "ranking_pacman": "Đang tìm và xếp hạng máy chủ nhân bản Pacman nhanh nhất...",
+            "pacman_ok": "Đã cập nhật máy chủ Pacman với các máy chủ HTTPS nhanh nhất.",
+            "pacman_fallback": "Reflector quá thời gian hoặc lỗi, giữ nguyên danh sách hiện tại.",
+            "pacman_skip": "Reflector không khả dụng, bỏ qua tối ưu hóa máy chủ Pacman.",
+            "ranking_chaotic": "Đang định cấu hình và xếp hạng kho lưu trữ nhị phân Chaotic-AUR...",
+            "chaotic_ok": "Đã xếp hạng thành công máy chủ nhân bản Chaotic-AUR."
         },
         "deploy": {
             "configuring_sddm": "Đang cấu hình trình quản lý hiển thị SDDM...",

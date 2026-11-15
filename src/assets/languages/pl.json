@@ -848,7 +848,8 @@
             "additional_pkgs_prompt": "  Dodatkowe pakiety > ",
             "additional_pkgs_title": "=== Wybór dodatkowych pakietów ===",
             "menu_additional_pkgs": "Dodatkowe pakiety",
-            "menu_keyboard": "Układ klawiatury i skrót"
+            "menu_keyboard": "Układ klawiatury i skrót",
+            "menu_fast_mirrors": "Szybkie serwery lustrzane i Chaotic-AUR"
         },
         "deps": {
             "syncing": "Synchronizacja i aktualizacja pakietów systemowych (pacman -Syyu)...",
@@ -862,7 +863,13 @@
             "enabling_repo": "Włączanie repozytorium {repo}...",
             "enabling_terra": "Włączanie repozytorium Terra...",
             "quickshell_outdated": "Quickshell {version} jest zbyt stary, wymagana jest wersja {minimum} lub nowsza. Aktualizowanie...",
-            "quickshell_still_old": "Quickshell nadal jest starszy niż {minimum}. Zaktualizuj go ręcznie, w przeciwnym razie ustawienia się nie otworzą."
+            "quickshell_still_old": "Quickshell nadal jest starszy niż {minimum}. Zaktualizuj go ręcznie, w przeciwnym razie ustawienia się nie otworzą.",
+            "ranking_pacman": "Wyszukiwanie i sortowanie najszybszych serwerów lustrzanych Pacman...",
+            "pacman_ok": "Zaktualizowano listę serwerów Pacman o najszybsze serwery HTTPS.",
+            "pacman_fallback": "Przekroczono limit czasu Reflector lub wystąpił błąd, zachowano bieżącą listę.",
+            "pacman_skip": "Reflector niedostępny, pomijanie optymalizacji serwerów Pacman.",
+            "ranking_chaotic": "Konfiguracja i sortowanie repozytorium binarnego Chaotic-AUR...",
+            "chaotic_ok": "Serwery lustrzane Chaotic-AUR zostały pomyślnie posortowane."
         },
         "deploy": {
             "configuring_sddm": "Konfigurowanie menedżera logowania SDDM...",

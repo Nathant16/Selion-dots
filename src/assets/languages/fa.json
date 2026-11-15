@@ -2313,7 +2313,8 @@
             "additional_pkgs_prompt": "  بسته‌های اضافی > ",
             "additional_pkgs_title": "=== انتخاب بسته‌های اضافی ===",
             "menu_additional_pkgs": "بسته‌های اضافی",
-            "menu_keyboard": "چیدمان صفحه‌کلید و میانبر"
+            "menu_keyboard": "چیدمان صفحه‌کلید و میانبر",
+            "menu_fast_mirrors": "آینه‌های سریع و Chaotic-AUR"
         },
         "deps": {
             "syncing": "در حال همگام‌سازی و به‌روزرسانی بسته‌های سیستم (pacman -syyu)...",
@@ -2327,7 +2328,13 @@
             "enabling_repo": "در حال فعال‌سازی مخزن {repo}...",
             "enabling_terra": "در حال فعال‌سازی مخزن Terra...",
             "quickshell_outdated": "نسخه Quickshell {version} بیش از حد قدیمی است، نسخه {minimum} یا جدیدتر لازم است. در حال ارتقا...",
-            "quickshell_still_old": "نسخه Quickshell همچنان قدیمی‌تر از {minimum} است. آن را به صورت دستی به‌روزرسانی کنید، در غیر این صورت تنظیمات باز نخواهد شد."
+            "quickshell_still_old": "نسخه Quickshell همچنان قدیمی‌تر از {minimum} است. آن را به صورت دستی به‌روزرسانی کنید، در غیر این صورت تنظیمات باز نخواهد شد.",
+            "ranking_pacman": "جستجو و رتبه‌بندی سریع‌ترین آینه‌های Pacman...",
+            "pacman_ok": "فهرست آینه‌های Pacman با سریع‌ترین آینه‌های HTTPS به‌روزرسانی شد.",
+            "pacman_fallback": "مهلت زمانی Reflector به پایان رسید، فهرست فعلی حفظ شد.",
+            "pacman_skip": "Reflector در دسترس نیست، صرف‌نظر از بهینه‌سازی آینه‌های Pacman.",
+            "ranking_chaotic": "پیکربندی و رتبه‌بندی مخزن باینری Chaotic-AUR...",
+            "chaotic_ok": "آینه‌های Chaotic-AUR با موفقیت رتبه‌بندی شدند."
         },
         "deploy": {
             "configuring_sddm": "در حال پیکربندی مدیر ورود SDDM...",

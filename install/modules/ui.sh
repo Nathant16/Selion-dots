@@ -14,6 +14,7 @@ ENABLE_TELEMETRY=true
 INSTALL_FULL_WALLPAPERS=true
 KEYBOARD_LAYOUT="us,ru"
 KEYBOARD_TOGGLE="alt_shift"
+OPT_FAST_REPOS=true
 SELECTED_COMPOSITORS=()
 DETECTED_COMPOSITOR_LABEL=""
 MULTIPLE_COMPOSITORS_DETECTED=false
@@ -904,10 +905,12 @@ run_installer_ui() {
         OPT_SDDM="${OPT_SDDM:-true}"
         INSTALL_FULL_WALLPAPERS="${INSTALL_FULL_WALLPAPERS:-true}"
         ENABLE_TELEMETRY="${ENABLE_TELEMETRY:-false}"
+        OPT_FAST_REPOS="${OPT_FAST_REPOS:-true}"
         return 0
     fi
 
     local cursor=0
+    OPT_FAST_REPOS="${OPT_FAST_REPOS:-true}"
 
     while true; do
         draw_banner
@@ -942,6 +945,7 @@ run_installer_ui() {
             local S_TEL="${DIM}[OFF]${RESET}"
             local S_WP="${DIM}[3 Random]${RESET}"
             local S_ADD="${DIM}[None]${RESET}"
+            local S_MIRRORS="${DIM}[OFF]${RESET}"
             local S_KB="${C_GREEN}[Alt+Shift ($KEYBOARD_LAYOUT)]${RESET}"
             case "$KEYBOARD_TOGGLE" in
                 ctrl_shift) S_KB="${C_GREEN}[Ctrl+Shift ($KEYBOARD_LAYOUT)]${RESET}" ;;
@@ -952,6 +956,7 @@ run_installer_ui() {
             [ "$OPT_SDDM" = true ] && S_SDDM="${C_GREEN}[ON]${RESET}"
             [ "$ENABLE_TELEMETRY" = true ] && S_TEL="${C_GREEN}[ON]${RESET}"
             [ "$INSTALL_FULL_WALLPAPERS" = true ] && S_WP="${C_GREEN}[Full Pack]${RESET}"
+            [ "$OPT_FAST_REPOS" = true ] && S_MIRRORS="${C_GREEN}[ON]${RESET}"
             [ ${#SELECTED_ADDITIONAL_PKGS[@]} -gt 0 ] && S_ADD="${C_GREEN}[${#SELECTED_ADDITIONAL_PKGS[@]} Selected]${RESET}"
 
             local items=()
@@ -961,15 +966,16 @@ run_installer_ui() {
             items+=("4. $(t "installer.ui.menu_wallpapers") $S_WP")
             items+=("5. $(t "installer.ui.menu_additional_pkgs" "Additional Packages") $S_ADD")
             items+=("6. $(t "installer.ui.menu_keyboard" "Keyboard Layout & Shortcut") $S_KB")
-            items+=("7. $(t "installer.ui.menu_telemetry") $S_TEL")
+            items+=("7. $(t "installer.ui.menu_fast_mirrors" "Fast mirrors & Chaotic-AUR") $S_MIRRORS")
+            items+=("8. $(t "installer.ui.menu_telemetry") $S_TEL")
 
             if [[ "$INSTALL_STATE" == "current" ]]; then
-                items+=("8. ${BOLD}${C_GREEN}$(t "installer.ui.menu_update")${RESET}")
-                items+=("9. ${BOLD}${C_YELLOW}$(t "installer.ui.menu_reinstall")${RESET}")
-                items+=("10. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
+                items+=("9. ${BOLD}${C_GREEN}$(t "installer.ui.menu_update")${RESET}")
+                items+=("10. ${BOLD}${C_YELLOW}$(t "installer.ui.menu_reinstall")${RESET}")
+                items+=("11. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
             else
-                items+=("8. ${BOLD}${C_GREEN}$(t "installer.ui.menu_install")${RESET}")
-                items+=("9. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
+                items+=("9. ${BOLD}${C_GREEN}$(t "installer.ui.menu_install")${RESET}")
+                items+=("10. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
             fi
 
             if [ "$rendered_lines" -gt 0 ]; then
@@ -1027,9 +1033,12 @@ run_installer_ui() {
                     break
                     ;;
                 "7")
-                    ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                    OPT_FAST_REPOS=$([ "$OPT_FAST_REPOS" = true ] && echo false || echo true)
                     ;;
                 "8")
+                    ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                    ;;
+                "9")
                     if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                         printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
                         sleep 1.5
@@ -1039,7 +1048,7 @@ run_installer_ui() {
                     cleanup_terminal
                     return 0
                     ;;
-                "9")
+                "10")
                     if [[ "$INSTALL_STATE" == "current" ]]; then
                         if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                             printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
@@ -1055,7 +1064,7 @@ run_installer_ui() {
                         exit 0
                     fi
                     ;;
-                "10")
+                "11")
                     if [[ "$INSTALL_STATE" == "current" ]]; then
                         cleanup_terminal
                         clear 2>/dev/null || true
@@ -1094,9 +1103,12 @@ run_installer_ui() {
                             break
                             ;;
                         *"7."*)
-                            ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                            OPT_FAST_REPOS=$([ "$OPT_FAST_REPOS" = true ] && echo false || echo true)
                             ;;
                         *"8."*)
+                            ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                            ;;
+                        *"9."*)
                             if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                                 printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
                                 sleep 1.5
@@ -1106,7 +1118,7 @@ run_installer_ui() {
                             cleanup_terminal
                             return 0
                             ;;
-                        *"9."*)
+                        *"10."*)
                             if [[ "$INSTALL_STATE" == "current" ]]; then
                                 if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                                     printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
@@ -1122,7 +1134,7 @@ run_installer_ui() {
                                 exit 0
                             fi
                             ;;
-                        *"10."*)
+                        *"11."*)
                             if [[ "$INSTALL_STATE" == "current" ]]; then
                                 cleanup_terminal
                                 clear 2>/dev/null || true
