@@ -2,7 +2,26 @@
 
 PM_BOOTSTRAP_TOOLS=(fzf jq curl git pciutils unzip fontconfig base-devel)
 PM_AUDIO_BUILD_PKGS=(base-devel pkgconf pipewire)
+
+get_gpu_vulkan_pkgs() {
+    local pkgs=()
+    local gpu
+    gpu=$(lspci 2>/dev/null | grep -iE 'vga|3d|display' || true)
+
+    if echo "$gpu" | grep -qiE 'amd|radeon|ati'; then
+        pkgs+=("vulkan-radeon" "lib32-vulkan-radeon")
+    elif echo "$gpu" | grep -qiE 'intel'; then
+        pkgs+=("vulkan-intel" "lib32-vulkan-intel")
+    elif echo "$gpu" | grep -qiE 'nvidia'; then
+        pkgs+=("nvidia-utils" "lib32-nvidia-utils")
+    fi
+    printf '%s\n' "${pkgs[@]}"
+}
+
 PM_EXTRA_PKGS=(pam-fprint-grosshack)
+for _p in $(get_gpu_vulkan_pkgs 2>/dev/null); do
+    PM_EXTRA_PKGS+=("$_p")
+done
 
 pm_prepare_repos() {
     if [ -f /etc/pacman.conf ]; then
