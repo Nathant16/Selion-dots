@@ -304,6 +304,7 @@ install_additional_packages() {
     local pkgs=("$@")
     [ ${#pkgs[@]} -eq 0 ] && return 0
 
+    sudo -n true 2>/dev/null || sudo -v 2>/dev/null || true
     echo -e "\n\e[36m[ INFO ]\e[0m $(t "installer.deps.additional_installing" "Installing additional packages...")\n"
     local SAFE_JOBS=$(( $(nproc) / 2 ))
     [[ $SAFE_JOBS -lt 1 ]] && SAFE_JOBS=1

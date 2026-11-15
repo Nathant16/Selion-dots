@@ -241,6 +241,8 @@ install_wallpapers() {
         default_wp="$(find "$selion_dir" "$wallpaper_dir" "$pics_parent/Wallpapers" "$pics_parent/Wallpaper" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | sort -V | head -n 1)"
     fi
     if [ -n "$default_wp" ] && [ -f "$default_wp" ]; then
+        [ ! -f "$wallpaper_dir/${default_wp##*/}" ] && cp -f "$default_wp" "$wallpaper_dir/${default_wp##*/}" 2>/dev/null || true
+        [ ! -f "$wallpaper_dir/default.png" ] && cp -f "$default_wp" "$wallpaper_dir/default.png" 2>/dev/null || true
         local def_state="$cache_dir/current_default"
         printf '%s' "$default_wp" > "$def_state"
         printf '%s\n' "${default_wp##*/}" > "${def_state}_name"
@@ -496,10 +498,15 @@ setup_pam_service() {
 
     # Configure sudo: allow typing password OR scanning fingerprint simultaneously
     if [ -f "$pam_dir/sudo" ]; then
-        if grep -qs "pam_fprintd" "$pam_dir/sudo"; then
-            sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/$fp_mod/g" "$pam_dir/sudo" 2>/dev/null || true
+        if [ "$fp_mod" = "pam_fprintd_grosshack.so" ]; then
+            if grep -qs "pam_fprintd" "$pam_dir/sudo"; then
+                sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/pam_fprintd_grosshack.so/g" "$pam_dir/sudo" 2>/dev/null || true
+            else
+                sudo sed -i "1s/^/-auth\t\tsufficient\tpam_fprintd_grosshack.so\n/" "$pam_dir/sudo" 2>/dev/null || true
+            fi
         else
-            sudo sed -i "1s/^/-auth\t\tsufficient\t$fp_mod\n/" "$pam_dir/sudo" 2>/dev/null || true
+            # Standard pam_fprintd blocks terminal input without password prompt; remove it from sudo
+            sudo sed -i '/pam_fprintd/d' "$pam_dir/sudo" 2>/dev/null || true
         fi
     fi
 
@@ -518,6 +525,69 @@ setup_pam_service() {
             sudo sed -i -E "s/pam_fprintd(_grosshack)?\.so/$fp_mod/g" "$pam_dir/system-local-login" 2>/dev/null || true
         else
             sudo sed -i "1s/^/-auth      sufficient $fp_mod\n/" "$pam_dir/system-local-login" 2>/dev/null || true
+        fi
+    fi
+}
+
+configure_keyboard_layout() {
+    local layout="${1:-${KEYBOARD_LAYOUT:-us,ru}}"
+    local toggle="${2:-${KEYBOARD_TOGGLE:-alt_shift}}"
+
+    local xkb_opts="grp:alt_shift_toggle,grp:ctrl_shift_toggle"
+    case "$toggle" in
+        ctrl_shift)
+            xkb_opts="grp:ctrl_shift_toggle,grp:alt_shift_toggle"
+            ;;
+        win_space)
+            xkb_opts="grp:win_space_toggle"
+            ;;
+        caps_lock)
+            xkb_opts="grp:caps_toggle"
+            ;;
+        *)
+            xkb_opts="grp:alt_shift_toggle,grp:ctrl_shift_toggle"
+            ;;
+    esac
+
+    echo -e "\e[36m[ INFO ]\e[0m Configuring keyboard layout ($layout, $toggle)..."
+
+    # Hyprland
+    local hypr_input="$HOME/.config/hypr/default/input.lua"
+    if [ -f "$hypr_input" ]; then
+        sed -i -E "s/kb_layout = \"[^\"]*\"/kb_layout = \"$layout\"/" "$hypr_input" 2>/dev/null || true
+        sed -i -E "s/kb_options = \"[^\"]*\"/kb_options = \"$xkb_opts\"/" "$hypr_input" 2>/dev/null || true
+    fi
+
+    # Sway
+    local sway_input="$HOME/.config/sway/default/input"
+    if [ -f "$sway_input" ]; then
+        sed -i -E "s/xkb_layout \"[^\"]*\"/xkb_layout \"$layout\"/" "$sway_input" 2>/dev/null || true
+        sed -i -E "s/xkb_options \"[^\"]*\"/xkb_options \"$xkb_opts\"/" "$sway_input" 2>/dev/null || true
+    fi
+
+    # Niri
+    local niri_input="$HOME/.config/niri/default/input.kdl"
+    if [ -f "$niri_input" ]; then
+        sed -i -E "s/layout \"[^\"]*\"/layout \"$layout\"/" "$niri_input" 2>/dev/null || true
+        sed -i -E "s/options \"[^\"]*\"/options \"$xkb_opts\"/" "$niri_input" 2>/dev/null || true
+    fi
+
+    # Mango
+    local mango_input="$HOME/.config/mango/default/input.conf"
+    if [ -f "$mango_input" ]; then
+        sed -i -E "s/xkb_rules_layout=[^[:space:]]*/xkb_rules_layout=$layout/" "$mango_input" 2>/dev/null || true
+        sed -i -E "s/xkb_rules_options=[^[:space:]]*/xkb_rules_options=$xkb_opts/" "$mango_input" 2>/dev/null || true
+    fi
+
+    # DriftWM
+    local drift_config="$HOME/.config/driftwm/config.toml"
+    if [ -f "$drift_config" ]; then
+        sed -i -E "s/^layout = \"[^\"]*\"/layout = \"$layout\"/" "$drift_config" 2>/dev/null || true
+        if ! grep -q '"shift+alt"' "$drift_config" 2>/dev/null; then
+            sed -i '/"alt+shift" = "switch-layout next"/a "shift+alt" = "switch-layout next"' "$drift_config" 2>/dev/null || true
+        fi
+        if ! grep -q '"shift+ctrl"' "$drift_config" 2>/dev/null; then
+            sed -i '/"ctrl+shift" = "switch-layout next"/a "shift+ctrl" = "switch-layout next"' "$drift_config" 2>/dev/null || true
         fi
     fi
 }
@@ -887,5 +957,6 @@ deploy_package() {
         python3 "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" 2>/dev/null || true
     fi
 
+    configure_keyboard_layout "$KEYBOARD_LAYOUT" "$KEYBOARD_TOGGLE"
     setup_pam_service
 }

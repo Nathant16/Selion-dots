@@ -794,6 +794,9 @@ Item {
             if (displayModel.count === 0) {
                 window.syncFromSrcModel();
             }
+            if (displayModel.count === 0 && (localProxyModel.count > 0 || videoProxyModel.count > 0)) {
+                window.applyFilters(true);
+            }
             if (displayModel.count === 0 && localProxyModel.count === 0 && videoProxyModel.count === 0) {
                 window.triggerIndexer();
             }
@@ -1177,6 +1180,9 @@ Item {
             if (localItems.length > 0) localProxyModel.append(localItems);
             if (videoItems.length > 0) videoProxyModel.append(videoItems);
             if (window.currentFilter !== "Search") {
+                if (displayModel.count === 0 && (localProxyModel.count > 0 || videoProxyModel.count > 0)) {
+                    window.applyFilters(true);
+                }
                 window.selectCurrentWallpaperTabAndFocus();
             }
         }

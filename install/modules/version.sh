@@ -68,10 +68,11 @@ get_saved_preference() {
     if [ -f "$VERSION_FILE" ]; then
         value=$(awk -F= -v k="$key" '$1 == k {gsub(/"/, "", $2); print $2}' "$VERSION_FILE")
     fi
-    case "$value" in
-        true|false) echo "$value" ;;
-        *) echo "$fallback" ;;
-    esac
+    if [ -n "$value" ]; then
+        echo "$value"
+    else
+        echo "$fallback"
+    fi
 }
 
 get_installed_version() {
@@ -156,6 +157,8 @@ write_version_state() {
     local opt_sddm="${6:-true}"
     local sddm_wayland="${7:-false}"
     local full_wallpapers="${8:-true}"
+    local kb_layout="${9:-"us,ru"}"
+    local kb_toggle="${10:-"alt_shift"}"
 
     if [[ -z "$commit" || "$commit" == "null" ]]; then
         commit="unknown"
@@ -178,6 +181,8 @@ SELECTED_COMPOSITORS="$compositors"
 OPT_SDDM="$opt_sddm"
 SDDM_WAYLAND="$sddm_wayland"
 INSTALL_FULL_WALLPAPERS="$full_wallpapers"
+KEYBOARD_LAYOUT="$kb_layout"
+KEYBOARD_TOGGLE="$kb_toggle"
 EOF
     mv -f "$tmp_file" "$VERSION_FILE"
 }

@@ -12,6 +12,8 @@ C_MAGENTA=$'\e[35m'
 
 ENABLE_TELEMETRY=true
 INSTALL_FULL_WALLPAPERS=true
+KEYBOARD_LAYOUT="us,ru"
+KEYBOARD_TOGGLE="alt_shift"
 SELECTED_COMPOSITORS=()
 DETECTED_COMPOSITOR_LABEL=""
 MULTIPLE_COMPOSITORS_DETECTED=false
@@ -787,6 +789,113 @@ additional_packages_menu() {
     done
 }
 
+manage_keyboard_menu() {
+    draw_banner
+    stty -echo 2>/dev/null || true
+    printf "\e[?25l"
+    printf "%s%s=== Keyboard Layout & Switch Shortcut ===%s\n\n" "$BOLD" "$C_CYAN" "$RESET"
+
+    local cursor=0
+    local rendered_lines=0
+
+    while true; do
+        local S_TOGGLE="Alt+Shift / Shift+Alt [Recommended]"
+        case "$KEYBOARD_TOGGLE" in
+            alt_shift)  S_TOGGLE="Alt+Shift / Shift+Alt [Recommended]" ;;
+            ctrl_shift) S_TOGGLE="Ctrl+Shift / Shift+Ctrl" ;;
+            win_space)  S_TOGGLE="Super+Space / Win+Space" ;;
+            caps_lock)  S_TOGGLE="Caps Lock" ;;
+        esac
+
+        local items=()
+        items+=("1. Switch Shortcut: ${BOLD}${C_GREEN}[$S_TOGGLE]${RESET}")
+        items+=("2. Layouts: ${BOLD}${C_GREEN}[$KEYBOARD_LAYOUT]${RESET}")
+        items+=("3. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Back to Main Menu")${RESET}")
+
+        if [ "$rendered_lines" -gt 0 ]; then
+            printf "\033[%dA" "$rendered_lines"
+        fi
+
+        for i in "${!items[@]}"; do
+            if [ "$i" -eq "$cursor" ]; then
+                printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
+            else
+                printf "\r\033[K    %s\n" "${items[$i]}"
+            fi
+        done
+        rendered_lines=${#items[@]}
+
+        local key
+        key=$(read_key)
+
+        case "$key" in
+            UP|[kK])
+                if [ "$cursor" -gt 0 ]; then
+                    cursor=$(( cursor - 1 ))
+                else
+                    cursor=$(( ${#items[@]} - 1 ))
+                fi
+                ;;
+            DOWN|[jJ])
+                if [ "$cursor" -lt $(( ${#items[@]} - 1 )) ]; then
+                    cursor=$(( cursor + 1 ))
+                else
+                    cursor=0
+                fi
+                ;;
+            ENTER|SPACE)
+                local selected_str="${items[$cursor]}"
+                case "$selected_str" in
+                    *"1."*)
+                        case "$KEYBOARD_TOGGLE" in
+                            alt_shift)  KEYBOARD_TOGGLE="ctrl_shift" ;;
+                            ctrl_shift) KEYBOARD_TOGGLE="win_space" ;;
+                            win_space)  KEYBOARD_TOGGLE="caps_lock" ;;
+                            caps_lock)  KEYBOARD_TOGGLE="alt_shift" ;;
+                            *)          KEYBOARD_TOGGLE="alt_shift" ;;
+                        esac
+                        ;;
+                    *"2."*)
+                        case "$KEYBOARD_LAYOUT" in
+                            "us,ru") KEYBOARD_LAYOUT="us" ;;
+                            "us")    KEYBOARD_LAYOUT="us,ua" ;;
+                            "us,ua") KEYBOARD_LAYOUT="us,by" ;;
+                            "us,by") KEYBOARD_LAYOUT="us,kz" ;;
+                            "us,kz") KEYBOARD_LAYOUT="us,de" ;;
+                            *)       KEYBOARD_LAYOUT="us,ru" ;;
+                        esac
+                        ;;
+                    *"3."*)
+                        break
+                        ;;
+                esac
+                ;;
+            "1")
+                case "$KEYBOARD_TOGGLE" in
+                    alt_shift)  KEYBOARD_TOGGLE="ctrl_shift" ;;
+                    ctrl_shift) KEYBOARD_TOGGLE="win_space" ;;
+                    win_space)  KEYBOARD_TOGGLE="caps_lock" ;;
+                    caps_lock)  KEYBOARD_TOGGLE="alt_shift" ;;
+                    *)          KEYBOARD_TOGGLE="alt_shift" ;;
+                esac
+                ;;
+            "2")
+                case "$KEYBOARD_LAYOUT" in
+                    "us,ru") KEYBOARD_LAYOUT="us" ;;
+                    "us")    KEYBOARD_LAYOUT="us,ua" ;;
+                    "us,ua") KEYBOARD_LAYOUT="us,by" ;;
+                    "us,by") KEYBOARD_LAYOUT="us,kz" ;;
+                    "us,kz") KEYBOARD_LAYOUT="us,de" ;;
+                    *)       KEYBOARD_LAYOUT="us,ru" ;;
+                esac
+                ;;
+            "3"|ESC|[qQ])
+                break
+                ;;
+        esac
+    done
+}
+
 run_installer_ui() {
     if [ "${NONINTERACTIVE:-0}" = "1" ] || [ "${AUTO_INSTALL:-0}" = "1" ]; then
         if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
@@ -833,6 +942,12 @@ run_installer_ui() {
             local S_TEL="${DIM}[OFF]${RESET}"
             local S_WP="${DIM}[3 Random]${RESET}"
             local S_ADD="${DIM}[None]${RESET}"
+            local S_KB="${C_GREEN}[Alt+Shift ($KEYBOARD_LAYOUT)]${RESET}"
+            case "$KEYBOARD_TOGGLE" in
+                ctrl_shift) S_KB="${C_GREEN}[Ctrl+Shift ($KEYBOARD_LAYOUT)]${RESET}" ;;
+                win_space)  S_KB="${C_GREEN}[Super+Space ($KEYBOARD_LAYOUT)]${RESET}" ;;
+                caps_lock)  S_KB="${C_GREEN}[Caps Lock ($KEYBOARD_LAYOUT)]${RESET}" ;;
+            esac
 
             [ "$OPT_SDDM" = true ] && S_SDDM="${C_GREEN}[ON]${RESET}"
             [ "$ENABLE_TELEMETRY" = true ] && S_TEL="${C_GREEN}[ON]${RESET}"
@@ -845,15 +960,16 @@ run_installer_ui() {
             items+=("3. $(t "installer.ui.menu_sddm") $S_SDDM")
             items+=("4. $(t "installer.ui.menu_wallpapers") $S_WP")
             items+=("5. $(t "installer.ui.menu_additional_pkgs" "Additional Packages") $S_ADD")
-            items+=("6. $(t "installer.ui.menu_telemetry") $S_TEL")
+            items+=("6. $(t "installer.ui.menu_keyboard" "Keyboard Layout & Shortcut") $S_KB")
+            items+=("7. $(t "installer.ui.menu_telemetry") $S_TEL")
 
             if [[ "$INSTALL_STATE" == "current" ]]; then
-                items+=("7. ${BOLD}${C_GREEN}$(t "installer.ui.menu_update")${RESET}")
-                items+=("8. ${BOLD}${C_YELLOW}$(t "installer.ui.menu_reinstall")${RESET}")
-                items+=("9. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
+                items+=("8. ${BOLD}${C_GREEN}$(t "installer.ui.menu_update")${RESET}")
+                items+=("9. ${BOLD}${C_YELLOW}$(t "installer.ui.menu_reinstall")${RESET}")
+                items+=("10. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
             else
-                items+=("7. ${BOLD}${C_GREEN}$(t "installer.ui.menu_install")${RESET}")
-                items+=("8. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
+                items+=("8. ${BOLD}${C_GREEN}$(t "installer.ui.menu_install")${RESET}")
+                items+=("9. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
             fi
 
             if [ "$rendered_lines" -gt 0 ]; then
@@ -907,9 +1023,13 @@ run_installer_ui() {
                     break
                     ;;
                 "6")
-                    ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                    manage_keyboard_menu
+                    break
                     ;;
                 "7")
+                    ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                    ;;
+                "8")
                     if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                         printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
                         sleep 1.5
@@ -919,7 +1039,7 @@ run_installer_ui() {
                     cleanup_terminal
                     return 0
                     ;;
-                "8")
+                "9")
                     if [[ "$INSTALL_STATE" == "current" ]]; then
                         if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                             printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
@@ -935,7 +1055,7 @@ run_installer_ui() {
                         exit 0
                     fi
                     ;;
-                "9")
+                "10")
                     if [[ "$INSTALL_STATE" == "current" ]]; then
                         cleanup_terminal
                         clear 2>/dev/null || true
@@ -970,9 +1090,13 @@ run_installer_ui() {
                             break
                             ;;
                         *"6."*)
-                            ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                            manage_keyboard_menu
+                            break
                             ;;
                         *"7."*)
+                            ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
+                            ;;
+                        *"8."*)
                             if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                                 printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
                                 sleep 1.5
@@ -982,7 +1106,7 @@ run_installer_ui() {
                             cleanup_terminal
                             return 0
                             ;;
-                        *"8."*)
+                        *"9."*)
                             if [[ "$INSTALL_STATE" == "current" ]]; then
                                 if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                                     printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
@@ -998,7 +1122,7 @@ run_installer_ui() {
                                 exit 0
                             fi
                             ;;
-                        *"9."*)
+                        *"10."*)
                             if [[ "$INSTALL_STATE" == "current" ]]; then
                                 cleanup_terminal
                                 clear 2>/dev/null || true

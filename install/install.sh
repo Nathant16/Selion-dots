@@ -69,6 +69,10 @@ ENABLE_TELEMETRY=$(get_telemetry_enabled)
 OPT_SDDM=$(get_saved_preference OPT_SDDM "$OPT_SDDM")
 SDDM_WAYLAND=$(get_saved_preference SDDM_WAYLAND "$SDDM_WAYLAND")
 INSTALL_FULL_WALLPAPERS=$(get_saved_preference INSTALL_FULL_WALLPAPERS "$INSTALL_FULL_WALLPAPERS")
+KEYBOARD_LAYOUT=$(get_saved_preference KEYBOARD_LAYOUT "${KEYBOARD_LAYOUT:-us,ru}")
+KEYBOARD_TOGGLE=$(get_saved_preference KEYBOARD_TOGGLE "${KEYBOARD_TOGGLE:-alt_shift}")
+export KEYBOARD_LAYOUT
+export KEYBOARD_TOGGLE
 
 check_supported_os
 bootstrap_installer_deps
@@ -81,6 +85,18 @@ OLD_COMMIT=$(get_installed_commit)
 
 init_compositor_detection
 run_installer_ui
+
+# Maintain background sudo authentication keep-alive so sudo never expires during build/install
+echo -e "\n\e[36m[ INFO ]\e[0m Requesting administrative privileges..."
+sudo -v
+(
+    while true; do
+        sudo -n true 2>/dev/null || exit 0
+        sleep 45
+    done
+) &
+SUDO_KEEP_ALIVE_PID=$!
+trap 'kill $SUDO_KEEP_ALIVE_PID 2>/dev/null || true' EXIT INT TERM
 
 TARGET_VERSION=$(get_target_version "$PROJECT_ROOT" "$REPO_SLUG")
 TARGET_COMMIT=$(get_target_commit "$PROJECT_ROOT" "$REPO_SLUG")
@@ -108,8 +124,9 @@ init_serpantinum_config "$PROJECT_ROOT" "$WALLPAPER_DIR" "$INSTALL_STATE" "$IS_R
 configure_ski_defaults
 
 setup_services
+setup_hibernation
 hand_over_from_easyeffects
-write_version_state "$TARGET_VERSION" "$TARGET_COMMIT" "$TELEMETRY_ID" "$ENABLE_TELEMETRY" "${SELECTED_COMPOSITORS[*]}" "$OPT_SDDM" "$SDDM_WAYLAND" "$INSTALL_FULL_WALLPAPERS"
+write_version_state "$TARGET_VERSION" "$TARGET_COMMIT" "$TELEMETRY_ID" "$ENABLE_TELEMETRY" "${SELECTED_COMPOSITORS[*]}" "$OPT_SDDM" "$SDDM_WAYLAND" "$INSTALL_FULL_WALLPAPERS" "$KEYBOARD_LAYOUT" "$KEYBOARD_TOGGLE"
 
 if [[ "$INSTALL_STATE" == "legacy" || "$INSTALL_STATE" == "fresh" || "$IS_REINSTALL" == true ]]; then
     rm -f "$HOME/.local/state/serpantinum/first_launch.done" "$HOME/.local/state/quickshell/first_launch.done"

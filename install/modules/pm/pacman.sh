@@ -2,6 +2,7 @@
 
 PM_BOOTSTRAP_TOOLS=(fzf jq curl git pciutils unzip fontconfig base-devel)
 PM_AUDIO_BUILD_PKGS=(base-devel pkgconf pipewire)
+PM_EXTRA_PKGS=(pam-fprint-grosshack)
 
 pm_prepare_repos() {
     if [ -f /etc/pacman.conf ]; then
@@ -43,6 +44,8 @@ pm_is_installed() {
 pm_install_pkg() {
     local pkg="$1"
     local safe_jobs="$2"
+
+    sudo -n true 2>/dev/null || sudo -v 2>/dev/null || true
 
     if pacman -Si "$pkg" &>/dev/null; then
         sudo pacman -S --noconfirm --needed "$pkg"

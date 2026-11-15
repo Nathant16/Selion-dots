@@ -114,7 +114,9 @@ blur = false
 [keybindings]
 # Раскладка клавиатуры
 "alt+shift" = "switch-layout next"
+"shift+alt" = "switch-layout next"
 "ctrl+shift" = "switch-layout next"
+"shift+ctrl" = "switch-layout next"
 
 # Терминал, файловый менеджер и монитор процессов
 "mod+return" = "exec kitty"
