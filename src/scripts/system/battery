@@ -328,6 +328,8 @@ def show_status():
     energy_full_wh = d["energy_full_wh"]
     energy_design_wh = d["energy_design_wh"]
     cycles = d["cycles"]
+    has_threshold_support = d.get("has_threshold_support", False)
+    is_conservation = d.get("is_conservation_mode", False)
 
     bar_len = 24
     filled = int(capacity / 100.0 * bar_len)
