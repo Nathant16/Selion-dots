@@ -985,6 +985,15 @@ deploy_package() {
         python3 "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" 2>/dev/null || true
     fi
 
+    # Automatic theme, fonts and cursor integration for Flatpak sandboxed applications
+    if command -v flatpak &>/dev/null; then
+        flatpak override --user --filesystem=xdg-config/gtk-3.0:ro \
+                                --filesystem=xdg-config/gtk-4.0:ro \
+                                --filesystem=xdg-config/fontconfig:ro \
+                                --filesystem=~/.icons:ro \
+                                --filesystem=xdg-data/icons:ro 2>/dev/null || true
+    fi
+
     configure_keyboard_layout "$KEYBOARD_LAYOUT" "$KEYBOARD_TOGGLE"
     setup_pam_service
 }
