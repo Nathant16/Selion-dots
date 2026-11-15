@@ -81,6 +81,13 @@ hl.window_rule({
     idle_inhibit = "fullscreen",
 })
 
+-- Special Workspace (Scratchpad margins)
+hl.workspace_rule({
+    workspace = "special:special",
+    gaps_out = 35,
+    gaps_in = 8,
+})
+
 -- Serpantinum dynamic window rules (opacity for kitty and ski)
 pcall(function()
     local home = os.getenv("HOME") or ""

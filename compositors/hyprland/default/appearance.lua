@@ -16,6 +16,7 @@ hl.animation({ leaf = "border", enabled = true, speed = 1, bezier = "liner" })
 hl.animation({ leaf = "borderangle", enabled = false })
 hl.animation({ leaf = "fade", enabled = true, speed = 6, bezier = "wind" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "wind", style = "slide" })
+hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 5, bezier = "wind", style = "slidevert" })
 
 local home = os.getenv("HOME") or ""
 local theme_file = home .. "/.local/state/serpantinum/theme_hyprland.lua"
@@ -56,6 +57,7 @@ hl.config({
         rounding = rounding,
         active_opacity = 1.0,
         inactive_opacity = 1.0,
+        dim_special = 0.3,
         shadow = {
             enabled = true,
             range = 15,
@@ -67,6 +69,7 @@ hl.config({
             size = 6,
             passes = 2,
             new_optimizations = true,
+            special = true,
         },
     },
 })

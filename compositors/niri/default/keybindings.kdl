@@ -25,6 +25,7 @@ binds {
     Mod+Alt+F { maximize-window-to-edges; }
     Mod+Space { toggle-window-floating; }
     Mod+Backspace { toggle-overview; }
+    Mod+S { toggle-overview; }
 
     // Focus & Navigation
     Mod+Left { focus-column-left; }
