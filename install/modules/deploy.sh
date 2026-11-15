@@ -474,15 +474,11 @@ setup_pam_service() {
     done
     [ -n "$base" ] || return 0
 
-    # Simultaneous fingerprint + password authentication for sudo, polkit, and login
-    local fp_mod="pam_fprintd.so"
-    if [ -f /usr/lib/security/pam_fprintd_grosshack.so ]; then
-        fp_mod="pam_fprintd_grosshack.so"
-    fi
-
+    # Serpantinum lockscreen uses parallel PamContext sessions in Quickshell:
+    # fpPam strictly requires standard pam_fprintd.so (grosshack asks for password, which breaks Quickshell biometric prompt).
     local content=""
     if ! grep -qs "pam_fprintd" "$pam_dir/$base"; then
-        content+="-auth       sufficient   $fp_mod"$'\n'
+        content+="-auth       sufficient   pam_fprintd.so"$'\n'
     fi
     content+="auth        include      $base"$'\n'
     content+="account     include      $base"$'\n'
@@ -490,6 +486,16 @@ setup_pam_service() {
     if [ ! -f "$target" ] || [ "$(cat "$target" 2>/dev/null)" != "${content%$'\n'}" ]; then
         printf '%s' "$content" | sudo tee "$target" >/dev/null 2>&1 || true
         sudo chmod 644 "$target" 2>/dev/null || true
+    fi
+
+    # Fix existing installations where grosshack was erroneously written to serpantinum
+    if [ -f "$target" ] && grep -qs "pam_fprintd_grosshack" "$target"; then
+        sudo sed -i 's/pam_fprintd_grosshack\.so/pam_fprintd.so/g' "$target" 2>/dev/null || true
+    fi
+
+    local fp_mod="pam_fprintd.so"
+    if [ -f /usr/lib/security/pam_fprintd_grosshack.so ]; then
+        fp_mod="pam_fprintd_grosshack.so"
     fi
 
     # Ensure fprintd service is enabled

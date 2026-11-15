@@ -226,7 +226,7 @@ Scope {
     }
 
     function usesNoFpPassword() {
-        return (!root.fingerprintEnabled || root.fpBlocked || root.fpResumeRetries > 0) && root.noFpPamReady;
+        return root.noFpPamReady;
     }
 
     function applyPasswordConfig() {
