@@ -1,5 +1,6 @@
 ### 2.7.1
 
+- fix(driftwm): disable `resize_on_border` to prevent sticky resize cursor on empty canvas, add `mod+right` resize binding
 - fix(compositors): fix DriftWM window rules schema (`pinned_to_screen`) and Sway autostart syntax
 - fix(daemon): improve session switching across Wayland displays and add fallback Mango socket auto-detection in `serpantinumd`
 - fix(fish): add native session logout handlers for Niri and Mango

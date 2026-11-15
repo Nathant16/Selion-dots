@@ -62,6 +62,16 @@ disable_while_typing = true
 [cursor]
 inactive_opacity = 0.5
 
+[mouse]
+resize_on_border = false
+
+[mouse.on-window]
+"alt+left" = "move-window"
+"alt+shift+left" = "move-snapped-windows"
+"alt+right" = "resize-window-snapped"
+"alt+shift+right" = "resize-window"
+"mod+right" = "resize-window"
+
 [zoom]
 step = 1.25
 trackpad_speed = 1.5
