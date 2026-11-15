@@ -155,11 +155,12 @@ handle_wallpaper_prep() {
 
     if [[ -d "$SRC_DIR" ]]; then
         local p_dir="$(dirname "$SRC_DIR")"
-        local b_dir="$(basename "$SRC_DIR")"
-        if [[ "$b_dir" == "Wallpapers" && ! -e "$p_dir/Wallpaper" ]]; then
-            ln -s "Wallpapers" "$p_dir/Wallpaper" 2>/dev/null || true
-        elif [[ "$b_dir" == "Wallpaper" && ! -e "$p_dir/Wallpapers" ]]; then
-            ln -s "Wallpaper" "$p_dir/Wallpapers" 2>/dev/null || true
+        if [[ -L "$p_dir/Wallpaper" ]]; then
+            local link_target
+            link_target="$(readlink "$p_dir/Wallpaper" 2>/dev/null || true)"
+            if [[ "$link_target" == "Wallpapers" || "$link_target" == "$SRC_DIR" || "$link_target" == "Wallpapers/" ]]; then
+                rm -f "$p_dir/Wallpaper"
+            fi
         fi
     fi
 

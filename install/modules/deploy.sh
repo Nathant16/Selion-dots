@@ -92,13 +92,14 @@ install_wallpapers() {
 
     mkdir -p "$wallpaper_dir" "$selion_dir"
 
-    # Compatibility symlink: keep Wallpaper and Wallpapers in sync
+    # Clean up redundant legacy symlink ~/Pictures/Wallpaper -> Wallpapers
     local pics_parent="$(dirname "$wallpaper_dir")"
-    local base_name="$(basename "$wallpaper_dir")"
-    if [ "$base_name" = "Wallpapers" ] && [ ! -e "$pics_parent/Wallpaper" ]; then
-        ln -s "Wallpapers" "$pics_parent/Wallpaper" 2>/dev/null || true
-    elif [ "$base_name" = "Wallpaper" ] && [ ! -e "$pics_parent/Wallpapers" ]; then
-        ln -s "Wallpaper" "$pics_parent/Wallpapers" 2>/dev/null || true
+    if [ -L "$pics_parent/Wallpaper" ]; then
+        local link_target
+        link_target="$(readlink "$pics_parent/Wallpaper" 2>/dev/null || true)"
+        if [ "$link_target" = "Wallpapers" ] || [ "$link_target" = "$wallpaper_dir" ] || [ "$link_target" = "Wallpapers/" ]; then
+            rm -f "$pics_parent/Wallpaper"
+        fi
     fi
 
     local sync_success=false
@@ -222,6 +223,20 @@ install_wallpapers() {
     local cache_dir="${XDG_CACHE_HOME:-"$HOME/.cache"}/serpantinum/wallpaper"
     mkdir -p "$cache_dir"
 
+    # Clean up legacy duplicate files in wallpaper_dir root
+    if [ -d "$selion_dir" ]; then
+        [ -f "$wallpaper_dir/default.png" ] && rm -f "$wallpaper_dir/default.png"
+        for root_img in "$wallpaper_dir"/*; do
+            [ -f "$root_img" ] || continue
+            local fname="$(basename "$root_img")"
+            if [ -f "$selion_dir/$fname" ]; then
+                if cmp -s "$root_img" "$selion_dir/$fname" 2>/dev/null; then
+                    rm -f "$root_img"
+                fi
+            fi
+        done
+    fi
+
     # Pre-index wallpapers for fast loading in WallpaperPicker
     local run_dir="${XDG_RUNTIME_DIR:-"/run/user/$(id -u)"}/serpantinum/wallpaper"
     mkdir -p "$run_dir"
@@ -238,11 +253,9 @@ install_wallpapers() {
     # Ensure a default wallpaper state exists so first boot never renders a black screen
     local default_wp="$selion_dir/1.png"
     if [ ! -f "$default_wp" ]; then
-        default_wp="$(find "$selion_dir" "$wallpaper_dir" "$pics_parent/Wallpapers" "$pics_parent/Wallpaper" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | sort -V | head -n 1)"
+        default_wp="$(find "$selion_dir" "$wallpaper_dir" "$pics_parent/Wallpapers" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | sort -V | head -n 1)"
     fi
     if [ -n "$default_wp" ] && [ -f "$default_wp" ]; then
-        [ ! -f "$wallpaper_dir/${default_wp##*/}" ] && cp -f "$default_wp" "$wallpaper_dir/${default_wp##*/}" 2>/dev/null || true
-        [ ! -f "$wallpaper_dir/default.png" ] && cp -f "$default_wp" "$wallpaper_dir/default.png" 2>/dev/null || true
         local def_state="$cache_dir/current_default"
         printf '%s' "$default_wp" > "$def_state"
         printf '%s\n' "${default_wp##*/}" > "${def_state}_name"
