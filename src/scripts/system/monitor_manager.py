@@ -187,6 +187,18 @@ def apply_hyprland(name, resolution, framerate, scale, env):
     if resolution:
         wlr_cmds = []
         if framerate:
+            try:
+                wproc = subprocess.run(["wlr-randr", "--json"], env=env, capture_output=True, text=True, timeout=2)
+                if wproc.returncode == 0:
+                    for out in json.loads(wproc.stdout):
+                        if out.get("name") == name:
+                            for m in out.get("modes", []):
+                                m_res = f"{m.get('width')}x{m.get('height')}"
+                                if m_res == str(resolution) and round(float(m.get("refresh", 0))) == round(float(framerate)):
+                                    wlr_cmds.append(["wlr-randr", "--output", name, "--mode", f"{m_res}@{m.get('refresh')}Hz", "--scale", str(scale_val)])
+                                    break
+            except Exception:
+                pass
             wlr_cmds.append(["wlr-randr", "--output", name, "--custom-mode", f"{resolution}@{framerate}Hz", "--scale", str(scale_val)])
             wlr_cmds.append(["wlr-randr", "--output", name, "--mode", f"{resolution}@{framerate}Hz", "--scale", str(scale_val)])
         wlr_cmds.append(["wlr-randr", "--output", name, "--mode", str(resolution), "--scale", str(scale_val)])

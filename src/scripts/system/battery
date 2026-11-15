@@ -1098,11 +1098,24 @@ def apply_display_refresh_rate(target_rate, mon_name=None, res_str=None):
     except Exception:
         pass
 
-    wlr_cmds = [
+    wlr_cmds = []
+    try:
+        wproc = subprocess.run(["wlr-randr", "--json"], env=env, capture_output=True, text=True, timeout=2)
+        if wproc.returncode == 0:
+            for out in json.loads(wproc.stdout):
+                if out.get("name") == mon_name:
+                    for m in out.get("modes", []):
+                        m_res = f"{m.get('width')}x{m.get('height')}"
+                        if m_res == str(res_str) and round(float(m.get("refresh", 0))) == round(float(target_rate)):
+                            wlr_cmds.append(["wlr-randr", "--output", mon_name, "--mode", f"{m_res}@{m.get('refresh')}Hz", "--scale", str(scale_val)])
+                            break
+    except Exception:
+        pass
+    wlr_cmds.extend([
         ["wlr-randr", "--output", mon_name, "--custom-mode", f"{res_str}@{rate_str}Hz", "--scale", str(scale_val)],
         ["wlr-randr", "--output", mon_name, "--mode", f"{res_str}@{rate_str}Hz", "--scale", str(scale_val)],
         ["wlr-randr", "--output", mon_name, "--mode", str(res_str), "--scale", str(scale_val)]
-    ]
+    ])
     for cmd in wlr_cmds:
         try:
             res = subprocess.run(cmd, env=env, capture_output=True, timeout=2)
