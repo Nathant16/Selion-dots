@@ -261,7 +261,7 @@ cli_usage() {
 
 cli_ipc() {
     ensure_daemon
-    quickshell -p "$MAIN_QML" ipc call "$@"
+    quickshell -p "$MAIN_QML" ipc --any-display call "$@"
 }
 
 cli_lock_redactor() {

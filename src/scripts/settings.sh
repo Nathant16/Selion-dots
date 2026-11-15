@@ -16,7 +16,7 @@ TAB="$1"
 SUBTAB="$2"
 
 if [[ -n "$MAIN_QML" ]]; then
-    quickshell -p "$MAIN_QML" ipc call main embeddedSettings "$ACTION" "${TAB}${SUBTAB:+:$SUBTAB}" >/dev/null 2>&1
+    quickshell -p "$MAIN_QML" ipc --any-display call main embeddedSettings "$ACTION" "${TAB}${SUBTAB:+:$SUBTAB}" >/dev/null 2>&1
 else
-    quickshell ipc call main embeddedSettings "$ACTION" "${TAB}${SUBTAB:+:$SUBTAB}" >/dev/null 2>&1
+    quickshell ipc --any-display call main embeddedSettings "$ACTION" "${TAB}${SUBTAB:+:$SUBTAB}" >/dev/null 2>&1
 fi

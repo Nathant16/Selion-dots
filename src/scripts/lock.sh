@@ -9,4 +9,4 @@ case "$1" in
     *) action="activate" ;;
 esac
 
-quickshell -p $MAIN_QML ipc call lock "$action"
+quickshell -p "$MAIN_QML" ipc --any-display call lock "$action"
