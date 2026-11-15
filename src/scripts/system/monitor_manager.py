@@ -171,7 +171,22 @@ def apply_hyprland(name, resolution, framerate, scale, env):
     mode_str = f"{resolution}{rate_str}" if resolution else "preferred"
     scale_val = float(scale) if scale is not None else 1.0
 
-    # 1. Live apply via hyprctl
+    # 1. Live apply via wlr-randr (standard Wayland protocol supported across compositors)
+    if resolution:
+        wlr_cmds = []
+        if framerate:
+            wlr_cmds.append(["wlr-randr", "--output", name, "--custom-mode", f"{resolution}@{framerate}Hz", "--scale", str(scale_val)])
+            wlr_cmds.append(["wlr-randr", "--output", name, "--mode", f"{resolution}@{framerate}Hz", "--scale", str(scale_val)])
+        wlr_cmds.append(["wlr-randr", "--output", name, "--mode", str(resolution), "--scale", str(scale_val)])
+        for wcmd in wlr_cmds:
+            try:
+                res = subprocess.run(wcmd, env=env, capture_output=True, timeout=2)
+                if res.returncode == 0:
+                    break
+            except Exception:
+                pass
+
+    # 2. Also try hyprctl keyword monitor
     cmd = ["hyprctl", "keyword", "monitor", f"{name},{mode_str},auto,{scale_val}"]
     try:
         subprocess.run(cmd, env=env, capture_output=True, timeout=2)

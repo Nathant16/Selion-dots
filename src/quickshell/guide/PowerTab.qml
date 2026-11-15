@@ -34,6 +34,14 @@ GuideTab {
     property bool autoBrightnessEnabled: true
     property int powerSaverBrightness: 60
 
+    property bool displayRefreshSupported: false
+    property bool displayRefreshEnabled: true
+    property var displayRefreshOptions: []
+    property var displayRefreshLabels: []
+    property int displayRefreshCurrentIndex: 0
+    property int displayRefreshCurrentRate: 60
+    property int displayRefreshTargetRate: 48
+
     onThresholdEndChanged: {
         let target = Math.max(70, Math.min(95, thresholdEnd < 100 ? thresholdEnd : 80));
         if (typeof limitSelector !== "undefined" && limitSelector && limitSelector.value !== target) {
@@ -135,6 +143,18 @@ GuideTab {
         cmdProc.running = true;
     }
 
+    function setDisplayRefreshEnabled(enabled) {
+        powerTabRoot.displayRefreshEnabled = enabled;
+        cmdProc.command = [powerTabRoot.batteryScriptPath, "set-display-rate-enabled", enabled ? "true" : "false"];
+        cmdProc.running = true;
+    }
+
+    function setDisplayRefreshRate(rate) {
+        powerTabRoot.displayRefreshTargetRate = rate;
+        cmdProc.command = [powerTabRoot.batteryScriptPath, "set-display-rate", String(rate)];
+        cmdProc.running = true;
+    }
+
     function setOptimization(optId, enabled) {
         let list = [];
         for (let i = 0; i < powerTabRoot.optimizationsModel.length; i++) {
@@ -191,6 +211,20 @@ GuideTab {
                     if (d.power_saver_brightness !== undefined) {
                         powerTabRoot.powerSaverBrightness = Number(d.power_saver_brightness) || 60;
                     }
+
+                    if (d.display_refresh) {
+                        powerTabRoot.displayRefreshSupported = Boolean(d.display_refresh.supported);
+                        powerTabRoot.displayRefreshEnabled = Boolean(d.display_refresh.enabled);
+                        powerTabRoot.displayRefreshOptions = d.display_refresh.options || [];
+                        let rLabels = [];
+                        for (let i = 0; i < powerTabRoot.displayRefreshOptions.length; i++) {
+                            rLabels.push(powerTabRoot.displayRefreshOptions[i].label);
+                        }
+                        powerTabRoot.displayRefreshLabels = rLabels;
+                        powerTabRoot.displayRefreshCurrentIndex = Number(d.display_refresh.current_index) || 0;
+                        powerTabRoot.displayRefreshCurrentRate = Number(d.display_refresh.current_rate) || 60;
+                        powerTabRoot.displayRefreshTargetRate = Number(d.display_refresh.target_rate) || 48;
+                    }
                 } catch(e) {}
             }
         }
@@ -218,6 +252,7 @@ GuideTab {
         } else {
             if (profileDropdown && profileDropdown.isOpen) profileDropdown.closePopup();
             if (cpuFreqDropdown && cpuFreqDropdown.isOpen) cpuFreqDropdown.closePopup();
+            if (displayRefreshDropdown && displayRefreshDropdown.isOpen) displayRefreshDropdown.closePopup();
         }
     }
 
@@ -436,6 +471,65 @@ GuideTab {
                                     onTriggered: {
                                         let rounded = Math.round(saverBriSelector.value / 5) * 5;
                                         powerTabRoot.setSaverBrightness(rounded);
+                                    }
+                                }
+                            }
+                        ]
+                    }
+
+                    // Display Refresh Rate Reduction (SettingsGroup with Toggle and Dropdown subSetting)
+                    SettingsGroup {
+                        id: displayRefreshGroup
+                        visible: powerTabRoot.displayRefreshSupported && powerTabRoot.displayRefreshLabels.length > 0
+                        settingId: "power_display_refresh"
+                        searchKeywords: "display screen refresh rate hz 48 60 120 144 hertz monitor eco saver"
+                        rootObj: powerTabRoot.rootObj
+                        icon: "󰍹"
+                        title: I18n.t("guide.power.display_refresh.title", "Reduce Screen Refresh Rate")
+                        description: I18n.t("guide.power.display_refresh.desc", "Lower display refresh rate in power saving mode")
+                        expanded: powerTabRoot.displayRefreshEnabled
+
+                        Toggle {
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            checked: powerTabRoot.displayRefreshEnabled
+                            accentColor: ThemeBackend.mauve
+                            baseColor: ThemeBackend.surface1
+                            handleColor: ThemeBackend.crust
+                            handleOffColor: ThemeBackend.text
+                            onToggled: function(val) {
+                                powerTabRoot.setDisplayRefreshEnabled(val);
+                            }
+                        }
+
+                        subSettings: [
+                            SettingsRow {
+                                id: displayRefreshSubRow
+                                rootObj: powerTabRoot.rootObj
+                                baseColor: "transparent"
+                                showIcon: false
+                                title: I18n.t("guide.power.display_refresh_target.title", "Target Refresh Rate")
+                                description: I18n.t("guide.power.display_refresh_target.desc", "Screen refresh rate to apply in power saving mode")
+
+                                Dropdown {
+                                    id: displayRefreshDropdown
+                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                    implicitWidth: rootObj.s(130)
+                                    implicitHeight: rootObj.s(32)
+                                    options: powerTabRoot.displayRefreshLabels
+                                    currentIndex: powerTabRoot.displayRefreshCurrentIndex
+                                    accentColor: ThemeBackend.mauve
+                                    baseColor: ThemeBackend.surface0
+                                    hoverColor: ThemeBackend.surface1
+                                    dropdownColor: ThemeBackend.surface0
+                                    borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
+                                    textColor: ThemeBackend.text
+                                    activeTextColor: ThemeBackend.crust
+                                    fontPixelSize: rootObj.s(11)
+                                    onValueChanged: function(index, value) {
+                                        if (powerTabRoot.displayRefreshOptions && powerTabRoot.displayRefreshOptions[index]) {
+                                            let rate = powerTabRoot.displayRefreshOptions[index].rate;
+                                            powerTabRoot.setDisplayRefreshRate(rate);
+                                        }
                                     }
                                 }
                             }

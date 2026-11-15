@@ -396,6 +396,13 @@ GuideTab {
         reloadMonitorsDebounceTimer.restart();
     }
 
+    function applyMonitorFramerate(monName, rateStr) {
+        if (!monName || !rateStr) return;
+        let mon = displayTabRoot.monitorsList.find(m => m.name === monName);
+        let resStr = mon ? (mon.dimensions || "1920x1080") : "1920x1080";
+        applyMonitorResolution(monName, resStr, rateStr);
+    }
+
     function applyMonitorScale(monName, scaleVal) {
         if (!monName || scaleVal === undefined) return;
         let mon = displayTabRoot.monitorsList.find(m => m.name === monName);

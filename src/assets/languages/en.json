@@ -309,6 +309,14 @@
                 "title": "UI scale",
                 "desc": "Set the display scale factor for this monitor"
             },
+            "resolution": {
+                "title": "Screen Resolution",
+                "desc": "Set monitor display resolution"
+            },
+            "framerate": {
+                "title": "Refresh Rate",
+                "desc": "Set display refresh rate (Hz)"
+            },
             "widgets": {
                 "title": "Desktop widgets",
                 "desc": "Configure and place widgets for this monitor",
@@ -1422,6 +1430,14 @@
             "saver_brightness": {
                 "title": "Target brightness level",
                 "desc": "Screen brightness level in power saving mode"
+            },
+            "display_refresh": {
+                "title": "Reduce Refresh Rate",
+                "desc": "Lower display refresh rate in power saving mode"
+            },
+            "display_refresh_target": {
+                "title": "Target Refresh Rate",
+                "desc": "Screen refresh rate to apply in power saving mode"
             },
             "time_remaining": "~%1 remaining",
             "time_until_full": "~%1 until full",

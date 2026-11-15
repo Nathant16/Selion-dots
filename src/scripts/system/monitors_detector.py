@@ -96,7 +96,8 @@ def main():
             scale = out.get('scale', 1.0)
             active = out.get('enabled', True)
 
-            # Available resolutions
+            # Available resolutions and refresh rates map
+            res_rates_map = {}
             res_list = []
             seen = set()
             for m in out.get('modes', []):
@@ -104,6 +105,15 @@ def main():
                 if s not in seen:
                     seen.add(s)
                     res_list.append(s)
+                raw_r = m.get('refresh', 60.0)
+                r_str = str(int(round(raw_r)))
+                if s not in res_rates_map:
+                    res_rates_map[s] = []
+                if r_str not in res_rates_map[s]:
+                    res_rates_map[s].append(r_str)
+
+            for s in res_rates_map:
+                res_rates_map[s].sort(key=lambda x: int(x), reverse=True)
 
             # Fallback to drm_modes if empty
             if not res_list and name in drm_modes:
@@ -114,10 +124,16 @@ def main():
             if cur_res not in res_list:
                 res_list.insert(0, cur_res)
 
+            cur_framerates = res_rates_map.get(cur_res, [str(int(round(rate)))])
+            if not cur_framerates:
+                cur_framerates = [str(int(round(rate)))]
+
             monitors.append({
                 'name': name,
                 'dimensions': cur_res,
                 'framerate': str(int(round(rate))),
+                'framerates': cur_framerates,
+                'resolutions_map': res_rates_map,
                 'scale': scale,
                 'active': active,
                 'modes': res_list
@@ -181,13 +197,42 @@ def main():
             scale = out.get('scale', 1.0)
             active = not out.get('disabled', False)
             cur_res = f"{w}x{h}"
-            res_list = drm_modes.get(name, [cur_res])
+
+            res_rates_map = {}
+            res_list = []
+            seen = set()
+            for m_str in out.get('availableModes', []):
+                try:
+                    mode_part, hz_part = m_str.split('@', 1)
+                    mode_part = mode_part.strip()
+                    hz_val = float(hz_part.replace('Hz', '').strip())
+                    r_str = str(int(round(hz_val)))
+                    if mode_part not in seen:
+                        seen.add(mode_part)
+                        res_list.append(mode_part)
+                    if mode_part not in res_rates_map:
+                        res_rates_map[mode_part] = []
+                    if r_str not in res_rates_map[mode_part]:
+                        res_rates_map[mode_part].append(r_str)
+                except Exception:
+                    pass
+
+            for s in res_rates_map:
+                res_rates_map[s].sort(key=lambda x: int(x), reverse=True)
+
             if cur_res not in res_list:
                 res_list.insert(0, cur_res)
+
+            cur_framerates = res_rates_map.get(cur_res, [str(int(round(rate)))])
+            if not cur_framerates:
+                cur_framerates = [str(int(round(rate)))]
+
             monitors.append({
                 'name': name,
                 'dimensions': cur_res,
                 'framerate': str(int(round(rate))),
+                'framerates': cur_framerates,
+                'resolutions_map': res_rates_map,
                 'scale': scale,
                 'active': active,
                 'modes': res_list
@@ -220,10 +265,13 @@ def main():
             if modes and top_res not in modes:
                 modes.insert(0, top_res)
             rate = saved_rates.get(name, "60")
+            res_rates_map = {m: [rate] for m in modes}
             monitors.append({
                 'name': name,
                 'dimensions': top_res,
                 'framerate': rate,
+                'framerates': [rate],
+                'resolutions_map': res_rates_map,
                 'scale': 1.0,
                 'active': True,
                 'modes': modes

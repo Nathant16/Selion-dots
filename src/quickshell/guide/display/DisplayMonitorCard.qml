@@ -23,6 +23,26 @@ Rectangle {
     property bool filterAuto: monSettings && monSettings.auto !== undefined ? monSettings.auto : false
     property real currentTemp: monSettings && monSettings.temperature !== undefined ? monSettings.temperature : 50
     property real currentScale: (monSettings && monSettings.scale !== undefined) ? monSettings.scale : (modelData.scale !== undefined ? modelData.scale : 1.0)
+    property string currentFramerate: (monSettings && monSettings.framerate) ? String(monSettings.framerate) : (modelData && modelData.framerate ? String(modelData.framerate) : "60")
+
+    readonly property var availableFramerates: {
+        let res = modelData.dimensions || "1920x1080";
+        if (modelData.resolutions_map && modelData.resolutions_map[res] && modelData.resolutions_map[res].length > 0) {
+            return modelData.resolutions_map[res];
+        }
+        if (modelData.framerates && modelData.framerates.length > 0) {
+            return modelData.framerates;
+        }
+        return [currentFramerate || "60"];
+    }
+
+    readonly property var framerateLabels: {
+        let labels = [];
+        for (let i = 0; i < availableFramerates.length; i++) {
+            labels.push(availableFramerates[i] + " Hz");
+        }
+        return labels;
+    }
 
     readonly property color cardTint: monitorPowered ? Qt.alpha(ThemeBackend.surface0, 0.4) : Qt.darker(Qt.alpha(ThemeBackend.surface0, 0.4), 1.1)
     color: monDelegateGlass.active ? "transparent" : cardTint
@@ -63,6 +83,9 @@ Rectangle {
         if (monSettings.scale !== undefined && monDelegate.tab.pendingMonScaleName !== monName && !uiScaleSlider.isDragging) {
             currentScale = monSettings.scale;
         }
+        if (monSettings.framerate !== undefined) {
+            currentFramerate = String(monSettings.framerate);
+        }
     }
 
     onModelDataChanged: {
@@ -71,6 +94,9 @@ Rectangle {
         }
         if (monDelegate.tab.pendingMonScaleName !== monName && !uiScaleSlider.isDragging) {
             currentScale = (monSettings && monSettings.scale !== undefined) ? monSettings.scale : (modelData.scale !== undefined ? modelData.scale : 1.0);
+        }
+        if (monSettings.framerate === undefined && modelData.framerate) {
+            currentFramerate = String(modelData.framerate);
         }
     }
 
@@ -273,7 +299,39 @@ Rectangle {
                 baseColor: ThemeBackend.surface0
                 textColor: ThemeBackend.text
                 onSelected: function(idx, val) {
-                    monDelegate.tab.applyMonitorResolution(monDelegate.monName, val, modelData.framerate || "60");
+                    monDelegate.tab.applyMonitorResolution(monDelegate.monName, val, monDelegate.currentFramerate || "60");
+                }
+            }
+        }
+
+        SettingsRow {
+            visible: monDelegate.availableFramerates.length > 0
+            rootObj: monDelegate.rootObj
+            baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
+            icon: "󰓅"
+            title: I18n.t("guide.display.framerate.title", "Refresh Rate")
+            description: I18n.t("guide.display.framerate.desc", "Set monitor refresh rate")
+
+            Dropdown {
+                id: rateDropdown
+                implicitWidth: rootObj.s(180)
+                implicitHeight: rootObj.s(32)
+                cornerRadius: rootObj.s(6)
+                options: monDelegate.framerateLabels
+                currentIndex: {
+                    let cur = monDelegate.currentFramerate;
+                    let idx = monDelegate.availableFramerates.indexOf(cur);
+                    return idx >= 0 ? idx : 0;
+                }
+                accentColor: ThemeBackend.mauve
+                baseColor: ThemeBackend.surface0
+                textColor: ThemeBackend.text
+                onSelected: function(idx, val) {
+                    if (monDelegate.availableFramerates && monDelegate.availableFramerates[idx]) {
+                        let selectedRate = monDelegate.availableFramerates[idx];
+                        monDelegate.currentFramerate = selectedRate;
+                        monDelegate.tab.applyMonitorFramerate(monDelegate.monName, selectedRate);
+                    }
                 }
             }
         }

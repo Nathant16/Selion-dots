@@ -239,7 +239,8 @@ def get_json_data():
             "has_threshold_support": False,
             "cpu_freq": get_cpu_freq_info(),
             "auto_brightness": bool(load_opts_config().get("auto_brightness", True)),
-            "power_saver_brightness": int(load_opts_config().get("power_saver_brightness", 60))
+            "power_saver_brightness": int(load_opts_config().get("power_saver_brightness", 60)),
+            "display_refresh": get_display_refresh_info()
         }
 
     status = b.get("POWER_SUPPLY_STATUS", "Unknown")
@@ -303,7 +304,8 @@ def get_json_data():
         "has_threshold_support": has_threshold_support,
         "cpu_freq": get_cpu_freq_info(),
         "auto_brightness": bool(load_opts_config().get("auto_brightness", True)),
-        "power_saver_brightness": int(load_opts_config().get("power_saver_brightness", 60))
+        "power_saver_brightness": int(load_opts_config().get("power_saver_brightness", 60)),
+        "display_refresh": get_display_refresh_info()
     }
 
 def show_status():
@@ -514,6 +516,9 @@ def apply_profile_optimizations(prof):
             save_opts_config(saved)
             start_fade_brightness_bg(restore_val, duration=5.0)
 
+        # Revert display refresh rate to normal/max
+        restore_display_refresh_rate()
+
     elif prof == "power-saver":
         # 1. Smoothly fade brightness to power_saver_brightness over 5s if auto_brightness is on
         if saved.get("auto_brightness", True):
@@ -531,9 +536,13 @@ def apply_profile_optimizations(prof):
         if cpu_mode == "manual" and target_khz > 0:
             set_cpu_freq_limit(target_khz)
 
-        # 3. Apply individual optimizations from JSON config
+        # 3. Apply display refresh rate reduction if enabled
+        if saved.get("display_refresh_save", True):
+            apply_saver_display_refresh_rate()
+
+        # 4. Apply individual optimizations from JSON config
         for opt_id, val in saved.items():
-            if opt_id not in ("cpu_max_freq", "cpu_freq_mode", "auto_brightness", "power_saver_brightness", "pre_saver_brightness"):
+            if opt_id not in ("cpu_max_freq", "cpu_freq_mode", "auto_brightness", "power_saver_brightness", "pre_saver_brightness", "power_saver_display_rate", "display_refresh_save"):
                 apply_single_opt(opt_id, bool(val))
 
 def set_profile(prof, set_dbus=True):
@@ -940,6 +949,233 @@ def set_cpu_freq_limit(target_khz):
 
     return True
 
+def get_wayland_env():
+    env = dict(os.environ)
+    if not env.get("XDG_RUNTIME_DIR"):
+        uid = os.getuid()
+        env["XDG_RUNTIME_DIR"] = f"/run/user/{uid}"
+    runtime_dir = env["XDG_RUNTIME_DIR"]
+    if not env.get("WAYLAND_DISPLAY") and os.path.exists(runtime_dir):
+        for sock in sorted(glob.glob(f"{runtime_dir}/wayland-*")):
+            if not sock.endswith(".lock"):
+                env["WAYLAND_DISPLAY"] = os.path.basename(sock)
+                break
+    if not env.get("HYPRLAND_INSTANCE_SIGNATURE") and os.path.exists(f"{runtime_dir}/hypr"):
+        socks = glob.glob(f"{runtime_dir}/hypr/*/.socket.sock")
+        if socks:
+            env["HYPRLAND_INSTANCE_SIGNATURE"] = os.path.basename(os.path.dirname(socks[0]))
+    if not env.get("SWAYSOCK"):
+        sw_socks = glob.glob(f"{runtime_dir}/sway-ipc.*.sock")
+        if sw_socks:
+            env["SWAYSOCK"] = sw_socks[0]
+    return env
+
+def get_display_refresh_info():
+    env = get_wayland_env()
+    wlr_data = None
+    try:
+        proc = subprocess.run(['wlr-randr', '--json'], capture_output=True, text=True, timeout=2, env=env)
+        if proc.returncode == 0 and proc.stdout.strip():
+            wlr_data = json.loads(proc.stdout)
+    except Exception:
+        pass
+
+    internal_name = "eDP-1"
+    cur_res = "1920x1080"
+    cur_rate = 60
+    modes_rates = []
+
+    if wlr_data and isinstance(wlr_data, list):
+        target_out = None
+        for out in wlr_data:
+            oname = out.get("name", "")
+            if any(oname.startswith(prefix) for prefix in ("eDP", "LVDS", "DSI")):
+                target_out = out
+                break
+        if not target_out and wlr_data:
+            target_out = wlr_data[0]
+
+        if target_out:
+            internal_name = target_out.get("name", "eDP-1")
+            cur_mode = next((m for m in target_out.get("modes", []) if m.get("current")), None)
+            if not cur_mode and target_out.get("modes"):
+                cur_mode = target_out["modes"][0]
+            if cur_mode:
+                cur_res = f"{cur_mode.get('width', 1920)}x{cur_mode.get('height', 1080)}"
+                cur_rate = int(round(cur_mode.get("refresh", 60.0)))
+            for m in target_out.get("modes", []):
+                m_res = f"{m.get('width')}x{m.get('height')}"
+                if m_res == cur_res:
+                    r_val = int(round(m.get("refresh", 60.0)))
+                    if r_val not in modes_rates:
+                        modes_rates.append(r_val)
+
+    if not modes_rates:
+        try:
+            hproc = subprocess.run(['hyprctl', 'monitors', '-j'], capture_output=True, text=True, timeout=2, env=env)
+            if hproc.returncode == 0 and hproc.stdout.strip():
+                hdata = json.loads(hproc.stdout)
+                target_out = None
+                for out in hdata:
+                    oname = out.get("name", "")
+                    if any(oname.startswith(prefix) for prefix in ("eDP", "LVDS", "DSI")):
+                        target_out = out
+                        break
+                if not target_out and hdata:
+                    target_out = hdata[0]
+                if target_out:
+                    internal_name = target_out.get("name", "eDP-1")
+                    cur_res = f"{target_out.get('width', 1920)}x{target_out.get('height', 1080)}"
+                    cur_rate = int(round(target_out.get("refreshRate", 60.0)))
+                    for m_str in target_out.get("availableModes", []):
+                        try:
+                            m_part, hz_part = m_str.split("@", 1)
+                            if m_part.strip() == cur_res:
+                                r_val = int(round(float(hz_part.replace("Hz", "").strip())))
+                                if r_val not in modes_rates:
+                                    modes_rates.append(r_val)
+                        except Exception:
+                            pass
+        except Exception:
+            pass
+
+    if not modes_rates:
+        modes_rates = [60]
+
+    modes_rates.sort()
+    max_rate = max(modes_rates)
+    min_rate = min(modes_rates)
+
+    saved = load_opts_config()
+    enabled = bool(saved.get("display_refresh_save", True))
+
+    saved_target = saved.get("power_saver_display_rate")
+    if saved_target is not None:
+        try:
+            target_rate = int(saved_target)
+        except Exception:
+            target_rate = min_rate
+    else:
+        target_rate = min_rate
+
+    if target_rate not in modes_rates:
+        target_rate = min_rate
+
+    opts = [{"rate": r, "label": f"{r} Hz"} for r in modes_rates]
+    current_index = 0
+    for idx, o in enumerate(opts):
+        if o["rate"] == target_rate:
+            current_index = idx
+            break
+
+    return {
+        "supported": len(modes_rates) > 1,
+        "monitor": internal_name,
+        "resolution": cur_res,
+        "current_rate": cur_rate,
+        "max_rate": max_rate,
+        "enabled": enabled,
+        "target_rate": target_rate,
+        "options": opts,
+        "current_index": current_index
+    }
+
+def apply_display_refresh_rate(target_rate, mon_name=None, res_str=None):
+    env = get_wayland_env()
+    if not mon_name or not res_str:
+        info = get_display_refresh_info()
+        mon_name = mon_name or info.get("monitor", "eDP-1")
+        res_str = res_str or info.get("resolution", "1920x1080")
+
+    rate_str = str(int(target_rate))
+    scale_val = 1.0
+    try:
+        s_file = os.path.expanduser("~/.config/serpantinum/settings.json")
+        if os.path.exists(s_file):
+            with open(s_file, "r") as f:
+                s_data = json.load(f)
+                scale_val = float(s_data.get("display", {}).get("monitors", {}).get(mon_name, {}).get("scale", 1.0))
+    except Exception:
+        pass
+
+    wlr_cmds = [
+        ["wlr-randr", "--output", mon_name, "--custom-mode", f"{res_str}@{rate_str}Hz", "--scale", str(scale_val)],
+        ["wlr-randr", "--output", mon_name, "--mode", f"{res_str}@{rate_str}Hz", "--scale", str(scale_val)],
+        ["wlr-randr", "--output", mon_name, "--mode", str(res_str), "--scale", str(scale_val)]
+    ]
+    for cmd in wlr_cmds:
+        try:
+            res = subprocess.run(cmd, env=env, capture_output=True, timeout=2)
+            if res.returncode == 0:
+                break
+        except Exception:
+            pass
+
+    for hypr_dir in glob.glob("/run/user/*/hypr"):
+        hypr_socks = glob.glob(f"{hypr_dir}/*/.socket.sock")
+        if hypr_socks:
+            sig = os.path.basename(os.path.dirname(hypr_socks[0]))
+            henv = env.copy()
+            henv["HYPRLAND_INSTANCE_SIGNATURE"] = sig
+            subprocess.run(["hyprctl", "keyword", "monitor", f"{mon_name},{res_str}@{rate_str},auto,{scale_val}"], env=henv, capture_output=True)
+
+    for sway_sock in glob.glob("/run/user/*/sway-ipc.*.sock"):
+        senv = env.copy()
+        senv["SWAYSOCK"] = sway_sock
+        subprocess.run(["swaymsg", "output", mon_name, "mode", f"{res_str}@{rate_str}Hz"], env=senv, capture_output=True)
+
+def restore_display_refresh_rate():
+    info = get_display_refresh_info()
+    mon_name = info.get("monitor", "eDP-1")
+    normal_rate = info.get("max_rate", 60)
+    try:
+        s_file = os.path.expanduser("~/.config/serpantinum/settings.json")
+        if os.path.exists(s_file):
+            with open(s_file, "r") as f:
+                s_data = json.load(f)
+                saved_rate = s_data.get("display", {}).get("monitors", {}).get(mon_name, {}).get("framerate")
+                if saved_rate:
+                    normal_rate = int(float(saved_rate))
+    except Exception:
+        pass
+    apply_display_refresh_rate(normal_rate, mon_name=mon_name, res_str=info.get("resolution"))
+
+def apply_saver_display_refresh_rate():
+    saved = load_opts_config()
+    if not saved.get("display_refresh_save", True):
+        return
+    info = get_display_refresh_info()
+    if info.get("supported"):
+        target_r = int(saved.get("power_saver_display_rate", info.get("target_rate", 48)))
+        apply_display_refresh_rate(target_r, mon_name=info.get("monitor"), res_str=info.get("resolution"))
+
+def set_display_rate_enabled(enabled):
+    saved = load_opts_config()
+    saved["display_refresh_save"] = bool(enabled)
+    save_opts_config(saved)
+
+    platform_profile = get_current_profile()
+    if platform_profile in ("low-power", "power-saver"):
+        if enabled:
+            apply_saver_display_refresh_rate()
+        else:
+            restore_display_refresh_rate()
+    return True
+
+def set_display_rate(rate):
+    try:
+        rate = int(rate)
+    except Exception:
+        return False
+    saved = load_opts_config()
+    saved["power_saver_display_rate"] = rate
+    save_opts_config(saved)
+
+    platform_profile = get_current_profile()
+    if platform_profile in ("low-power", "power-saver") and saved.get("display_refresh_save", True):
+        apply_saver_display_refresh_rate()
+    return True
+
 def save_opts_config(cfg):
     try:
         os.makedirs(os.path.dirname(OPTS_CONFIG_PATH), exist_ok=True)
@@ -1147,12 +1383,6 @@ def get_optimizations_list():
             "title": "Audio Codec Power Save",
             "desc": "Power down audio codec when silent",
             "icon": "󰕾",
-        },
-        {
-            "id": "display_refresh_save",
-            "title": "48 Hz Display Refresh on Battery",
-            "desc": "Drop internal screen refresh rate to 48.01 Hz on battery in Hyprland & Sway",
-            "icon": "󰍹",
         }
     ]
     if os.path.exists("/usr/local/bin/ryzenadj") or shutil.which("ryzenadj"):
@@ -1208,7 +1438,7 @@ def apply_all_optimizations():
 
     saved = load_opts_config()
     for opt_id, val in saved.items():
-        if opt_id not in ("cpu_max_freq", "cpu_freq_mode", "auto_brightness", "power_saver_brightness", "pre_saver_brightness"):
+        if opt_id not in ("cpu_max_freq", "cpu_freq_mode", "auto_brightness", "power_saver_brightness", "pre_saver_brightness", "power_saver_display_rate", "display_refresh_save"):
             apply_single_opt(opt_id, bool(val))
     cpu_mode = saved.get("cpu_freq_mode", "auto")
     target_khz = int(saved.get("cpu_max_freq", 0))
@@ -1219,6 +1449,8 @@ def apply_all_optimizations():
             max_f = read_val(os.path.join(p, "cpuinfo_max_freq"), "")
             if max_f:
                 write_val(os.path.join(p, "scaling_max_freq"), max_f)
+    if saved.get("display_refresh_save", True):
+        apply_saver_display_refresh_rate()
     if saved.get("auto_brightness", True):
         cur_b = get_brightness()
         existing_pre = saved.get("pre_saver_brightness", 0)
@@ -1283,6 +1515,19 @@ def main():
             print(json.dumps({"success": True, "power_saver_brightness": int(sys.argv[2])}))
         else:
             print("Usage: battery set-saver-brightness <50-95>")
+    elif arg in ("set-display-rate-enabled", "display-rate-enabled"):
+        if len(sys.argv) > 2:
+            val = sys.argv[2].lower() in ("true", "1", "on", "yes", "enable")
+            set_display_rate_enabled(val)
+            print(json.dumps({"success": True, "display_refresh": get_display_refresh_info()}))
+        else:
+            print("Usage: battery set-display-rate-enabled <true|false>")
+    elif arg in ("set-display-rate", "display-rate"):
+        if len(sys.argv) > 2:
+            set_display_rate(sys.argv[2])
+            print(json.dumps({"success": True, "display_refresh": get_display_refresh_info()}))
+        else:
+            print("Usage: battery set-display-rate <hz>")
     elif arg in ("apply-opts", "apply-optimizations"):
         apply_all_optimizations()
         print("✔ Applied power optimizations from config.")

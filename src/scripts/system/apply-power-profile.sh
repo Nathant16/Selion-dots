@@ -170,28 +170,13 @@ for eth in /sys/class/net/*; do
 done
 
 # ------------------------------------------------------------------------------
-# 6c. DISPLAY REFRESH RATE (48Hz on Battery / 60Hz on AC)
+# 6c. DISPLAY REFRESH RATE & POWER OPTS
 # ------------------------------------------------------------------------------
-TARGET_HZ=$([ "$PROFILE" = "power-saver" ] && echo "48.01" || echo "60.01")
-CUR_RES="1920x1080"
-for s_cfg in /home/*/.config/serpantinum/settings.json; do
-    if [ -f "$s_cfg" ]; then
-        r=$(grep -A 5 '"eDP-1"' "$s_cfg" 2>/dev/null | grep '"resolution"' | head -n 1 | cut -d'"' -f4)
-        [ -n "$r" ] && CUR_RES="$r" && break
-    fi
-done
-
-for hsock in /run/user/*/hypr/*/.socket.sock; do
-    if [ -S "$hsock" ]; then
-        sig=$(basename "$(dirname "$hsock")")
-        HYPRLAND_INSTANCE_SIGNATURE="$sig" hyprctl keyword monitor "eDP-1,${CUR_RES}@${TARGET_HZ},auto,1" >/dev/null 2>&1 || true
-    fi
-done
-for swsock in /run/user/*/sway-ipc.*.sock; do
-    if [ -S "$swsock" ]; then
-        SWAYSOCK="$swsock" swaymsg output eDP-1 mode "${CUR_RES}@${TARGET_HZ}Hz" >/dev/null 2>&1 || true
-    fi
-done
+if command -v battery >/dev/null 2>&1; then
+    battery apply-opts >/dev/null 2>&1 || true
+elif [ -n "$BATTERY_SCRIPT" ] && [ -f "$BATTERY_SCRIPT" ]; then
+    python3 "$BATTERY_SCRIPT" apply-opts >/dev/null 2>&1 || true
+fi
 
 # ------------------------------------------------------------------------------
 # 7. BLUETOOTH SLEEP
