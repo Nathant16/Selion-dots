@@ -110,17 +110,17 @@ blur = false
 
 [[window_rules]]
 title = "Picture-in-Picture"
-pinned = true
+pinned_to_screen = true
 preserve_aspect_ratio = true
 
 [[window_rules]]
 title = "Picture in picture"
-pinned = true
+pinned_to_screen = true
 preserve_aspect_ratio = true
 
 [[window_rules]]
 app_id = "btop"
-pinned = true
+pinned_to_screen = true
 size = [1200, 750]
 
 

@@ -202,8 +202,15 @@ if [ "$COMMAND" == "start" ]; then
         [ -f "/tmp/serpantinumd.pid" ] && existing_pid="$(cat "/tmp/serpantinumd.pid" 2>/dev/null)"
 
         if [ -n "$existing_pid" ] && is_alive "$existing_pid"; then
-            echo "$(t "daemon.already_running")"
-            exit 1
+            old_wdisp=$(tr '\0' '\n' < "/proc/$existing_pid/environ" 2>/dev/null | grep '^WAYLAND_DISPLAY=' | cut -d= -f2)
+            local_rdir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+            old_sock="$local_rdir/${old_wdisp:-wayland-0}"
+            if ([ -n "$WAYLAND_DISPLAY" ] && [ -n "$old_wdisp" ] && [ "$WAYLAND_DISPLAY" != "$old_wdisp" ]) || [ ! -e "$old_sock" ]; then
+                terminate_and_wait "$existing_pid" 2
+            else
+                echo "$(t "daemon.already_running")"
+                exit 1
+            fi
         fi
 
         pkill -KILL -f "serpantinum-core screentime track" 2>/dev/null
@@ -323,6 +330,10 @@ if [ "$COMMAND" == "start" ]; then
     if [ -z "$NIRI_SOCKET" ]; then
         local_ns=$(ls "$local_rdir"/niri*.sock 2>/dev/null | head -n 1)
         [ -n "$local_ns" ] && export NIRI_SOCKET="$local_ns" && export XDG_CURRENT_DESKTOP="niri"
+    fi
+    if [ -z "$MANGO_INSTANCE_SIGNATURE" ]; then
+        local_ms=$(ls "$local_rdir"/mango-*.sock 2>/dev/null | head -n 1)
+        [ -n "$local_ms" ] && export MANGO_INSTANCE_SIGNATURE="$local_ms" && export XDG_CURRENT_DESKTOP="mango"
     fi
 
     # On NVIDIA, keep wallpaper video decoding off the NVIDIA GPU: NVDEC keeps it at
