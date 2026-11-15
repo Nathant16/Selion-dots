@@ -168,10 +168,17 @@ def apply_driftwm(name, resolution, framerate, scale, env):
 
 def resolve_current_resolution(name, env):
     try:
-        from monitors_detector import detect_monitors
-        for m in detect_monitors(env):
-            if m.get("name") == name and m.get("dimensions"):
-                return m["dimensions"]
+        from monitors_detector import get_wlr_randr, get_hyprland_monitors
+        monitors = get_wlr_randr(env) or get_hyprland_monitors(env)
+        for m in (monitors or []):
+            if m.get("name") == name:
+                cur_mode = next((mode for mode in m.get("modes", []) if mode.get("current")), None)
+                if not cur_mode and m.get("modes"):
+                    cur_mode = m["modes"][0]
+                if cur_mode and cur_mode.get("width") and cur_mode.get("height"):
+                    return f"{cur_mode['width']}x{cur_mode['height']}"
+                if m.get("width") and m.get("height"):
+                    return f"{m['width']}x{m['height']}"
     except Exception:
         pass
     return None
