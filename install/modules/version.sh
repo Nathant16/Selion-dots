@@ -159,7 +159,7 @@ write_version_state() {
     local full_wallpapers="${8:-true}"
     local kb_layout="${9:-"us,ru"}"
     local kb_toggle="${10:-"alt_shift"}"
-    local opt_fast_repos="${11:-true}"
+    local opt_fast_repos="${11:-false}"
 
     if [[ -z "$commit" || "$commit" == "null" ]]; then
         commit="unknown"

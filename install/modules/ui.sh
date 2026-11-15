@@ -14,7 +14,7 @@ ENABLE_TELEMETRY=true
 INSTALL_FULL_WALLPAPERS=true
 KEYBOARD_LAYOUT="us,ru"
 KEYBOARD_TOGGLE="alt_shift"
-OPT_FAST_REPOS=true
+OPT_FAST_REPOS=false
 SELECTED_COMPOSITORS=()
 DETECTED_COMPOSITOR_LABEL=""
 MULTIPLE_COMPOSITORS_DETECTED=false
@@ -905,12 +905,12 @@ run_installer_ui() {
         OPT_SDDM="${OPT_SDDM:-true}"
         INSTALL_FULL_WALLPAPERS="${INSTALL_FULL_WALLPAPERS:-true}"
         ENABLE_TELEMETRY="${ENABLE_TELEMETRY:-false}"
-        OPT_FAST_REPOS="${OPT_FAST_REPOS:-true}"
+        OPT_FAST_REPOS="${OPT_FAST_REPOS:-false}"
         return 0
     fi
 
     local cursor=0
-    OPT_FAST_REPOS="${OPT_FAST_REPOS:-true}"
+    OPT_FAST_REPOS="${OPT_FAST_REPOS:-false}"
 
     while true; do
         draw_banner

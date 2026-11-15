@@ -71,7 +71,7 @@ SDDM_WAYLAND=$(get_saved_preference SDDM_WAYLAND "$SDDM_WAYLAND")
 INSTALL_FULL_WALLPAPERS=$(get_saved_preference INSTALL_FULL_WALLPAPERS "${INSTALL_FULL_WALLPAPERS:-true}")
 KEYBOARD_LAYOUT=$(get_saved_preference KEYBOARD_LAYOUT "${KEYBOARD_LAYOUT:-us,ru}")
 KEYBOARD_TOGGLE=$(get_saved_preference KEYBOARD_TOGGLE "${KEYBOARD_TOGGLE:-alt_shift}")
-OPT_FAST_REPOS=$(get_saved_preference OPT_FAST_REPOS "${OPT_FAST_REPOS:-true}")
+OPT_FAST_REPOS=$(get_saved_preference OPT_FAST_REPOS "${OPT_FAST_REPOS:-false}")
 export KEYBOARD_LAYOUT
 export KEYBOARD_TOGGLE
 export OPT_FAST_REPOS
