@@ -805,6 +805,7 @@ ALLOWED_SCRIPTS=(
     "location_manual"
     "gamma"
     "battery"
+    "clamshell"
 )
 
 COMMAND="$1"

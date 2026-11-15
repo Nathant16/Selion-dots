@@ -949,6 +949,12 @@ deploy_package() {
         sudo chmod 644 /etc/polkit-1/rules.d/50-net.reactivated.fprint.rules 2>/dev/null || true
     fi
 
+    # Deploy logind clamshell configuration: ignore lid switch when external monitor is connected
+    if [ -d "/etc/systemd" ]; then
+        sudo mkdir -p /etc/systemd/logind.conf.d 2>/dev/null || true
+        printf '[Login]\nHandleLidSwitch=suspend\nHandleLidSwitchDocked=ignore\n' | sudo tee /etc/systemd/logind.conf.d/99-serpantinum-clamshell.conf >/dev/null 2>&1 || true
+    fi
+
     # Deploy Twemoji fontconfig and ensure emoji font availability
     if [ -f "$TARGET_BASE/src/assets/fontconfig/75-twemoji.conf" ]; then
         local fontconfig_avail="/usr/share/fontconfig/conf.avail"

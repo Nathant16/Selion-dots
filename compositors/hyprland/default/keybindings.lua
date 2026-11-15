@@ -101,3 +101,7 @@ hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tru
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
+
+-- ==> Clamshell Mode (Laptop Lid Switch)
+hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("serpantinum clamshell close"), { locked = true, description = "Clamshell lid closed" })
+hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("serpantinum clamshell open"), { locked = true, description = "Clamshell lid opened" })

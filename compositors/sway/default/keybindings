@@ -107,3 +107,7 @@ bindsym $mod+Shift+7 exec serpantinum msg workspace 7 move
 bindsym $mod+Shift+8 exec serpantinum msg workspace 8 move
 bindsym $mod+Shift+9 exec serpantinum msg workspace 9 move
 bindsym $mod+Shift+0 exec serpantinum msg workspace 10 move
+
+# Clamshell Mode (Laptop Lid Switch)
+bindswitch --locked lid:on exec serpantinum clamshell close
+bindswitch --locked lid:off exec serpantinum clamshell open

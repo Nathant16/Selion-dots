@@ -133,7 +133,7 @@ def get_blur_background(settings):
     th = settings.get("theme", {})
     if "blurBackground" in th:
         return bool(th["blurBackground"])
-    return False
+    return True
 
 def get_apply_effects_to_windows(settings):
     th = settings.get("theme", {})
