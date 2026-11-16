@@ -71,6 +71,23 @@ CompositorStateBase {
         Quickshell.execDetached(["driftwm", "msg", "action", "go-to-bookmark", String(index + 1)]);
     }
 
+    function setCamera(x, y) {
+        Quickshell.execDetached(["driftwm", "msg", "camera", String(Math.round(x)), String(Math.round(y))]);
+    }
+
+    function setZoom(level) {
+        let clamped = Math.max(0.1, Math.min(1.0, level));
+        Quickshell.execDetached(["driftwm", "msg", "zoom", clamped.toFixed(2)]);
+    }
+
+    function zoomIn() {
+        Quickshell.execDetached(["driftwm", "msg", "action", "zoom-in"]);
+    }
+
+    function zoomOut() {
+        Quickshell.execDetached(["driftwm", "msg", "action", "zoom-out"]);
+    }
+
     function moveWindowToWorkspace(index) {
         Quickshell.execDetached(["driftwm", "msg", "action", "move-to-bookmark", String(index + 1)]);
     }

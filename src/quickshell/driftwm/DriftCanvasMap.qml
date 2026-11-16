@@ -20,11 +20,9 @@ PanelWindow {
     exclusionMode: ExclusionMode.Ignore
     color: "transparent"
 
-    // Click-through except for the Pin button
+    // Click-through when hidden, interactive across the card surface when shown
     Region { id: emptyRegion }
-    Region { id: pinRegion; item: pinBtn }
-
-    mask: (mapCard.isShown && mapCard.opacity > 0.1) ? pinRegion : emptyRegion
+    mask: (mapCard.isShown && mapCard.opacity > 0.05) ? null : emptyRegion
 
     anchors {
         bottom: true
@@ -130,6 +128,18 @@ PanelWindow {
             }
         }
 
+        // Hover handling: keep map visible while mouse is hovered over it
+        HoverHandler {
+            id: cardHoverHandler
+            onHoveredChanged: {
+                if (hovered) {
+                    hideTimer.stop();
+                } else if (!mapCard.isPinned && mapCard.isShown) {
+                    hideTimer.restart();
+                }
+            }
+        }
+
         property bool isPinned: {
             if (typeof Config !== "undefined" && typeof Config.getSetting === "function") {
                 let s = Config.getSetting("driftwm", {});
@@ -147,7 +157,9 @@ PanelWindow {
                 Config.setSetting("driftwm", s);
             }
             if (!nextPinned) {
-                hideTimer.restart();
+                if (!cardHoverHandler.hovered) {
+                    hideTimer.restart();
+                }
             } else {
                 isShown = true;
             }
@@ -155,7 +167,7 @@ PanelWindow {
 
         function wakeUp() {
             isShown = true;
-            if (!isPinned) {
+            if (!isPinned && !cardHoverHandler.hovered) {
                 hideTimer.restart();
             }
             DriftState.refreshBookmarks();
@@ -167,7 +179,7 @@ PanelWindow {
             interval: 1800
             repeat: false
             onTriggered: {
-                if (!mapCard.isPinned) {
+                if (!mapCard.isPinned && !cardHoverHandler.hovered) {
                     mapCard.isShown = false;
                 }
             }
@@ -218,19 +230,21 @@ PanelWindow {
             let maxY = cy + vh / 2;
 
             // Include all active windows on canvas
-            let wins = DriftState.windows || [];
-            for (let i = 0; i < wins.length; i++) {
-                let w = wins[i];
-                if (!w || !w.position || !w.size) continue;
-                let wx = Number(w.position[0]) || 0;
-                let wy = Number(w.position[1]) || 0;
-                let ww = Number(w.size[0]) || 800;
-                let wh = Number(w.size[1]) || 600;
+            let wins = DriftState.windows;
+            if (wins && wins.length) {
+                for (let i = 0; i < wins.length; i++) {
+                    let w = wins[i];
+                    if (!w || !w.position || !w.size) continue;
+                    let wx = Number(w.position[0]) || 0;
+                    let wy = Number(w.position[1]) || 0;
+                    let ww = Number(w.size[0]) || 800;
+                    let wh = Number(w.size[1]) || 500;
 
-                minX = Math.min(minX, wx - ww / 2);
-                maxX = Math.max(maxX, wx + ww / 2);
-                minY = Math.min(minY, wy - wh / 2);
-                maxY = Math.max(maxY, wy + wh / 2);
+                    minX = Math.min(minX, wx - ww / 2);
+                    maxX = Math.max(maxX, wx + ww / 2);
+                    minY = Math.min(minY, wy - wh / 2);
+                    maxY = Math.max(maxY, wy + wh / 2);
+                }
             }
 
             // Include active bookmark in bounds calculation
@@ -273,31 +287,32 @@ PanelWindow {
             color: ThemeBackend.blurBackground
                 ? Qt.alpha(ThemeBackend.base, ThemeBackend.elementOpacity)
                 : Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, 0.88)
-            border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.10)
+            border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.09)
             border.width: 1
+            clip: true
 
-            // Hardware Wallpaper Blur integration
-            WallpaperBlur {
-                z: -1
+            GlassFill {
                 anchors.fill: parent
-                radius: parent.radius
-                standalone: true
-                visible: ThemeBackend.blurBackground
+                radius: cardBg.radius
+                allowed: ThemeBackend.glassBlur
+                tintColor: ThemeBackend.surface0
+                tintAmount: 0.18
+                tintStrength: 1.0
             }
 
-            // Inner subtle ambient highlight ring
+            // Inner Shadow/Glow Accent Border
             Rectangle {
                 anchors.fill: parent
-                anchors.margins: 1
-                radius: parent.radius - 1
+                radius: cardBg.radius
                 color: "transparent"
-                border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.04)
+                border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.14)
                 border.width: 1
             }
 
+            // Content Column
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: mapWindow.s(11)
+                anchors.margins: mapWindow.s(10)
                 spacing: mapWindow.s(9)
 
                 // Top Header Row
@@ -390,7 +405,7 @@ PanelWindow {
                         }
                     }
 
-                    // Pin / Lock Button (Keeps Minimap permanently on screen)
+                    // Pin / Lock Button (matching DockAppMenu style: 󰤰 when pinned, 󰤱 when unpinned)
                     Rectangle {
                         id: pinBtn
                         width: mapWindow.s(26)
@@ -403,13 +418,14 @@ PanelWindow {
                             ? ThemeBackend.primary
                             : Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.85)
                         border.width: 1
+                        z: 10
 
                         Behavior on color { ColorAnimation { duration: 150 } }
                         Behavior on border.color { ColorAnimation { duration: 150 } }
 
                         Text {
                             anchors.centerIn: parent
-                            text: mapCard.isPinned ? "󰐃" : "󰤰"
+                            text: mapCard.isPinned ? "󰤰" : "󰤱"
                             font.family: ThemeBackend.iconFont
                             font.pixelSize: mapWindow.s(13)
                             color: mapCard.isPinned
@@ -421,6 +437,7 @@ PanelWindow {
                         MouseArea {
                             id: pinMa
                             anchors.fill: parent
+                            anchors.margins: -mapWindow.s(2)
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: mapCard.togglePin()
@@ -435,8 +452,8 @@ PanelWindow {
                     Layout.fillHeight: true
                     radius: mapWindow.s(10)
                     clip: true
-                    color: Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, 0.55)
-                    border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.06)
+                    color: Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, 0.65)
+                    border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.08)
                     border.width: 1
 
                     readonly property real mapScale: Math.min(
@@ -453,13 +470,23 @@ PanelWindow {
                         return canvasArea.height / 2 - (wy - mapCard.worldCenterY) * mapScale;
                     }
 
-                    // Background Axis Grid / Origin Crosshair
+                    function toWorldX(mx) {
+                        return mapCard.worldCenterX + (mx - canvasArea.width / 2) / Math.max(0.0001, mapScale);
+                    }
+
+                    function toWorldY(my) {
+                        // flip back from screen Y-down to Cartesian Y-up
+                        return mapCard.worldCenterY - (my - canvasArea.height / 2) / Math.max(0.0001, mapScale);
+                    }
+
+                    // Background Axis Grid lines
                     Rectangle {
                         x: 0
                         y: canvasArea.toMapY(0)
                         width: canvasArea.width
                         height: 1
-                        color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.05)
+                        z: 1
+                        color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.04)
                     }
 
                     Rectangle {
@@ -467,24 +494,72 @@ PanelWindow {
                         y: 0
                         width: 1
                         height: canvasArea.height
-                        color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.05)
+                        z: 1
+                        color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.04)
                     }
 
-                    // Origin indicator dot (0, 0)
-                    Rectangle {
-                        x: canvasArea.toMapX(0) - width / 2
-                        y: canvasArea.toMapY(0) - height / 2
-                        width: 3
-                        height: 3
-                        radius: 1.5
-                        color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.35)
+                    // Interactive Panning & Wheel Zooming on the canvas
+                    MouseArea {
+                        id: canvasPanMa
+                        anchors.fill: parent
+                        z: 2
+                        hoverEnabled: true
+                        cursorShape: pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+                        acceptedButtons: Qt.LeftButton
+
+                        property real lastPanTime: 0
+                        property int wheelAccum: 0
+
+                        Timer {
+                            id: wheelDebounce
+                            interval: 70
+                            repeat: false
+                            onTriggered: canvasPanMa.wheelAccum = 0
+                        }
+
+                        function panTo(mx, my) {
+                            let now = Date.now();
+                            if (now - lastPanTime < 28) return;
+                            lastPanTime = now;
+                            let wx = Math.round(canvasArea.toWorldX(mx));
+                            let wy = Math.round(canvasArea.toWorldY(my));
+                            DriftState.setCamera(wx, wy);
+                        }
+
+                        onPressed: (mouse) => {
+                            panTo(mouse.x, mouse.y);
+                        }
+
+                        onPositionChanged: (mouse) => {
+                            if (pressed) {
+                                panTo(mouse.x, mouse.y);
+                            }
+                        }
+
+                        onReleased: (mouse) => {
+                            let wx = Math.round(canvasArea.toWorldX(mouse.x));
+                            let wy = Math.round(canvasArea.toWorldY(mouse.y));
+                            DriftState.setCamera(wx, wy);
+                        }
+
+                        onWheel: (wheel) => {
+                            wheelAccum += wheel.angleDelta.y;
+                            wheelDebounce.restart();
+                            if (wheelAccum >= 60) {
+                                wheelAccum = 0;
+                                DriftState.zoomIn();
+                            } else if (wheelAccum <= -60) {
+                                wheelAccum = 0;
+                                DriftState.zoomOut();
+                            }
+                        }
                     }
 
-                    // Bookmarks Indicators
+                    // Top Zone Ruler for Bookmarks 1..9 (pinned along top of canvas so they NEVER collide with windows)
                     Repeater {
                         model: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                        delegate: Item {
-                            id: bmItem
+                        delegate: Rectangle {
+                            id: topBmRuler
                             required property int modelData
 
                             readonly property var bmCoords: {
@@ -496,36 +571,66 @@ PanelWindow {
                                 return [(modelData - 1) * 2500, 0];
                             }
                             readonly property real bx: Number(bmCoords[0]) || 0
-                            readonly property real by: Number(bmCoords[1]) || 0
                             readonly property bool isCurrent: (DriftState.activeIndex + 1) === modelData
 
                             x: canvasArea.toMapX(bx) - width / 2
-                            y: canvasArea.toMapY(by) - height / 2
+                            y: mapWindow.s(3)
                             width: mapWindow.s(14)
-                            height: mapWindow.s(14)
+                            height: mapWindow.s(11)
+                            radius: mapWindow.s(2.5)
+                            z: 3
 
-                            Rectangle {
+                            visible: x >= -width && x <= canvasArea.width + width
+
+                            color: isCurrent
+                                ? ThemeBackend.primary
+                                : Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.70)
+                            border.color: isCurrent
+                                ? "#ffffff"
+                                : Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.70)
+                            border.width: 1
+
+                            Text {
                                 anchors.centerIn: parent
-                                width: isCurrent ? mapWindow.s(14) : mapWindow.s(10)
-                                height: isCurrent ? mapWindow.s(14) : mapWindow.s(10)
-                                radius: width / 2
-                                color: isCurrent ? ThemeBackend.primary : Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.08)
-                                border.color: isCurrent ? "#ffffff" : Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.15)
-                                border.width: 1
+                                text: topBmRuler.modelData
+                                font.family: ThemeBackend.fontFamily
+                                font.pixelSize: mapWindow.s(7)
+                                font.bold: true
+                                color: topBmRuler.isCurrent ? ThemeBackend.crust : ThemeBackend.subtext0
+                            }
 
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: modelData
-                                    font.family: ThemeBackend.fontFamily
-                                    font.pixelSize: isCurrent ? mapWindow.s(8) : mapWindow.s(6.5)
-                                    font.bold: true
-                                    color: isCurrent ? ThemeBackend.crust : ThemeBackend.subtext1
-                                }
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: DriftState.focusWorkspace(topBmRuler.modelData - 1)
                             }
                         }
                     }
 
-                    // Windows on the Canvas
+                    // Vertical Zone Dividers for Bookmarks (Clean canvas partitioning without number clutter)
+                    Repeater {
+                        model: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        delegate: Rectangle {
+                            required property int modelData
+                            readonly property var bmCoords: {
+                                let rev = DriftState.bookmarksRevision;
+                                let bms = DriftState.bookmarks;
+                                if (bms && bms[String(modelData)]) {
+                                    return bms[String(modelData)];
+                                }
+                                return [(modelData - 1) * 2500, 0];
+                            }
+                            readonly property real bx: Number(bmCoords[0]) || 0
+                            x: canvasArea.toMapX(bx)
+                            y: 0
+                            width: 1
+                            height: canvasArea.height
+                            z: 1
+                            color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.04)
+                        }
+                    }
+
+                    // Windows on the Canvas (High-opacity solid cards to eliminate overlapping collisions)
                     Repeater {
                         model: DriftState.windows
                         delegate: Rectangle {
@@ -539,28 +644,44 @@ PanelWindow {
                             readonly property bool isFocused: !!modelData.is_focused
                             readonly property bool isSuspended: !!modelData.suspended
 
-                            width: Math.max(mapWindow.s(5), ww * canvasArea.mapScale)
-                            height: Math.max(mapWindow.s(4), wh * canvasArea.mapScale)
+                            width: Math.max(mapWindow.s(6), ww * canvasArea.mapScale)
+                            height: Math.max(mapWindow.s(5), wh * canvasArea.mapScale)
                             x: canvasArea.toMapX(wx) - width / 2
                             y: canvasArea.toMapY(wy) - height / 2
-                            radius: Math.max(2, Math.min(4, mapWindow.s(4)))
+                            radius: Math.max(2, Math.min(5, mapWindow.s(4)))
+                            clip: true
 
+                            // Z-ordering: focused window ALWAYS in front, higher IDs above lower IDs
+                            z: isFocused ? 30 : (10 + (modelData.id ? (modelData.id % 12) : 0))
+
+                            // High-opacity solid fill prevents messy text collisions when windows overlap
                             color: {
-                                if (isFocused) return Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.40);
-                                if (isSuspended) return Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.20);
-                                return Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.58);
+                                if (isFocused) return Qt.lighter(ThemeBackend.surface1, 1.15);
+                                if (isSuspended) return Qt.rgba(ThemeBackend.surface0.r, ThemeBackend.surface0.g, ThemeBackend.surface0.b, 0.88);
+                                if (winMa.containsMouse) return Qt.lighter(ThemeBackend.surface0, 1.20);
+                                return Qt.rgba(ThemeBackend.surface0.r, ThemeBackend.surface0.g, ThemeBackend.surface0.b, 0.95);
                             }
 
                             border.width: isFocused ? 1.5 : 1
                             border.color: {
                                 if (isFocused) return ThemeBackend.primary;
-                                if (isSuspended) return Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.16);
-                                return Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.28);
+                                if (isSuspended) return Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.20);
+                                return Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.90);
                             }
 
-                            // Minimalist app label inside window (only clean program name)
+                            // Dark drop shadow outline for crisp window depth separation
+                            Rectangle {
+                                anchors.fill: parent
+                                anchors.margins: -1
+                                radius: parent.radius + 1
+                                z: -1
+                                color: "transparent"
+                                border.color: Qt.rgba(0, 0, 0, 0.45)
+                                border.width: 1
+                            }
+
+                            // Minimalist app label inside window
                             Text {
-                                anchors.centerIn: parent
                                 anchors.fill: parent
                                 anchors.margins: mapWindow.s(2)
                                 horizontalAlignment: Text.AlignHCenter
@@ -570,17 +691,25 @@ PanelWindow {
                                 font.family: ThemeBackend.fontFamily
                                 font.pixelSize: Math.max(7, Math.min(9, parent.height * 0.45))
                                 font.bold: isFocused
-                                color: isFocused ? "#ffffff" : ThemeBackend.subtext0
-                                opacity: isFocused ? 0.95 : 0.85
+                                color: isFocused ? "#ffffff" : ThemeBackend.subtext1
                                 elide: Text.ElideRight
                                 maximumLineCount: 1
+                            }
+
+                            MouseArea {
+                                id: winMa
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: DriftState.focusWindow(modelData.id)
                             }
                         }
                     }
 
-                    // --- User's Viewport (Camera Frustum / Viewfinder without text) ---
+                    // --- User's Viewport (Camera Frustum / Viewfinder) ---
                     Rectangle {
                         id: viewportRect
+                        z: 45
 
                         readonly property real zoomLevel: Math.max(0.1, DriftState.zoom)
                         readonly property real sw: DriftState.screenWidth || 1920
@@ -595,7 +724,7 @@ PanelWindow {
                         y: canvasArea.toMapY(DriftState.cameraY) - height / 2
                         radius: mapWindow.s(4)
 
-                        color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.12)
+                        color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.10)
                         border.color: ThemeBackend.primary
                         border.width: 1.5
 
@@ -605,25 +734,11 @@ PanelWindow {
                             anchors.margins: -1
                             radius: parent.radius + 1
                             color: "transparent"
-                            border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.42)
+                            border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.40)
                             border.width: 1
                         }
 
-                        // Center reticle crosshair (+)
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: mapWindow.s(7)
-                            height: 1.5
-                            color: ThemeBackend.primary
-                        }
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: 1.5
-                            height: mapWindow.s(7)
-                            color: ThemeBackend.primary
-                        }
-
-                        // Viewfinder HUD Corner Brackets
+                        // Viewfinder Corner Brackets (no center crosshair to avoid obscuring text)
                         Rectangle {
                             anchors.top: parent.top
                             anchors.left: parent.left
