@@ -1,5 +1,6 @@
 ### 2.7.2
 
+- feat(installer): auto-detect all installed compositors during updates and automatically check their selection checkboxes
 - feat(cursors): integrate complete Windows 11M Dark cursor theme across all 5 Window Managers (DriftWM, Hyprland, Sway, Niri, Mango), SDDM, GTK, Flatpak, and X11
 - feat(cursors): draw pixel-perfect missing cursors (Grabbing, ZoomIn, ZoomOut, Copy, Alias, ContextMenu, Cell, VerticalText, ColResize, RowResize) matching theme palette and shadows
 - fix(weather): fully localize weather alerts and government warning notifications across all 23 language files and normalize CAP alert language tags

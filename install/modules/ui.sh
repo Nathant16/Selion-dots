@@ -82,13 +82,63 @@ read_key() {
     echo "$key"
 }
 
+is_compositor_installed() {
+    local comp="$1"
+    case "$comp" in
+        hyprland)
+            command -v Hyprland &>/dev/null || command -v hyprland &>/dev/null || pm_is_installed hyprland
+            ;;
+        driftwm)
+            command -v driftwm &>/dev/null || pm_is_installed driftwm || pm_is_installed driftwm-bin
+            ;;
+        niri)
+            command -v niri &>/dev/null || pm_is_installed niri
+            ;;
+        sway)
+            command -v sway &>/dev/null || pm_is_installed sway
+            ;;
+        mango)
+            command -v mango &>/dev/null || command -v mangowm &>/dev/null || command -v mangowc &>/dev/null || pm_is_installed mangowm || pm_is_installed mangowc || pm_is_installed mango
+            ;;
+        *)
+            command -v "$comp" &>/dev/null || pm_is_installed "$comp"
+            ;;
+    esac
+}
+
 init_compositor_detection() {
+    local supported_compositors=("hyprland" "driftwm" "niri" "sway" "mango")
     local installed=()
-    for comp in hyprland driftwm niri sway mango; do
-        if command -v "$comp" &>/dev/null || pm_is_installed "$(compositor_package_name "$comp")"; then
+    for comp in "${supported_compositors[@]}"; do
+        if is_compositor_installed "$comp"; then
             installed+=("$comp")
         fi
     done
+
+    local is_update=false
+    if [[ "$INSTALL_STATE" == "current" || "$INSTALL_STATE" == "legacy" || -f "$HOME/.local/state/serpantinum/version" || -f "$HOME/.local/state/imperative-dots-version" ]]; then
+        is_update=true
+    fi
+
+    if [ "$is_update" = true ]; then
+        if [ ${#installed[@]} -gt 0 ]; then
+            SELECTED_COMPOSITORS=("${installed[@]}")
+            DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
+            MULTIPLE_COMPOSITORS_DETECTED=false
+            UNSUPPORTED_COMPOSITOR_DETECTED=false
+            return 0
+        elif [ -f "$HOME/.local/state/serpantinum/version" ]; then
+            local saved_comps
+            saved_comps=$(awk -F= '/^SELECTED_COMPOSITORS=/{gsub(/"/, "", $2); print $2}' "$HOME/.local/state/serpantinum/version" 2>/dev/null || true)
+            if [ -n "$saved_comps" ]; then
+                read -r -a SELECTED_COMPOSITORS <<< "$saved_comps"
+                DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
+                MULTIPLE_COMPOSITORS_DETECTED=false
+                UNSUPPORTED_COMPOSITOR_DETECTED=false
+                return 0
+            fi
+        fi
+    fi
 
     local running=""
     local de="${XDG_CURRENT_DESKTOP,,}"
@@ -109,27 +159,16 @@ init_compositor_detection() {
     if [ -n "$running" ]; then
         SELECTED_COMPOSITORS=("$running")
         DETECTED_COMPOSITOR_LABEL="$running"
-    elif [ -f "$HOME/.local/state/serpantinum/version" ]; then
-        local saved_comps
-        saved_comps=$(awk -F= '/^SELECTED_COMPOSITORS=/{gsub(/"/, "", $2); print $2}' "$HOME/.local/state/serpantinum/version" 2>/dev/null || true)
-        if [ -n "$saved_comps" ]; then
-            read -r -a SELECTED_COMPOSITORS <<< "$saved_comps"
-            DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
-        fi
-    fi
-
-    if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
-        if [ ${#installed[@]} -gt 1 ]; then
-            MULTIPLE_COMPOSITORS_DETECTED=true
-            SELECTED_COMPOSITORS=()
-        elif [ ${#installed[@]} -eq 1 ]; then
-            SELECTED_COMPOSITORS=("${installed[0]}")
-            DETECTED_COMPOSITOR_LABEL="${installed[0]}"
-        else
-            UNSUPPORTED_COMPOSITOR_DETECTED=true
-            DETECTED_COMPOSITOR_LABEL="$(t "installer.ui.unsupported_compositor")"
-            SELECTED_COMPOSITORS=()
-        fi
+    elif [ ${#installed[@]} -gt 1 ]; then
+        MULTIPLE_COMPOSITORS_DETECTED=true
+        SELECTED_COMPOSITORS=()
+    elif [ ${#installed[@]} -eq 1 ]; then
+        SELECTED_COMPOSITORS=("${installed[0]}")
+        DETECTED_COMPOSITOR_LABEL="${installed[0]}"
+    else
+        UNSUPPORTED_COMPOSITOR_DETECTED=true
+        DETECTED_COMPOSITOR_LABEL="$(t "installer.ui.unsupported_compositor")"
+        SELECTED_COMPOSITORS=()
     fi
 }
 
@@ -265,21 +304,11 @@ manage_compositors_menu() {
         local status_sway="$(t "installer.ui.not_installed")"
         local status_mango="$(t "installer.ui.not_installed")"
 
-        if command -v hyprland &>/dev/null || pm_is_installed hyprland; then
-            status_hypr="$(t "installer.ui.installed")"
-        fi
-        if command -v driftwm &>/dev/null || pm_is_installed driftwm; then
-            status_drift="$(t "installer.ui.installed")"
-        fi
-        if command -v niri &>/dev/null || pm_is_installed niri; then
-            status_niri="$(t "installer.ui.installed")"
-        fi
-        if command -v sway &>/dev/null || pm_is_installed sway; then
-            status_sway="$(t "installer.ui.installed")"
-        fi
-        if command -v mango &>/dev/null || pm_is_installed "$(compositor_package_name mango)"; then
-            status_mango="$(t "installer.ui.installed")"
-        fi
+        is_compositor_installed hyprland && status_hypr="$(t "installer.ui.installed")"
+        is_compositor_installed driftwm && status_drift="$(t "installer.ui.installed")"
+        is_compositor_installed niri && status_niri="$(t "installer.ui.installed")"
+        is_compositor_installed sway && status_sway="$(t "installer.ui.installed")"
+        is_compositor_installed mango && status_mango="$(t "installer.ui.installed")"
 
         local S_HYPR="${DIM}[ ]${RESET}"
         local S_DRIFT="${DIM}[ ]${RESET}"
@@ -369,6 +398,7 @@ manage_compositors_menu() {
                 fi
                 ;;
             "6"|ESC|[qQ])
+                DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
                 break
                 ;;
             ENTER|SPACE)
@@ -409,6 +439,7 @@ manage_compositors_menu() {
                         fi
                         ;;
                     5)
+                        DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
                         break
                         ;;
                 esac
