@@ -1,3 +1,7 @@
+### 2.7.4
+
+- style(cursors): increase default cursor size from 24 to 28 across all 5 compositors, GTK, SDDM, and theming sync
+
 ### 2.7.3
 
 - feat(docs): unify common keybindings into master guide (`compositors/README.md`), eliminate redundant tables, remove all emojis, and detail unique mechanics for each compositor

@@ -326,7 +326,7 @@ configure_sddm_cursor() {
         theme="$(find /usr/share/icons -mindepth 2 -maxdepth 2 -type d -name cursors 2>/dev/null | head -n 1 | xargs -r dirname | xargs -r basename)"
     fi
     [ -n "$theme" ] || return 0
-    sudo sed -i -e "/^ThemeDir=/a CursorTheme=$theme" -e "/^ThemeDir=/a CursorSize=24" "$conf"
+    sudo sed -i -e "/^ThemeDir=/a CursorTheme=$theme" -e "/^ThemeDir=/a CursorSize=28" "$conf"
 }
 
 setup_sddm() {
@@ -1040,21 +1040,21 @@ EOF_CUR
 
         if command -v gsettings &>/dev/null; then
             gsettings set org.gnome.desktop.interface cursor-theme 'Windows-11M-Dark' 2>/dev/null || true
-            gsettings set org.gnome.desktop.interface cursor-size 24 2>/dev/null || true
+            gsettings set org.gnome.desktop.interface cursor-size 28 2>/dev/null || true
         fi
         for gtk_dir in "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"; do
             mkdir -p "$gtk_dir" 2>/dev/null || true
             local ini="$gtk_dir/settings.ini"
             if [ -f "$ini" ]; then
                 sed -i 's/^gtk-cursor-theme-name=.*/gtk-cursor-theme-name=Windows-11M-Dark/' "$ini" 2>/dev/null || true
-                sed -i 's/^gtk-cursor-theme-size=.*/gtk-cursor-theme-size=24/' "$ini" 2>/dev/null || true
+                sed -i 's/^gtk-cursor-theme-size=.*/gtk-cursor-theme-size=28/' "$ini" 2>/dev/null || true
                 grep -q "gtk-cursor-theme-name" "$ini" || echo "gtk-cursor-theme-name=Windows-11M-Dark" >> "$ini"
-                grep -q "gtk-cursor-theme-size" "$ini" || echo "gtk-cursor-theme-size=24" >> "$ini"
+                grep -q "gtk-cursor-theme-size" "$ini" || echo "gtk-cursor-theme-size=28" >> "$ini"
             else
                 cat << 'EOF_GTK' > "$ini"
 [Settings]
 gtk-cursor-theme-name=Windows-11M-Dark
-gtk-cursor-theme-size=24
+gtk-cursor-theme-size=28
 EOF_GTK
             fi
         done
