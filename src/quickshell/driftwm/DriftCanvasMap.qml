@@ -424,7 +424,7 @@ PanelWindow {
                         Layout.preferredWidth: width
                         Layout.preferredHeight: height
                         cornerRadius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
-                        buttonIcon: mapCard.isPinned ? "󰤰" : "󰤱"
+                        buttonIcon: mapCard.isPinned ? "󰐃" : "󰤰"
                         iconFontSize: mapWindow.s(13)
                         accentColor: mapCard.isPinned ? ThemeBackend.primary : ThemeBackend.surface0
                         textColor: mapCard.isPinned ? ThemeBackend.crust : (pinBtn.isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.subtext0)
