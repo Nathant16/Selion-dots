@@ -169,9 +169,12 @@ size = [1100, 700]
 "mod+q" = "close-window"
 "mod+shift+q" = "suspend-window"
 "alt+return" = "toggle-fullscreen"
+"mod+f" = "fit-window"
+"mod+shift+f" = "fill-window"
 "mod+space" = "toggle-pin-to-screen"
 "mod+t" = "toggle-pin-to-screen"
 "mod+backspace" = "center-window"
+"mod+home" = "home-toggle"
 
 # Навигация и фокус окон (как на ПК)
 "mod+left" = "focus-nearest left"
@@ -181,7 +184,7 @@ size = [1100, 700]
 "alt+tab" = "cycle-windows forward"
 "alt+shift+tab" = "cycle-windows backward"
 
-# Перемещение окон на активном воркспейсе (Super + Alt + Стрелки)
+# Перемещение окон со снаппингом (Super + Alt + Стрелки)
 "mod+alt+left" = "move-to-snap left"
 "mod+alt+right" = "move-to-snap right"
 "mod+alt+up" = "move-to-snap up"
@@ -193,11 +196,11 @@ size = [1100, 700]
 "mod+ctrl+up" = "go-to-bookmark prev"
 "mod+ctrl+down" = "go-to-bookmark next"
 
-# Изменение размера
-"mod+shift+left" = "move-to-snap left"
-"mod+shift+right" = "move-to-snap right"
-"mod+shift+up" = "move-to-snap up"
-"mod+shift+down" = "move-to-snap down"
+# Изменение размера со снаппингом (Super + Shift + Стрелки)
+"mod+shift+left" = "resize-to-snap left"
+"mod+shift+right" = "resize-to-snap right"
+"mod+shift+up" = "resize-to-snap up"
+"mod+shift+down" = "resize-to-snap down"
 
 # Приложения (соответствие ПК / userprefs)
 "mod+shift+c" = "exec code"
