@@ -97,6 +97,11 @@ CompositorStateBase {
         Quickshell.execDetached(["driftwm", "msg", "focus", "--id", String(id)]);
     }
 
+    function relaunchWindow(id) {
+        if (id === undefined || id === null) return;
+        Quickshell.execDetached(["driftwm", "msg", "relaunch", "--id", String(id)]);
+    }
+
     function closeWindow(id) {
         if (id === undefined || id === null) return;
         Quickshell.execDetached(["driftwm", "msg", "close", "--id", String(id)]);

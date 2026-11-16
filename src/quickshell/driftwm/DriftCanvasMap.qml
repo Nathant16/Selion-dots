@@ -527,9 +527,9 @@ PanelWindow {
                             onTriggered: canvasPanMa.wheelAccum = 0
                         }
 
-                        function panTo(mx, my) {
+                        function panTo(mx, my, force) {
                             let now = Date.now();
-                            if (now - lastPanTime < 28) return;
+                            if (!force && now - lastPanTime < 28) return;
                             lastPanTime = now;
                             let wx = Math.round(canvasArea.toWorldX(mx));
                             let wy = Math.round(canvasArea.toWorldY(my));
@@ -537,19 +537,17 @@ PanelWindow {
                         }
 
                         onPressed: (mouse) => {
-                            panTo(mouse.x, mouse.y);
+                            panTo(mouse.x, mouse.y, true);
                         }
 
                         onPositionChanged: (mouse) => {
                             if (pressed) {
-                                panTo(mouse.x, mouse.y);
+                                panTo(mouse.x, mouse.y, false);
                             }
                         }
 
                         onReleased: (mouse) => {
-                            let wx = Math.round(canvasArea.toWorldX(mouse.x));
-                            let wy = Math.round(canvasArea.toWorldY(mouse.y));
-                            DriftState.setCamera(wx, wy);
+                            panTo(mouse.x, mouse.y, true);
                         }
 
                         onWheel: (wheel) => {
@@ -744,8 +742,17 @@ PanelWindow {
                                 id: winMa
                                 anchors.fill: parent
                                 hoverEnabled: true
+                                acceptedButtons: Qt.RightButton
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: DriftState.focusWindow(modelData.id)
+                                onClicked: (mouse) => {
+                                    if (mouse.button === Qt.RightButton) {
+                                        if (modelData.suspended) {
+                                            DriftState.relaunchWindow(modelData.id);
+                                        } else {
+                                            DriftState.focusWindow(modelData.id);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
