@@ -701,20 +701,26 @@ PanelWindow {
                                 border.width: 1
                             }
 
-                            // Minimalist app label inside window
+                            // Minimalist app label inside window with auto-shrinking font to fit card
                             Text {
                                 anchors.fill: parent
-                                anchors.margins: mapWindow.s(2)
+                                anchors.leftMargin: mapWindow.s(2)
+                                anchors.rightMargin: mapWindow.s(2)
+                                anchors.topMargin: mapWindow.s(1)
+                                anchors.bottomMargin: mapWindow.s(1)
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
-                                visible: parent.width > mapWindow.s(16) && parent.height > mapWindow.s(8)
+                                visible: parent.width >= mapWindow.s(10) && parent.height >= mapWindow.s(6)
                                 text: mapWindow.formatAppName(modelData.app_id, modelData.title)
                                 font.family: ThemeBackend.fontFamily
-                                font.pixelSize: Math.max(7, Math.min(9, parent.height * 0.45))
+                                font.pixelSize: Math.max(7, Math.min(mapWindow.s(9.5), parent.height * 0.55))
+                                fontSizeMode: Text.Fit
+                                minimumPixelSize: Math.max(4, mapWindow.s(4.5))
                                 font.bold: isFocused
                                 color: isFocused ? "#ffffff" : ThemeBackend.subtext1
                                 elide: Text.ElideRight
                                 maximumLineCount: 1
+                                wrapMode: Text.NoWrap
                             }
 
                             MouseArea {
