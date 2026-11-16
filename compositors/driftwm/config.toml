@@ -135,6 +135,18 @@ app_id = "btop"
 pinned_to_screen = true
 size = [1200, 750]
 
+[[window_rules]]
+app_id = "org.gnome.Loupe"
+size = [1100, 700]
+
+[[window_rules]]
+app_id = "loupe"
+size = [1100, 700]
+
+[[window_rules]]
+app_id = "com.gabm.satty"
+size = [1100, 700]
+
 
 # █ █ █▀▀ █  █ █▀▀▄  ▀  █▀▀▄ █▀▀▄  ▀  █▀▀▄ █▀▀▀ █▀▀
 # █▀▄ █▀▀ █▄▄█ █▀▀▄ ▀█▀ █  █ █  █ ▀█▀ █  █ █ ▀█ ▀▀█

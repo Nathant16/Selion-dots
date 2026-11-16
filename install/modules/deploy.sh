@@ -1068,6 +1068,13 @@ EOF_GTK
                                 --filesystem=xdg-data/icons:ro 2>/dev/null || true
     fi
 
+    # Default image viewer configuration
+    if command -v xdg-mime >/dev/null 2>&1; then
+        if command -v loupe >/dev/null 2>&1; then
+            xdg-mime default org.gnome.Loupe.desktop image/png image/jpeg image/webp image/gif image/svg+xml image/bmp image/tiff 2>/dev/null || true
+        fi
+    fi
+
     configure_keyboard_layout "$KEYBOARD_LAYOUT" "$KEYBOARD_TOGGLE"
     setup_pam_service
 }
