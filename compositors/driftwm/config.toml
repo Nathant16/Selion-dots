@@ -69,10 +69,23 @@ resize_on_border = false
 
 [mouse.on-window]
 "alt+left" = "move-window"
+"mod+left" = "move-window"
 "alt+shift+left" = "move-snapped-windows"
 "alt+right" = "resize-window-snapped"
-"alt+shift+right" = "resize-window"
 "mod+right" = "resize-window"
+
+[mouse.on-canvas]
+"alt+left" = "pan-viewport"
+"mod+left" = "pan-viewport"
+"middle" = "pan-viewport"
+
+[navigation]
+camera_speed = 1.0
+drift = 0.5
+trackpad_speed = 1.2
+mouse_speed = 1.0
+nudge_step = 40
+resize_step = 50
 
 [zoom]
 step = 1.25
@@ -169,12 +182,11 @@ size = [1100, 700]
 "mod+q" = "close-window"
 "mod+shift+q" = "suspend-window"
 "alt+return" = "toggle-fullscreen"
-"mod+f" = "fit-window"
-"mod+shift+f" = "fill-window"
 "mod+space" = "toggle-pin-to-screen"
 "mod+t" = "toggle-pin-to-screen"
-"mod+backspace" = "center-window"
 "mod+home" = "home-toggle"
+"mod+Home" = "home-toggle"
+"mod+grave" = "home-toggle"
 
 # Навигация и фокус окон (как на ПК)
 "mod+left" = "focus-nearest left"
@@ -196,11 +208,11 @@ size = [1100, 700]
 "mod+ctrl+up" = "go-to-bookmark prev"
 "mod+ctrl+down" = "go-to-bookmark next"
 
-# Изменение размера со снаппингом (Super + Shift + Стрелки)
-"mod+shift+left" = "resize-to-snap left"
-"mod+shift+right" = "resize-to-snap right"
-"mod+shift+up" = "resize-to-snap up"
-"mod+shift+down" = "resize-to-snap down"
+# Изменение размера окон (Super + Shift + Стрелки)
+"mod+shift+right" = "grow-window right"
+"mod+shift+left" = "shrink-window right"
+"mod+shift+down" = "grow-window down"
+"mod+shift+up" = "shrink-window down"
 
 # Приложения (соответствие ПК / userprefs)
 "mod+shift+c" = "exec code"

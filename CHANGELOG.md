@@ -1,3 +1,11 @@
+### 2.7.3
+
+- feat(docs): add comprehensive documentation (`README.md`) for all 5 window managers (DriftWM, Hyprland, Sway, Niri, Mango) covering concept, full keybinding tables, touchpad gestures, and custom preferences
+- feat(installer): include GNOME Loupe (`loupe`) in core base packages and set as default image viewer MIME handler
+- fix(driftwm): clean up keybindings (remove non-functional fit/fill/center, fix `Super+Home` and add `Super+~`, map real directional grow/shrink resize to `Super+Shift+Arrows`)
+- fix(driftwm): configure canvas viewport panning via `Super+Left`/`Alt+Left`/`Middle` mouse buttons and fine-tune zoom & navigation speed
+- perf(touchpad): configure Synaptics touchpad high-speed RMI4/SMBus driver mode (`psmouse.synaptics_intertouch=1`) to eliminate gesture latency and packet drops
+
 ### 2.7.2
 
 - feat(installer): auto-detect all installed compositors during updates and automatically check their selection checkboxes

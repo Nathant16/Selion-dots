@@ -46,7 +46,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/Nathant16/Selion-dots/ma
 
 ## Features
 
-- Supported Compositors: Full integration with Hyprland, Sway, DriftWM, and Niri.
+- Supported Compositors: Full integration with [DriftWM](compositors/driftwm/README.md), [Hyprland](compositors/hyprland/README.md), [Sway](compositors/sway/README.md), [Niri](compositors/niri/README.md), and [Mango](compositors/mango/README.md).
 - Dynamic Theming: Powered by Material You (matugen) - automatically derives accent colors from your wallpaper or lets you choose manual presets, dynamically theming GTK, Qt, Kitty, Fish, and Fastfetch.
 - Terminal and Shell Out-of-the-Box:
   - Fish Shell with a custom two-line prompt, theme synchronization on the fly, and handy aliases (eza, bat, zoxide).
@@ -67,6 +67,15 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/Nathant16/Selion-dots/ma
 ---
 
 ## Keybindings
+
+For detailed keybinding tables, touchpad gestures, and compositor-specific controls, see the dedicated guides:
+- 🧭 [DriftWM Guide & Keybindings](compositors/driftwm/README.md) — Infinite 2D canvas, bookmarks, window freezing, and zoom
+- 🪟 [Hyprland Guide & Keybindings](compositors/hyprland/README.md) — Dynamic tiling, fluid animations, and 3-finger workspace swipe
+- 🌲 [Sway Guide & Keybindings](compositors/sway/README.md) — Classic i3 manual tiling, scratchpad, and gestures
+- 📜 [Niri Guide & Keybindings](compositors/niri/README.md) — Scrollable horizontal column ribbon and overview mode
+- ⚡ [Mango Guide & Keybindings](compositors/mango/README.md) — Lightweight dwm-inspired dynamic tiling
+
+### Common Shortcuts
 
 | Keybinding | Action |
 |---|---|
