@@ -299,7 +299,6 @@ PanelWindow {
                 anchors.fill: parent
                 radius: cardBg.radius
                 standalone: true
-                screenOverride: mapWindow.screen
             }
 
             // Content Column
@@ -346,7 +345,7 @@ PanelWindow {
                         // Slightly less transparent than base elementOpacity (higher alpha)
                         readonly property real pillOpacity: Math.min(1.0, ThemeBackend.elementOpacity * 0.75 + 0.25)
 
-                        color: (badgeGlass.active || (ThemeBackend.liquidGlass && badgeBlur.active))
+                        color: (badgeGlass.active || (ThemeBackend.liquidGlass && cardBlur.active))
                             ? "transparent"
                             : Qt.alpha(Qt.darker(ThemeBackend.surface0, 1.15), pillOpacity)
 
@@ -354,15 +353,6 @@ PanelWindow {
                             ? Qt.rgba(255, 255, 255, 0.20)
                             : Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.50)
                         border.width: 1
-
-                        WallpaperBlur {
-                            id: badgeBlur
-                            z: -1
-                            anchors.fill: parent
-                            radius: badgePill.radius
-                            standalone: true
-                            screenOverride: mapWindow.screen
-                        }
 
                         GlassFill {
                             id: badgeGlass
@@ -464,9 +454,7 @@ PanelWindow {
                     Layout.fillHeight: true
                     radius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
                     clip: true
-                    color: canvasGlass.active
-                        ? "transparent"
-                        : Qt.alpha(ThemeBackend.crust, 0.40 * (ThemeBackend.liquidGlass ? 1.0 : (ThemeBackend.blurBackground ? Math.max(0.15, ThemeBackend.elementOpacity) : ThemeBackend.elementOpacity)))
+                    color: "transparent"
                     border.color: ThemeBackend.liquidGlass
                         ? Qt.rgba(255, 255, 255, 0.10)
                         : Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.08)
@@ -478,7 +466,7 @@ PanelWindow {
                         radius: canvasArea.radius
                         allowed: Boolean(ThemeBackend.liquidGlass)
                         tintColor: ThemeBackend.crust
-                        tintAmount: 0.18
+                        tintAmount: 0.12
                     }
 
                     readonly property real mapScale: Math.min(
@@ -720,7 +708,7 @@ PanelWindow {
                                 return Qt.darker(ThemeBackend.surface0, 1.15);
                             }
 
-                            color: (winGlass.active || (ThemeBackend.liquidGlass && winBlur.active))
+                            color: (winGlass.active || (ThemeBackend.liquidGlass && cardBlur.active))
                                 ? "transparent"
                                 : Qt.alpha(winBaseColor, winOpacity)
 
@@ -732,15 +720,6 @@ PanelWindow {
                                 return Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.60);
                             }
 
-                            WallpaperBlur {
-                                id: winBlur
-                                z: -1
-                                anchors.fill: parent
-                                radius: winRect.radius
-                                standalone: true
-                                screenOverride: mapWindow.screen
-                            }
-
                             GlassFill {
                                 id: winGlass
                                 anchors.fill: parent
@@ -749,17 +728,6 @@ PanelWindow {
                                 allowed: Boolean(ThemeBackend.liquidGlass)
                                 tintColor: winRect.winBaseColor
                                 tintAmount: isFocused ? 0.40 : 0.35
-                            }
-
-                            // Dark drop shadow outline for crisp window depth separation
-                            Rectangle {
-                                anchors.fill: parent
-                                anchors.margins: -1
-                                radius: parent.radius + 1
-                                z: -2
-                                color: "transparent"
-                                border.color: Qt.rgba(0, 0, 0, 0.45)
-                                border.width: 1
                             }
 
                             // Minimalist app label inside window with auto-shrinking font and guaranteed edge padding
