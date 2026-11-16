@@ -68,12 +68,14 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/Nathant16/Selion-dots/ma
 
 ## Keybindings
 
-For detailed keybinding tables, touchpad gestures, and compositor-specific controls, see the dedicated guides:
-- 🧭 [DriftWM Guide & Keybindings](compositors/driftwm/README.md) — Infinite 2D canvas, bookmarks, window freezing, and zoom
-- 🪟 [Hyprland Guide & Keybindings](compositors/hyprland/README.md) — Dynamic tiling, fluid animations, and 3-finger workspace swipe
-- 🌲 [Sway Guide & Keybindings](compositors/sway/README.md) — Classic i3 manual tiling, scratchpad, and gestures
-- 📜 [Niri Guide & Keybindings](compositors/niri/README.md) — Scrollable horizontal column ribbon and overview mode
-- ⚡ [Mango Guide & Keybindings](compositors/mango/README.md) — Lightweight dwm-inspired dynamic tiling
+Selion uses a unified set of keybindings across all supported window managers. For full tables and architectural comparison, see the [Compositors & Keybindings Guide](compositors/README.md).
+
+Dedicated compositor guides:
+- [DriftWM Guide & Keybindings](compositors/driftwm/README.md) — Infinite 2D canvas, bookmarks, window freezing, and zoom
+- [Hyprland Guide & Keybindings](compositors/hyprland/README.md) — Dynamic tiling, fluid animations, and 3-finger workspace swipe
+- [Sway Guide & Keybindings](compositors/sway/README.md) — Classic i3 manual tiling, scratchpad, and gestures
+- [Niri Guide & Keybindings](compositors/niri/README.md) — Scrollable horizontal column ribbon and overview mode
+- [Mango Guide & Keybindings](compositors/mango/README.md) — Lightweight dwm-inspired dynamic tiling
 
 ### Common Shortcuts
 

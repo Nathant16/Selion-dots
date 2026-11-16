@@ -1,6 +1,6 @@
 ### 2.7.3
 
-- feat(docs): add comprehensive documentation (`README.md`) for all 5 window managers (DriftWM, Hyprland, Sway, Niri, Mango) covering concept, full keybinding tables, touchpad gestures, and custom preferences
+- feat(docs): unify common keybindings into master guide (`compositors/README.md`), eliminate redundant tables, remove all emojis, and detail unique mechanics for each compositor
 - feat(installer): include GNOME Loupe (`loupe`) in core base packages and set as default image viewer MIME handler
 - fix(driftwm): clean up keybindings (remove non-functional fit/fill/center, fix `Super+Home` and add `Super+~`, map real directional grow/shrink resize to `Super+Shift+Arrows`)
 - fix(driftwm): configure canvas viewport panning via `Super+Left`/`Alt+Left`/`Middle` mouse buttons and fine-tune zoom & navigation speed
