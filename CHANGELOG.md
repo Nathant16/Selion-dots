@@ -1,3 +1,7 @@
+### 2.7.9
+
+- fix(cursor): ensure 32px cursor size (`Windows-11M-Dark`) across systemd user sessions, DriftWM process environment, and display managers via `~/.config/environment.d/10-cursor.conf`, `systemctl --user import-environment`, and SDDM configuration
+
 ### 2.7.8
 
 - fix(sway): add `--to-code` to all keybindings to ensure full layout resilience (bindings remain active when switched to Russian/Cyrillic keyboard layouts)

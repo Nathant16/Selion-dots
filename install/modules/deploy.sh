@@ -326,7 +326,17 @@ configure_sddm_cursor() {
         theme="$(find /usr/share/icons -mindepth 2 -maxdepth 2 -type d -name cursors 2>/dev/null | head -n 1 | xargs -r dirname | xargs -r basename)"
     fi
     [ -n "$theme" ] || return 0
-    sudo sed -i -e "/^ThemeDir=/a CursorTheme=$theme" -e "/^ThemeDir=/a CursorSize=32" "$conf"
+    [ -f "$conf" ] || return 0
+    if sudo grep -q "^CursorTheme=" "$conf" 2>/dev/null; then
+        sudo sed -i "s/^CursorTheme=.*/CursorTheme=$theme/" "$conf" 2>/dev/null || true
+    else
+        sudo sed -i -e "/^ThemeDir=/a CursorTheme=$theme" "$conf" 2>/dev/null || true
+    fi
+    if sudo grep -q "^CursorSize=" "$conf" 2>/dev/null; then
+        sudo sed -i "s/^CursorSize=.*/CursorSize=32/" "$conf" 2>/dev/null || true
+    else
+        sudo sed -i -e "/^ThemeDir=/a CursorSize=32" "$conf" 2>/dev/null || true
+    fi
 }
 
 setup_sddm() {
@@ -1056,6 +1066,26 @@ EOF_CUR
 gtk-cursor-theme-name=Windows-11M-Dark
 gtk-cursor-theme-size=32
 EOF_GTK
+            fi
+        done
+
+        mkdir -p "$HOME/.config/environment.d" 2>/dev/null || true
+        cat << 'EOF_ENV' > "$HOME/.config/environment.d/10-cursor.conf"
+XCURSOR_THEME=Windows-11M-Dark
+XCURSOR_SIZE=32
+HYPRCURSOR_THEME=Windows-11M-Dark
+HYPRCURSOR_SIZE=32
+EOF_ENV
+        if command -v systemctl &>/dev/null; then
+            systemctl --user import-environment XCURSOR_SIZE XCURSOR_THEME HYPRCURSOR_SIZE HYPRCURSOR_THEME 2>/dev/null || true
+        fi
+        if command -v dbus-update-activation-environment &>/dev/null; then
+            dbus-update-activation-environment --systemd XCURSOR_SIZE XCURSOR_THEME HYPRCURSOR_SIZE HYPRCURSOR_THEME 2>/dev/null || true
+        fi
+
+        for sddm_conf in /etc/sddm.conf.d/*.conf /etc/sddm.conf; do
+            if [ -f "$sddm_conf" ]; then
+                configure_sddm_cursor "$sddm_conf" 2>/dev/null || true
             fi
         done
     fi

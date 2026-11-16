@@ -39,6 +39,10 @@ QT_QPA_PLATFORMTHEME = "qt6ct"
 MOZ_ENABLE_WAYLAND = "1"
 XDG_CURRENT_DESKTOP = "driftwm:sway:wlroots"
 XDG_SESSION_DESKTOP = "driftwm"
+XCURSOR_THEME = "Windows-11M-Dark"
+XCURSOR_SIZE = "32"
+HYPRCURSOR_THEME = "Windows-11M-Dark"
+HYPRCURSOR_SIZE = "32"
 
 #  ▀  █▀▀▄ █▀▀█ █  █ ▀▀█▀▀
 # ▀█▀ █  █ █  █ █  █   █

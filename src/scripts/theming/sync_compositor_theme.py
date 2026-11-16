@@ -531,6 +531,22 @@ blur = {"true" if should_blur_windows else "false"}
 
 def sync_cursor():
     try:
+        env_d = Path.home() / ".config" / "environment.d"
+        env_d.mkdir(parents=True, exist_ok=True)
+        (env_d / "10-cursor.conf").write_text(
+            "XCURSOR_THEME=Windows-11M-Dark\n"
+            "XCURSOR_SIZE=32\n"
+            "HYPRCURSOR_THEME=Windows-11M-Dark\n"
+            "HYPRCURSOR_SIZE=32\n"
+        )
+    except Exception:
+        pass
+    try:
+        subprocess.run(["systemctl", "--user", "import-environment", "XCURSOR_SIZE", "XCURSOR_THEME", "HYPRCURSOR_SIZE", "HYPRCURSOR_THEME"], capture_output=True, timeout=1)
+        subprocess.run(["dbus-update-activation-environment", "--systemd", "XCURSOR_SIZE", "XCURSOR_THEME", "HYPRCURSOR_SIZE", "HYPRCURSOR_THEME"], capture_output=True, timeout=1)
+    except Exception:
+        pass
+    try:
         subprocess.run(["gsettings", "set", "org.gnome.desktop.interface", "cursor-theme", "Windows-11M-Dark"], capture_output=True, timeout=1)
         subprocess.run(["gsettings", "set", "org.gnome.desktop.interface", "cursor-size", "32"], capture_output=True, timeout=1)
     except Exception:
