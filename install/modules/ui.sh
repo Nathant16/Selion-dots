@@ -1108,38 +1108,37 @@ run_installer_ui() {
                     exit 0
                     ;;
                 ENTER|SPACE)
-                    local sel="${items[$cursor]}"
-                    case "$sel" in
-                        *"1."*)
+                    case "$cursor" in
+                        0)
                             show_package_overview
                             break
                             ;;
-                        *"2."*)
+                        1)
                             manage_compositors_menu
                             break
                             ;;
-                        *"3."*)
+                        2)
                             manage_sddm_menu
                             break
                             ;;
-                        *"4."*)
+                        3)
                             INSTALL_FULL_WALLPAPERS=$([ "$INSTALL_FULL_WALLPAPERS" = true ] && echo false || echo true)
                             ;;
-                        *"5."*)
+                        4)
                             additional_packages_menu
                             break
                             ;;
-                        *"6."*)
+                        5)
                             manage_keyboard_menu
                             break
                             ;;
-                        *"7."*)
+                        6)
                             OPT_FAST_REPOS=$([ "$OPT_FAST_REPOS" = true ] && echo false || echo true)
                             ;;
-                        *"8."*)
+                        7)
                             ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
                             ;;
-                        *"9."*)
+                        8)
                             if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                                 printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
                                 sleep 1.5
@@ -1149,7 +1148,7 @@ run_installer_ui() {
                             cleanup_terminal
                             return 0
                             ;;
-                        *"10."*)
+                        9)
                             if [[ "$INSTALL_STATE" == "current" ]]; then
                                 if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
                                     printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
@@ -1165,7 +1164,7 @@ run_installer_ui() {
                                 exit 0
                             fi
                             ;;
-                        *"11."*)
+                        10)
                             if [[ "$INSTALL_STATE" == "current" ]]; then
                                 cleanup_terminal
                                 clear 2>/dev/null || true
