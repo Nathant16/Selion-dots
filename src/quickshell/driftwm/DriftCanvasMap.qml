@@ -593,16 +593,15 @@ PanelWindow {
                             readonly property real bx: Number(bmCoords[0]) || 0
                             readonly property bool isCurrent: (DriftState.activeIndex + 1) === modelData
 
-                            x: canvasArea.toMapX(bx) - width / 2
+                            x: Math.round(canvasArea.toMapX(bx) - width / 2)
                             y: mapWindow.s(3)
-                            width: mapWindow.s(15)
+                            width: mapWindow.s(16)
                             height: mapWindow.s(12)
                             radius: Math.max(2, Math.min(5, mapWindow.s(3.5)))
                             clip: true
                             z: 4
 
                             visible: x >= -width && x <= canvasArea.width + width
-                            scale: isCurrent ? 1.10 : 1.0
 
                             readonly property real bmOpacity: isCurrent ? 0.95 : badgePill.pillOpacity
                             readonly property color bmBaseColor: {
@@ -633,19 +632,14 @@ PanelWindow {
                                     easing.type: Easing.OutCubic
                                 }
                             }
-                            Behavior on scale {
-                                NumberAnimation {
-                                    duration: 300
-                                    easing.type: Easing.OutBack
-                                    easing.overshoot: 1.25
-                                }
-                            }
 
                             Text {
-                                anchors.centerIn: parent
-                                text: topBmRuler.modelData
+                                anchors.fill: parent
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                text: String(topBmRuler.modelData)
                                 font.family: ThemeBackend.fontFamily
-                                font.pixelSize: mapWindow.s(7.5)
+                                font.pixelSize: mapWindow.s(8)
                                 font.bold: true
                                 color: topBmRuler.isCurrent ? ThemeBackend.crust : (bmMa.containsMouse ? ThemeBackend.text : ThemeBackend.subtext0)
 
