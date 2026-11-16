@@ -1,3 +1,8 @@
+### 2.7.5
+
+- fix(session): fix logout in Mango and multi-compositor sessions by eliminating false-positive Hyprland signature matches and ensuring reliable socket resolution
+- fix(mango): add `Super+Shift+M` logout keybinding in Mango and improve Fish shell logout helper
+
 ### 2.7.4
 
 - style(cursors): increase default cursor size from 24 to 28 across all 5 compositors, GTK, SDDM, and theming sync

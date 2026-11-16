@@ -516,7 +516,7 @@ Item {
                                 interval: 150
                                 onTriggered: {
                                     closeSequence.start();
-                                    Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/system/exit.sh"]);
+                                    Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/system/exit.sh", Compositor.name]);
                                 }
                             }
 
