@@ -170,7 +170,6 @@ PanelWindow {
             if (!isPinned && !cardHoverHandler.hovered) {
                 hideTimer.restart();
             }
-            DriftState.refreshBookmarks();
             recalcBounds();
         }
 
@@ -527,7 +526,7 @@ PanelWindow {
                         z: 2
                         hoverEnabled: true
                         cursorShape: pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
-                        acceptedButtons: Qt.LeftButton
+                        acceptedButtons: Qt.LeftButton | Qt.MiddleButton
 
                         property real lastPanTime: 0
                         property int wheelAccum: 0
@@ -590,7 +589,7 @@ PanelWindow {
                                 }
                                 return [(modelData - 1) * 2500, 0];
                             }
-                            readonly property real bx: Number(bmCoords[0]) || 0
+                            readonly property real bx: (bmCoords && bmCoords.length >= 1 && !isNaN(Number(bmCoords[0]))) ? Number(bmCoords[0]) : (modelData - 1) * 2500
                             readonly property bool isCurrent: (DriftState.activeIndex + 1) === modelData
 
                             x: Math.round(canvasArea.toMapX(bx) - width / 2)
@@ -674,7 +673,7 @@ PanelWindow {
                                 }
                                 return [(modelData - 1) * 2500, 0];
                             }
-                            readonly property real bx: Number(bmCoords[0]) || 0
+                            readonly property real bx: (bmCoords && bmCoords.length >= 1 && !isNaN(Number(bmCoords[0]))) ? Number(bmCoords[0]) : (modelData - 1) * 2500
                             readonly property bool isCurrent: (DriftState.activeIndex + 1) === modelData
 
                             x: canvasArea.toMapX(bx)
@@ -697,10 +696,10 @@ PanelWindow {
                             id: winRect
                             required property var modelData
 
-                            readonly property real ww: (modelData.size && modelData.size[0]) ? Number(modelData.size[0]) : 800
-                            readonly property real wh: (modelData.size && modelData.size[1]) ? Number(modelData.size[1]) : 500
-                            readonly property real wx: (modelData.position && modelData.position[0]) ? Number(modelData.position[0]) : 0
-                            readonly property real wy: (modelData.position && modelData.position[1]) ? Number(modelData.position[1]) : 0
+                            readonly property real ww: (modelData.size && modelData.size.length >= 1 && !isNaN(Number(modelData.size[0]))) ? Number(modelData.size[0]) : 800
+                            readonly property real wh: (modelData.size && modelData.size.length >= 2 && !isNaN(Number(modelData.size[1]))) ? Number(modelData.size[1]) : 500
+                            readonly property real wx: (modelData.position && modelData.position.length >= 1 && !isNaN(Number(modelData.position[0]))) ? Number(modelData.position[0]) : 0
+                            readonly property real wy: (modelData.position && modelData.position.length >= 2 && !isNaN(Number(modelData.position[1]))) ? Number(modelData.position[1]) : 0
                             readonly property bool isFocused: !!modelData.is_focused
                             readonly property bool isSuspended: !!modelData.suspended
 
@@ -775,13 +774,54 @@ PanelWindow {
                                 id: winMa
                                 anchors.fill: parent
                                 hoverEnabled: true
-                                acceptedButtons: Qt.RightButton
-                                cursorShape: Qt.PointingHandCursor
+                                acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+                                cursorShape: isDragging ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+
+                                property bool isDragging: false
+                                property real lastDragTime: 0
+
+                                onPressed: (mouse) => {
+                                    if (mouse.button === Qt.LeftButton) {
+                                        if (mouse.modifiers & (Qt.AltModifier | Qt.ShiftModifier)) {
+                                            isDragging = true;
+                                            mouse.accepted = true;
+                                        } else {
+                                            // Fall through to canvasPanMa underneath for canvas panning
+                                            mouse.accepted = false;
+                                        }
+                                    }
+                                }
+
+                                onPositionChanged: (mouse) => {
+                                    if (isDragging && (mouse.buttons & Qt.LeftButton)) {
+                                        let now = Date.now();
+                                        if (now - lastDragTime < 30) return;
+                                        lastDragTime = now;
+                                        let nwx = Math.round(canvasArea.toWorldX(winRect.x + mouse.x));
+                                        let nwy = Math.round(canvasArea.toWorldY(winRect.y + mouse.y));
+                                        DriftState.moveWindow(modelData.id, nwx, nwy);
+                                    }
+                                }
+
+                                onReleased: (mouse) => {
+                                    if (isDragging) {
+                                        isDragging = false;
+                                        let nwx = Math.round(canvasArea.toWorldX(winRect.x + mouse.x));
+                                        let nwy = Math.round(canvasArea.toWorldY(winRect.y + mouse.y));
+                                        DriftState.moveWindow(modelData.id, nwx, nwy);
+                                    }
+                                }
+
                                 onClicked: (mouse) => {
                                     if (mouse.button === Qt.RightButton) {
                                         if (modelData.suspended) {
                                             DriftState.relaunchWindow(modelData.id);
                                         } else {
+                                            DriftState.focusWindow(modelData.id);
+                                        }
+                                    } else if (mouse.button === Qt.MiddleButton) {
+                                        DriftState.setCamera(wx, wy);
+                                        if (!modelData.suspended) {
                                             DriftState.focusWindow(modelData.id);
                                         }
                                     }

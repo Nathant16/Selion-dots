@@ -3,7 +3,7 @@
 # Reset DriftWM canvas bookmarks 1..9 to default positions (0,0), (2500,0), ...
 for i in 1 2 3 4 5 6 7 8 9; do
     x=$(( (i - 1) * 2500 ))
-    driftwm msg bookmark "$i" "$x" 0 2>/dev/null
+    driftwm msg bookmark "$i" "$x" 0 >/dev/null 2>&1
 done
 
 if command -v notify-send >/dev/null 2>&1; then

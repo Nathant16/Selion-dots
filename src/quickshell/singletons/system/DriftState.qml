@@ -88,8 +88,21 @@ CompositorStateBase {
         Quickshell.execDetached(["driftwm", "msg", "action", "zoom-out"]);
     }
 
+    function zoomReset() {
+        Quickshell.execDetached(["driftwm", "msg", "action", "zoom-reset"]);
+    }
+
+    function zoomToFit() {
+        Quickshell.execDetached(["driftwm", "msg", "action", "zoom-to-fit"]);
+    }
+
     function moveWindowToWorkspace(index) {
         Quickshell.execDetached(["driftwm", "msg", "action", "move-to-bookmark", String(index + 1)]);
+    }
+
+    function moveWindow(id, x, y) {
+        if (id === undefined || id === null) return;
+        Quickshell.execDetached(["driftwm", "msg", "move", "--id", String(id), String(Math.round(x)), String(Math.round(y))]);
     }
 
     function focusWindow(id) {
@@ -112,7 +125,7 @@ CompositorStateBase {
     }
 
     function initBookmarks() {
-        let script = "for i in 1 2 3 4 5 6 7 8 9; do driftwm msg bookmark \$i \$(( (i-1)*2500 )) 0 2>/dev/null; done";
+        let script = "for i in 1 2 3 4 5 6 7 8 9; do driftwm msg bookmark \$i \$(( (i-1)*2500 )) 0 >/dev/null 2>&1; done";
         Quickshell.execDetached(["sh", "-c", script]);
         bookmarkRefreshTimer.restart();
     }
@@ -201,11 +214,14 @@ CompositorStateBase {
         let cy = root.cameraY;
         let z = root.zoom;
         if (state.camera && Array.isArray(state.camera) && state.camera.length >= 2) {
-            cx = Number(state.camera[0]) || 0;
-            cy = Number(state.camera[1]) || 0;
+            let scx = Number(state.camera[0]);
+            let scy = Number(state.camera[1]);
+            if (!isNaN(scx)) cx = scx;
+            if (!isNaN(scy)) cy = scy;
         }
         if (state.zoom !== undefined && state.zoom !== null) {
-            z = Number(state.zoom) || 1.0;
+            let sz = Number(state.zoom);
+            if (!isNaN(sz) && sz > 0) z = sz;
         }
         if (state.outputs && Array.isArray(state.outputs) && state.outputs.length > 0) {
             let out = state.outputs[0];
@@ -214,11 +230,14 @@ CompositorStateBase {
                 root.screenHeight = Number(out.size[1]) || 1080;
             }
             if (out.camera && Array.isArray(out.camera) && out.camera.length >= 2) {
-                cx = Number(out.camera[0]) || cx;
-                cy = Number(out.camera[1]) || cy;
+                let ocx = Number(out.camera[0]);
+                let ocy = Number(out.camera[1]);
+                if (!isNaN(ocx)) cx = ocx;
+                if (!isNaN(ocy)) cy = ocy;
             }
             if (out.zoom !== undefined && out.zoom !== null) {
-                z = Number(out.zoom) || z;
+                let oz = Number(out.zoom);
+                if (!isNaN(oz) && oz > 0) z = oz;
             }
         }
 
@@ -242,9 +261,14 @@ CompositorStateBase {
                 try {
                     let obj = JSON.parse(str);
                     if (obj && obj.Ok && obj.Ok.Bookmarks) {
-                        root.bookmarks = obj.Ok.Bookmarks;
-                        root.bookmarksRevision++;
-                        root.bookmarksUpdated();
+                        let bms = obj.Ok.Bookmarks;
+                        if (Object.keys(bms).length === 0) {
+                            root.initBookmarks();
+                        } else {
+                            root.bookmarks = bms;
+                            root.bookmarksRevision++;
+                            root.bookmarksUpdated();
+                        }
                     }
                 } catch(e) {}
             }
@@ -308,7 +332,7 @@ CompositorStateBase {
 
     Component.onCompleted: {
         if (Compositor.name === "driftwm") {
-            initBookmarks();
+            refreshBookmarks();
         }
     }
 }
