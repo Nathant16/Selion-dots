@@ -711,19 +711,44 @@ PanelWindow {
                             // Z-ordering: focused window ALWAYS in front, higher IDs above lower IDs
                             z: isFocused ? 30 : (10 + (modelData.id ? (modelData.id % 12) : 0))
 
-                            // High-opacity solid fill prevents messy text collisions when windows overlap
-                            color: {
+                            // Matches the exact transparency, blur, and liquid glass of badgePill above
+                            readonly property real winOpacity: badgePill.pillOpacity
+                            readonly property color winBaseColor: {
                                 if (isFocused) return Qt.lighter(ThemeBackend.surface1, 1.15);
-                                if (isSuspended) return Qt.rgba(ThemeBackend.surface0.r, ThemeBackend.surface0.g, ThemeBackend.surface0.b, 0.88);
-                                if (winMa.containsMouse) return Qt.lighter(ThemeBackend.surface0, 1.20);
-                                return Qt.rgba(ThemeBackend.surface0.r, ThemeBackend.surface0.g, ThemeBackend.surface0.b, 0.95);
+                                if (isSuspended) return Qt.darker(ThemeBackend.surface0, 1.05);
+                                if (winMa.containsMouse) return Qt.lighter(ThemeBackend.surface0, 1.15);
+                                return Qt.darker(ThemeBackend.surface0, 1.15);
                             }
+
+                            color: (winGlass.active || (ThemeBackend.liquidGlass && winBlur.active))
+                                ? "transparent"
+                                : Qt.alpha(winBaseColor, winOpacity)
 
                             border.width: isFocused ? 1.5 : 1
                             border.color: {
                                 if (isFocused) return ThemeBackend.primary;
+                                if (ThemeBackend.liquidGlass) return Qt.rgba(255, 255, 255, 0.22);
                                 if (isSuspended) return Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.20);
-                                return Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.90);
+                                return Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.60);
+                            }
+
+                            WallpaperBlur {
+                                id: winBlur
+                                z: -1
+                                anchors.fill: parent
+                                radius: winRect.radius
+                                standalone: true
+                                screenOverride: mapWindow.screen
+                            }
+
+                            GlassFill {
+                                id: winGlass
+                                anchors.fill: parent
+                                z: -1
+                                radius: winRect.radius
+                                allowed: Boolean(ThemeBackend.liquidGlass)
+                                tintColor: winRect.winBaseColor
+                                tintAmount: isFocused ? 0.40 : 0.35
                             }
 
                             // Dark drop shadow outline for crisp window depth separation
@@ -731,7 +756,7 @@ PanelWindow {
                                 anchors.fill: parent
                                 anchors.margins: -1
                                 radius: parent.radius + 1
-                                z: -1
+                                z: -2
                                 color: "transparent"
                                 border.color: Qt.rgba(0, 0, 0, 0.45)
                                 border.width: 1
