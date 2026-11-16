@@ -17,8 +17,18 @@ CompositorStateBase {
     property int workspaceSubscribers: 0
     property int windowSubscribers: 0
     property int keyboardSubscribers: 0
+    property int minimapSubscribers: 0
 
-    readonly property bool needsWatch: Compositor.name === "driftwm" && (workspaceSubscribers + windowSubscribers + keyboardSubscribers) > 0
+    property real cameraX: 0
+    property real cameraY: 0
+    property real zoom: 1.0
+    property real screenWidth: 1920
+    property real screenHeight: 1080
+    property var bookmarks: ({ "1": [0, 0], "2": [2500, 0], "3": [5000, 0], "4": [7500, 0], "5": [10000, 0], "6": [12500, 0], "7": [15000, 0], "8": [17500, 0], "9": [20000, 0] })
+
+    signal cameraMoved(real cx, real cy, real zoom)
+
+    readonly property bool needsWatch: Compositor.name === "driftwm" && (workspaceSubscribers + windowSubscribers + keyboardSubscribers + minimapSubscribers) > 0
 
     // Keep base.watching false so serpantinum-core is not executed for driftwm
     watching: false
@@ -47,6 +57,14 @@ CompositorStateBase {
         keyboardSubscribers = Math.max(0, keyboardSubscribers - 1);
     }
 
+    function subscribeMinimap() {
+        minimapSubscribers++;
+    }
+
+    function unsubscribeMinimap() {
+        minimapSubscribers = Math.max(0, minimapSubscribers - 1);
+    }
+
     function focusWorkspace(index) {
         Quickshell.execDetached(["driftwm", "msg", "action", "go-to-bookmark", String(index + 1)]);
     }
@@ -72,6 +90,7 @@ CompositorStateBase {
     function initBookmarks() {
         let script = "for i in 1 2 3 4 5 6 7 8 9; do driftwm msg bookmark \$i \$(( (i-1)*2500 )) 0 2>/dev/null; done";
         Quickshell.execDetached(["sh", "-c", script]);
+        bookmarkRefreshTimer.restart();
     }
 
     function handleDriftState(state) {
@@ -125,6 +144,64 @@ CompositorStateBase {
                 root.keyboardReady = true;
             }
         }
+
+        // 4. Camera, Zoom & Outputs
+        let cx = root.cameraX;
+        let cy = root.cameraY;
+        let z = root.zoom;
+        if (state.camera && Array.isArray(state.camera) && state.camera.length >= 2) {
+            cx = Number(state.camera[0]) || 0;
+            cy = Number(state.camera[1]) || 0;
+        }
+        if (state.zoom !== undefined && state.zoom !== null) {
+            z = Number(state.zoom) || 1.0;
+        }
+        if (state.outputs && Array.isArray(state.outputs) && state.outputs.length > 0) {
+            let out = state.outputs[0];
+            if (out.size && Array.isArray(out.size) && out.size.length >= 2) {
+                root.screenWidth = Number(out.size[0]) || 1920;
+                root.screenHeight = Number(out.size[1]) || 1080;
+            }
+            if (out.camera && Array.isArray(out.camera) && out.camera.length >= 2) {
+                cx = Number(out.camera[0]) || cx;
+                cy = Number(out.camera[1]) || cy;
+            }
+            if (out.zoom !== undefined && out.zoom !== null) {
+                z = Number(out.zoom) || z;
+            }
+        }
+
+        let moved = (Math.abs(cx - root.cameraX) > 0.05 || Math.abs(cy - root.cameraY) > 0.05 || Math.abs(z - root.zoom) > 0.001);
+        root.cameraX = cx;
+        root.cameraY = cy;
+        root.zoom = z;
+        if (moved) {
+            root.cameraMoved(cx, cy, z);
+        }
+    }
+
+    Process {
+        id: bookmarksProc
+        command: ["driftwm", "msg", "bookmark", "--json"]
+        stdout: SplitParser {
+            splitMarker: "\n"
+            onRead: data => {
+                let str = data ? data.trim() : "";
+                if (!str) return;
+                try {
+                    let obj = JSON.parse(str);
+                    if (obj && obj.Ok && obj.Ok.Bookmarks) {
+                        root.bookmarks = obj.Ok.Bookmarks;
+                    }
+                } catch(e) {}
+            }
+        }
+    }
+
+    function refreshBookmarks() {
+        if (Compositor.name === "driftwm") {
+            bookmarksProc.running = true;
+        }
     }
 
     Process {
@@ -159,6 +236,13 @@ CompositorStateBase {
         onTriggered: {
             if (root.needsWatch && !driftProc.running) driftProc.running = true;
         }
+    }
+
+    Timer {
+        id: bookmarkRefreshTimer
+        interval: 300
+        repeat: false
+        onTriggered: refreshBookmarks()
     }
 
     Component.onCompleted: {
