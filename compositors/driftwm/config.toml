@@ -76,8 +76,8 @@ resize_on_border = false
 "middle" = "pan-viewport"
 
 [gestures]
-pinch_in_threshold = 0.85
-pinch_out_threshold = 1.15
+pinch_in_threshold = 0.94
+pinch_out_threshold = 1.06
 
 [gestures.on-canvas]
 "2-finger-pinch" = "zoom"
