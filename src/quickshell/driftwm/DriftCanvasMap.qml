@@ -737,44 +737,6 @@ PanelWindow {
                             border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.40)
                             border.width: 1
                         }
-
-                        // Viewfinder Corner Brackets (no center crosshair to avoid obscuring text)
-                        Rectangle {
-                            anchors.top: parent.top
-                            anchors.left: parent.left
-                            anchors.margins: 2
-                            width: 3
-                            height: 3
-                            radius: 1
-                            color: ThemeBackend.primary
-                        }
-                        Rectangle {
-                            anchors.top: parent.top
-                            anchors.right: parent.right
-                            anchors.margins: 2
-                            width: 3
-                            height: 3
-                            radius: 1
-                            color: ThemeBackend.primary
-                        }
-                        Rectangle {
-                            anchors.bottom: parent.bottom
-                            anchors.left: parent.left
-                            anchors.margins: 2
-                            width: 3
-                            height: 3
-                            radius: 1
-                            color: ThemeBackend.primary
-                        }
-                        Rectangle {
-                            anchors.bottom: parent.bottom
-                            anchors.right: parent.right
-                            anchors.margins: 2
-                            width: 3
-                            height: 3
-                            radius: 1
-                            color: ThemeBackend.primary
-                        }
                     }
                 }
             }
