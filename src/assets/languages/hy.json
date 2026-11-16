@@ -2433,7 +2433,22 @@
         "last_success": "Վերջին հաջող ստուգում",
         "sources_ok": "{total}-ից {ok} աղբյուր հասանելի է",
         "refresh": "Ստուգել հիմա",
-        "no_alerts": "Ակտիվ զգուշացումներ չկան"
+        "no_alerts": "Ակտիվ զգուշացումներ չկան",
+        "hazard_body": {
+            "generic": "Hazardous weather conditions expected.",
+            "rain": "Heavy rain and downpours expected.",
+            "flood": "Flood warning in effect for this area.",
+            "snow": "Heavy snow and blizzard conditions expected.",
+            "ice": "Icy roads and freezing rain expected.",
+            "storm": "Thunderstorms and squalls expected.",
+            "wind": "Strong damaging winds expected.",
+            "fog": "Dense fog and reduced visibility expected.",
+            "heat": "Extreme heat conditions expected.",
+            "cold": "Severe cold conditions expected.",
+            "fire": "Elevated fire danger warning.",
+            "dust": "Blowing dust and sandstorm warning.",
+            "marine": "Hazardous marine weather conditions expected."
+        }
     },
     "weather_alerts": {
         "rain_soon": {

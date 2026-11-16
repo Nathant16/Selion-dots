@@ -916,10 +916,15 @@ function buildDelivery(a, rootId) {
     };
 }
 
+function normLang(l) {
+    return String(l || "").split(/[-_]/)[0].toLowerCase();
+}
+
 function rankOf(a, b, preferredLang) {
     if (preferredLang) {
-        var aMatch = (a.lang === preferredLang) ? 1 : 0;
-        var bMatch = (b.lang === preferredLang) ? 1 : 0;
+        var pref = normLang(preferredLang);
+        var aMatch = (normLang(a.lang) === pref) ? 1 : 0;
+        var bMatch = (normLang(b.lang) === pref) ? 1 : 0;
         if (aMatch !== bMatch) return bMatch - aMatch;
     }
     var sd = SEV_RANK[b.severity] - SEV_RANK[a.severity];

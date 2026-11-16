@@ -2433,7 +2433,22 @@
         "last_success": "最終確認成功日時",
         "sources_ok": "{total}件中{ok}件のソースに接続可能",
         "refresh": "今すぐ確認",
-        "no_alerts": "有効な警報はありません"
+        "no_alerts": "有効な警報はありません",
+        "hazard_body": {
+            "generic": "Hazardous weather conditions expected.",
+            "rain": "Heavy rain and downpours expected.",
+            "flood": "Flood warning in effect for this area.",
+            "snow": "Heavy snow and blizzard conditions expected.",
+            "ice": "Icy roads and freezing rain expected.",
+            "storm": "Thunderstorms and squalls expected.",
+            "wind": "Strong damaging winds expected.",
+            "fog": "Dense fog and reduced visibility expected.",
+            "heat": "Extreme heat conditions expected.",
+            "cold": "Severe cold conditions expected.",
+            "fire": "Elevated fire danger warning.",
+            "dust": "Blowing dust and sandstorm warning.",
+            "marine": "Hazardous marine weather conditions expected."
+        }
     },
     "weather_alerts": {
         "rain_soon": {

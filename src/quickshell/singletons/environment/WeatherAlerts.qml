@@ -162,14 +162,16 @@ Item {
         lasts[alert.kind.indexOf("daily_") === 0 ? "daily" : alert.kind] = now;
         root.lastDelivered = lasts;
         root.saveState();
+        let title = alert.titleKey ? root.resolveText(alert.titleKey, alert.args) : alert.title;
+        let body = alert.bodyKey ? root.resolveText(alert.bodyKey, alert.args) : alert.body;
         Quickshell.execDetached([
             "serpantinum-core", "notify",
             "--app", "Weather",
             "--urgency", alert.urgency === "critical" ? "critical" : "normal",
             "--icon", "weather-kind-" + alert.kind,
             "--",
-            alert.title,
-            alert.body
+            title,
+            body
         ]);
     }
 

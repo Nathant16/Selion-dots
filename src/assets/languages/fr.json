@@ -2433,7 +2433,22 @@
         "last_success": "Dernière vérification réussie",
         "sources_ok": "{ok} sources sur {total} accessibles",
         "refresh": "Vérifier maintenant",
-        "no_alerts": "Aucun avertissement actif"
+        "no_alerts": "Aucun avertissement actif",
+        "hazard_body": {
+            "generic": "Conditions météorologiques dangereuses attendues.",
+            "rain": "Fortes pluies et averses attendues.",
+            "flood": "Alerte inondation en vigueur.",
+            "snow": "Fortes chutes de neige et blizzard attendus.",
+            "ice": "Verglas et pluie verglaçante attendus.",
+            "storm": "Orages et rafales violentes attendus.",
+            "wind": "Fortes rafales de vent attendues.",
+            "fog": "Brouillard dense et visibilité réduite attendus.",
+            "heat": "Vague de chaleur extrême attendue.",
+            "cold": "Grand froid sévère attendu.",
+            "fire": "Risque d incendie élevé.",
+            "dust": "Alerte tempête de poussière ou sable.",
+            "marine": "Conditions maritimes dangereuses attendues."
+        }
     },
     "weather_alerts": {
         "rain_soon": {

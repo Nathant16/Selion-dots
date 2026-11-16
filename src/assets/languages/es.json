@@ -2433,7 +2433,22 @@
         "last_success": "Última comprobación exitosa",
         "sources_ok": "{ok} de {total} fuentes accesibles",
         "refresh": "Comprobar ahora",
-        "no_alerts": "No hay avisos activos"
+        "no_alerts": "No hay avisos activos",
+        "hazard_body": {
+            "generic": "Se esperan condiciones meteorológicas adversas.",
+            "rain": "Se esperan lluvias intensas y chubascos.",
+            "flood": "Aviso de inundación en vigor para esta zona.",
+            "snow": "Se esperan nevadas intensas y ventiscas.",
+            "ice": "Se esperan heladas y carreteras resbaladizas.",
+            "storm": "Se esperan tormentas eléctricas y vendavales.",
+            "wind": "Se esperan vientos fuertes y rachas intensas.",
+            "fog": "Se espera niebla densa y visibilidad reducida.",
+            "heat": "Aviso por calor extremo.",
+            "cold": "Aviso por frío extremo.",
+            "fire": "Riesgo elevado de incendios.",
+            "dust": "Aviso por tormenta de polvo o arena.",
+            "marine": "Condiciones marítimas peligrosas."
+        }
     },
     "weather_alerts": {
         "rain_soon": {

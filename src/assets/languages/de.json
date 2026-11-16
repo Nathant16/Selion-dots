@@ -2433,7 +2433,22 @@
         "last_success": "Letzte erfolgreiche Prüfung",
         "sources_ok": "{ok} von {total} Quellen erreichbar",
         "refresh": "Jetzt prüfen",
-        "no_alerts": "Keine aktiven Warnungen"
+        "no_alerts": "Keine aktiven Warnungen",
+        "hazard_body": {
+            "generic": "Warnung vor gefährlichen Wetterbedingungen.",
+            "rain": "Starker Regen und Unwetter erwartet.",
+            "flood": "Hochwasserwarnung für dieses Gebiet.",
+            "snow": "Starker Schneefall und Schneestürme erwartet.",
+            "ice": "Glätte und gefrierender Regen erwartet.",
+            "storm": "Gewitter und Sturmböen erwartet.",
+            "wind": "Starke Windböen erwartet.",
+            "fog": "Dichter Nebel und schlechte Sicht erwartet.",
+            "heat": "Warnung vor extremer Hitze.",
+            "cold": "Warnung vor extremer Kälte.",
+            "fire": "Erhöhte Waldbrandgefahr.",
+            "dust": "Warnung vor Staub- oder Sandsturm.",
+            "marine": "Gefahr auf Gewässern und Seegebieten."
+        }
     },
     "weather_alerts": {
         "rain_soon": {

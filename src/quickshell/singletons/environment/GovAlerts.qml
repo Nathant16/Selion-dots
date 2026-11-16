@@ -380,12 +380,14 @@ Item {
         if (typeof WeatherAlerts === "undefined" || typeof WeatherAlerts.enqueue !== "function") return;
         let now = Date.now();
         let preferredLang = typeof I18n !== "undefined" ? I18n.currentLang : "en";
+        let prefNorm = String(preferredLang || "en").split(/[-_]/)[0].toLowerCase();
         for (let i = 0; i < root._active.length; i++) {
             let a = root._active[i];
             if (a.expires <= now) continue;
             let title = a.title;
             let body = a.body;
-            if (preferredLang !== "en" && a.lang !== preferredLang && typeof I18n !== "undefined") {
+            let aLangNorm = String(a.lang || "").split(/[-_]/)[0].toLowerCase();
+            if (prefNorm !== "en" && aLangNorm !== prefNorm && typeof I18n !== "undefined") {
                 let localizedHazard = I18n.t("gov_alerts.hazard." + a.hazard, "");
                 if (localizedHazard && localizedHazard !== ("gov_alerts.hazard." + a.hazard)) {
                     let localizedSev = I18n.t("gov_alerts.severity." + a.severity, "");
@@ -394,6 +396,11 @@ Item {
                     } else {
                         title = localizedHazard;
                     }
+                }
+                let localizedBody = I18n.t("gov_alerts.hazard_body." + a.hazard, "");
+                if (localizedBody && localizedBody !== ("gov_alerts.hazard_body." + a.hazard)) {
+                    let agency = a.senderName ? String(a.senderName).trim() : "";
+                    body = localizedBody + (agency ? "\n" + agency : "");
                 }
             }
             WeatherAlerts.enqueue({

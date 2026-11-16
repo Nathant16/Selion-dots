@@ -2433,7 +2433,22 @@
         "last_success": "上次成功检查",
         "sources_ok": "{total} 个来源中有 {ok} 个可访问",
         "refresh": "立即检查",
-        "no_alerts": "暂无生效中的预警"
+        "no_alerts": "暂无生效中的预警",
+        "hazard_body": {
+            "generic": "Hazardous weather conditions expected.",
+            "rain": "Heavy rain and downpours expected.",
+            "flood": "Flood warning in effect for this area.",
+            "snow": "Heavy snow and blizzard conditions expected.",
+            "ice": "Icy roads and freezing rain expected.",
+            "storm": "Thunderstorms and squalls expected.",
+            "wind": "Strong damaging winds expected.",
+            "fog": "Dense fog and reduced visibility expected.",
+            "heat": "Extreme heat conditions expected.",
+            "cold": "Severe cold conditions expected.",
+            "fire": "Elevated fire danger warning.",
+            "dust": "Blowing dust and sandstorm warning.",
+            "marine": "Hazardous marine weather conditions expected."
+        }
     },
     "weather_alerts": {
         "rain_soon": {

@@ -2433,7 +2433,22 @@
         "last_success": "Laatste geslaagde controle",
         "sources_ok": "{ok} van {total} bronnen bereikbaar",
         "refresh": "Nu controleren",
-        "no_alerts": "Geen actieve waarschuwingen"
+        "no_alerts": "Geen actieve waarschuwingen",
+        "hazard_body": {
+            "generic": "Hazardous weather conditions expected.",
+            "rain": "Heavy rain and downpours expected.",
+            "flood": "Flood warning in effect for this area.",
+            "snow": "Heavy snow and blizzard conditions expected.",
+            "ice": "Icy roads and freezing rain expected.",
+            "storm": "Thunderstorms and squalls expected.",
+            "wind": "Strong damaging winds expected.",
+            "fog": "Dense fog and reduced visibility expected.",
+            "heat": "Extreme heat conditions expected.",
+            "cold": "Severe cold conditions expected.",
+            "fire": "Elevated fire danger warning.",
+            "dust": "Blowing dust and sandstorm warning.",
+            "marine": "Hazardous marine weather conditions expected."
+        }
     },
     "weather_alerts": {
         "rain_soon": {
