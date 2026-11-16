@@ -882,7 +882,7 @@ deploy_package() {
         python3 "$TARGET_BASE/bin/serpantinum_theme_sync.py" 2>/dev/null || true
     fi
 
-    # Ensure kitty.conf base settings (font_size 16.0, JetBrainsMono, fish) are present
+    # Ensure kitty.conf base settings (font_size 13.0, JetBrainsMono, fish) are present
     local kitty_dest="$HOME/.config/kitty/kitty.conf"
     local kitty_src="$REPO_ROOT/config/kitty/kitty.conf"
     if [ -f "$kitty_src" ]; then
