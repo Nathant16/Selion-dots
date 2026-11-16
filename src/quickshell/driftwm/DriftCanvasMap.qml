@@ -7,6 +7,7 @@ import Quickshell.Wayland
 import "../singletons/system"
 import "../singletons/theme"
 import "../reusables"
+import "../reusables/display"
 import "../"
 
 PanelWindow {
@@ -40,39 +41,39 @@ PanelWindow {
     Item {
         id: mapCard
 
-        readonly property real cardWidth: mapWindow.s(270)
-        readonly property real cardHeight: mapWindow.s(175)
+        readonly property real cardWidth: mapWindow.s(280)
+        readonly property real cardHeight: mapWindow.s(185)
 
         width: cardWidth
         height: cardHeight
 
         property bool isShown: false
-        property real ySlide: isShown ? 0 : mapWindow.s(14)
+        property real ySlide: isShown ? 0 : mapWindow.s(12)
 
         opacity: isShown ? 1.0 : 0.0
-        scale: isShown ? 1.0 : 0.90
+        scale: isShown ? 1.0 : 0.92
         visible: opacity > 0.005
 
         transform: Translate { y: mapCard.ySlide }
 
         Behavior on opacity {
             NumberAnimation {
-                duration: mapCard.isShown ? 160 : 380
-                easing.type: mapCard.isShown ? Easing.OutCubic : Easing.InCubic
+                duration: mapCard.isShown ? 180 : 380
+                easing.type: mapCard.isShown ? Easing.OutQuint : Easing.InCubic
             }
         }
 
         Behavior on scale {
             NumberAnimation {
-                duration: mapCard.isShown ? 220 : 380
+                duration: mapCard.isShown ? 240 : 380
                 easing.type: mapCard.isShown ? Easing.OutBack : Easing.InCubic
             }
         }
 
         Behavior on ySlide {
             NumberAnimation {
-                duration: mapCard.isShown ? 200 : 380
-                easing.type: mapCard.isShown ? Easing.OutCubic : Easing.InCubic
+                duration: mapCard.isShown ? 220 : 380
+                easing.type: mapCard.isShown ? Easing.OutQuint : Easing.InCubic
             }
         }
 
@@ -84,7 +85,7 @@ PanelWindow {
 
         Timer {
             id: hideTimer
-            interval: 1600
+            interval: 1800
             repeat: false
             onTriggered: {
                 mapCard.isShown = false;
@@ -112,10 +113,10 @@ PanelWindow {
         property real worldW: Math.max(2400, targetMaxX - targetMinX)
         property real worldH: Math.max(1500, targetMaxY - targetMinY)
 
-        Behavior on worldCenterX { NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
-        Behavior on worldCenterY { NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
-        Behavior on worldW { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
-        Behavior on worldH { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
+        Behavior on worldCenterX { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
+        Behavior on worldCenterY { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
+        Behavior on worldW { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+        Behavior on worldH { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
         function recalcBounds() {
             let cx = DriftState.cameraX;
@@ -180,68 +181,98 @@ PanelWindow {
             worldCenterY = (targetMinY + targetMaxY) / 2;
         }
 
-        // --- Card Frame ---
+        // --- Card Frame (Styled in Rice Design System) ---
         Rectangle {
             id: cardBg
             anchors.fill: parent
-            radius: ThemeBackend.clampedBorderRadius > 0 ? Math.max(12, ThemeBackend.clampedBorderRadius) : mapWindow.s(16)
-            color: Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, ThemeBackend.elementOpacity < 0.99 ? 0.72 : 0.84)
-            border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.12)
+            radius: Math.min(ThemeBackend.borderRadius, mapWindow.s(18))
+            color: ThemeBackend.blurBackground
+                ? Qt.alpha(ThemeBackend.base, ThemeBackend.elementOpacity)
+                : Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, 0.88)
+            border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.10)
             border.width: 1
 
-            // Subtle outer ambient ring
+            // Hardware Wallpaper Blur integration
+            WallpaperBlur {
+                z: -1
+                anchors.fill: parent
+                radius: parent.radius
+                standalone: true
+                visible: ThemeBackend.blurBackground
+            }
+
+            // Inner subtle ambient highlight ring
             Rectangle {
                 anchors.fill: parent
-                anchors.margins: -1
-                radius: parent.radius + 1
+                anchors.margins: 1
+                radius: parent.radius - 1
                 color: "transparent"
-                border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.15)
+                border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.04)
                 border.width: 1
             }
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: mapWindow.s(10)
-                spacing: mapWindow.s(8)
+                anchors.margins: mapWindow.s(11)
+                spacing: mapWindow.s(9)
 
                 // Top Header Row
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: mapWindow.s(6)
+                    spacing: mapWindow.s(8)
 
-                    // Mini compass radar dot
+                    // Canvas radar icon badge
                     Rectangle {
-                        width: mapWindow.s(8)
-                        height: mapWindow.s(8)
-                        radius: width / 2
-                        color: ThemeBackend.primary
+                        width: mapWindow.s(22)
+                        height: mapWindow.s(22)
+                        radius: mapWindow.s(6)
+                        color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.14)
+                        border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.32)
+                        border.width: 1
 
                         Rectangle {
                             anchors.centerIn: parent
-                            width: parent.width + 4
-                            height: parent.height + 4
+                            width: mapWindow.s(6)
+                            height: mapWindow.s(6)
+                            radius: width / 2
+                            color: ThemeBackend.primary
+                        }
+
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: mapWindow.s(12)
+                            height: mapWindow.s(12)
                             radius: width / 2
                             color: "transparent"
-                            border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.4)
+                            border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.5)
                             border.width: 1
                         }
                     }
 
-                    Text {
-                        text: "DRIFT CANVAS"
-                        font.family: ThemeBackend.fontFamily
-                        font.pixelSize: mapWindow.s(9)
-                        font.bold: true
-                        color: ThemeBackend.text
-                        opacity: 0.85
-                        Layout.fillWidth: true
+                    ColumnLayout {
+                        spacing: 0
+                        Text {
+                            text: "Canvas Map"
+                            font.family: ThemeBackend.fontFamily
+                            font.pixelSize: mapWindow.s(10)
+                            font.bold: true
+                            color: ThemeBackend.text
+                        }
+                        Text {
+                            text: (DriftState.windows ? DriftState.windows.length : 0) + " windows"
+                            font.family: ThemeBackend.fontFamily
+                            font.pixelSize: mapWindow.s(7.5)
+                            color: ThemeBackend.subtext0
+                        }
                     }
 
-                    // Bookmark & Zoom Pill Badge
+                    Item { Layout.fillWidth: true }
+
+                    // Bookmark & Zoom Capsule (Rice Pill Style)
                     Rectangle {
-                        height: mapWindow.s(18)
+                        height: mapWindow.s(22)
                         radius: height / 2
-                        color: Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.6)
+                        color: Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.55)
                         border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.08)
                         border.width: 1
                         implicitWidth: badgeRow.implicitWidth + mapWindow.s(16)
@@ -271,7 +302,7 @@ PanelWindow {
                                 font.pixelSize: mapWindow.s(9)
                                 font.bold: true
                                 color: ThemeBackend.text
-                                opacity: 0.85
+                                opacity: 0.90
                             }
                         }
                     }
@@ -284,7 +315,7 @@ PanelWindow {
                     Layout.fillHeight: true
                     radius: mapWindow.s(10)
                     clip: true
-                    color: Qt.rgba(ThemeBackend.base.r, ThemeBackend.base.g, ThemeBackend.base.b, 0.65)
+                    color: Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, 0.55)
                     border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.06)
                     border.width: 1
 
@@ -308,7 +339,7 @@ PanelWindow {
                         y: canvasArea.toMapY(0)
                         width: canvasArea.width
                         height: 1
-                        color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.06)
+                        color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.05)
                     }
 
                     Rectangle {
@@ -316,7 +347,7 @@ PanelWindow {
                         y: 0
                         width: 1
                         height: canvasArea.height
-                        color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.06)
+                        color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.05)
                     }
 
                     // Origin indicator dot (0, 0)
@@ -326,7 +357,7 @@ PanelWindow {
                         width: 3
                         height: 3
                         radius: 1.5
-                        color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.25)
+                        color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.35)
                     }
 
                     // Bookmarks Indicators
@@ -394,16 +425,16 @@ PanelWindow {
                             radius: Math.max(2, Math.min(4, mapWindow.s(4)))
 
                             color: {
-                                if (isFocused) return Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.42);
-                                if (isSuspended) return Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.22);
-                                return Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.60);
+                                if (isFocused) return Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.40);
+                                if (isSuspended) return Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.20);
+                                return Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.58);
                             }
 
                             border.width: isFocused ? 1.5 : 1
                             border.color: {
                                 if (isFocused) return ThemeBackend.primary;
-                                if (isSuspended) return Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.18);
-                                return Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.32);
+                                if (isSuspended) return Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.16);
+                                return Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.28);
                             }
 
                             // Minimalist app label inside window
@@ -421,7 +452,7 @@ PanelWindow {
                         }
                     }
 
-                    // --- User's Viewport (Camera Frustum / "Где сейчас дисплей") ---
+                    // --- User's Viewport (Camera Frustum / Viewfinder without text) ---
                     Rectangle {
                         id: viewportRect
 
@@ -432,13 +463,13 @@ PanelWindow {
                         readonly property real vw: (sw / zoomLevel) * canvasArea.mapScale
                         readonly property real vh: (sh / zoomLevel) * canvasArea.mapScale
 
-                        width: Math.max(mapWindow.s(14), vw)
-                        height: Math.max(mapWindow.s(9), vh)
+                        width: Math.max(mapWindow.s(16), vw)
+                        height: Math.max(mapWindow.s(10), vh)
                         x: canvasArea.toMapX(DriftState.cameraX) - width / 2
                         y: canvasArea.toMapY(DriftState.cameraY) - height / 2
                         radius: mapWindow.s(4)
 
-                        color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.16)
+                        color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.12)
                         border.color: ThemeBackend.primary
                         border.width: 1.5
 
@@ -448,39 +479,60 @@ PanelWindow {
                             anchors.margins: -1
                             radius: parent.radius + 1
                             color: "transparent"
-                            border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.45)
+                            border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.42)
                             border.width: 1
                         }
 
-                        // Center reticle dot
+                        // Center reticle crosshair (+)
                         Rectangle {
                             anchors.centerIn: parent
-                            width: 3
-                            height: 3
-                            radius: 1.5
+                            width: mapWindow.s(7)
+                            height: 1.5
+                            color: ThemeBackend.primary
+                        }
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: 1.5
+                            height: mapWindow.s(7)
                             color: ThemeBackend.primary
                         }
 
-                        // Tag "DISPLAY" on viewport
+                        // Viewfinder HUD Corner Brackets
                         Rectangle {
+                            anchors.top: parent.top
                             anchors.left: parent.left
-                            anchors.bottom: parent.top
-                            anchors.bottomMargin: 2
-                            visible: viewportRect.width > mapWindow.s(32)
-                            height: mapWindow.s(11)
-                            radius: 2
+                            anchors.margins: 2
+                            width: 3
+                            height: 3
+                            radius: 1
                             color: ThemeBackend.primary
-                            implicitWidth: tagText.implicitWidth + 6
-
-                            Text {
-                                id: tagText
-                                anchors.centerIn: parent
-                                text: "DISPLAY"
-                                font.family: ThemeBackend.fontFamily
-                                font.pixelSize: mapWindow.s(6.5)
-                                font.bold: true
-                                color: ThemeBackend.crust
-                            }
+                        }
+                        Rectangle {
+                            anchors.top: parent.top
+                            anchors.right: parent.right
+                            anchors.margins: 2
+                            width: 3
+                            height: 3
+                            radius: 1
+                            color: ThemeBackend.primary
+                        }
+                        Rectangle {
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left
+                            anchors.margins: 2
+                            width: 3
+                            height: 3
+                            radius: 1
+                            color: ThemeBackend.primary
+                        }
+                        Rectangle {
+                            anchors.bottom: parent.bottom
+                            anchors.right: parent.right
+                            anchors.margins: 2
+                            width: 3
+                            height: 3
+                            radius: 1
+                            color: ThemeBackend.primary
                         }
                     }
                 }
