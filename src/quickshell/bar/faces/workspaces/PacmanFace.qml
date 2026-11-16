@@ -23,7 +23,37 @@ Item {
     property real pacmanAngle: 90
 
     property real stepSize: slotSize + slotSpacing
-    property real targetPacmanPos: activeIdx >= 0 ? ((isVertical ? pelletsLayout.y : pelletsLayout.x) + activeIdx * stepSize) : 0
+
+    function isShown(index) {
+        if (!widget) return true;
+        if (typeof widget.isShown === "function") return widget.isShown(index);
+        return true;
+    }
+
+    function getPos(index) {
+        if (index < 0 || !widget) return 0;
+        let pos = 0;
+        for (let i = 0; i < index; i++) {
+            if (!isShown(i)) continue;
+            pos += stepSize;
+        }
+        return (isVertical ? pelletsLayout.y : pelletsLayout.x) + pos;
+    }
+
+    property real targetPacmanPos: {
+        if (widget) {
+            widget.hideEmptyWorkspaces;
+            widget.activeIndex;
+            widget.workspaceCount;
+            widget.niriOccupiedMap;
+            widget.swayOccupiedMap;
+            widget.driftOccupiedMap;
+            widget.mangoOccupiedMap;
+            if (Compositor.name === "hyprland" && typeof Hyprland !== "undefined" && Hyprland.workspaces)
+                Hyprland.workspaces.values;
+        }
+        return activeIdx >= 0 ? getPos(activeIdx) : 0;
+    }
     property real currentPacmanPos: targetPacmanPos
 
     Behavior on currentPacmanPos {
@@ -85,8 +115,11 @@ Item {
                 id: pelletSlot
                 required property int index
 
-                width: pacmanFaceRoot.slotSize
-                height: pacmanFaceRoot.slotSize
+                property bool shown: pacmanFaceRoot.isShown(index)
+
+                visible: shown
+                width: shown ? pacmanFaceRoot.slotSize : 0
+                height: shown ? pacmanFaceRoot.slotSize : 0
 
                 property bool isOccupied: widget ? widget.isOccupied(index) : false
                 property bool isActive: widget ? (index === widget.activeIndex) : false
@@ -103,7 +136,7 @@ Item {
                         : (widget ? widget.s(widget.isCompact ? 7 : 9) : 9)
                     height: width
                     radius: width / 2
-                    color: Qt.alpha((widget && widget.isCompact) ? ThemeBackend.surface1 : ThemeBackend.surface0, ThemeBackend.elementOpacity)
+                    color: (widget && widget.isCompact) ? ThemeBackend.surface1 : ThemeBackend.surface0
                     opacity: pelletSlot.isActive ? 0.0 : (pelletSlot.isHovered ? 1.0 : 0.85)
 
                     scale: pelletSlot.isActive ? 0.0 : (pelletMouse.pressed ? 0.88 : (pelletSlot.isHovered ? 1.2 : 1.0))

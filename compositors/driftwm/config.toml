@@ -69,18 +69,27 @@ resize_on_border = false
 
 [mouse.on-window]
 "alt+left" = "move-window"
-"mod+left" = "move-window"
-"alt+shift+left" = "move-snapped-windows"
-"alt+right" = "resize-window-snapped"
-"mod+right" = "resize-window"
+"alt+right" = "resize-window"
+"mod+left" = "pan-viewport"
 
 [mouse.on-canvas]
-"alt+left" = "pan-viewport"
 "mod+left" = "pan-viewport"
 "middle" = "pan-viewport"
 
+[gestures]
+pinch_in_threshold = 0.94
+pinch_out_threshold = 1.06
+
+[gestures.on-canvas]
+"2-finger-pinch" = "zoom"
+"3-finger-pinch" = "zoom"
+
+[gestures.on-window]
+"2-finger-pinch" = "zoom"
+"3-finger-pinch" = "zoom"
+
 [navigation]
-camera_speed = 1.0
+camera_speed = 0.25
 drift = 0.5
 trackpad_speed = 1.2
 mouse_speed = 1.0
@@ -96,6 +105,8 @@ fit_padding = 40.0
 blur_radius = 5
 blur_strength = 1.5
 animate_blur_fps = 20
+animation_speed = 0.22
+animation_scale = 0.8
 
 # █▀▀█ █▀▀▄  ▀  █▀▄▀█ █▀▀█ ▀▀█▀▀  ▀  █▀▀█ █▀▀▄ █▀▀
 # █▄▄█ █  █ ▀█▀ █ ▀ █ █▄▄█   █   ▀█▀ █  █ █  █ ▀▀█
@@ -286,3 +297,5 @@ size = [1100, 700]
 "mod+ctrl+7" = "set-bookmark 7"
 "mod+ctrl+8" = "set-bookmark 8"
 "mod+ctrl+9" = "set-bookmark 9"
+"mod+ctrl+0" = "exec serpantinum drift-bookmarks-reset"
+"mod+ctrl+backspace" = "exec serpantinum drift-bookmarks-reset"

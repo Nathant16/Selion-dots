@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "widgets"
+import "driftwm"
 import "notifications/weather"
 import "notifications/battery"
 
@@ -91,6 +92,11 @@ ShellRoot {
     Loader {
         active: !performanceMode && quickactionsEnabled
         sourceComponent: Floating {}
+    }
+
+    Loader {
+        active: Compositor.name === "driftwm"
+        sourceComponent: DriftCanvasMap {}
     }
 
     Component.onCompleted: {

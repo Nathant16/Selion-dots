@@ -12,6 +12,7 @@ ScreenshotOverlay 1.0 screenshot/ScreenshotOverlay.qml
 WallpaperEngine 1.0 wallpaper/WallpaperEngine.qml
 Idle 1.0 idle/Idle.qml
 Lock 1.0 lock/Lock.qml
+DriftCanvasMap 1.0 driftwm/DriftCanvasMap.qml
 LockRedactor 1.0 lock/redactor/LockRedactor.qml
 
 Start 1.0 serp/Start.qml

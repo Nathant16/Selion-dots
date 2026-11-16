@@ -882,7 +882,7 @@ deploy_package() {
         python3 "$TARGET_BASE/bin/serpantinum_theme_sync.py" 2>/dev/null || true
     fi
 
-    # Ensure kitty.conf base settings (font_size 16.0, JetBrainsMono, fish) are present
+    # Ensure kitty.conf base settings (font_size 13.0, JetBrainsMono, fish) are present
     local kitty_dest="$HOME/.config/kitty/kitty.conf"
     local kitty_src="$REPO_ROOT/config/kitty/kitty.conf"
     if [ -f "$kitty_src" ]; then
@@ -901,6 +901,12 @@ deploy_package() {
     if [ -f "$kitty_dest" ]; then
         if ! grep -q "JetBrainsMono Nerd Font" "$kitty_dest"; then
             sed -i 's/font_family[[:space:]]\+JetBrains Mono/font_family      JetBrainsMono Nerd Font/' "$kitty_dest" 2>/dev/null || true
+        fi
+        if grep -qE "font_size[[:space:]]+16(\.0)?" "$kitty_dest"; then
+            sed -i -E 's/font_size[[:space:]]+16(\.0)?/font_size        13.0/' "$kitty_dest" 2>/dev/null || true
+        fi
+        if grep -q "background_opacity" "$kitty_dest"; then
+            sed -i -E 's/background_opacity[[:space:]]+[0-9.]+/background_opacity 1.0/' "$kitty_dest" 2>/dev/null || true
         fi
         if ! grep -q "shell.*fish" "$kitty_dest" && command -v fish >/dev/null 2>&1; then
             echo -e "\nshell $(command -v fish)" >> "$kitty_dest"

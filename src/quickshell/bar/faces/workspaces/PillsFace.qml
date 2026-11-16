@@ -64,10 +64,13 @@ Item {
             if (widget) {
                 widget.hideEmptyWorkspaces;
                 widget.activeIndex;
+                widget.workspaceCount;
                 widget.niriOccupiedMap;
                 widget.swayOccupiedMap;
                 widget.driftOccupiedMap;
                 widget.mangoOccupiedMap;
+                if (Compositor.name === "hyprland" && typeof Hyprland !== "undefined" && Hyprland.workspaces)
+                    Hyprland.workspaces.values;
             }
             return (curIdx >= 0 && widget) ? getPos(curIdx, curIdx) : 0;
         }
@@ -136,7 +139,7 @@ Item {
                     id: wsVisualShape
                     anchors.fill: parent
                     radius: widget ? widget.s(widget.isCompact ? 8 : 10) : 10
-                    color: (wsPill.isActive || pillsShapeGlass.active) ? "transparent" : Qt.alpha(wsPill.isOccupied ? ThemeBackend.surface2 : ((widget && widget.isCompact) ? ThemeBackend.surface1 : ThemeBackend.surface0), ThemeBackend.elementOpacity)
+                    color: (wsPill.isActive || pillsShapeGlass.active) ? "transparent" : (wsPill.isOccupied ? ThemeBackend.surface2 : ((widget && widget.isCompact) ? ThemeBackend.surface1 : ThemeBackend.surface0))
 
                     GlassFill {
                         id: pillsShapeGlass

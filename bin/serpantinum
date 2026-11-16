@@ -806,6 +806,7 @@ ALLOWED_SCRIPTS=(
     "gamma"
     "battery"
     "clamshell"
+    "drift-bookmarks-reset"
 )
 
 COMMAND="$1"
