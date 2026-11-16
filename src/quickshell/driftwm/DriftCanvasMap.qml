@@ -356,11 +356,11 @@ PanelWindow {
                             anchors.centerIn: parent
                             spacing: mapWindow.s(7)
 
-                            // Bookmark item
+                            // Workspace / Bookmark item (using canonical Serpantinum workspace icon)
                             RowLayout {
                                 spacing: mapWindow.s(4)
                                 Text {
-                                    text: "󰃀"
+                                    text: "󰮯"
                                     font.family: ThemeBackend.iconFont
                                     font.pixelSize: mapWindow.s(12)
                                     color: ThemeBackend.primary
@@ -415,43 +415,22 @@ PanelWindow {
                         }
                     }
 
-                    // Pin / Lock Button (matching DockAppMenu style: 󰤰 when pinned, 󰤱 when unpinned)
-                    Rectangle {
+                    // Pin / Lock Button (using official Serpantinum IconButton with GlassFill and bounce feedback)
+                    IconButton {
                         id: pinBtn
                         width: mapWindow.s(26)
                         height: mapWindow.s(26)
-                        radius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
-                        color: mapCard.isPinned
-                            ? ThemeBackend.primary
-                            : (pinMa.containsMouse ? Qt.lighter(ThemeBackend.surface0, 1.25) : Qt.lighter(ThemeBackend.surface0, 1.15))
-                        border.color: mapCard.isPinned
-                            ? ThemeBackend.primary
-                            : Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.85)
-                        border.width: 1
+                        size: height
+                        Layout.preferredWidth: width
+                        Layout.preferredHeight: height
+                        cornerRadius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
+                        buttonIcon: mapCard.isPinned ? "󰤰" : "󰤱"
+                        iconFontSize: mapWindow.s(13)
+                        accentColor: mapCard.isPinned ? ThemeBackend.primary : ThemeBackend.surface0
+                        textColor: mapCard.isPinned ? ThemeBackend.crust : (pinBtn.isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.subtext0)
+                        bgOpacity: mapCard.isPinned ? 1.0 : ThemeBackend.elementOpacity
                         z: 10
-
-                        Behavior on color { ColorAnimation { duration: 150 } }
-                        Behavior on border.color { ColorAnimation { duration: 150 } }
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: mapCard.isPinned ? "󰤰" : "󰤱"
-                            font.family: ThemeBackend.iconFont
-                            font.pixelSize: mapWindow.s(13)
-                            color: mapCard.isPinned
-                                ? ThemeBackend.crust
-                                : (pinMa.containsMouse ? ThemeBackend.text : ThemeBackend.subtext0)
-                            Behavior on color { ColorAnimation { duration: 150 } }
-                        }
-
-                        MouseArea {
-                            id: pinMa
-                            anchors.fill: parent
-                            anchors.margins: -mapWindow.s(2)
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: mapCard.togglePin()
-                        }
+                        onClicked: mapCard.togglePin()
                     }
                 }
 
