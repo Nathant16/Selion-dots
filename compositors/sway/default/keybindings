@@ -24,6 +24,8 @@ bindsym $mod+Shift+O exec obsidian
 bindsym $mod+Q kill
 bindsym Alt+Return fullscreen toggle
 bindsym $mod+space floating toggle
+bindsym $mod+b splith
+bindsym $mod+v splitv
 
 # Focus & Navigation
 bindsym $mod+Left focus left

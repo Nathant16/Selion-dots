@@ -532,15 +532,15 @@ blur = {"true" if should_blur_windows else "false"}
 def sync_cursor():
     try:
         subprocess.run(["gsettings", "set", "org.gnome.desktop.interface", "cursor-theme", "Windows-11M-Dark"], capture_output=True, timeout=1)
-        subprocess.run(["gsettings", "set", "org.gnome.desktop.interface", "cursor-size", "28"], capture_output=True, timeout=1)
+        subprocess.run(["gsettings", "set", "org.gnome.desktop.interface", "cursor-size", "32"], capture_output=True, timeout=1)
     except Exception:
         pass
     try:
-        subprocess.run(["hyprctl", "setcursor", "Windows-11M-Dark", "28"], capture_output=True, timeout=1)
+        subprocess.run(["hyprctl", "setcursor", "Windows-11M-Dark", "32"], capture_output=True, timeout=1)
     except Exception:
         pass
     try:
-        subprocess.run(["swaymsg", "seat", "seat0", "xcursor_theme", "Windows-11M-Dark", "28"], capture_output=True, timeout=1)
+        subprocess.run(["swaymsg", "seat", "seat0", "xcursor_theme", "Windows-11M-Dark", "32"], capture_output=True, timeout=1)
     except Exception:
         pass
 

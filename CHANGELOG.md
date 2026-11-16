@@ -1,3 +1,8 @@
+### 2.7.6
+
+- feat(sway): enable automatic dwindle tiling (Hyprland-like alternating dynamic splits) via native Python autotiling daemon
+- style(cursors): increase default cursor size to 32px (1:1 native theme resolution) across all 5 compositors, GTK, SDDM, and theming sync
+
 ### 2.7.5
 
 - fix(session): fix logout in Mango and multi-compositor sessions by eliminating false-positive Hyprland signature matches and ensuring reliable socket resolution

@@ -12,6 +12,6 @@ hotkey-overlay {
 
 environment {
     XCURSOR_THEME "Windows-11M-Dark"
-    XCURSOR_SIZE "28"
+    XCURSOR_SIZE "32"
 }
 

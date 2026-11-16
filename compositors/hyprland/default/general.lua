@@ -39,7 +39,7 @@ hl.config({
 })
 
 hl.env("XCURSOR_THEME", "Windows-11M-Dark")
-hl.env("XCURSOR_SIZE", "28")
+hl.env("XCURSOR_SIZE", "32")
 hl.env("HYPRCURSOR_THEME", "Windows-11M-Dark")
-hl.env("HYPRCURSOR_SIZE", "28")
-hl.exec_cmd("hyprctl setcursor Windows-11M-Dark 28")
+hl.env("HYPRCURSOR_SIZE", "32")
+hl.exec_cmd("hyprctl setcursor Windows-11M-Dark 32")

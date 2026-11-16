@@ -21,7 +21,7 @@ window-rule {
 
 cursor {
     xcursor-theme "Windows-11M-Dark"
-    xcursor-size 28
+    xcursor-size 32
 }
 
 include optional=true "~/.local/state/serpantinum/theme_niri.kdl"

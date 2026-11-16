@@ -5,3 +5,4 @@
 exec wl-paste --type text --watch cliphist store
 exec wl-paste --type image --watch cliphist store
 exec serpantinumd start
+exec_always python3 ~/.local/share/serpantinum/src/scripts/system/sway-autotiling.py
