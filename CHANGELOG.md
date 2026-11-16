@@ -1,3 +1,7 @@
+### 2.7.7
+
+- fix(sway): eliminate conflicting `$mod+B` and `$mod+V` bindings to prevent Swaynag error banner
+
 ### 2.7.6
 
 - feat(sway): enable automatic dwindle tiling (Hyprland-like alternating dynamic splits) via native Python autotiling daemon
