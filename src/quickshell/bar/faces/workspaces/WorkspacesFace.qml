@@ -131,8 +131,8 @@ Item {
 
     readonly property int hyprActiveId: {
         if (Compositor.name !== "hyprland") return -1;
-        const mon = Hyprland.monitors.values.find(m => m.name === myOutput);
-        const ws = (mon && mon.activeWorkspace) ? mon.activeWorkspace : Hyprland.focusedWorkspace;
+        const mon = (typeof Hyprland !== "undefined" && Hyprland.monitors && Hyprland.monitors.values) ? Hyprland.monitors.values.find(m => m.name === myOutput) : null;
+        const ws = (mon && mon.activeWorkspace) ? mon.activeWorkspace : ((typeof Hyprland !== "undefined" && Hyprland.focusedWorkspace) ? Hyprland.focusedWorkspace : null);
         return ws ? ws.id : -1;
     }
 
@@ -150,7 +150,40 @@ Item {
             }
         }
         if (Compositor.name === "niri" && niriMaxWorkspaceIndex >= count) count = niriMaxWorkspaceIndex + 1;
-        if (Compositor.name === "mango" && mangoTagCount > 0) count = Math.min(count, mangoTagCount);
+        if (Compositor.name === "sway") {
+            if (swayOccupiedMap) {
+                for (let k in swayOccupiedMap) {
+                    let idx = parseInt(k);
+                    if (!isNaN(idx) && idx >= count) count = idx + 1;
+                }
+            }
+        }
+        if (Compositor.name === "mango") {
+            if (mangoOccupiedMap) {
+                let perOutput = (myOutput && mangoOccupiedMap[myOutput]) ? mangoOccupiedMap[myOutput] : null;
+                let occ = perOutput || MangoState.occupiedMap;
+                if (occ) {
+                    for (let k in occ) {
+                        let idx = parseInt(k);
+                        if (!isNaN(idx) && idx >= count) count = idx + 1;
+                    }
+                }
+            }
+            if (mangoTagCount > 0) count = Math.min(count, mangoTagCount);
+        }
+        if (Compositor.name === "hyprland") {
+            if (typeof Hyprland !== "undefined" && Hyprland.workspaces && Hyprland.workspaces.values) {
+                let wsList = Hyprland.workspaces.values;
+                for (let i = 0; i < wsList.length; i++) {
+                    let w = wsList[i];
+                    if (!w) continue;
+                    let idx = w.id - 1 - hyprBase;
+                    if (idx >= 0 && (blockSize <= 0 || idx < blockSize)) {
+                        if (idx >= count) count = idx + 1;
+                    }
+                }
+            }
+        }
         if (blockSize > 0) count = Math.min(count, blockSize);
         return Math.max(2, count);
     }
@@ -221,13 +254,14 @@ Item {
 
     function wsForId(id) {
         if (Compositor.name !== "hyprland") return null;
+        if (typeof Hyprland === "undefined" || !Hyprland.workspaces || !Hyprland.workspaces.values) return null;
         return Hyprland.workspaces.values.find(w => w.id === id) ?? null;
     }
 
     function isOccupied(index) {
-        if (Compositor.name === "niri") return !!(niriExistingMap[index] && niriOccupiedMap[index]);
+        if (Compositor.name === "niri") return !!(niriOccupiedMap && niriOccupiedMap[index] && (niriExistingMap[index] || Object.keys(niriExistingMap).length === 0));
         if (Compositor.name === "driftwm") return !!(driftOccupiedMap && driftOccupiedMap[index]);
-        if (Compositor.name === "sway") return !!swayOccupiedMap[index];
+        if (Compositor.name === "sway") return !!(swayOccupiedMap && swayOccupiedMap[index]);
         if (Compositor.name === "mango") return !!(mangoOccupiedMap && MangoState.isOccupied(myOutput, index));
         let ws = wsForId(hyprBase + index + 1);
         return ws !== null && ws.toplevels && ws.toplevels.values && ws.toplevels.values.length > 0;
@@ -249,7 +283,13 @@ Item {
         } else if (Compositor.name === "mango") {
             Quickshell.execDetached(["mmsg", "dispatch", "view," + wsId]);
         } else if (Compositor.name === "hyprland") {
-            Hyprland.dispatch("hl.dsp.focus({ workspace = " + wsId + " })");
+            if (typeof Hyprland !== "undefined" && Hyprland.usingLua === false) {
+                Hyprland.dispatch("workspace " + wsId);
+            } else if (typeof Hyprland !== "undefined") {
+                Hyprland.dispatch("hl.dsp.focus({ workspace = " + wsId + " })");
+            } else {
+                Quickshell.execDetached(["sh", "-c", "hyprctl dispatch 'hl.dsp.focus({ workspace = " + wsId + " })' 2>/dev/null || hyprctl dispatch workspace " + wsId]);
+            }
         }
     }
 
@@ -295,7 +335,13 @@ Item {
 
     Connections {
         target: Compositor
-        function onNameChanged() { root.syncSwaySubscription(); root.syncDriftSubscription(); }
+        function onNameChanged() {
+            root.syncNiriSubscription();
+            root.syncMangoSubscription();
+            root.syncSwaySubscription();
+            root.syncDriftSubscription();
+            root.syncModel();
+        }
     }
 
     property real targetLength: (moduleActive && workspaceCount > 0 && faceLoader.item) ? (isVertical ? faceLoader.item.implicitHeight : faceLoader.item.implicitWidth) + s(isCompact ? 18 : 22) : 0
@@ -333,13 +379,31 @@ Item {
                     } else {
                         let cur = root.activeIndex;
                         let nextIndex = 0;
-                        if (cur < 0) {
-                            nextIndex = steps > 0 ? (root.workspaceCount - 1) : 0;
+                        if (root.hideEmptyWorkspaces) {
+                            let visibleList = [];
+                            for (let i = 0; i < root.workspaceCount; i++) {
+                                if (root.isShown(i)) visibleList.push(i);
+                            }
+                            if (visibleList.length > 0) {
+                                let curPos = visibleList.indexOf(cur);
+                                if (curPos < 0) {
+                                    nextIndex = steps > 0 ? visibleList[visibleList.length - 1] : visibleList[0];
+                                } else {
+                                    let nextPos = steps > 0
+                                        ? (curPos - 1 + visibleList.length) % visibleList.length
+                                        : (curPos + 1) % visibleList.length;
+                                    nextIndex = visibleList[nextPos];
+                                }
+                            }
                         } else {
-                            if (steps > 0) {
-                                nextIndex = (cur - 1 + root.workspaceCount) % root.workspaceCount;
-                            } else if (steps < 0) {
-                                nextIndex = (cur + 1) % root.workspaceCount;
+                            if (cur < 0) {
+                                nextIndex = steps > 0 ? (root.workspaceCount - 1) : 0;
+                            } else {
+                                if (steps > 0) {
+                                    nextIndex = (cur - 1 + root.workspaceCount) % root.workspaceCount;
+                                } else if (steps < 0) {
+                                    nextIndex = (cur + 1) % root.workspaceCount;
+                                }
                             }
                         }
                         if (nextIndex !== root.activeIndex) {

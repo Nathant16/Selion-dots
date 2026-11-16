@@ -32,7 +32,7 @@ Item {
         widget.swayOccupiedMap;
         widget.driftOccupiedMap;
         widget.mangoOccupiedMap;
-        if (Compositor.name === "hyprland")
+        if (Compositor.name === "hyprland" && typeof Hyprland !== "undefined" && Hyprland.workspaces)
             Hyprland.workspaces.values;
         let ids = [];
         for (let i = 0; i < widget.workspaceCount; i++) {

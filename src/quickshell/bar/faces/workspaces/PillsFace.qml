@@ -64,10 +64,13 @@ Item {
             if (widget) {
                 widget.hideEmptyWorkspaces;
                 widget.activeIndex;
+                widget.workspaceCount;
                 widget.niriOccupiedMap;
                 widget.swayOccupiedMap;
                 widget.driftOccupiedMap;
                 widget.mangoOccupiedMap;
+                if (Compositor.name === "hyprland" && typeof Hyprland !== "undefined" && Hyprland.workspaces)
+                    Hyprland.workspaces.values;
             }
             return (curIdx >= 0 && widget) ? getPos(curIdx, curIdx) : 0;
         }
