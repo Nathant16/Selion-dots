@@ -220,7 +220,6 @@ Item {
 
     function isModuleActive(moduleId) {
         let norm = BarModuleRegistry.normalizeId(moduleId);
-        if (norm === "workspaces" && Compositor.name === "driftwm") return false;
         let checkFlat = arr => {
             for (let i = 0; i < arr.length; i++) {
                 if (BarModuleRegistry.normalizeId(arr[i]) === norm) return true;
@@ -259,7 +258,7 @@ Item {
     }
 
     property real wLeft: (isModuleActive("left") && leftWidget) ? (leftWidget.targetWidth !== undefined ? leftWidget.targetWidth : leftWidget.width) : 0
-    property real wWorkspaces: (Compositor.name !== "driftwm" && isModuleActive("workspaces") && workspacesWidget) ? (workspacesWidget.targetWidth !== undefined ? workspacesWidget.targetWidth : workspacesWidget.width) : 0
+    property real wWorkspaces: (isModuleActive("workspaces") && workspacesWidget) ? (workspacesWidget.targetWidth !== undefined ? workspacesWidget.targetWidth : workspacesWidget.width) : 0
     property real wFocus: (isModuleActive("focus") && focusWidget) ? (focusWidget.targetWidth !== undefined ? focusWidget.targetWidth : focusWidget.width) : 0
     property real wMedia: (isModuleActive("media") && mediaWidget) ? (mediaWidget.targetWidth !== undefined ? mediaWidget.targetWidth : mediaWidget.width) : 0
     property real wVis: (isModuleActive("vis") && visWidget) ? (visWidget.targetWidth !== undefined ? visWidget.targetWidth : visWidget.width) : 0

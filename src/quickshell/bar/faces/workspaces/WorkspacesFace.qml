@@ -17,10 +17,7 @@ Item {
 
     readonly property bool isCompact: module ? module.isCompact : false
     readonly property var barWindow: module ? module.barWindow : null
-    readonly property bool isDriftWM: Compositor.name === "driftwm"
-    readonly property bool moduleActive: !isDriftWM && (module ? module.moduleActive : true)
-    readonly property bool isFaceVisible: !isDriftWM
-    visible: !isDriftWM
+    readonly property bool moduleActive: module ? module.moduleActive : true
 
     readonly property string myOutput: (barWindow && barWindow.screen && barWindow.screen.name) ? barWindow.screen.name : ""
     readonly property int niriActiveIndex: NiriState.activeIndexFor(myOutput)
@@ -144,6 +141,14 @@ Item {
         let act = activeIndex;
         let count = base;
         if (act >= count) count = act + 1;
+        if (Compositor.name === "driftwm") {
+            if (driftOccupiedMap) {
+                for (let k in driftOccupiedMap) {
+                    let idx = parseInt(k);
+                    if (!isNaN(idx) && idx >= count) count = idx + 1;
+                }
+            }
+        }
         if (Compositor.name === "niri" && niriMaxWorkspaceIndex >= count) count = niriMaxWorkspaceIndex + 1;
         if (Compositor.name === "mango" && mangoTagCount > 0) count = Math.min(count, mangoTagCount);
         if (blockSize > 0) count = Math.min(count, blockSize);
@@ -293,9 +298,9 @@ Item {
         function onNameChanged() { root.syncSwaySubscription(); root.syncDriftSubscription(); }
     }
 
-    property real targetLength: (!isDriftWM && moduleActive && workspaceCount > 0 && faceLoader.item) ? (isVertical ? faceLoader.item.implicitHeight : faceLoader.item.implicitWidth) + s(isCompact ? 18 : 22) : 0
-    implicitWidth: isDriftWM ? 0 : (isVertical ? (parent ? parent.width : 0) : targetLength)
-    implicitHeight: isDriftWM ? 0 : (isVertical ? targetLength : (parent ? parent.height : 0))
+    property real targetLength: (moduleActive && workspaceCount > 0 && faceLoader.item) ? (isVertical ? faceLoader.item.implicitHeight : faceLoader.item.implicitWidth) + s(isCompact ? 18 : 22) : 0
+    implicitWidth: isVertical ? (parent ? parent.width : 0) : targetLength
+    implicitHeight: isVertical ? targetLength : (parent ? parent.height : 0)
 
     property real wheelAccumulator: 0
     Timer {

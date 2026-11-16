@@ -20,8 +20,11 @@ PanelWindow {
     exclusionMode: ExclusionMode.Ignore
     color: "transparent"
 
-    // 100% click-through: empty Region ensures all pointer events pass through to windows/canvas
-    mask: Region {}
+    // Click-through except for the Pin button
+    Region { id: emptyRegion }
+    Region { id: pinRegion; item: pinBtn }
+
+    mask: (mapCard.isShown && mapCard.opacity > 0.1) ? pinRegion : emptyRegion
 
     anchors {
         bottom: true
@@ -77,9 +80,34 @@ PanelWindow {
             }
         }
 
+        property bool isPinned: {
+            if (typeof Config !== "undefined" && typeof Config.getSetting === "function") {
+                let s = Config.getSetting("driftwm", {});
+                return Boolean(s && s.minimapPinned);
+            }
+            return false;
+        }
+
+        function togglePin() {
+            let nextPinned = !isPinned;
+            isPinned = nextPinned;
+            if (typeof Config !== "undefined" && typeof Config.setSetting === "function") {
+                let s = Config.getSetting("driftwm", {}) || {};
+                s.minimapPinned = nextPinned;
+                Config.setSetting("driftwm", s);
+            }
+            if (!nextPinned) {
+                hideTimer.restart();
+            } else {
+                isShown = true;
+            }
+        }
+
         function wakeUp() {
             isShown = true;
-            hideTimer.restart();
+            if (!isPinned) {
+                hideTimer.restart();
+            }
             DriftState.refreshBookmarks();
             recalcBounds();
         }
@@ -89,7 +117,9 @@ PanelWindow {
             interval: 1800
             repeat: false
             onTriggered: {
-                mapCard.isShown = false;
+                if (!mapCard.isPinned) {
+                    mapCard.isShown = false;
+                }
             }
         }
 
@@ -308,6 +338,43 @@ PanelWindow {
                                     verticalAlignment: Text.AlignVCenter
                                 }
                             }
+                        }
+                    }
+
+                    // Pin / Lock Button (Keeps Minimap permanently on screen)
+                    Rectangle {
+                        id: pinBtn
+                        width: mapWindow.s(26)
+                        height: mapWindow.s(26)
+                        radius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
+                        color: mapCard.isPinned
+                            ? ThemeBackend.primary
+                            : (pinMa.containsMouse ? Qt.lighter(ThemeBackend.surface0, 1.25) : Qt.lighter(ThemeBackend.surface0, 1.15))
+                        border.color: mapCard.isPinned
+                            ? ThemeBackend.primary
+                            : Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.85)
+                        border.width: 1
+
+                        Behavior on color { ColorAnimation { duration: 150 } }
+                        Behavior on border.color { ColorAnimation { duration: 150 } }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: mapCard.isPinned ? "󰐃" : "󰤰"
+                            font.family: ThemeBackend.iconFont
+                            font.pixelSize: mapWindow.s(13)
+                            color: mapCard.isPinned
+                                ? ThemeBackend.crust
+                                : (pinMa.containsMouse ? ThemeBackend.text : ThemeBackend.subtext0)
+                            Behavior on color { ColorAnimation { duration: 150 } }
+                        }
+
+                        MouseArea {
+                            id: pinMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: mapCard.togglePin()
                         }
                     }
                 }
@@ -547,6 +614,9 @@ PanelWindow {
 
     Component.onCompleted: {
         DriftState.subscribeMinimap();
+        if (mapCard.isPinned) {
+            mapCard.isShown = true;
+        }
         mapCard.recalcBounds();
     }
 

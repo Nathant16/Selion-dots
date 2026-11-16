@@ -101,21 +101,35 @@ CompositorStateBase {
         // 1. Workspaces / Bookmarks
         let curBookmark = state.active_bookmark;
         let actIdx = 0;
+        let bms = root.bookmarks;
         if (curBookmark !== null && curBookmark !== undefined) {
             let parsed = parseInt(curBookmark);
             if (!isNaN(parsed) && parsed >= 1 && parsed <= 9) {
                 actIdx = parsed - 1;
             }
         } else if (state.camera && Array.isArray(state.camera)) {
-            let cx = state.camera[0] || 0;
-            actIdx = Math.max(0, Math.min(8, Math.round(cx / 2500)));
+            let cx = Number(state.camera[0]) || 0;
+            let cy = Number(state.camera[1]) || 0;
+            let bestDist = Infinity;
+            let bestIdx = 0;
+            for (let i = 1; i <= 9; i++) {
+                let key = String(i);
+                let bx = (bms && bms[key] && Array.isArray(bms[key])) ? (Number(bms[key][0]) || 0) : ((i - 1) * 2500);
+                let by = (bms && bms[key] && Array.isArray(bms[key])) ? (Number(bms[key][1]) || 0) : 0;
+                let d = Math.hypot(cx - bx, cy - by);
+                if (d < bestDist) {
+                    bestDist = d;
+                    bestIdx = i - 1;
+                }
+            }
+            actIdx = bestIdx;
         }
         if (root.activeIndex !== actIdx) {
             root.activeIndex = actIdx;
             root.refreshBookmarks();
         }
 
-        // Occupied workspaces based on window positions
+        // Occupied workspaces based on window positions relative to saved bookmarks
         let rawWins = Array.isArray(state.windows) ? state.windows : [];
         let wins = [];
         let occ = {};
@@ -125,9 +139,21 @@ CompositorStateBase {
             if (!w || w.is_widget) continue;
             wins.push(w);
             if (w.position && Array.isArray(w.position)) {
-                let wx = w.position[0];
-                let idx = Math.max(0, Math.min(8, Math.round(wx / 2500)));
-                occ[idx] = true;
+                let wx = Number(w.position[0]) || 0;
+                let wy = Number(w.position[1]) || 0;
+                let bestDist = Infinity;
+                let bestIdx = 0;
+                for (let k = 1; k <= 9; k++) {
+                    let key = String(k);
+                    let bx = (bms && bms[key] && Array.isArray(bms[key])) ? (Number(bms[key][0]) || 0) : ((k - 1) * 2500);
+                    let by = (bms && bms[key] && Array.isArray(bms[key])) ? (Number(bms[key][1]) || 0) : 0;
+                    let d = Math.hypot(wx - bx, wy - by);
+                    if (d < bestDist) {
+                        bestDist = d;
+                        bestIdx = k - 1;
+                    }
+                }
+                occ[bestIdx] = true;
             }
         }
 
