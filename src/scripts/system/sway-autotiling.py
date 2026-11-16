@@ -27,8 +27,8 @@ def get_sway_socket():
         return socks[0]
     return None
 
-def send_ipc(sock, msg_type, payload):
-    data = payload.encode("utf-8")
+def send_ipc(sock, msg_type, payload=""):
+    data = payload.encode("utf-8") if isinstance(payload, str) else payload
     hdr = struct.pack("<6sII", b"i3-ipc", len(data), msg_type)
     sock.sendall(hdr + data)
 
@@ -50,6 +50,64 @@ def recv_ipc(sock):
         body.extend(chunk)
     return msg_type, body.decode("utf-8", errors="replace")
 
+def get_tree(cmd_sock):
+    send_ipc(cmd_sock, 4)  # type 4 = GET_TREE
+    _, payload = recv_ipc(cmd_sock)
+    if payload:
+        try:
+            return json.loads(payload)
+        except Exception:
+            pass
+    return None
+
+def find_focused_and_parent(node, parent=None):
+    if node.get("focused"):
+        return node, parent
+    for child in node.get("nodes", []):
+        res = find_focused_and_parent(child, node)
+        if res[0] is not None:
+            return res
+    for child in node.get("floating_nodes", []):
+        res = find_focused_and_parent(child, node)
+        if res[0] is not None:
+            return res
+    return None, None
+
+def update_split(cmd_sock):
+    tree = get_tree(cmd_sock)
+    if not tree:
+        return
+
+    con, parent = find_focused_and_parent(tree)
+    if not con or con.get("type") != "con":
+        return
+
+    # Exclude floating containers, popups, and fullscreen windows
+    floating = con.get("floating", "")
+    fullscreen = con.get("fullscreen_mode", 0)
+    if floating in ("user_on", "auto_on") or fullscreen != 0:
+        return
+
+    # Exclude tabbed and stacked parent containers
+    if parent and parent.get("layout") in ("tabbed", "stacked"):
+        return
+
+    rect = con.get("rect", {})
+    w = rect.get("width", 0)
+    h = rect.get("height", 0)
+    if w <= 0 or h <= 0:
+        return
+
+    # Dynamic dwindle rule:
+    # If window is taller than wide -> split vertical (splitv, opens below)
+    # If window is wider than tall -> split horizontal (splith, opens to right)
+    new_layout = "splitv" if h > w else "splith"
+    parent_layout = parent.get("layout") if parent else None
+
+    if new_layout != parent_layout:
+        send_ipc(cmd_sock, 0, new_layout)
+        recv_ipc(cmd_sock)
+
 def run_daemon():
     # Ensure single instance
     lock_file = f"/tmp/sway-autotiling-{os.getuid()}.lock"
@@ -57,7 +115,6 @@ def run_daemon():
         lock_fd = open(lock_file, "w")
         fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except (IOError, OSError):
-        # Another instance is already active
         sys.exit(0)
 
     while True:
@@ -73,16 +130,16 @@ def run_daemon():
             sub_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             sub_sock.connect(sock_path)
 
-            # 2. Command dispatcher socket
+            # 2. Command dispatcher / tree query socket
             cmd_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             cmd_sock.connect(sock_path)
 
-            # Subscribe to window events (type 2 = SUBSCRIBE)
-            send_ipc(sub_sock, 2, '["window"]')
+            # Subscribe to window and workspace events
+            send_ipc(sub_sock, 2, '["window", "workspace"]')
             recv_ipc(sub_sock)
 
-            last_con_id = None
-            last_layout = None
+            # Initial split orientation update on startup
+            update_split(cmd_sock)
 
             while True:
                 msg_type, payload = recv_ipc(sub_sock)
@@ -95,36 +152,8 @@ def run_daemon():
                     continue
 
                 change = event.get("change")
-                if change in ("focus", "new", "move"):
-                    con = event.get("container")
-                    if not con:
-                        continue
-
-                    cid = con.get("id")
-                    ctype = con.get("type", "")
-                    floating = con.get("floating", "")
-                    fullscreen = con.get("fullscreen_mode", 0)
-
-                    # Exclude floating containers, popups, and fullscreen windows
-                    if ctype == "floating_con" or floating in ("user_on", "auto_on") or fullscreen != 0:
-                        continue
-
-                    rect = con.get("rect", {})
-                    w = rect.get("width", 0)
-                    h = rect.get("height", 0)
-                    if w <= 0 or h <= 0:
-                        continue
-
-                    # Dynamic dwindle rule:
-                    # If window is wider than it is tall -> split horizontal (new window opens to the right)
-                    # If window is taller than it is wide -> split vertical (new window opens below)
-                    target_layout = "splitv" if h > w else "splith"
-
-                    if cid != last_con_id or target_layout != last_layout:
-                        send_ipc(cmd_sock, 0, f"[con_id={cid}] {target_layout}")
-                        recv_ipc(cmd_sock)
-                        last_con_id = cid
-                        last_layout = target_layout
+                if change in ("focus", "new", "close", "move", "floating", "fullscreen_mode", "init"):
+                    update_split(cmd_sock)
 
         except (socket.error, OSError):
             time.sleep(1)
@@ -149,4 +178,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

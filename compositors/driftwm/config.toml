@@ -242,6 +242,7 @@ size = [1100, 700]
 "mod+w" = "spawn serpantinum msg toggle wallpaper"
 "mod+b" = "spawn serpantinum msg bar autohide"
 "mod+l" = "spawn serpantinum lock"
+"mod+shift+m" = "spawn serpantinum exit"
 
 # Скриншоты
 "Print" = "exec serpantinum screenshot"

@@ -1,3 +1,9 @@
+### 2.7.8
+
+- fix(sway): add `--to-code` to all keybindings to ensure full layout resilience (bindings remain active when switched to Russian/Cyrillic keyboard layouts)
+- fix(sway): improve `sway-autotiling` daemon with live tree inspection, parent layout comparison, and complete window lifecycle event handling (`focus`, `close`, `move`, `floating`, `fullscreen`) to eliminate desynchronization
+- feat(keybindings): unify universal session exit hotkey `Super+Shift+M` (`serpantinum exit`) across Hyprland, Sway, Niri, DriftWM, and Mango
+
 ### 2.7.7
 
 - fix(sway): eliminate conflicting `$mod+B` and `$mod+V` bindings to prevent Swaynag error banner

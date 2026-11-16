@@ -35,6 +35,7 @@ hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("serpantinum msg toggle wallpaper"), 
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("serpantinum msg bar autohide"), { description = "Toggle status bar / shell" })
 
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("serpantinum lock"), { locked = true, description = "Lock screen" })
+hl.bind(subMod .. " + M", hl.dsp.exec_cmd("serpantinum exit"), { description = "Exit desktop session" })
 hl.bind("XF86PowerOff", hl.dsp.exec_cmd("serpantinum lock"), { locked = true, description = "Lock screen" })
 
 -- ==> Window Actions

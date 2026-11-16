@@ -60,6 +60,7 @@ binds {
     Mod+W { spawn "serpantinum" "msg" "toggle" "wallpaper"; }
     Mod+B { spawn "serpantinum" "msg" "bar" "autohide"; }
     Mod+L { spawn "serpantinum" "lock"; }
+    Mod+Shift+M { spawn "serpantinum" "exit"; }
     XF86PowerOff { spawn "serpantinum" "lock"; }
 
     // Screenshots

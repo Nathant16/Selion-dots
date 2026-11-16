@@ -5,73 +5,74 @@
 # Sway Keybindings - Synchronized with PC
 
 # Terminal, File Manager & Task Manager
-bindsym $mod+Return exec $terminal
-bindsym $mod+KP_Enter exec $terminal
-bindsym $mod+E exec ski
-bindsym Ctrl+Shift+Escape exec $terminal --class btop -e btop
-bindsym Ctrl+Alt+Delete exec $terminal --class btop -e btop
+bindsym --to-code $mod+Return exec $terminal
+bindsym --to-code $mod+KP_Enter exec $terminal
+bindsym --to-code $mod+E exec ski
+bindsym --to-code Ctrl+Shift+Escape exec $terminal --class btop -e btop
+bindsym --to-code Ctrl+Alt+Delete exec $terminal --class btop -e btop
 
 # App Shortcuts (Synchronized with PC / userprefs)
-bindsym $mod+Shift+C exec code
-bindsym $mod+Shift+Z exec zen-browser
-bindsym $mod+Shift+S exec spotify
-bindsym $mod+Shift+T exec AyuGram
-bindsym $mod+Shift+G exec steam
-bindsym $mod+Shift+D exec discord
-bindsym $mod+Shift+O exec obsidian
+bindsym --to-code $mod+Shift+C exec code
+bindsym --to-code $mod+Shift+Z exec zen-browser
+bindsym --to-code $mod+Shift+S exec spotify
+bindsym --to-code $mod+Shift+T exec AyuGram
+bindsym --to-code $mod+Shift+G exec steam
+bindsym --to-code $mod+Shift+D exec discord
+bindsym --to-code $mod+Shift+O exec obsidian
 
 # Window Actions
-bindsym $mod+Q kill
-bindsym Alt+Return fullscreen toggle
-bindsym $mod+space floating toggle
+bindsym --to-code $mod+Q kill
+bindsym --to-code Alt+Return fullscreen toggle
+bindsym --to-code $mod+space floating toggle
 
 # Focus & Navigation
-bindsym $mod+Left focus left
-bindsym $mod+Right focus right
-bindsym $mod+Up focus up
-bindsym $mod+Down focus down
-bindsym Alt+Tab focus next
-bindsym Alt+Shift+Tab focus prev
+bindsym --to-code $mod+Left focus left
+bindsym --to-code $mod+Right focus right
+bindsym --to-code $mod+Up focus up
+bindsym --to-code $mod+Down focus down
+bindsym --to-code Alt+Tab focus next
+bindsym --to-code Alt+Shift+Tab focus prev
 
 # Move Windows (Super + Alt + Стрелки)
-bindsym $mod+Alt+Left move left
-bindsym $mod+Alt+Right move right
-bindsym $mod+Alt+Up move up
-bindsym $mod+Alt+Down move down
+bindsym --to-code $mod+Alt+Left move left
+bindsym --to-code $mod+Alt+Right move right
+bindsym --to-code $mod+Alt+Up move up
+bindsym --to-code $mod+Alt+Down move down
 
 # Workspace Navigation (Super + Ctrl + Стрелки)
-bindsym $mod+Ctrl+Left workspace prev
-bindsym $mod+Ctrl+Right workspace next
-bindsym $mod+Ctrl+Up workspace prev
-bindsym $mod+Ctrl+Down workspace next
+bindsym --to-code $mod+Ctrl+Left workspace prev
+bindsym --to-code $mod+Ctrl+Right workspace next
+bindsym --to-code $mod+Ctrl+Up workspace prev
+bindsym --to-code $mod+Ctrl+Down workspace next
 
 # Resize Windows
-bindsym $mod+Shift+Left resize shrink width 5 ppt
-bindsym $mod+Shift+Right resize grow width 5 ppt
-bindsym $mod+Shift+Up resize shrink height 5 ppt
-bindsym $mod+Shift+Down resize grow height 5 ppt
+bindsym --to-code $mod+Shift+Left resize shrink width 5 ppt
+bindsym --to-code $mod+Shift+Right resize grow width 5 ppt
+bindsym --to-code $mod+Shift+Up resize shrink height 5 ppt
+bindsym --to-code $mod+Shift+Down resize grow height 5 ppt
 
 # Scratchpad / Special Workspace
-bindsym $mod+S scratchpad show
-bindsym $mod+Alt+S move scratchpad
-bindsym $mod+BackSpace scratchpad show
+bindsym --to-code $mod+S scratchpad show
+bindsym --to-code $mod+Alt+S move scratchpad
+bindsym --to-code $mod+BackSpace scratchpad show
 
 # Shell, Launcher, Clipboard & System Controls
-bindsym $mod+A exec serpantinum msg toggle launcher
-bindsym $mod+R exec serpantinum reload
-bindsym $mod+I exec serpantinum msg toggle settings
-bindsym $mod+V exec serpantinum msg toggle clipboard
-bindsym $mod+W exec serpantinum msg toggle wallpaper
-bindsym $mod+B exec serpantinum msg bar autohide
+bindsym --to-code $mod+A exec serpantinum msg toggle launcher
+bindsym --to-code $mod+R exec serpantinum reload
+bindsym --to-code $mod+I exec serpantinum msg toggle settings
+bindsym --to-code $mod+V exec serpantinum msg toggle clipboard
+bindsym --to-code $mod+W exec serpantinum msg toggle wallpaper
+bindsym --to-code $mod+B exec serpantinum msg bar autohide
 
-bindsym $mod+L exec serpantinum lock
+bindsym --to-code $mod+L exec serpantinum lock
+bindsym --to-code $mod+Shift+M exec serpantinum exit
 bindsym XF86PowerOff exec serpantinum lock
 
 # Screenshots
 bindsym Print exec serpantinum screenshot
 bindsym Shift+Print exec serpantinum screenshot --edit
-bindsym $mod+Print exec serpantinum screenshot --full
-bindsym $mod+Shift+Print exec serpantinum screenshot --full --edit
+bindsym --to-code $mod+Print exec serpantinum screenshot --full
+bindsym --to-code $mod+Shift+Print exec serpantinum screenshot --full --edit
 
 # Hardware & Media Controls
 bindsym XF86MonBrightnessDown exec serpantinum brightness lower
@@ -86,27 +87,27 @@ bindsym XF86AudioPrev exec playerctl previous
 bindsym XF86AudioNext exec playerctl next
 
 # Workspaces 1..10
-bindsym $mod+1 exec serpantinum msg workspace 1
-bindsym $mod+2 exec serpantinum msg workspace 2
-bindsym $mod+3 exec serpantinum msg workspace 3
-bindsym $mod+4 exec serpantinum msg workspace 4
-bindsym $mod+5 exec serpantinum msg workspace 5
-bindsym $mod+6 exec serpantinum msg workspace 6
-bindsym $mod+7 exec serpantinum msg workspace 7
-bindsym $mod+8 exec serpantinum msg workspace 8
-bindsym $mod+9 exec serpantinum msg workspace 9
-bindsym $mod+0 exec serpantinum msg workspace 10
+bindsym --to-code $mod+1 exec serpantinum msg workspace 1
+bindsym --to-code $mod+2 exec serpantinum msg workspace 2
+bindsym --to-code $mod+3 exec serpantinum msg workspace 3
+bindsym --to-code $mod+4 exec serpantinum msg workspace 4
+bindsym --to-code $mod+5 exec serpantinum msg workspace 5
+bindsym --to-code $mod+6 exec serpantinum msg workspace 6
+bindsym --to-code $mod+7 exec serpantinum msg workspace 7
+bindsym --to-code $mod+8 exec serpantinum msg workspace 8
+bindsym --to-code $mod+9 exec serpantinum msg workspace 9
+bindsym --to-code $mod+0 exec serpantinum msg workspace 10
 
-bindsym $mod+Shift+1 exec serpantinum msg workspace 1 move
-bindsym $mod+Shift+2 exec serpantinum msg workspace 2 move
-bindsym $mod+Shift+3 exec serpantinum msg workspace 3 move
-bindsym $mod+Shift+4 exec serpantinum msg workspace 4 move
-bindsym $mod+Shift+5 exec serpantinum msg workspace 5 move
-bindsym $mod+Shift+6 exec serpantinum msg workspace 6 move
-bindsym $mod+Shift+7 exec serpantinum msg workspace 7 move
-bindsym $mod+Shift+8 exec serpantinum msg workspace 8 move
-bindsym $mod+Shift+9 exec serpantinum msg workspace 9 move
-bindsym $mod+Shift+0 exec serpantinum msg workspace 10 move
+bindsym --to-code $mod+Shift+1 exec serpantinum msg workspace 1 move
+bindsym --to-code $mod+Shift+2 exec serpantinum msg workspace 2 move
+bindsym --to-code $mod+Shift+3 exec serpantinum msg workspace 3 move
+bindsym --to-code $mod+Shift+4 exec serpantinum msg workspace 4 move
+bindsym --to-code $mod+Shift+5 exec serpantinum msg workspace 5 move
+bindsym --to-code $mod+Shift+6 exec serpantinum msg workspace 6 move
+bindsym --to-code $mod+Shift+7 exec serpantinum msg workspace 7 move
+bindsym --to-code $mod+Shift+8 exec serpantinum msg workspace 8 move
+bindsym --to-code $mod+Shift+9 exec serpantinum msg workspace 9 move
+bindsym --to-code $mod+Shift+0 exec serpantinum msg workspace 10 move
 
 # Clamshell Mode (Laptop Lid Switch)
 bindswitch --locked lid:on exec serpantinum clamshell close
