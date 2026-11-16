@@ -27,6 +27,9 @@ ShellRoot {
                 exclusionMode: ExclusionMode.Ignore
                 color: "#0a0a0f"
 
+                Region { id: emptyRegion }
+                mask: (Compositor.name === "driftwm") ? emptyRegion : null
+
                 anchors { top: true; bottom: true; left: true; right: true }
 
                 readonly property string wpCacheDir: Caching.getCacheDir("wallpaper")
@@ -819,6 +822,7 @@ ShellRoot {
 
                     MouseArea {
                         anchors.fill: parent
+                        enabled: Compositor.name !== "driftwm"
                         acceptedButtons: Qt.RightButton | Qt.LeftButton
                         onClicked: mouse => {
                             if (mouse.button === Qt.RightButton) {

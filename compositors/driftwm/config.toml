@@ -68,16 +68,24 @@ inactive_opacity = 0.5
 resize_on_border = false
 
 [mouse.on-window]
-"alt+left" = "move-window"
 "mod+left" = "move-window"
-"alt+shift+left" = "move-snapped-windows"
-"alt+right" = "resize-window-snapped"
 "mod+right" = "resize-window"
 
 [mouse.on-canvas]
-"alt+left" = "pan-viewport"
 "mod+left" = "pan-viewport"
 "middle" = "pan-viewport"
+
+[gestures]
+pinch_in_threshold = 0.85
+pinch_out_threshold = 1.15
+
+[gestures.on-canvas]
+"2-finger-pinch" = "zoom"
+"3-finger-pinch" = "zoom"
+
+[gestures.on-window]
+"2-finger-pinch" = "zoom"
+"3-finger-pinch" = "zoom"
 
 [navigation]
 camera_speed = 0.25
@@ -286,3 +294,5 @@ size = [1100, 700]
 "mod+ctrl+7" = "set-bookmark 7"
 "mod+ctrl+8" = "set-bookmark 8"
 "mod+ctrl+9" = "set-bookmark 9"
+"mod+ctrl+0" = "exec serpantinum drift-bookmarks-reset"
+"mod+ctrl+backspace" = "exec serpantinum drift-bookmarks-reset"

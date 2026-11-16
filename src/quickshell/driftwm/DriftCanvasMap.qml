@@ -80,6 +80,7 @@ PanelWindow {
         function wakeUp() {
             isShown = true;
             hideTimer.restart();
+            DriftState.refreshBookmarks();
             recalcBounds();
         }
 
@@ -98,6 +99,9 @@ PanelWindow {
                 mapCard.wakeUp();
             }
             function onWindowsUpdated() {
+                mapCard.recalcBounds();
+            }
+            function onBookmarksUpdated() {
                 mapCard.recalcBounds();
             }
         }
@@ -149,17 +153,18 @@ PanelWindow {
                 maxY = Math.max(maxY, wy + wh / 2);
             }
 
-            // Include nearby active bookmark
+            // Include all bookmarks in bounds calculation
             let bms = DriftState.bookmarks;
             if (bms) {
-                let curKey = String(DriftState.activeIndex + 1);
-                if (bms[curKey] && Array.isArray(bms[curKey])) {
-                    let bx = Number(bms[curKey][0]) || 0;
-                    let by = Number(bms[curKey][1]) || 0;
-                    minX = Math.min(minX, bx - 600);
-                    maxX = Math.max(maxX, bx + 600);
-                    minY = Math.min(minY, by - 400);
-                    maxY = Math.max(maxY, by + 400);
+                for (let k in bms) {
+                    if (Array.isArray(bms[k])) {
+                        let bx = Number(bms[k][0]) || 0;
+                        let by = Number(bms[k][1]) || 0;
+                        minX = Math.min(minX, bx - 400);
+                        maxX = Math.max(maxX, bx + 400);
+                        minY = Math.min(minY, by - 300);
+                        maxY = Math.max(maxY, by + 300);
+                    }
                 }
             }
 
@@ -367,6 +372,7 @@ PanelWindow {
                             required property int modelData
 
                             readonly property var bmCoords: {
+                                let rev = DriftState.bookmarksRevision;
                                 let bms = DriftState.bookmarks;
                                 if (bms && bms[String(modelData)]) {
                                     return bms[String(modelData)];

@@ -25,7 +25,9 @@ CompositorStateBase {
     property real screenWidth: 1920
     property real screenHeight: 1080
     property var bookmarks: ({ "1": [0, 0], "2": [2500, 0], "3": [5000, 0], "4": [7500, 0], "5": [10000, 0], "6": [12500, 0], "7": [15000, 0], "8": [17500, 0], "9": [20000, 0] })
+    property int bookmarksRevision: 0
 
+    signal bookmarksUpdated()
     signal cameraMoved(real cx, real cy, real zoom)
 
     readonly property bool needsWatch: Compositor.name === "driftwm" && (workspaceSubscribers + windowSubscribers + keyboardSubscribers + minimapSubscribers) > 0
@@ -110,6 +112,7 @@ CompositorStateBase {
         }
         if (root.activeIndex !== actIdx) {
             root.activeIndex = actIdx;
+            root.refreshBookmarks();
         }
 
         // Occupied workspaces based on window positions
@@ -192,6 +195,8 @@ CompositorStateBase {
                     let obj = JSON.parse(str);
                     if (obj && obj.Ok && obj.Ok.Bookmarks) {
                         root.bookmarks = obj.Ok.Bookmarks;
+                        root.bookmarksRevision++;
+                        root.bookmarksUpdated();
                     }
                 } catch(e) {}
             }
@@ -199,7 +204,7 @@ CompositorStateBase {
     }
 
     function refreshBookmarks() {
-        if (Compositor.name === "driftwm") {
+        if (Compositor.name === "driftwm" && !bookmarksProc.running) {
             bookmarksProc.running = true;
         }
     }
@@ -243,6 +248,14 @@ CompositorStateBase {
         interval: 300
         repeat: false
         onTriggered: refreshBookmarks()
+    }
+
+    Timer {
+        id: periodicBookmarkTimer
+        running: root.needsWatch && root.minimapSubscribers > 0
+        interval: 1500
+        repeat: true
+        onTriggered: root.refreshBookmarks()
     }
 
     Component.onCompleted: {
