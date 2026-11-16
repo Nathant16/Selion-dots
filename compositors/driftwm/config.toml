@@ -80,7 +80,7 @@ resize_on_border = false
 "middle" = "pan-viewport"
 
 [navigation]
-camera_speed = 1.0
+camera_speed = 0.25
 drift = 0.5
 trackpad_speed = 1.2
 mouse_speed = 1.0

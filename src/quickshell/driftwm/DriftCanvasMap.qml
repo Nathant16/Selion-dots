@@ -221,88 +221,87 @@ PanelWindow {
                     Layout.fillWidth: true
                     spacing: mapWindow.s(8)
 
-                    // Canvas radar icon badge
-                    Rectangle {
-                        width: mapWindow.s(22)
-                        height: mapWindow.s(22)
-                        radius: mapWindow.s(6)
-                        color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.14)
-                        border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.32)
-                        border.width: 1
-
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: mapWindow.s(6)
-                            height: mapWindow.s(6)
-                            radius: width / 2
-                            color: ThemeBackend.primary
-                        }
-
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: mapWindow.s(12)
-                            height: mapWindow.s(12)
-                            radius: width / 2
-                            color: "transparent"
-                            border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.5)
-                            border.width: 1
-                        }
-                    }
-
-                    ColumnLayout {
-                        spacing: 0
+                    // Windows counter on the left
+                    RowLayout {
+                        spacing: mapWindow.s(5)
                         Text {
-                            text: "Canvas Map"
-                            font.family: ThemeBackend.fontFamily
-                            font.pixelSize: mapWindow.s(10)
-                            font.bold: true
-                            color: ThemeBackend.text
+                            text: "󰖲"
+                            font.family: ThemeBackend.iconFont
+                            font.pixelSize: mapWindow.s(13)
+                            color: ThemeBackend.subtext0
+                            verticalAlignment: Text.AlignVCenter
                         }
                         Text {
                             text: (DriftState.windows ? DriftState.windows.length : 0) + " windows"
                             font.family: ThemeBackend.fontFamily
-                            font.pixelSize: mapWindow.s(7.5)
+                            font.pixelSize: mapWindow.s(10)
+                            font.bold: true
                             color: ThemeBackend.subtext0
+                            verticalAlignment: Text.AlignVCenter
                         }
                     }
 
                     Item { Layout.fillWidth: true }
 
-                    // Bookmark & Zoom Capsule (Rice Pill Style)
+                    // Pill Badge in Panel Style (like language switcher)
                     Rectangle {
-                        height: mapWindow.s(22)
-                        radius: height / 2
-                        color: Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.55)
-                        border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.08)
+                        height: mapWindow.s(26)
+                        radius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
+                        color: Qt.lighter(ThemeBackend.surface0, 1.15)
+                        border.color: Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.85)
                         border.width: 1
-                        implicitWidth: badgeRow.implicitWidth + mapWindow.s(16)
+                        implicitWidth: badgeRow.implicitWidth + mapWindow.s(20)
 
                         RowLayout {
                             id: badgeRow
                             anchors.centerIn: parent
-                            spacing: mapWindow.s(6)
+                            spacing: mapWindow.s(7)
 
-                            Text {
-                                text: "🔖 " + (DriftState.activeIndex + 1)
-                                font.family: ThemeBackend.fontFamily
-                                font.pixelSize: mapWindow.s(9)
-                                font.bold: true
-                                color: ThemeBackend.primary
+                            // Bookmark item
+                            RowLayout {
+                                spacing: mapWindow.s(4)
+                                Text {
+                                    text: "󰃀"
+                                    font.family: ThemeBackend.iconFont
+                                    font.pixelSize: mapWindow.s(12)
+                                    color: ThemeBackend.primary
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                                Text {
+                                    text: String(DriftState.activeIndex + 1)
+                                    font.family: ThemeBackend.fontFamily
+                                    font.pixelSize: mapWindow.s(11)
+                                    font.bold: true
+                                    color: ThemeBackend.text
+                                    verticalAlignment: Text.AlignVCenter
+                                }
                             }
 
+                            // Divider
                             Rectangle {
                                 width: 1
-                                height: mapWindow.s(10)
+                                height: mapWindow.s(12)
                                 color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.15)
                             }
 
-                            Text {
-                                text: Math.round(DriftState.zoom * 100) + "%"
-                                font.family: ThemeBackend.fontFamily
-                                font.pixelSize: mapWindow.s(9)
-                                font.bold: true
-                                color: ThemeBackend.text
-                                opacity: 0.90
+                            // Zoom item with magnifying glass
+                            RowLayout {
+                                spacing: mapWindow.s(4)
+                                Text {
+                                    text: "󰍉"
+                                    font.family: ThemeBackend.iconFont
+                                    font.pixelSize: mapWindow.s(12)
+                                    color: ThemeBackend.subtext0
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                                Text {
+                                    text: Math.round(DriftState.zoom * 100) + "%"
+                                    font.family: ThemeBackend.fontFamily
+                                    font.pixelSize: mapWindow.s(11)
+                                    font.bold: true
+                                    color: ThemeBackend.text
+                                    verticalAlignment: Text.AlignVCenter
+                                }
                             }
                         }
                     }
