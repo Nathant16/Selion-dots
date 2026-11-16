@@ -155,6 +155,10 @@ def get_ski_opacity(element_opacity, apply_to_windows=True):
 
 def sync_apps(app_opacity, ski_opacity, blur_background, apply_to_windows):
     # 1. Kitty configuration
+    # Compositors (DriftWM, Hyprland, Sway, Niri) apply window-level opacity rules.
+    # Setting background_opacity to app_opacity causes double multiplication
+    # (opacity^2), making kitty far more transparent than other windows (like ski).
+    # Keep background_opacity at 1.0 so compositor opacity is uniform across all windows.
     kitty_cfg = Path.home() / ".config" / "kitty" / "kitty.conf"
     if kitty_cfg.is_file():
         try:
@@ -162,9 +166,9 @@ def sync_apps(app_opacity, ski_opacity, blur_background, apply_to_windows):
                 content = f.read()
 
             if re.search(r'^\s*background_opacity\s+.*$', content, re.MULTILINE):
-                content = re.sub(r'^\s*background_opacity\s+.*$', f'background_opacity {app_opacity}', content, flags=re.MULTILINE)
+                content = re.sub(r'^\s*background_opacity\s+.*$', 'background_opacity 1.0', content, flags=re.MULTILINE)
             else:
-                content = content.rstrip() + f'\nbackground_opacity {app_opacity}\n'
+                content = content.rstrip() + '\nbackground_opacity 1.0\n'
 
             blur_val = 1 if (blur_background and apply_to_windows) else 0
             if re.search(r'^\s*background_blur\s+.*$', content, re.MULTILINE):
