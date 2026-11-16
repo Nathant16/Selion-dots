@@ -586,29 +586,39 @@ PanelWindow {
 
                             x: canvasArea.toMapX(bx) - width / 2
                             y: mapWindow.s(3)
-                            width: mapWindow.s(14)
-                            height: mapWindow.s(11)
-                            radius: mapWindow.s(2.5)
+                            width: mapWindow.s(15)
+                            height: mapWindow.s(12)
+                            radius: Math.max(2, Math.min(5, mapWindow.s(3.5)))
+                            clip: true
                             z: 4
 
                             visible: x >= -width && x <= canvasArea.width + width
                             scale: isCurrent ? 1.10 : 1.0
 
-                            color: isCurrent
-                                ? ThemeBackend.primary
-                                : Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.70)
-                            border.color: isCurrent
-                                ? "#ffffff"
-                                : Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.70)
-                            border.width: 1
+                            readonly property real bmOpacity: isCurrent ? 0.95 : badgePill.pillOpacity
+                            readonly property color bmBaseColor: {
+                                if (isCurrent) return ThemeBackend.primary;
+                                if (bmMa.containsMouse) return Qt.lighter(ThemeBackend.surface0, 1.20);
+                                return Qt.darker(ThemeBackend.surface0, 1.15);
+                            }
+
+                            color: (bmGlass.active || (ThemeBackend.liquidGlass && cardBlur.active))
+                                ? "transparent"
+                                : (isCurrent ? ThemeBackend.primary : Qt.alpha(bmBaseColor, bmOpacity))
+
+                            border.width: 0
+
+                            GlassFill {
+                                id: bmGlass
+                                anchors.fill: parent
+                                z: -1
+                                radius: topBmRuler.radius
+                                allowed: Boolean(ThemeBackend.liquidGlass)
+                                tintColor: topBmRuler.bmBaseColor
+                                tintAmount: topBmRuler.isCurrent ? 0.45 : 0.35
+                            }
 
                             Behavior on color {
-                                ColorAnimation {
-                                    duration: 320
-                                    easing.type: Easing.OutCubic
-                                }
-                            }
-                            Behavior on border.color {
                                 ColorAnimation {
                                     duration: 320
                                     easing.type: Easing.OutCubic
@@ -626,9 +636,9 @@ PanelWindow {
                                 anchors.centerIn: parent
                                 text: topBmRuler.modelData
                                 font.family: ThemeBackend.fontFamily
-                                font.pixelSize: mapWindow.s(7)
+                                font.pixelSize: mapWindow.s(7.5)
                                 font.bold: true
-                                color: topBmRuler.isCurrent ? ThemeBackend.crust : ThemeBackend.subtext0
+                                color: topBmRuler.isCurrent ? ThemeBackend.crust : (bmMa.containsMouse ? ThemeBackend.text : ThemeBackend.subtext0)
 
                                 Behavior on color {
                                     ColorAnimation {
@@ -639,7 +649,9 @@ PanelWindow {
                             }
 
                             MouseArea {
+                                id: bmMa
                                 anchors.fill: parent
+                                hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: DriftState.focusWorkspace(topBmRuler.modelData - 1)
                             }
