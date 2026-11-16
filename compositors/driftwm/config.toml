@@ -68,8 +68,9 @@ inactive_opacity = 0.5
 resize_on_border = false
 
 [mouse.on-window]
-"mod+left" = "move-window"
-"mod+right" = "resize-window"
+"alt+left" = "move-window"
+"alt+right" = "resize-window"
+"mod+left" = "pan-viewport"
 
 [mouse.on-canvas]
 "mod+left" = "pan-viewport"
