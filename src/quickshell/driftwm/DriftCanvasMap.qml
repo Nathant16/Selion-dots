@@ -294,7 +294,7 @@ PanelWindow {
             GlassFill {
                 anchors.fill: parent
                 radius: cardBg.radius
-                allowed: ThemeBackend.glassBlur
+                allowed: Boolean(ThemeBackend.glassBlur)
                 tintColor: ThemeBackend.surface0
                 tintAmount: 0.18
                 tintStrength: 1.0
@@ -367,12 +367,22 @@ PanelWindow {
                                     verticalAlignment: Text.AlignVCenter
                                 }
                                 Text {
+                                    id: activeNumText
                                     text: String(DriftState.activeIndex + 1)
                                     font.family: ThemeBackend.fontFamily
                                     font.pixelSize: mapWindow.s(11)
                                     font.bold: true
                                     color: ThemeBackend.text
                                     verticalAlignment: Text.AlignVCenter
+
+                                    onTextChanged: numAnim.restart()
+                                    NumberAnimation on opacity {
+                                        id: numAnim
+                                        from: 0.2
+                                        to: 1.0
+                                        duration: 220
+                                        easing.type: Easing.OutQuad
+                                    }
                                 }
                             }
 
@@ -578,9 +588,10 @@ PanelWindow {
                             width: mapWindow.s(14)
                             height: mapWindow.s(11)
                             radius: mapWindow.s(2.5)
-                            z: 3
+                            z: 4
 
                             visible: x >= -width && x <= canvasArea.width + width
+                            scale: isCurrent ? 1.10 : 1.0
 
                             color: isCurrent
                                 ? ThemeBackend.primary
@@ -590,6 +601,26 @@ PanelWindow {
                                 : Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.70)
                             border.width: 1
 
+                            Behavior on color {
+                                ColorAnimation {
+                                    duration: 320
+                                    easing.type: Easing.OutCubic
+                                }
+                            }
+                            Behavior on border.color {
+                                ColorAnimation {
+                                    duration: 320
+                                    easing.type: Easing.OutCubic
+                                }
+                            }
+                            Behavior on scale {
+                                NumberAnimation {
+                                    duration: 300
+                                    easing.type: Easing.OutBack
+                                    easing.overshoot: 1.25
+                                }
+                            }
+
                             Text {
                                 anchors.centerIn: parent
                                 text: topBmRuler.modelData
@@ -597,6 +628,13 @@ PanelWindow {
                                 font.pixelSize: mapWindow.s(7)
                                 font.bold: true
                                 color: topBmRuler.isCurrent ? ThemeBackend.crust : ThemeBackend.subtext0
+
+                                Behavior on color {
+                                    ColorAnimation {
+                                        duration: 280
+                                        easing.type: Easing.OutCubic
+                                    }
+                                }
                             }
 
                             MouseArea {
@@ -621,12 +659,18 @@ PanelWindow {
                                 return [(modelData - 1) * 2500, 0];
                             }
                             readonly property real bx: Number(bmCoords[0]) || 0
+                            readonly property bool isCurrent: (DriftState.activeIndex + 1) === modelData
+
                             x: canvasArea.toMapX(bx)
                             y: 0
                             width: 1
                             height: canvasArea.height
                             z: 1
-                            color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.04)
+                            color: isCurrent
+                                ? Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.22)
+                                : Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.04)
+
+                            Behavior on color { ColorAnimation { duration: 300; easing.type: Easing.OutCubic } }
                         }
                     }
 
