@@ -279,34 +279,27 @@ PanelWindow {
             worldCenterY = (targetMinY + targetMaxY) / 2;
         }
 
-        // --- Card Frame (Styled in Rice Design System) ---
+        // --- Card Frame (Styled exactly like Serpantinum GuidePopup and TopBar) ---
         Rectangle {
             id: cardBg
             anchors.fill: parent
             radius: Math.min(ThemeBackend.borderRadius, mapWindow.s(18))
-            color: ThemeBackend.blurBackground
-                ? Qt.alpha(ThemeBackend.base, ThemeBackend.elementOpacity)
-                : Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, 0.88)
-            border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.09)
+            color: (cardBlur.active && ThemeBackend.liquidGlass)
+                ? "transparent"
+                : Qt.alpha(ThemeBackend.base, ThemeBackend.elementOpacity)
+            border.color: ThemeBackend.liquidGlass
+                ? Qt.rgba(255, 255, 255, 0.12)
+                : Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.08)
             border.width: 1
             clip: true
 
-            GlassFill {
+            WallpaperBlur {
+                id: cardBlur
+                z: -1
                 anchors.fill: parent
                 radius: cardBg.radius
-                allowed: Boolean(ThemeBackend.glassBlur)
-                tintColor: ThemeBackend.surface0
-                tintAmount: 0.18
-                tintStrength: 1.0
-            }
-
-            // Inner Shadow/Glow Accent Border
-            Rectangle {
-                anchors.fill: parent
-                radius: cardBg.radius
-                color: "transparent"
-                border.color: Qt.rgba(ThemeBackend.primary.r, ThemeBackend.primary.g, ThemeBackend.primary.b, 0.14)
-                border.width: 1
+                standalone: true
+                screenOverride: mapWindow.screen
             }
 
             // Content Column
@@ -342,14 +335,44 @@ PanelWindow {
 
                     Item { Layout.fillWidth: true }
 
-                    // Pill Badge in Panel Style (like language switcher)
+                    // Zoom & Workspace Pill (matching BarModule distinct pill pattern)
                     Rectangle {
+                        id: badgePill
                         height: mapWindow.s(26)
                         radius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
-                        color: Qt.lighter(ThemeBackend.surface0, 1.15)
-                        border.color: Qt.rgba(ThemeBackend.surface1.r, ThemeBackend.surface1.g, ThemeBackend.surface1.b, 0.85)
-                        border.width: 1
                         implicitWidth: badgeRow.implicitWidth + mapWindow.s(20)
+                        clip: true
+
+                        // Slightly less transparent than base elementOpacity (higher alpha)
+                        readonly property real pillOpacity: Math.min(1.0, ThemeBackend.elementOpacity * 0.75 + 0.25)
+
+                        color: (badgeGlass.active || (ThemeBackend.liquidGlass && badgeBlur.active))
+                            ? "transparent"
+                            : Qt.alpha(Qt.darker(ThemeBackend.surface0, 1.15), pillOpacity)
+
+                        border.color: ThemeBackend.liquidGlass
+                            ? Qt.rgba(255, 255, 255, 0.20)
+                            : Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.50)
+                        border.width: 1
+
+                        WallpaperBlur {
+                            id: badgeBlur
+                            z: -1
+                            anchors.fill: parent
+                            radius: badgePill.radius
+                            standalone: true
+                            screenOverride: mapWindow.screen
+                        }
+
+                        GlassFill {
+                            id: badgeGlass
+                            anchors.fill: parent
+                            z: -1
+                            radius: badgePill.radius
+                            allowed: Boolean(ThemeBackend.liquidGlass)
+                            tintColor: Qt.darker(ThemeBackend.surface0, 1.15)
+                            tintAmount: 0.35
+                        }
 
                         RowLayout {
                             id: badgeRow
@@ -390,7 +413,7 @@ PanelWindow {
                             Rectangle {
                                 width: 1
                                 height: mapWindow.s(12)
-                                color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.15)
+                                color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.20)
                             }
 
                             // Zoom item with magnifying glass
@@ -426,9 +449,9 @@ PanelWindow {
                         cornerRadius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
                         buttonIcon: mapCard.isPinned ? "󰐃" : "󰤰"
                         iconFontSize: mapWindow.s(13)
-                        accentColor: mapCard.isPinned ? ThemeBackend.primary : ThemeBackend.surface0
+                        accentColor: mapCard.isPinned ? ThemeBackend.primary : Qt.darker(ThemeBackend.surface0, 1.15)
                         textColor: mapCard.isPinned ? ThemeBackend.crust : (pinBtn.isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.subtext0)
-                        bgOpacity: mapCard.isPinned ? 1.0 : ThemeBackend.elementOpacity
+                        bgOpacity: mapCard.isPinned ? 1.0 : (ThemeBackend.liquidGlass ? 0.35 : badgePill.pillOpacity)
                         z: 10
                         onClicked: mapCard.togglePin()
                     }
@@ -439,11 +462,24 @@ PanelWindow {
                     id: canvasArea
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    radius: mapWindow.s(10)
+                    radius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
                     clip: true
-                    color: Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, 0.65)
-                    border.color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.08)
+                    color: canvasGlass.active
+                        ? "transparent"
+                        : Qt.alpha(ThemeBackend.crust, 0.40 * (ThemeBackend.liquidGlass ? 1.0 : (ThemeBackend.blurBackground ? Math.max(0.15, ThemeBackend.elementOpacity) : ThemeBackend.elementOpacity)))
+                    border.color: ThemeBackend.liquidGlass
+                        ? Qt.rgba(255, 255, 255, 0.10)
+                        : Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.08)
                     border.width: 1
+
+                    GlassFill {
+                        id: canvasGlass
+                        anchors.fill: parent
+                        radius: canvasArea.radius
+                        allowed: Boolean(ThemeBackend.liquidGlass)
+                        tintColor: ThemeBackend.crust
+                        tintAmount: 0.18
+                    }
 
                     readonly property real mapScale: Math.min(
                         canvasArea.width / Math.max(100, mapCard.worldW),
