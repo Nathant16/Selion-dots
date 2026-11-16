@@ -38,6 +38,56 @@ PanelWindow {
 
     function s(val) { return (typeof Scaler !== "undefined") ? Scaler.s(val) : val; }
 
+    function formatAppName(rawAppId, rawTitle) {
+        let app = String(rawAppId || "").trim();
+        let title = String(rawTitle || "").trim();
+
+        if (app !== "") {
+            if (app.endsWith(".desktop")) app = app.slice(0, -8);
+
+            // Strip reverse domain prefixes like org.gnome.Loupe -> Loupe
+            if (app.indexOf(".") !== -1) {
+                let parts = app.split(".");
+                let last = parts[parts.length - 1];
+                if (last && last.length > 1) {
+                    app = last;
+                }
+            }
+
+            let lower = app.toLowerCase();
+            if (lower === "ski-file-manager" || lower === "ski") return "Ski";
+            if (lower.startsWith("zen")) return "Zen";
+            if (lower === "google-chrome" || lower === "chrome") return "Chrome";
+            if (lower.startsWith("code")) return "Code";
+            if (lower === "ayugram" || lower.indexOf("telegram") !== -1) return "Telegram";
+            if (lower.indexOf("firefox") !== -1) return "Firefox";
+            if (lower === "org.gnome.loupe" || lower === "loupe") return "Loupe";
+
+            app = app.replace(/-file-manager$/i, "")
+                     .replace(/-browser$/i, "")
+                     .replace(/-desktop$/i, "")
+                     .replace(/_desktop$/i, "");
+
+            if (app.length > 0) {
+                return app.charAt(0).toUpperCase() + app.slice(1);
+            }
+        }
+
+        if (title !== "") {
+            if (title.indexOf(" — ") !== -1) {
+                let parts = title.split(" — ");
+                return parts[parts.length - 1].trim();
+            }
+            if (title.indexOf(" - ") !== -1) {
+                let parts = title.split(" - ");
+                return parts[parts.length - 1].trim();
+            }
+            return title.length > 10 ? title.substring(0, 9) + "…" : title;
+        }
+
+        return "";
+    }
+
     implicitWidth: mapCard.width
     implicitHeight: mapCard.height
 
@@ -183,18 +233,17 @@ PanelWindow {
                 maxY = Math.max(maxY, wy + wh / 2);
             }
 
-            // Include all bookmarks in bounds calculation
+            // Include active bookmark in bounds calculation
             let bms = DriftState.bookmarks;
             if (bms) {
-                for (let k in bms) {
-                    if (Array.isArray(bms[k])) {
-                        let bx = Number(bms[k][0]) || 0;
-                        let by = Number(bms[k][1]) || 0;
-                        minX = Math.min(minX, bx - 400);
-                        maxX = Math.max(maxX, bx + 400);
-                        minY = Math.min(minY, by - 300);
-                        maxY = Math.max(maxY, by + 300);
-                    }
+                let curKey = String(DriftState.activeIndex + 1);
+                if (bms[curKey] && Array.isArray(bms[curKey])) {
+                    let bx = Number(bms[curKey][0]) || 0;
+                    let by = Number(bms[curKey][1]) || 0;
+                    minX = Math.min(minX, bx - 600);
+                    maxX = Math.max(maxX, bx + 600);
+                    minY = Math.min(minY, by - 400);
+                    maxY = Math.max(maxY, by + 400);
                 }
             }
 
@@ -509,15 +558,20 @@ PanelWindow {
                                 return Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.28);
                             }
 
-                            // Minimalist app label inside window
+                            // Minimalist app label inside window (only clean program name)
                             Text {
                                 anchors.centerIn: parent
-                                visible: parent.width > mapWindow.s(26) && parent.height > mapWindow.s(12)
-                                text: modelData.app_id ? modelData.app_id.substring(0, 6) : ""
+                                anchors.fill: parent
+                                anchors.margins: mapWindow.s(2)
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                visible: parent.width > mapWindow.s(16) && parent.height > mapWindow.s(8)
+                                text: mapWindow.formatAppName(modelData.app_id, modelData.title)
                                 font.family: ThemeBackend.fontFamily
-                                font.pixelSize: Math.max(6, Math.min(8, parent.height * 0.45))
+                                font.pixelSize: Math.max(7, Math.min(9, parent.height * 0.45))
+                                font.bold: isFocused
                                 color: isFocused ? "#ffffff" : ThemeBackend.subtext0
-                                opacity: 0.85
+                                opacity: isFocused ? 0.95 : 0.85
                                 elide: Text.ElideRight
                                 maximumLineCount: 1
                             }
