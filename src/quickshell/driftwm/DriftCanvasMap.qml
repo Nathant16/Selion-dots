@@ -334,7 +334,7 @@ PanelWindow {
 
                     Item { Layout.fillWidth: true }
 
-                    // Zoom & Workspace Pill (matching BarModule distinct pill pattern)
+                    // Zoom & Workspace Pill (matching ClickButton / KbFace language switch design)
                     Rectangle {
                         id: badgePill
                         height: mapWindow.s(26)
@@ -342,26 +342,35 @@ PanelWindow {
                         implicitWidth: badgeRow.implicitWidth + mapWindow.s(20)
                         clip: true
 
-                        // Slightly less transparent than base elementOpacity (higher alpha)
+                        readonly property color accentColor: Qt.lighter(ThemeBackend.surface0, 1.18)
                         readonly property real pillOpacity: Math.min(1.0, ThemeBackend.elementOpacity * 0.75 + 0.25)
 
                         color: (badgeGlass.active || (ThemeBackend.liquidGlass && cardBlur.active))
                             ? "transparent"
-                            : Qt.alpha(Qt.darker(ThemeBackend.surface0, 1.15), pillOpacity)
+                            : Qt.alpha(badgeMa.pressed ? Qt.darker(accentColor, 1.15) : (badgeMa.containsMouse ? Qt.lighter(accentColor, 1.14) : accentColor), pillOpacity)
 
-                        border.color: ThemeBackend.liquidGlass
-                            ? Qt.rgba(255, 255, 255, 0.20)
-                            : Qt.rgba(ThemeBackend.surface2.r, ThemeBackend.surface2.g, ThemeBackend.surface2.b, 0.50)
-                        border.width: 1
+                        border.width: 0
+
+                        scale: badgeMa.pressed ? 0.985 : (badgeMa.containsMouse ? 1.015 : 1.0)
+                        Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutQuint } }
 
                         GlassFill {
                             id: badgeGlass
                             anchors.fill: parent
-                            z: -1
+                            shadow: 1
+                            press: badgeMa.pressed ? 1 : (badgeMa.containsMouse ? 0.25 : 0)
                             radius: badgePill.radius
                             allowed: Boolean(ThemeBackend.liquidGlass)
-                            tintColor: Qt.darker(ThemeBackend.surface0, 1.15)
-                            tintAmount: 0.35
+                            tintColor: badgePill.accentColor
+                            tintAmount: (badgeMa.pressed ? 0.55 : (badgeMa.containsMouse ? 0.42 : 0.32)) * badgePill.pillOpacity
+                        }
+
+                        MouseArea {
+                            id: badgeMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: DriftState.zoomReset()
                         }
 
                         RowLayout {
@@ -376,7 +385,7 @@ PanelWindow {
                                     text: "󰮯"
                                     font.family: ThemeBackend.iconFont
                                     font.pixelSize: mapWindow.s(12)
-                                    color: ThemeBackend.primary
+                                    color: badgeMa.containsMouse ? Qt.lighter(ThemeBackend.primary, 1.15) : ThemeBackend.primary
                                     verticalAlignment: Text.AlignVCenter
                                 }
                                 Text {
@@ -385,7 +394,7 @@ PanelWindow {
                                     font.family: ThemeBackend.fontFamily
                                     font.pixelSize: mapWindow.s(11)
                                     font.bold: true
-                                    color: ThemeBackend.text
+                                    color: badgeMa.containsMouse ? Qt.lighter(ThemeBackend.text, 1.15) : ThemeBackend.text
                                     verticalAlignment: Text.AlignVCenter
 
                                     onTextChanged: numAnim.restart()
@@ -403,7 +412,7 @@ PanelWindow {
                             Rectangle {
                                 width: 1
                                 height: mapWindow.s(12)
-                                color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.20)
+                                color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.16)
                             }
 
                             // Zoom item with magnifying glass
@@ -413,7 +422,7 @@ PanelWindow {
                                     text: "󰍉"
                                     font.family: ThemeBackend.iconFont
                                     font.pixelSize: mapWindow.s(12)
-                                    color: ThemeBackend.subtext0
+                                    color: badgeMa.containsMouse ? Qt.lighter(ThemeBackend.subtext0, 1.15) : ThemeBackend.subtext0
                                     verticalAlignment: Text.AlignVCenter
                                 }
                                 Text {
@@ -421,7 +430,7 @@ PanelWindow {
                                     font.family: ThemeBackend.fontFamily
                                     font.pixelSize: mapWindow.s(11)
                                     font.bold: true
-                                    color: ThemeBackend.text
+                                    color: badgeMa.containsMouse ? Qt.lighter(ThemeBackend.text, 1.15) : ThemeBackend.text
                                     verticalAlignment: Text.AlignVCenter
                                 }
                             }
@@ -439,7 +448,7 @@ PanelWindow {
                         cornerRadius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
                         buttonIcon: mapCard.isPinned ? "󰐃" : "󰤰"
                         iconFontSize: mapWindow.s(13)
-                        accentColor: mapCard.isPinned ? ThemeBackend.primary : Qt.darker(ThemeBackend.surface0, 1.15)
+                        accentColor: mapCard.isPinned ? ThemeBackend.primary : Qt.lighter(ThemeBackend.surface0, 1.18)
                         textColor: mapCard.isPinned ? ThemeBackend.crust : (pinBtn.isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.subtext0)
                         bgOpacity: mapCard.isPinned ? 1.0 : (ThemeBackend.liquidGlass ? 0.35 : badgePill.pillOpacity)
                         z: 10
