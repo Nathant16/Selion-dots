@@ -31,4 +31,15 @@ hl.config({
     xwayland = {
         force_zero_scaling = true,
     },
+    cursor = {
+        no_hardware_cursors = false,
+        enable_hyprcursor = false,
+        warp_on_change_workspace = true,
+    },
 })
+
+hl.env("XCURSOR_THEME", "Windows-11M-Dark")
+hl.env("XCURSOR_SIZE", "24")
+hl.env("HYPRCURSOR_THEME", "Windows-11M-Dark")
+hl.env("HYPRCURSOR_SIZE", "24")
+hl.exec_cmd("hyprctl setcursor Windows-11M-Dark 24")

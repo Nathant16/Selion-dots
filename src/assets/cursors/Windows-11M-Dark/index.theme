@@ -1,0 +1,4 @@
+[Icon Theme]
+Name=Windows 11M Dark
+Comment=Windows 11M Dark cursor theme adapted for Wayland & X11 with custom matching cursors
+Inherits=core

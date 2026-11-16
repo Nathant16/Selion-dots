@@ -314,6 +314,10 @@ if [ "$COMMAND" == "start" ]; then
     LAUNCH_PID=$!
 
     # Auto-detect compositor sockets if not already in environment
+    export XCURSOR_THEME="Windows-11M-Dark"
+    export XCURSOR_SIZE="24"
+    export HYPRCURSOR_THEME="Windows-11M-Dark"
+    export HYPRCURSOR_SIZE="24"
     local_rdir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
     if [ -z "$DRIFTWM_SOCKET" ] && [ -d "$local_rdir/driftwm" ]; then
         local_ds=$(find "$local_rdir/driftwm" -name "ipc-*.sock" 2>/dev/null | head -n 1)

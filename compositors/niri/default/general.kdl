@@ -10,3 +10,8 @@ hotkey-overlay {
 // █ ▀ █ ▀█▀ ▀▀█ █
 // ▀   ▀ ▀▀▀ ▀▀▀ ▀▀▀
 
+environment {
+    XCURSOR_THEME "Windows-11M-Dark"
+    XCURSOR_SIZE "24"
+}
+

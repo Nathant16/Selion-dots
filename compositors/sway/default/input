@@ -14,6 +14,8 @@ input type:touchpad {
   middle_emulation enabled
 }
 
+seat seat0 xcursor_theme Windows-11M-Dark 24
+
 # Touchpad Gestures
 bindgesture swipe:3:right workspace prev
 bindgesture swipe:3:left workspace next

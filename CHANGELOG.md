@@ -1,3 +1,10 @@
+### 2.7.2
+
+- feat(cursors): integrate complete Windows 11M Dark cursor theme across all 5 Window Managers (DriftWM, Hyprland, Sway, Niri, Mango), SDDM, GTK, Flatpak, and X11
+- feat(cursors): draw pixel-perfect missing cursors (Grabbing, ZoomIn, ZoomOut, Copy, Alias, ContextMenu, Cell, VerticalText, ColResize, RowResize) matching theme palette and shadows
+- fix(weather): fully localize weather alerts and government warning notifications across all 23 language files and normalize CAP alert language tags
+- feat(telemetry): route diagnostic telemetry to personal server endpoint in YAML format
+
 ### 2.7.1
 
 - fix(driftwm): disable `resize_on_border` to prevent sticky resize cursor on empty canvas, add `mod+right` resize binding

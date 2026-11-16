@@ -318,7 +318,9 @@ resolve_sddm_backend() {
 
 configure_sddm_cursor() {
     local conf="$1" theme=""
-    if [ -d /usr/share/icons/Adwaita/cursors ]; then
+    if [ -d /usr/share/icons/Windows-11M-Dark/cursors ] || [ -d "$TARGET_BASE/src/assets/cursors/Windows-11M-Dark/cursors" ]; then
+        theme="Windows-11M-Dark"
+    elif [ -d /usr/share/icons/Adwaita/cursors ]; then
         theme="Adwaita"
     else
         theme="$(find /usr/share/icons -mindepth 2 -maxdepth 2 -type d -name cursors 2>/dev/null | head -n 1 | xargs -r dirname | xargs -r basename)"
@@ -1007,6 +1009,50 @@ deploy_package() {
     fi
 
     remove_settings_desktop_entry
+
+    # Deploy custom Windows-11M-Dark cursor theme
+    local cursor_src="$TARGET_BASE/src/assets/cursors/Windows-11M-Dark"
+    if [ -d "$cursor_src" ]; then
+        local user_icons="$HOME/.local/share/icons"
+        local legacy_icons="$HOME/.icons"
+        mkdir -p "$user_icons" "$legacy_icons" "$legacy_icons/default" 2>/dev/null || true
+        rm -rf "$user_icons/Windows-11M-Dark" "$legacy_icons/Windows-11M-Dark" 2>/dev/null || true
+        cp -r "$cursor_src" "$user_icons/"
+        ln -sf "$user_icons/Windows-11M-Dark" "$legacy_icons/Windows-11M-Dark" 2>/dev/null || true
+
+        cat << 'EOF_CUR' > "$legacy_icons/default/index.theme"
+[Icon Theme]
+Name=Default
+Comment=Default Cursor Theme
+Inherits=Windows-11M-Dark
+EOF_CUR
+
+        if [ -w /usr/share/icons ] || sudo -n true 2>/dev/null; then
+            sudo rm -rf /usr/share/icons/Windows-11M-Dark 2>/dev/null || true
+            sudo cp -r "$cursor_src" /usr/share/icons/ 2>/dev/null || true
+        fi
+
+        if command -v gsettings &>/dev/null; then
+            gsettings set org.gnome.desktop.interface cursor-theme 'Windows-11M-Dark' 2>/dev/null || true
+            gsettings set org.gnome.desktop.interface cursor-size 24 2>/dev/null || true
+        fi
+        for gtk_dir in "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"; do
+            mkdir -p "$gtk_dir" 2>/dev/null || true
+            local ini="$gtk_dir/settings.ini"
+            if [ -f "$ini" ]; then
+                sed -i 's/^gtk-cursor-theme-name=.*/gtk-cursor-theme-name=Windows-11M-Dark/' "$ini" 2>/dev/null || true
+                sed -i 's/^gtk-cursor-theme-size=.*/gtk-cursor-theme-size=24/' "$ini" 2>/dev/null || true
+                grep -q "gtk-cursor-theme-name" "$ini" || echo "gtk-cursor-theme-name=Windows-11M-Dark" >> "$ini"
+                grep -q "gtk-cursor-theme-size" "$ini" || echo "gtk-cursor-theme-size=24" >> "$ini"
+            else
+                cat << 'EOF_GTK' > "$ini"
+[Settings]
+gtk-cursor-theme-name=Windows-11M-Dark
+gtk-cursor-theme-size=24
+EOF_GTK
+            fi
+        done
+    fi
 
     # Initial theme and border synchronization for all compositors
     if [ -f "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" ]; then

@@ -19,5 +19,10 @@ window-rule {
     clip-to-geometry true
 }
 
+cursor {
+    xcursor-theme "Windows-11M-Dark"
+    xcursor-size 24
+}
+
 include optional=true "~/.local/state/serpantinum/theme_niri.kdl"
 

@@ -60,6 +60,8 @@ accel_profile = "adaptive"
 disable_while_typing = true
 
 [cursor]
+theme = "Windows-11M-Dark"
+size = 24
 inactive_opacity = 0.5
 
 [mouse]
