@@ -701,21 +701,25 @@ PanelWindow {
                                 border.width: 1
                             }
 
-                            // Minimalist app label inside window with auto-shrinking font to fit card
+                            // Minimalist app label inside window with auto-shrinking font and guaranteed edge padding
                             Text {
+                                readonly property real hPad: Math.max(mapWindow.s(4), Math.min(mapWindow.s(7), parent.width * 0.08))
+                                readonly property real vPad: Math.max(mapWindow.s(2), Math.min(mapWindow.s(4), parent.height * 0.10))
+
                                 anchors.fill: parent
-                                anchors.leftMargin: mapWindow.s(2)
-                                anchors.rightMargin: mapWindow.s(2)
-                                anchors.topMargin: mapWindow.s(1)
-                                anchors.bottomMargin: mapWindow.s(1)
+                                anchors.leftMargin: hPad
+                                anchors.rightMargin: hPad
+                                anchors.topMargin: vPad
+                                anchors.bottomMargin: vPad
+
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
-                                visible: parent.width >= mapWindow.s(10) && parent.height >= mapWindow.s(6)
+                                visible: parent.width >= mapWindow.s(12) && parent.height >= mapWindow.s(7)
                                 text: mapWindow.formatAppName(modelData.app_id, modelData.title)
                                 font.family: ThemeBackend.fontFamily
-                                font.pixelSize: Math.max(7, Math.min(mapWindow.s(9.5), parent.height * 0.55))
+                                font.pixelSize: Math.max(6, Math.min(mapWindow.s(9), parent.height * 0.50))
                                 fontSizeMode: Text.Fit
-                                minimumPixelSize: Math.max(4, mapWindow.s(4.5))
+                                minimumPixelSize: Math.max(3.5, mapWindow.s(4.0))
                                 font.bold: isFocused
                                 color: isFocused ? "#ffffff" : ThemeBackend.subtext1
                                 elide: Text.ElideRight
