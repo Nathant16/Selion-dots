@@ -105,6 +105,8 @@ fit_padding = 40.0
 blur_radius = 5
 blur_strength = 1.5
 animate_blur_fps = 20
+animation_speed = 0.22
+animation_scale = 0.8
 
 # █▀▀█ █▀▀▄  ▀  █▀▄▀█ █▀▀█ ▀▀█▀▀  ▀  █▀▀█ █▀▀▄ █▀▀
 # █▄▄█ █  █ ▀█▀ █ ▀ █ █▄▄█   █   ▀█▀ █  █ █  █ ▀▀█
