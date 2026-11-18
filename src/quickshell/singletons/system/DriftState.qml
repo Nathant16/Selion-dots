@@ -264,8 +264,9 @@ CompositorStateBase {
                         let bms = obj.Ok.Bookmarks;
                         let broken = false;
                         for (let i = 1; i <= 9; i++) {
-                            let expected = (i - 1) * 2500;
-                            if (!bms[String(i)] || Number(bms[String(i)][0]) !== expected) {
+                            let expectedX = (i - 1) * 2500;
+                            let expectedY = 0;
+                            if (!bms[String(i)] || Number(bms[String(i)][0]) !== expectedX || Number(bms[String(i)][1]) !== expectedY) {
                                 broken = true;
                                 break;
                             }
