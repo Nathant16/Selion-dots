@@ -24,7 +24,7 @@ CompositorStateBase {
     property real zoom: 1.0
     property real screenWidth: 1920
     property real screenHeight: 1080
-    property var bookmarks: ({ "1": [0, 0], "2": [2500, 0], "3": [5000, 0], "4": [7500, 0], "5": [10000, 0], "6": [12500, 0], "7": [15000, 0], "8": [17500, 0], "9": [20000, 0] })
+    property var bookmarks: ({ "1": [0, 0], "2": [5000, 0], "3": [5000, 0], "4": [7500, 0], "5": [10000, 0], "6": [15000, 0], "7": [15000, 0], "8": [17500, 0], "9": [20000, 0] })
     property int bookmarksRevision: 0
 
     signal bookmarksUpdated()
@@ -125,7 +125,7 @@ CompositorStateBase {
     }
 
     function initBookmarks() {
-        let script = "for i in 1 2 3 4 5 6 7 8 9; do driftwm msg bookmark \$i \$(( (i-1)*2500 )) 0 >/dev/null 2>&1; done";
+        let script = "for i in 1 2 3 4 5 6 7 8 9; do driftwm msg bookmark \$i \$(( (i-1)*5000 )) 0 >/dev/null 2>&1; done";
         Quickshell.execDetached(["sh", "-c", script]);
         bookmarkRefreshTimer.restart();
     }
@@ -149,7 +149,7 @@ CompositorStateBase {
             let bestIdx = 0;
             for (let i = 1; i <= 9; i++) {
                 let key = String(i);
-                let bx = (bms && bms[key] && Array.isArray(bms[key])) ? (Number(bms[key][0]) || 0) : ((i - 1) * 2500);
+                let bx = (bms && bms[key] && Array.isArray(bms[key])) ? (Number(bms[key][0]) || 0) : ((i - 1) * 5000);
                 let by = (bms && bms[key] && Array.isArray(bms[key])) ? (Number(bms[key][1]) || 0) : 0;
                 let d = Math.hypot(cx - bx, cy - by);
                 if (d < bestDist) {
@@ -180,7 +180,7 @@ CompositorStateBase {
                 let bestIdx = 0;
                 for (let k = 1; k <= 9; k++) {
                     let key = String(k);
-                    let bx = (bms && bms[key] && Array.isArray(bms[key])) ? (Number(bms[key][0]) || 0) : ((k - 1) * 2500);
+                    let bx = (bms && bms[key] && Array.isArray(bms[key])) ? (Number(bms[key][0]) || 0) : ((k - 1) * 5000);
                     let by = (bms && bms[key] && Array.isArray(bms[key])) ? (Number(bms[key][1]) || 0) : 0;
                     let d = Math.hypot(wx - bx, wy - by);
                     if (d < bestDist) {
