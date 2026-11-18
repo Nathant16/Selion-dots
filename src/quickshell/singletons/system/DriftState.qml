@@ -24,7 +24,7 @@ CompositorStateBase {
     property real zoom: 1.0
     property real screenWidth: 1920
     property real screenHeight: 1080
-    property var bookmarks: ({ "1": [0, 0], "2": [2500, 0], "3": [2500, 0], "4": [7500, 0], "5": [10000, 0], "6": [12500, 0], "7": [12500, 0], "8": [17500, 0], "9": [20000, 0] })
+    property var bookmarks: ({ "1": [0, 0], "2": [2500, 0], "3": [5000, 0], "4": [7500, 0], "5": [10000, 0], "6": [12500, 0], "7": [15000, 0], "8": [17500, 0], "9": [20000, 0] })
     property int bookmarksRevision: 0
 
     signal bookmarksUpdated()

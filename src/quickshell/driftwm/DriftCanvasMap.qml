@@ -600,7 +600,7 @@ PanelWindow {
                             clip: true
                             z: 4
 
-                            visible: x >= -width && x <= canvasArea.width + width
+                            visible: true
 
                             readonly property real bmOpacity: isCurrent ? 0.95 : badgePill.pillOpacity
                             readonly property color bmBaseColor: {
