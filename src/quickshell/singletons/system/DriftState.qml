@@ -262,7 +262,15 @@ CompositorStateBase {
                     let obj = JSON.parse(str);
                     if (obj && obj.Ok && obj.Ok.Bookmarks) {
                         let bms = obj.Ok.Bookmarks;
-                        if (Object.keys(bms).length === 0) {
+                        let broken = false;
+                        for (let i = 1; i <= 9; i++) {
+                            let expected = (i - 1) * 2500;
+                            if (!bms[String(i)] || Number(bms[String(i)][0]) !== expected) {
+                                broken = true;
+                                break;
+                            }
+                        }
+                        if (broken) {
                             root.initBookmarks();
                         } else {
                             root.bookmarks = bms;
