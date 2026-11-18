@@ -199,7 +199,7 @@ PanelWindow {
 
         // --- Smooth World Bounds & Auto-Scaling ---
         property real targetMinX: 0
-        property real targetMaxX: 5000
+        property real targetMaxX: 2500
         property real targetMinY: -600
         property real targetMaxY: 600
 
@@ -587,9 +587,9 @@ PanelWindow {
                                 if (bms && bms[String(modelData)]) {
                                     return bms[String(modelData)];
                                 }
-                                return [(modelData - 1) * 5000, 0];
+                                return [(modelData - 1) * 2500, 0];
                             }
-                            readonly property real bx: (bmCoords && bmCoords.length >= 1 && !isNaN(Number(bmCoords[0]))) ? Number(bmCoords[0]) : (modelData - 1) * 5000
+                            readonly property real bx: (bmCoords && bmCoords.length >= 1 && !isNaN(Number(bmCoords[0]))) ? Number(bmCoords[0]) : (modelData - 1) * 2500
                             readonly property bool isCurrent: (DriftState.activeIndex + 1) === modelData
 
                             x: Math.round(canvasArea.toMapX(bx) - width / 2)
@@ -671,9 +671,9 @@ PanelWindow {
                                 if (bms && bms[String(modelData)]) {
                                     return bms[String(modelData)];
                                 }
-                                return [(modelData - 1) * 5000, 0];
+                                return [(modelData - 1) * 2500, 0];
                             }
-                            readonly property real bx: (bmCoords && bmCoords.length >= 1 && !isNaN(Number(bmCoords[0]))) ? Number(bmCoords[0]) : (modelData - 1) * 5000
+                            readonly property real bx: (bmCoords && bmCoords.length >= 1 && !isNaN(Number(bmCoords[0]))) ? Number(bmCoords[0]) : (modelData - 1) * 2500
                             readonly property bool isCurrent: (DriftState.activeIndex + 1) === modelData
 
                             x: canvasArea.toMapX(bx)
