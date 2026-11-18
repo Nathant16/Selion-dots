@@ -589,11 +589,12 @@ PanelWindow {
                                 }
                                 return [(modelData - 1) * 2500, 0];
                             }
-                            readonly property real bx: (modelData - 1) * 2500
+                            readonly property real bx: bmCoords[0]
+                            readonly property real by: bmCoords[1]
                             readonly property bool isCurrent: (DriftState.activeIndex + 1) === modelData
 
                             x: Math.round(canvasArea.toMapX(bx) - width / 2)
-                            y: mapWindow.s(3)
+                            y: Math.round(canvasArea.toMapY(by) - height / 2)
                             width: mapWindow.s(16)
                             height: mapWindow.s(12)
                             radius: Math.max(2, Math.min(5, mapWindow.s(3.5)))
@@ -673,7 +674,8 @@ PanelWindow {
                                 }
                                 return [(modelData - 1) * 2500, 0];
                             }
-                            readonly property real bx: (modelData - 1) * 2500
+                            readonly property real bx: bmCoords[0]
+                            readonly property real by: bmCoords[1]
                             readonly property bool isCurrent: (DriftState.activeIndex + 1) === modelData
 
                             x: canvasArea.toMapX(bx)
