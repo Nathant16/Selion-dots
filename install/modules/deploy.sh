@@ -639,6 +639,50 @@ configure_keyboard_layout() {
     fi
 }
 
+configure_driftwm_bookmarks() {
+    local compositors=("$@")
+    if [[ " ${compositors[*]} " != *" driftwm "* ]]; then
+        return 0
+    fi
+
+    local step=2500
+
+    # Running DriftWM: move the live bookmarks into the Selion row 1..9.
+    if command -v driftwm >/dev/null 2>&1 && timeout 3 driftwm msg bookmark --json >/dev/null 2>&1; then
+        for i in 1 2 3 4 5 6 7 8 9; do
+            driftwm msg bookmark "$i" "$(( (i - 1) * step ))" 0 >/dev/null 2>&1 || true
+        done
+        return 0
+    fi
+
+    # Not running: repair the durable session so the next DriftWM start
+    # restores the row instead of the four default corners.
+    local session_file="$HOME/.local/state/driftwm/session.json"
+    [[ -f "$session_file" ]] || return 0
+
+    python3 - "$session_file" "$step" <<'PY' 2>/dev/null || true
+import json
+import sys
+
+path = sys.argv[1]
+step = int(sys.argv[2])
+try:
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+except Exception:
+    sys.exit(0)
+if not isinstance(data, dict):
+    sys.exit(0)
+data["bookmarks"] = {str(i): [(i - 1) * step, 0] for i in range(1, 10)}
+try:
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+        f.write("\n")
+except Exception:
+    pass
+PY
+}
+
 remove_settings_desktop_entry() {
     local data_home="${XDG_DATA_HOME:-$HOME/.local/share}"
     local apps_dir="$data_home/applications"
@@ -1112,5 +1156,6 @@ EOF_ENV
     fi
 
     configure_keyboard_layout "$KEYBOARD_LAYOUT" "$KEYBOARD_TOGGLE"
+    configure_driftwm_bookmarks "${COMPOSITORS[@]}"
     setup_pam_service
 }

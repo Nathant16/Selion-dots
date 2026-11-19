@@ -395,10 +395,39 @@ window_rule=focused_opacity:{app_opacity},unfocused_opacity:{app_opacity}{no_blu
 def write_driftwm_theme(state_dir, colors, rounding, app_opacity, blur_background, apply_to_windows):
     should_blur_windows = blur_background and apply_to_windows
 
+    config_file = Path.home() / ".config" / "driftwm" / "config.toml"
+
+    # [effects] is rewritten as a whole below. Preserve the animation tuning
+    # that lives in the same table instead of silently dropping it (the
+    # installer ships animation_speed/animation_scale in the base config).
+    animation_speed = "0.22"
+    animation_scale = "0.8"
+    if config_file.is_file():
+        try:
+            in_effects = False
+            for line in config_file.read_text(encoding="utf-8").splitlines():
+                stripped = line.strip()
+                if stripped.startswith("["):
+                    in_effects = stripped == "[effects]"
+                    continue
+                if not in_effects or "=" not in stripped:
+                    continue
+                key, value = stripped.split("=", 1)
+                key = key.strip()
+                value = value.strip()
+                if key == "animation_speed":
+                    animation_speed = value
+                elif key == "animation_scale":
+                    animation_scale = value
+        except Exception:
+            pass
+
     effects_block = f"""[effects]
 blur_radius = {5 if blur_background else 0}
 blur_strength = {1.5 if blur_background else 0.0}
 animate_blur_fps = {20 if blur_background else 0}
+animation_speed = {animation_speed}
+animation_scale = {animation_scale}
 """
 
     decorations_block = f"""[decorations]
@@ -418,7 +447,6 @@ blur = {"true" if should_blur_windows else "false"}
         f.write(effects_block + "\n" + decorations_block + "\n")
 
     # Update ~/.config/driftwm/config.toml
-    config_file = Path.home() / ".config" / "driftwm" / "config.toml"
     if config_file.is_file():
         try:
             with open(config_file, "r", encoding="utf-8") as f:

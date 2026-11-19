@@ -113,7 +113,7 @@ while [ $# -gt 0 ]; do
             show_help
             exit 0
             ;;
-        start|stop|status)
+        start|stop|status|restart)
             if [ -z "$COMMAND" ]; then
                 COMMAND="$1"
             fi
@@ -129,6 +129,13 @@ done
 
 if [ -z "$COMMAND" ]; then
     COMMAND="start"
+fi
+
+if [ "$COMMAND" == "restart" ]; then
+    "$0" stop >/dev/null 2>&1 || true
+    setsid "$0" start >/dev/null 2>&1 < /dev/null &
+    sleep 0.5
+    exit 0
 fi
 
 if [ "$COMMAND" == "stop" ]; then

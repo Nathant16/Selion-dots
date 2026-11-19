@@ -124,7 +124,27 @@ CompositorStateBase {
         Quickshell.execDetached(["driftwm", "msg", "action", "switch-layout", "next"]);
     }
 
+    property real lastBookmarkInitAt: 0
+
+    function linearBookmarks() {
+        let bms = ({});
+        for (let i = 1; i <= 9; i++) bms[String(i)] = [(i - 1) * 2500, 0];
+        return bms;
+    }
+
     function initBookmarks() {
+        // Throttle writes so a failing direct call cannot spawn a process storm
+        // through the periodic refresh timer.
+        let now = Date.now();
+        if (now - lastBookmarkInitAt < 2000) return;
+        lastBookmarkInitAt = now;
+
+        // Update the local copy immediately so the minimap and the bar snap to
+        // the linear layout while the compositor commands are in flight.
+        root.bookmarks = linearBookmarks();
+        root.bookmarksRevision++;
+        root.bookmarksUpdated();
+
         let script = "for i in 1 2 3 4 5 6 7 8 9; do driftwm msg bookmark \$i \$(( (i-1)*2500 )) 0 >/dev/null 2>&1; done";
         Quickshell.execDetached(["sh", "-c", script]);
         bookmarkRefreshTimer.restart();
@@ -250,37 +270,45 @@ CompositorStateBase {
         }
     }
 
+    function applyBookmarkList(raw) {
+        let str = raw ? String(raw).trim() : "";
+        if (!str) return;
+        let obj;
+        try {
+            obj = JSON.parse(str);
+        } catch (e) {
+            return;
+        }
+        if (!obj || !obj.Ok || !obj.Ok.Bookmarks) return;
+        let bms = obj.Ok.Bookmarks;
+        let broken = false;
+        for (let i = 1; i <= 9; i++) {
+            let expectedX = (i - 1) * 2500;
+            let expectedY = 0;
+            let bm = bms[String(i)];
+            if (!bm || !Array.isArray(bm) || Number(bm[0]) !== expectedX || Number(bm[1]) !== expectedY) {
+                broken = true;
+                break;
+            }
+        }
+        if (broken) {
+            root.initBookmarks();
+        } else {
+            root.bookmarks = bms;
+            root.bookmarksRevision++;
+            root.bookmarksUpdated();
+        }
+    }
+
     Process {
         id: bookmarksProc
         command: ["driftwm", "msg", "bookmark", "--json"]
-        stdout: SplitParser {
-            splitMarker: "\n"
-            onRead: data => {
-                let str = data ? data.trim() : "";
-                if (!str) return;
-                try {
-                    let obj = JSON.parse(str);
-                    if (obj && obj.Ok && obj.Ok.Bookmarks) {
-                        let bms = obj.Ok.Bookmarks;
-                        let broken = false;
-                        for (let i = 1; i <= 9; i++) {
-                            let expectedX = (i - 1) * 2500;
-                            let expectedY = 0;
-                            if (!bms[String(i)] || Number(bms[String(i)][0]) !== expectedX || Number(bms[String(i)][1]) !== expectedY) {
-                                broken = true;
-                                break;
-                            }
-                        }
-                        if (broken) {
-                            root.initBookmarks();
-                        } else {
-                            root.bookmarks = bms;
-                            root.bookmarksRevision++;
-                            root.bookmarksUpdated();
-                        }
-                    }
-                } catch(e) {}
-            }
+        // `driftwm msg ... --json` prints pretty-printed JSON, so the reply must
+        // be collected whole. SplitParser (line-by-line) always failed here and
+        // left the four-corner default bookmarks in place.
+        stdout: StdioCollector {
+            id: bookmarksOut
+            onStreamFinished: root.applyBookmarkList(bookmarksOut.text)
         }
     }
 
