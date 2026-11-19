@@ -482,9 +482,6 @@ PanelWindow {
                         canvasArea.height / Math.max(100, mapCard.worldH)
                     )
 
-                    // Nine equal columns for the fixed 1..9 workspace ruler.
-                    readonly property real bookmarkSlot: width / 9
-
                     function toMapX(wx) {
                         return canvasArea.width / 2 + (wx - mapCard.worldCenterX) * mapScale;
                     }
@@ -584,19 +581,28 @@ PanelWindow {
                             id: topBmRuler
                             required property int modelData
 
+                            readonly property var bmCoords: {
+                                let rev = DriftState.bookmarksRevision;
+                                let bms = DriftState.bookmarks;
+                                if (bms && bms[String(modelData)]) {
+                                    return bms[String(modelData)];
+                                }
+                                return [(modelData - 1) * 2500, 0];
+                            }
+                            readonly property real bx: Number(bmCoords[0]) || 0
                             readonly property bool isCurrent: (DriftState.activeIndex + 1) === modelData
                             readonly property real pinMargin: mapWindow.s(2)
 
-                            // Fixed ruler: the nine markers always sit in equal
-                            // columns along the top edge and never move with
-                            // camera pan/zoom or drift out of the card.
-                            x: Math.round((modelData - 0.5) * canvasArea.bookmarkSlot - width / 2)
+                            // X follows the bookmark's real canvas position (so the
+                            // active one sits centered after a jump); only Y is
+                            // pinned to the top edge of the map.
+                            x: Math.round(canvasArea.toMapX(bx) - width / 2)
                             y: pinMargin
                             width: mapWindow.s(16)
                             height: mapWindow.s(12)
                             radius: Math.max(2, Math.min(5, mapWindow.s(3.5)))
                             clip: true
-                            // Above the viewport rectangle, so the row stays readable
+                            // Above the viewport rectangle, so the pinned row stays readable
                             z: 46
 
                             visible: true
@@ -664,9 +670,18 @@ PanelWindow {
                         model: [1, 2, 3, 4, 5, 6, 7, 8, 9]
                         delegate: Rectangle {
                             required property int modelData
+                            readonly property var bmCoords: {
+                                let rev = DriftState.bookmarksRevision;
+                                let bms = DriftState.bookmarks;
+                                if (bms && bms[String(modelData)]) {
+                                    return bms[String(modelData)];
+                                }
+                                return [(modelData - 1) * 2500, 0];
+                            }
+                            readonly property real bx: Number(bmCoords[0]) || 0
                             readonly property bool isCurrent: (DriftState.activeIndex + 1) === modelData
 
-                            x: Math.round((modelData - 1) * canvasArea.bookmarkSlot)
+                            x: canvasArea.toMapX(bx)
                             y: 0
                             width: 1
                             height: canvasArea.height
