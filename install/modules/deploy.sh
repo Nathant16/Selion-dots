@@ -580,10 +580,13 @@ configure_keyboard_layout() {
     local layout="${1:-${KEYBOARD_LAYOUT:-us,ru}}"
     local toggle="${2:-${KEYBOARD_TOGGLE:-alt_shift}}"
 
-    local xkb_opts="grp:alt_shift_toggle,grp:ctrl_shift_toggle"
+    # Only one grp:*_toggle may own the left Shift key. Combining
+    # alt_shift_toggle with ctrl_shift_toggle makes ctrl override LFSH and
+    # breaks Alt-then-Shift order switching, so apply only the chosen toggle.
+    local xkb_opts="grp:alt_shift_toggle"
     case "$toggle" in
         ctrl_shift)
-            xkb_opts="grp:ctrl_shift_toggle,grp:alt_shift_toggle"
+            xkb_opts="grp:ctrl_shift_toggle"
             ;;
         win_space)
             xkb_opts="grp:win_space_toggle"
@@ -592,7 +595,7 @@ configure_keyboard_layout() {
             xkb_opts="grp:caps_toggle"
             ;;
         *)
-            xkb_opts="grp:alt_shift_toggle,grp:ctrl_shift_toggle"
+            xkb_opts="grp:alt_shift_toggle"
             ;;
     esac
 

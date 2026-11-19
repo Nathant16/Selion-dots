@@ -20,7 +20,9 @@ hl.gesture({
 hl.config({
     input = {
         kb_layout = "us,ru",
-        kb_options = "grp:alt_shift_toggle,grp:ctrl_shift_toggle",
+        -- Only one grp:*_toggle may own LFSH: combining alt_shift and
+        -- ctrl_shift makes ctrl win and breaks the Alt-then-Shift order.
+        kb_options = "grp:alt_shift_toggle",
         numlock_by_default = true,
         follow_mouse = 1,
         sensitivity = 0,
