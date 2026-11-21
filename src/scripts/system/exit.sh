@@ -24,6 +24,7 @@ if [ -z "$TARGET" ]; then
         *hyprland*) TARGET="hyprland" ;;
         *niri*)     TARGET="niri" ;;
         *sway*)     TARGET="sway" ;;
+        *umbriel*)  TARGET="umbriel" ;;
     esac
 fi
 
@@ -39,6 +40,8 @@ if [ -z "$TARGET" ]; then
         TARGET="sway"
     elif pgrep -x Hyprland &>/dev/null; then
         TARGET="hyprland"
+    elif pgrep -x umbriel &>/dev/null; then
+        TARGET="umbriel"
     fi
 fi
 
@@ -124,6 +127,17 @@ quit_niri() {
     fi
 }
 
+quit_umbriel() {
+    umbriel msg session-quit skip-confirmation 2>/dev/null || \
+    umbriel msg session-quit 2>/dev/null || \
+    pkill -SIGTERM -x umbriel 2>/dev/null
+
+    sleep 0.2
+    if pgrep -x umbriel &>/dev/null; then
+        terminate_session
+    fi
+}
+
 quit_sway() {
     swaymsg exit 2>/dev/null || \
     pkill -SIGTERM -x sway 2>/dev/null
@@ -147,6 +161,9 @@ case "$TARGET" in
     niri)
         quit_niri
         ;;
+    umbriel)
+        quit_umbriel
+        ;;
     sway)
         quit_sway
         ;;
@@ -161,6 +178,8 @@ case "$TARGET" in
             quit_sway
         elif pgrep -x Hyprland &>/dev/null; then
             quit_hyprland
+        elif pgrep -x umbriel &>/dev/null; then
+            quit_umbriel
         else
             terminate_session
         fi

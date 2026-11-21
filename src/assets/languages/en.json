@@ -309,14 +309,6 @@
                 "title": "UI scale",
                 "desc": "Set the display scale factor for this monitor"
             },
-            "resolution": {
-                "title": "Display Resolution",
-                "desc": "Set output display resolution"
-            },
-            "framerate": {
-                "title": "Refresh Rate",
-                "desc": "Set display refresh rate (Hz)"
-            },
             "widgets": {
                 "title": "Desktop widgets",
                 "desc": "Configure and place widgets for this monitor",
@@ -376,6 +368,14 @@
                     "follows_hint": "Follows wallpaper",
                     "none": "No background selected"
                 }
+            },
+            "resolution": {
+                "title": "Display Resolution",
+                "desc": "Set output display resolution"
+            },
+            "framerate": {
+                "title": "Refresh Rate",
+                "desc": "Set display refresh rate (Hz)"
             },
             "layout_stage": "2D Displays Arrangement",
             "monitors_detected": "monitor(s)"
@@ -727,10 +727,6 @@
                     "liquid": "Liquid glass"
                 }
             },
-            "apply_to_windows": {
-                "title": "Apply effects to windows",
-                "desc": "Enable transparency and blur for terminal and file manager windows"
-            },
             "colors": {
                 "title": "Color themes",
                 "desc": "Select a predefined color palette preset or create your own custom theme.",
@@ -769,6 +765,31 @@
                     "paint": {
                         "name": "Paint",
                         "desc": "Paint the new wallpaper in, cell by cell, from colonies that grow across the screen"
+                    },
+                    "wave": {
+                        "name": "Fluid wave",
+                        "desc": "Sweep a curved liquid wave across the screen",
+                        "direction_desc": "Edge or corner the wave sweeps from"
+                    },
+                    "blinds": {
+                        "name": "Venetian blinds",
+                        "desc": "Open parallel slats across the screen in a staggered wave",
+                        "orientation_desc": "Axis the blinds open along"
+                    },
+                    "clock": {
+                        "name": "Clock sweep",
+                        "desc": "Sweep clockwise around a point like a radar beam",
+                        "origin_desc": "Where the sweep pivots from"
+                    },
+                    "hex": {
+                        "name": "Hex grid",
+                        "desc": "Reveal the new wallpaper through a rippling honeycomb of hexagons",
+                        "size_title": "Hex size",
+                        "size_desc": "Size of each hexagon tile in the grid"
+                    },
+                    "ink": {
+                        "name": "Ink bleed",
+                        "desc": "Bloom organically across the screen like watercolor ink"
                     },
                     "orientation": {
                         "title": "Orientation",
@@ -846,6 +867,10 @@
                 "light": "Light",
                 "dark": "Dark",
                 "fixed": "Fixed by the selected color theme. Choose Matugen to switch modes"
+            },
+            "apply_to_windows": {
+                "title": "Apply effects to windows",
+                "desc": "Enable transparency and blur for terminal and file manager windows"
             },
             "delete_theme": "Delete"
         },
@@ -2290,12 +2315,17 @@
             "menu_overview": "Package installation overview ({count} core packages)",
             "menu_sddm": "SDDM login manager",
             "menu_wallpapers": "Wallpaper pack",
-            "menu_keyboard": "Keyboard layout & shortcut",
             "menu_telemetry": "Anonymous telemetry",
             "menu_update": "Update",
             "menu_reinstall": "Reinstall",
             "menu_install": "Install",
             "menu_exit": "Exit",
+            "menu_uninstall": "Uninstall",
+            "uninstall_title": "Are you sure you want to uninstall Selion?",
+            "uninstall_removes": "This removes the shell, serpantinum-core, serpantinum-audio, serpantinum-gamma, the SDDM theme and your Selion settings, state and cache, and resets themed apps, Qt and SDDM to their system defaults.",
+            "uninstall_keeps": "Ski, compositors, compositor configs, wallpapers and system packages are left untouched.",
+            "uninstall_cancel": "No, go back",
+            "uninstall_confirm": "Yes, uninstall Selion",
             "error_no_compositor": "You must choose at least one supported compositor before proceeding.",
             "tagline": "A desktop shell built for you",
             "support_creator": "Support the creator:",
@@ -2304,6 +2334,7 @@
             "failed_packages": "The following packages encountered errors during installation:",
             "restart_prompt": "Restart your compositor or run 'serpantinumd start' to begin.",
             "ask_reboot": "Do you want to restart? [y/n] ",
+            "menu_keyboard": "Keyboard layout & shortcut",
             "compositors_prompt": " Compositor setup > ",
             "compositors_header": " Toggle supported compositors, then select done ",
             "sddm_prompt": " SDDM setup > ",
@@ -2380,6 +2411,12 @@
             "download_failed": "Could not download the Serpantinum core services, skipping. You can install them later from github.com/ilyamiro/serpantinum-core.",
             "checksum_failed": "The core services download failed its checksum check, skipping.",
             "unsupported_arch": "Prebuilt core services packages exist only for x86_64, skipping."
+        },
+        "uninstall": {
+            "stopping": "Stopping Selion and its daemons...",
+            "resetting": "Resetting app themes to system defaults...",
+            "removing": "Removing Selion files...",
+            "done": "Selion has been uninstalled. Remove its autostart line from your compositor config if you no longer need it."
         }
     },
     "datetime": {

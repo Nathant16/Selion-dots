@@ -20,6 +20,7 @@ DETECTED_COMPOSITOR_LABEL=""
 MULTIPLE_COMPOSITORS_DETECTED=false
 UNSUPPORTED_COMPOSITOR_DETECTED=false
 IS_REINSTALL=false
+DO_UNINSTALL=false
 
 OPT_SDDM=true
 REPLACE_DM=false
@@ -100,6 +101,9 @@ is_compositor_installed() {
         mango)
             command -v mango &>/dev/null || command -v mangowm &>/dev/null || command -v mangowc &>/dev/null || pm_is_installed mangowm || pm_is_installed mangowc || pm_is_installed mango
             ;;
+        umbriel)
+            command -v umbriel &>/dev/null || pm_is_installed "$(compositor_package_name umbriel)"
+            ;;
         *)
             command -v "$comp" &>/dev/null || pm_is_installed "$comp"
             ;;
@@ -107,7 +111,7 @@ is_compositor_installed() {
 }
 
 init_compositor_detection() {
-    local supported_compositors=("hyprland" "driftwm" "niri" "sway" "mango")
+    local supported_compositors=("hyprland" "driftwm" "niri" "sway" "mango" "umbriel")
     local installed=()
     for comp in "${supported_compositors[@]}"; do
         if is_compositor_installed "$comp"; then
@@ -154,6 +158,8 @@ init_compositor_detection() {
         running="sway"
     elif pgrep -x "niri" &>/dev/null || [[ "$de" == *"niri"* ]] || [[ "$session" == *"niri"* ]]; then
         running="niri"
+    elif [[ -n "$UMBRIEL_SOCKET" ]] || pgrep -x "umbriel" &>/dev/null || [[ "$de" == *"umbriel"* ]] || [[ "$session" == *"umbriel"* ]]; then
+        running="umbriel"
     fi
 
     if [ -n "$running" ]; then
@@ -303,24 +309,28 @@ manage_compositors_menu() {
         local status_niri="$(t "installer.ui.not_installed")"
         local status_sway="$(t "installer.ui.not_installed")"
         local status_mango="$(t "installer.ui.not_installed")"
+        local status_umbriel="$(t "installer.ui.not_installed")"
 
         is_compositor_installed hyprland && status_hypr="$(t "installer.ui.installed")"
         is_compositor_installed driftwm && status_drift="$(t "installer.ui.installed")"
         is_compositor_installed niri && status_niri="$(t "installer.ui.installed")"
         is_compositor_installed sway && status_sway="$(t "installer.ui.installed")"
         is_compositor_installed mango && status_mango="$(t "installer.ui.installed")"
+        is_compositor_installed umbriel && status_umbriel="$(t "installer.ui.installed")"
 
         local S_HYPR="${DIM}[ ]${RESET}"
         local S_DRIFT="${DIM}[ ]${RESET}"
         local S_NIRI="${DIM}[ ]${RESET}"
         local S_SWAY="${DIM}[ ]${RESET}"
         local S_MANGO="${DIM}[ ]${RESET}"
+        local S_UMBRIEL="${DIM}[ ]${RESET}"
 
         [[ " ${SELECTED_COMPOSITORS[*]} " =~ " hyprland " ]] && S_HYPR="${C_GREEN}[✓]${RESET}"
         [[ " ${SELECTED_COMPOSITORS[*]} " =~ " driftwm " ]] && S_DRIFT="${C_GREEN}[✓]${RESET}"
         [[ " ${SELECTED_COMPOSITORS[*]} " =~ " niri " ]] && S_NIRI="${C_GREEN}[✓]${RESET}"
         [[ " ${SELECTED_COMPOSITORS[*]} " =~ " sway " ]] && S_SWAY="${C_GREEN}[✓]${RESET}"
         [[ " ${SELECTED_COMPOSITORS[*]} " =~ " mango " ]] && S_MANGO="${C_GREEN}[✓]${RESET}"
+        [[ " ${SELECTED_COMPOSITORS[*]} " =~ " umbriel " ]] && S_UMBRIEL="${C_GREEN}[✓]${RESET}"
 
         local items=(
             "1. $S_HYPR Hyprland $status_hypr"
@@ -328,7 +338,8 @@ manage_compositors_menu() {
             "3. $S_NIRI Niri $status_niri"
             "4. $S_SWAY Sway $status_sway"
             "5. $S_MANGO Mango $status_mango"
-            "6. ${BOLD}${C_GREEN}$(t "installer.ui.done")${RESET}"
+            "6. $S_UMBRIEL Umbriel $status_umbriel"
+            "7. ${BOLD}${C_GREEN}$(t "installer.ui.done")${RESET}"
         )
 
         if [ "$rendered_lines" -gt 0 ]; then
@@ -397,7 +408,14 @@ manage_compositors_menu() {
                     SELECTED_COMPOSITORS+=("mango")
                 fi
                 ;;
-            "6"|ESC|[qQ])
+            "6")
+                if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " umbriel " ]]; then
+                    remove_compositor "umbriel"
+                else
+                    SELECTED_COMPOSITORS+=("umbriel")
+                fi
+                ;;
+            "7"|ESC|[qQ])
                 DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
                 break
                 ;;
@@ -439,6 +457,13 @@ manage_compositors_menu() {
                         fi
                         ;;
                     5)
+                        if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " umbriel " ]]; then
+                            remove_compositor "umbriel"
+                        else
+                            SELECTED_COMPOSITORS+=("umbriel")
+                        fi
+                        ;;
+                    6)
                         DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
                         break
                         ;;
@@ -928,10 +953,62 @@ manage_keyboard_menu() {
     done
 }
 
+confirm_uninstall() {
+    draw_banner
+    stty -echo 2>/dev/null || true
+    printf "\e[?25l"
+    printf "%s%s%s%s\n\n" "$BOLD" "$C_RED" "$(t "installer.ui.uninstall_title")" "$RESET"
+    printf "%s\n" "$(t "installer.ui.uninstall_removes")"
+    printf "%s\n\n" "$(t "installer.ui.uninstall_keeps")"
+
+    local cursor=0
+    local rendered_lines=0
+    local items=(
+        "1. $(t "installer.ui.uninstall_cancel")"
+        "2. ${BOLD}${C_RED}$(t "installer.ui.uninstall_confirm")${RESET}"
+    )
+
+    while true; do
+        if [ "$rendered_lines" -gt 0 ]; then
+            printf "\033[%dA" "$rendered_lines"
+        fi
+
+        for i in "${!items[@]}"; do
+            if [ "$i" -eq "$cursor" ]; then
+                printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
+            else
+                printf "\r\033[K    %s\n" "${items[$i]}"
+            fi
+        done
+        rendered_lines=${#items[@]}
+
+        local key
+        key=$(read_key)
+
+        case "$key" in
+            UP|[kK]|DOWN|[jJ])
+                cursor=$(( 1 - cursor ))
+                ;;
+            "1"|ESC|[qQ]|[nN])
+                return 1
+                ;;
+            "2")
+                return 0
+                ;;
+            ENTER|SPACE)
+                if [ "$cursor" -eq 1 ]; then
+                    return 0
+                fi
+                return 1
+                ;;
+        esac
+    done
+}
+
 run_installer_ui() {
     if [ "${NONINTERACTIVE:-0}" = "1" ] || [ "${AUTO_INSTALL:-0}" = "1" ]; then
         if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
-            SELECTED_COMPOSITORS=("hyprland" "driftwm" "niri" "sway" "mango")
+            SELECTED_COMPOSITORS=("hyprland" "driftwm" "niri" "sway" "mango" "umbriel")
         fi
         OPT_SDDM="${OPT_SDDM:-true}"
         INSTALL_FULL_WALLPAPERS="${INSTALL_FULL_WALLPAPERS:-true}"
@@ -1004,6 +1081,7 @@ run_installer_ui() {
                 items+=("9. ${BOLD}${C_GREEN}$(t "installer.ui.menu_update")${RESET}")
                 items+=("10. ${BOLD}${C_YELLOW}$(t "installer.ui.menu_reinstall")${RESET}")
                 items+=("11. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
+                items+=("12. ${BOLD}${C_RED}$(t "installer.ui.menu_uninstall")${RESET}")
             else
                 items+=("9. ${BOLD}${C_GREEN}$(t "installer.ui.menu_install")${RESET}")
                 items+=("10. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
@@ -1102,6 +1180,16 @@ run_installer_ui() {
                         exit 0
                     fi
                     ;;
+                "12")
+                    if [[ "$INSTALL_STATE" == "current" ]]; then
+                        if confirm_uninstall; then
+                            DO_UNINSTALL=true
+                            cleanup_terminal
+                            return 0
+                        fi
+                        break
+                    fi
+                    ;;
                 ESC|[qQ])
                     cleanup_terminal
                     clear 2>/dev/null || true
@@ -1169,6 +1257,16 @@ run_installer_ui() {
                                 cleanup_terminal
                                 clear 2>/dev/null || true
                                 exit 0
+                            fi
+                            ;;
+                        11)
+                            if [[ "$INSTALL_STATE" == "current" ]]; then
+                                if confirm_uninstall; then
+                                    DO_UNINSTALL=true
+                                    cleanup_terminal
+                                    return 0
+                                fi
+                                break
                             fi
                             ;;
                     esac

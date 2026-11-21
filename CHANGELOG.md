@@ -1,3 +1,12 @@
+### 2.8.0
+
+- feat(upstream): merge upstream Serpantinum v2.5.2 (Umbriel compositor, wallpaper transitions, installer uninstall, package-manager fixes, Croatian/Serbian translations)
+- feat(umbriel): integrate Umbriel across installer, compositor detection, workspaces, focus/window tracking, display settings, session exit, documentation and package mappings
+- feat(installer): add uninstall option that removes the shell and helper daemons, resets themed apps, Qt and SDDM, and keeps compositor configs and wallpapers
+- feat(wallpaper): add fluid wave, blinds, clock, iris, hex grid and ink bleed transitions; tune antialiasing and add hex grid size setting
+- feat(i18n): merge upstream locale keys and Serbian/Croatian translations with Selion translations; add uninstall strings for all locales
+- chore: preserve Selion branding, CalendarPopup 3D weather orbit, DriftWM and Mango integrations during the upstream merge
+
 ### 2.7.9
 
 - fix(cursor): ensure 32px cursor size (`Windows-11M-Dark`) across systemd user sessions, DriftWM process environment, and display managers via `~/.config/environment.d/10-cursor.conf`, `systemctl --user import-environment`, and SDDM configuration

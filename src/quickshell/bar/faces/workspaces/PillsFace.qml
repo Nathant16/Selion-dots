@@ -69,6 +69,7 @@ Item {
                 widget.swayOccupiedMap;
                 widget.driftOccupiedMap;
                 widget.mangoOccupiedMap;
+                widget.umbrielOccupiedMap;
                 if (Compositor.name === "hyprland" && typeof Hyprland !== "undefined" && Hyprland.workspaces)
                     Hyprland.workspaces.values;
             }

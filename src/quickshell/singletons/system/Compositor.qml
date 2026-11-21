@@ -12,6 +12,7 @@ Item {
         if (Quickshell.env("DRIFTWM_SOCKET") || desktop.indexOf("drift") !== -1) return "driftwm";
         if (Quickshell.env("NIRI_SOCKET") || desktop.indexOf("niri") !== -1) return "niri";
         if (Quickshell.env("MANGO_INSTANCE_SIGNATURE") || desktop.indexOf("mango") !== -1) return "mango";
+        if (Quickshell.env("UMBRIEL_SOCKET") || desktop.indexOf("umbriel") !== -1) return "umbriel";
         if (Quickshell.env("SWAYSOCK") || desktop.indexOf("sway") !== -1) return "sway";
         if (Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE") || desktop.indexOf("hyprland") !== -1) return "hyprland";
         return "unknown";
@@ -30,6 +31,7 @@ Item {
             if [ -n \"$NIRI_SOCKET\" ] || ls \"$rdir\"/niri*.sock >/dev/null 2>&1 || pgrep -x niri >/dev/null 2>&1; then echo niri; exit 0; fi
             if [ -n \"$SWAYSOCK\" ] || ls \"$rdir\"/sway-ipc*.sock >/dev/null 2>&1 || pgrep -x sway >/dev/null 2>&1; then echo sway; exit 0; fi
             if [ -n \"$MANGO_INSTANCE_SIGNATURE\" ] || pgrep -x mango >/dev/null 2>&1; then echo mango; exit 0; fi
+            if [ -n \"$UMBRIEL_SOCKET\" ] || pgrep -x umbriel >/dev/null 2>&1; then echo umbriel; exit 0; fi
             echo unknown
         "]
         stdout: SplitParser {

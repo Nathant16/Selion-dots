@@ -3,6 +3,14 @@
 PM_BOOTSTRAP_TOOLS=(fzf jq curl git pciutils unzip fontconfig base-devel)
 PM_AUDIO_BUILD_PKGS=(base-devel pkgconf pipewire)
 
+declare -A PM_PKG_MAP=(
+    [umbriel]="umbriel-git"
+)
+
+pm_resolve_name() {
+    echo "${PM_PKG_MAP[$1]:-$1}"
+}
+
 get_gpu_vulkan_pkgs() {
     local pkgs=()
     local gpu
@@ -22,7 +30,6 @@ PM_EXTRA_PKGS=(pam-fprint-grosshack)
 for _p in $(get_gpu_vulkan_pkgs 2>/dev/null); do
     PM_EXTRA_PKGS+=("$_p")
 done
-
 pm_prepare_repos() {
     if [ -f /etc/pacman.conf ]; then
         local changed=false
@@ -61,11 +68,15 @@ pm_full_upgrade() {
 }
 
 pm_missing_pkgs() {
-    pacman -T "$@" 2>/dev/null || true
+    local resolved=() pkg
+    for pkg in "$@"; do
+        resolved+=("$(pm_resolve_name "$pkg")")
+    done
+    pacman -T "${resolved[@]}" 2>/dev/null || true
 }
 
 pm_is_installed() {
-    pacman -Q "$1" &>/dev/null
+    pacman -Q "$(pm_resolve_name "$1")" &>/dev/null
 }
 
 pm_install_pkg() {

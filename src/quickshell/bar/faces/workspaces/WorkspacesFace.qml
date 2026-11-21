@@ -59,6 +59,19 @@ Item {
             else DriftState.unsubscribe();
         }
     }
+
+    readonly property int umbrielActiveIndex: UmbrielState.activeIndexFor(myOutput)
+    readonly property var umbrielOccupiedMap: UmbrielState.occupiedByOutput
+    readonly property int umbrielCount: UmbrielState.countFor(myOutput)
+    property bool umbrielSubscribed: false
+
+    function syncUmbrielSubscription() {
+        let want = Compositor.name === "umbriel" && moduleActive;
+        if (want === umbrielSubscribed) return;
+        umbrielSubscribed = want;
+        if (want) UmbrielState.subscribe();
+        else UmbrielState.unsubscribe();
+    }
     readonly property int swayActiveIndex: SwayState.activeIndexFor(myOutput)
     readonly property var swayOccupiedMap: SwayState.occupiedMap
     property bool swaySubscribed: false
@@ -184,6 +197,7 @@ Item {
                 }
             }
         }
+        if (Compositor.name === "umbriel" && umbrielCount >= count) count = umbrielCount;
         if (blockSize > 0) count = Math.min(count, blockSize);
         return Math.max(2, count);
     }
@@ -263,6 +277,7 @@ Item {
         if (Compositor.name === "driftwm") return !!(driftOccupiedMap && driftOccupiedMap[index]);
         if (Compositor.name === "sway") return !!(swayOccupiedMap && swayOccupiedMap[index]);
         if (Compositor.name === "mango") return !!(mangoOccupiedMap && MangoState.isOccupied(myOutput, index));
+        if (Compositor.name === "umbriel") return !!(umbrielOccupiedMap && UmbrielState.isOccupied(myOutput, index));
         let ws = wsForId(hyprBase + index + 1);
         return ws !== null && ws.toplevels && ws.toplevels.values && ws.toplevels.values.length > 0;
     }
@@ -282,6 +297,8 @@ Item {
             SwayState.focusWorkspace(index);
         } else if (Compositor.name === "mango") {
             Quickshell.execDetached(["mmsg", "dispatch", "view," + wsId]);
+        } else if (Compositor.name === "umbriel") {
+            UmbrielState.dispatch("workspace-switch", myOutput ? [String(wsId), "--output", myOutput] : [String(wsId)]);
         } else if (Compositor.name === "hyprland") {
             if (typeof Hyprland !== "undefined" && Hyprland.usingLua === false) {
                 Hyprland.dispatch("workspace " + wsId);
@@ -303,6 +320,8 @@ Item {
             idx = swayActiveIndex;
         } else if (Compositor.name === "mango") {
             idx = mangoActiveIndex;
+        } else if (Compositor.name === "umbriel") {
+            idx = umbrielActiveIndex;
         } else {
             if (hyprActiveId < 0) return -1;
             idx = hyprActiveId - 1 - hyprBase;
@@ -314,6 +333,7 @@ Item {
     Component.onCompleted: {
         syncNiriSubscription();
         syncMangoSubscription();
+        syncUmbrielSubscription();
         syncSwaySubscription();
         syncDriftSubscription();
         syncModel();
@@ -322,6 +342,7 @@ Item {
     Component.onDestruction: {
         if (niriSubscribed) NiriState.unsubscribe();
         if (mangoSubscribed) MangoState.unsubscribe();
+        if (umbrielSubscribed) UmbrielState.unsubscribe();
         if (swaySubscribed) SwayState.unsubscribe();
         if (driftSubscribed && typeof DriftState !== "undefined") DriftState.unsubscribe();
     }
@@ -329,6 +350,7 @@ Item {
     onModuleActiveChanged: {
         syncNiriSubscription();
         syncMangoSubscription();
+        syncUmbrielSubscription();
         syncSwaySubscription();
         syncDriftSubscription();
     }
@@ -338,6 +360,7 @@ Item {
         function onNameChanged() {
             root.syncNiriSubscription();
             root.syncMangoSubscription();
+            root.syncUmbrielSubscription();
             root.syncSwaySubscription();
             root.syncDriftSubscription();
             root.syncModel();

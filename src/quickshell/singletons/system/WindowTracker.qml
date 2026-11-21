@@ -25,6 +25,7 @@ Item {
         if (subscribers === 1) {
             if (Compositor.name === "niri" && typeof NiriState !== "undefined") NiriState.subscribe();
             if (Compositor.name === "mango") MangoState.subscribeClients();
+            if (Compositor.name === "umbriel") UmbrielState.subscribeClients();
             if (Compositor.name === "sway") SwayState.subscribeWindows();
             if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") DriftState.subscribeWindows();
             _requestRebuild();
@@ -36,6 +37,7 @@ Item {
         if (subscribers === 0) {
             if (Compositor.name === "niri" && typeof NiriState !== "undefined") NiriState.unsubscribe();
             if (Compositor.name === "mango") MangoState.unsubscribeClients();
+            if (Compositor.name === "umbriel") UmbrielState.unsubscribeClients();
             if (Compositor.name === "sway") SwayState.unsubscribeWindows();
             if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") DriftState.unsubscribeWindows();
         }
@@ -76,6 +78,8 @@ Item {
             rawList = root._collectSwayWindows();
         } else if (Compositor.name === "mango") {
             rawList = root._collectMangoWindows();
+        } else if (Compositor.name === "umbriel") {
+            rawList = root._collectUmbrielWindows();
         } else if (Compositor.name === "hyprland" && typeof Hyprland !== "undefined" && Hyprland.toplevels && Hyprland.toplevels.values) {
             rawList = root._collectHyprlandWindows();
         } else if (typeof ToplevelManager !== "undefined" && ToplevelManager.toplevels && ToplevelManager.toplevels.values) {
@@ -383,6 +387,44 @@ Item {
         return list;
     }
 
+    function _collectUmbrielWindows() {
+        let list = [];
+        let wins = UmbrielState.windows || [];
+        for (let i = 0; i < wins.length; i++) {
+            let w = wins[i];
+            if (!w || w.id === undefined || w.id === null || w.id === "") continue;
+
+            let rawApp = w.app_id || "";
+            let appKey = AppMatcher.normalizeKey(rawApp);
+            let dId = AppMatcher.resolve(rawApp);
+            let cid = dId !== "" ? AppMatcher.canonicalId(dId) : AppMatcher.canonicalId(rawApp);
+            let gKey = cid !== "" ? cid : (appKey !== "" ? appKey : ("win:" + w.id));
+            let isFoc = w.active === true;
+            if (isFoc) _recordFocus(w.id);
+
+            let wsIdx = (typeof w.workspace_index === "number") ? w.workspace_index : -1;
+
+            list.push({
+                id: "umbriel:" + w.id,
+                nativeId: w.id,
+                seq: ++_seqCounter,
+                appId: rawApp,
+                appKey: appKey,
+                title: w.title || "",
+                workspace: wsIdx,
+                workspaceLabel: wsIdx >= 0 ? String(wsIdx + 1) : "",
+                output: w.output || "",
+                focused: isFoc,
+                lastFocus: _getMru(w.id),
+                desktopId: dId !== "" ? (dId.endsWith(".desktop") ? dId : (dId + ".desktop")) : (rawApp ? (rawApp + ".desktop") : ""),
+                canonicalId: cid,
+                groupKey: gKey,
+                native: null
+            });
+        }
+        return list;
+    }
+
     function _formatHyprAddress(nid) {
         if (!nid) return "";
         let s = String(nid).trim();
@@ -451,6 +493,11 @@ Item {
             return;
         }
 
+        if (Compositor.name === "umbriel") {
+            root._focusUmbriel(win);
+            return;
+        }
+
         if (Compositor.name === "hyprland") {
             root._focusHyprland(win);
             return;
@@ -495,6 +542,10 @@ Item {
         }
         if (Compositor.name === "mango" && nid) {
             root._closeMango(win);
+            return;
+        }
+        if (Compositor.name === "umbriel" && nid) {
+            root._closeUmbriel(win);
             return;
         }
     }
@@ -553,6 +604,20 @@ Item {
         let nid = (typeof win === "object") ? win.nativeId : win;
         if (nid === undefined || nid === null || nid === "") return;
         Quickshell.execDetached(["mmsg", "dispatch", "killclient", "client," + nid]);
+    }
+
+    function _focusUmbriel(win) {
+        if (!win) return;
+        let nid = (typeof win === "object") ? win.nativeId : win;
+        if (nid === undefined || nid === null || nid === "") return;
+        UmbrielState.dispatch("window-focus", [String(nid)]);
+    }
+
+    function _closeUmbriel(win) {
+        if (!win) return;
+        let nid = (typeof win === "object") ? win.nativeId : win;
+        if (nid === undefined || nid === null || nid === "") return;
+        UmbrielState.dispatch("window-close", [String(nid)]);
     }
 
     Connections {
@@ -617,6 +682,13 @@ Item {
         target: MangoState
         function onClientsUpdated() {
             if (Compositor.name === "mango") root._requestRebuild();
+        }
+    }
+
+    Connections {
+        target: UmbrielState
+        function onWindowsUpdated() {
+            if (Compositor.name === "umbriel") root._requestRebuild();
         }
     }
 }

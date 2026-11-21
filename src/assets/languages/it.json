@@ -754,6 +754,31 @@
                         "name": "Pittura",
                         "desc": "Dipingi il nuovo sfondo cella per cella da colonie che crescono sullo schermo"
                     },
+                    "wave": {
+                        "name": "Onda fluida",
+                        "desc": "Attraversa lo schermo con un'onda liquida sinuosa",
+                        "direction_desc": "Bordo o angolo da cui parte l'onda"
+                    },
+                    "blinds": {
+                        "name": "Veneziane",
+                        "desc": "Apre lamelle parallele sullo schermo con un'onda sfalsata",
+                        "orientation_desc": "Asse lungo cui si aprono le veneziane"
+                    },
+                    "clock": {
+                        "name": "Spazzata oraria",
+                        "desc": "Ruota in senso orario attorno a un punto come un raggio radar",
+                        "origin_desc": "Punto attorno a cui ruota la spazzata"
+                    },
+                    "hex": {
+                        "name": "Griglia esagonale",
+                        "desc": "Rivela il nuovo sfondo attraverso un nido d'ape ondulante",
+                        "size_title": "Dimensione esagoni",
+                        "size_desc": "Dimensione di ciascuna tessera esagonale nella griglia"
+                    },
+                    "ink": {
+                        "name": "Diffusione d'inchiostro",
+                        "desc": "Si espande organicamente sullo schermo come inchiostro ad acquerello"
+                    },
                     "orientation": {
                         "title": "Orientamento",
                         "desc": "Asse lungo cui si apre la transizione",
@@ -2295,6 +2320,12 @@
             "menu_reinstall": "Reinstalla",
             "menu_install": "Installa",
             "menu_exit": "Esci",
+            "menu_uninstall": "Disinstalla",
+            "uninstall_title": "Vuoi davvero disinstallare Selion?",
+            "uninstall_removes": "Verranno rimossi la shell, serpantinum-core, serpantinum-audio, serpantinum-gamma, il tema SDDM e le impostazioni, lo stato e la cache di Selion, e le app con tema, Qt e SDDM torneranno ai valori predefiniti di sistema.",
+            "uninstall_keeps": "Ski, i compositor, le loro configurazioni, gli sfondi e i pacchetti di sistema restano invariati.",
+            "uninstall_cancel": "No, torna indietro",
+            "uninstall_confirm": "Sì, disinstalla Selion",
             "error_no_compositor": "Devi scegliere almeno un compositor supportato prima di procedere.",
             "tagline": "Una shell desktop creata su misura per te",
             "support_creator": "Supporta il creatore:",
@@ -2380,6 +2411,12 @@
             "installing": "Installazione del gestore file Ski...",
             "unsupported_arch": "I pacchetti precompilati di Ski esistono solo per x86_64, operazione saltata.",
             "up_to_date": "-> Ski {version} è già installato."
+        },
+        "uninstall": {
+            "stopping": "Arresto di Selion e dei suoi servizi...",
+            "resetting": "Ripristino dei temi delle app ai valori predefiniti di sistema...",
+            "removing": "Rimozione dei file di Selion...",
+            "done": "Selion è stato disinstallato. Rimuovi la riga di avvio automatico dalla configurazione del compositor se non ti serve più."
         }
     },
     "datetime": {

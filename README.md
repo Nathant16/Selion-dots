@@ -42,11 +42,15 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/Nathant16/Selion-dots/ma
 > [!NOTE]
 > To update, run the command above and choose "6. Update", or click the Update button inside the Settings -> About tab. Your custom configurations, keybindings, and preferences will be preserved.
 
+### Supported compositors
+
+Hyprland, DriftWM, Niri, Sway, Mango and Umbriel. The installer detects the running compositor and deploys its configuration. On Arch, Umbriel is installed from the AUR. On Fedora, Mango and Umbriel are installed from the Terra repository. On Void Linux, Hyprland is installed from the third-party black-hole.dev repository and Umbriel from the third-party UniversalRepository.
+
 ---
 
 ## Features
 
-- Supported Compositors: Full integration with [DriftWM](compositors/driftwm/README.md), [Hyprland](compositors/hyprland/README.md), [Sway](compositors/sway/README.md), [Niri](compositors/niri/README.md), and [Mango](compositors/mango/README.md).
+- Supported Compositors: Full integration with [DriftWM](compositors/driftwm/README.md), [Hyprland](compositors/hyprland/README.md), [Sway](compositors/sway/README.md), [Niri](compositors/niri/README.md), [Mango](compositors/mango/README.md), and [Umbriel](docs/configure/compositors/umbriel.md).
 - Dynamic Theming: Powered by Material You (matugen) - automatically derives accent colors from your wallpaper or lets you choose manual presets, dynamically theming GTK, Qt, Kitty, Fish, and Fastfetch.
 - Terminal and Shell Out-of-the-Box:
   - Fish Shell with a custom two-line prompt, theme synchronization on the fly, and handy aliases (eza, bat, zoxide).
@@ -76,6 +80,7 @@ Dedicated compositor guides:
 - [Sway Guide & Keybindings](compositors/sway/README.md) — Classic i3 manual tiling, scratchpad, and gestures
 - [Niri Guide & Keybindings](compositors/niri/README.md) — Scrollable horizontal column ribbon and overview mode
 - [Mango Guide & Keybindings](compositors/mango/README.md) — Lightweight dwm-inspired dynamic tiling
+- [Umbriel Guide & Keybindings](docs/configure/compositors/umbriel.md) — Lightweight wlroots-based compositor with TOML configuration
 
 ### Common Shortcuts
 

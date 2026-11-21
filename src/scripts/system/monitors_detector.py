@@ -76,6 +76,18 @@ def get_hyprland_monitors(env):
         pass
     return None
 
+def get_umbriel_outputs(env):
+    try:
+        proc = subprocess.run(['umbriel', 'outputs', '--json'], capture_output=True, text=True, timeout=2, env=env)
+        if proc.returncode == 0 and proc.stdout.strip():
+            data = json.loads(proc.stdout)
+            if isinstance(data, dict):
+                data = list(data.values())
+            return data if isinstance(data, list) else None
+    except Exception:
+        pass
+    return None
+
 def main():
     env = get_wayland_env()
     drm_modes = get_drm_modes()
@@ -141,7 +153,62 @@ def main():
         print(json.dumps(monitors))
         return
 
-    # 2. Check driftwm IPC state if running
+    # 2. Check Umbriel native IPC if running
+    umbriel_data = get_umbriel_outputs(env)
+    if umbriel_data:
+        monitors = []
+        for out in umbriel_data:
+            name = out.get('name', 'Display')
+            modes = out.get('modes', []) or []
+            cur_mode = next((m for m in modes if m.get('current')), None)
+            if not cur_mode and modes:
+                cur_mode = modes[0]
+
+            w = int(cur_mode.get('width', 1920)) if cur_mode else 1920
+            h = int(cur_mode.get('height', 1080)) if cur_mode else 1080
+            rate_mhz = int(cur_mode.get('refresh_mhz', 60000) or 60000) if cur_mode else 60000
+            rate = int(round(rate_mhz / 1000))
+            try:
+                scale = float(out.get('scale', 1.0))
+            except (TypeError, ValueError):
+                scale = 1.0
+            active = out.get('enabled', True) is not False
+
+            cur_res = f"{w}x{h}"
+            res_rates_map = {}
+            res_list = []
+            seen = set()
+            for m in modes:
+                mw = int(m.get('width', 1920))
+                mh = int(m.get('height', 1080))
+                s = f"{mw}x{mh}"
+                if s not in seen:
+                    seen.add(s)
+                    res_list.append(s)
+                mr = int(round(int(m.get('refresh_mhz', 60000) or 60000) / 1000))
+                res_rates_map.setdefault(s, [])
+                if str(mr) not in res_rates_map[s]:
+                    res_rates_map[s].append(str(mr))
+            for s in res_rates_map:
+                res_rates_map[s].sort(key=lambda x: int(x), reverse=True)
+            if cur_res not in res_list:
+                res_list.insert(0, cur_res)
+            cur_framerates = res_rates_map.get(cur_res, [str(rate)])
+
+            monitors.append({
+                'name': name,
+                'dimensions': cur_res,
+                'framerate': str(rate),
+                'framerates': cur_framerates,
+                'resolutions_map': res_rates_map,
+                'scale': scale,
+                'active': active,
+                'modes': res_list
+            })
+        print(json.dumps(monitors))
+        return
+
+    # 3. Check driftwm IPC state if running
     try:
         proc = subprocess.run(['driftwm', 'msg', 'state', '--json'], capture_output=True, text=True, timeout=2, env=env)
         if proc.returncode == 0 and proc.stdout.strip():

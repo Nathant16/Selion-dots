@@ -8,6 +8,7 @@ across supported Wayland compositors:
 - sway (~/.config/sway/default/monitors)
 - niri (~/.config/niri/default/monitors.kdl)
 - mango (~/.config/mango/default/monitors.conf)
+- umbriel (~/.config/umbriel via umbriel config set)
 - generic wlroots (wlr-randr)
 """
 
@@ -60,9 +61,11 @@ def detect_compositor(env):
         return "niri"
     if "mango" in desktop or "mango" in session:
         return "mango"
+    if "umbriel" in desktop or "umbriel" in session or env.get("UMBRIEL_SOCKET"):
+        return "umbriel"
 
     # 2. Running processes
-    for comp in ["driftwm", "hyprland", "sway", "niri", "mango"]:
+    for comp in ["driftwm", "hyprland", "sway", "niri", "mango", "umbriel"]:
         try:
             res = subprocess.run(["pgrep", "-x", comp], capture_output=True, text=True)
             if res.returncode == 0:
@@ -329,6 +332,28 @@ def apply_mango(name, resolution, framerate, scale, env):
     except Exception as e:
         sys.stderr.write(f"Warning: failed to write mango monitors.conf: {e}\n")
 
+def apply_umbriel(name, resolution, framerate, scale, env):
+    mode_str = f"{resolution}@{framerate}" if framerate and resolution else (resolution or "")
+    scale_val = float(scale) if scale is not None else 1.0
+
+    # Native config command persists the setting in ~/.config/umbriel.
+    try:
+        if mode_str:
+            subprocess.run(["umbriel", "config", "set", f'output."{name}".mode', mode_str], env=env, capture_output=True, timeout=2)
+        if scale is not None:
+            subprocess.run(["umbriel", "config", "set", f'output."{name}".scale', str(scale_val)], env=env, capture_output=True, timeout=2)
+    except Exception:
+        pass
+
+    # Fallback live apply for running sessions.
+    try:
+        if mode_str:
+            subprocess.run(["wlr-randr", "--output", name, "--mode", mode_str, "--scale", str(scale_val)], env=env, capture_output=True, timeout=2)
+        elif scale is not None:
+            subprocess.run(["wlr-randr", "--output", name, "--scale", str(scale_val)], env=env, capture_output=True, timeout=2)
+    except Exception:
+        pass
+
 def apply_generic(name, resolution, framerate, scale, env):
     scale_val = float(scale) if scale is not None else 1.0
     if resolution:
@@ -380,6 +405,8 @@ def main():
             apply_niri(args.name, args.resolution, args.framerate, args.scale, env)
         elif comp == "mango":
             apply_mango(args.name, args.resolution, args.framerate, args.scale, env)
+        elif comp == "umbriel":
+            apply_umbriel(args.name, args.resolution, args.framerate, args.scale, env)
         else:
             apply_generic(args.name, args.resolution, args.framerate, args.scale, env)
 

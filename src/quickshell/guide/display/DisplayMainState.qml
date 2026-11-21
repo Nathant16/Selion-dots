@@ -302,7 +302,7 @@ GuideTab {
     }
 
     function reloadMonitors() {
-        if (displayTabRoot.compositor === "niri" || displayTabRoot.compositor === "sway" || displayTabRoot.compositor === "mango" || displayTabRoot.compositor === "hyprland" || displayTabRoot.compositor === "driftwm") {
+        if (displayTabRoot.compositor === "niri" || displayTabRoot.compositor === "sway" || displayTabRoot.compositor === "mango" || displayTabRoot.compositor === "hyprland" || displayTabRoot.compositor === "driftwm" || displayTabRoot.compositor === "umbriel") {
             if (monitorDetector.running) return;
             monitorDetector.running = true;
         } else {
@@ -345,6 +345,8 @@ GuideTab {
             Quickshell.execDetached(["bash", "-c", "swaymsg output " + monName + (enabled ? " enable" : " disable")]);
         } else if (displayTabRoot.compositor === "mango") {
             Quickshell.execDetached(["mmsg", "dispatch", (enabled ? "wakeup_monitor," : "sleep_monitor,") + monName]);
+        } else if (displayTabRoot.compositor === "umbriel") {
+            UmbrielState.dispatch(enabled ? "output-enable" : "output-disable", [monName]);
         } else if (displayTabRoot.compositor === "hyprland") {
             let mon = displayTabRoot.monitorsList.find(m => m.name === monName);
             let modeStr = mon ? (mon.dimensions + "@" + mon.framerate) : "preferred";

@@ -254,6 +254,9 @@ DockWindowApps {
         if (Compositor.name === "mango") {
             MangoState.subscribe();
         }
+        if (Compositor.name === "umbriel") {
+            UmbrielState.subscribe();
+        }
         if (typeof WindowTracker !== "undefined") {
             WindowTracker.subscribe();
         }
@@ -270,6 +273,9 @@ DockWindowApps {
         }
         if (Compositor.name === "mango") {
             MangoState.unsubscribe();
+        }
+        if (Compositor.name === "umbriel") {
+            UmbrielState.unsubscribe();
         }
         if (dockWindowRoot.swaySubscribed) {
             SwayState.unsubscribe();

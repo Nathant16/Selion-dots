@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Synchronizes window border colors, corner rounding, window opacity (kitty, ski),
-and blur across all 5 Window Managers (Hyprland, Sway, Niri, Mango, DriftWM)
+and blur across the supported Window Managers (Hyprland, Sway, Niri, Mango, DriftWM)
 and native apps adaptively and immediately to match the active theme.
 """
 

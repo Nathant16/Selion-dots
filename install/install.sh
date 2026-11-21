@@ -21,7 +21,13 @@ fi
 
 if [[ -z "$PROJECT_ROOT" || ! -f "$PROJECT_ROOT/install/modules/deps.sh" || ! -d "$PROJECT_ROOT/src" ]]; then
     if ! command -v git &>/dev/null; then
-        if command -v pacman &>/dev/null; then
+        OS_IDS=" $(awk -F= '/^(ID|ID_LIKE)=/{gsub(/"/, "", $2); printf "%s ", $2}' /etc/os-release 2>/dev/null)"
+        if [[ "$OS_IDS" == *" fedora "* ]] && command -v dnf &>/dev/null; then
+            sudo dnf install -y git
+        elif [[ "$OS_IDS" == *" void "* ]] && command -v xbps-install &>/dev/null; then
+            sudo xbps-install -Suy xbps || true
+            sudo xbps-install -Sy git
+        elif command -v pacman &>/dev/null; then
             sudo pacman -Sy --noconfirm --needed git
         elif command -v dnf &>/dev/null; then
             sudo dnf install -y git
@@ -63,6 +69,7 @@ source "$MODULES_DIR/version.sh"
 source "$MODULES_DIR/config.sh"
 source "$MODULES_DIR/service.sh"
 source "$MODULES_DIR/ui.sh"
+source "$MODULES_DIR/uninstall.sh"
 
 TELEMETRY_ID=$(get_telemetry_id)
 ENABLE_TELEMETRY=$(get_telemetry_enabled)
@@ -87,6 +94,11 @@ OLD_COMMIT=$(get_installed_commit)
 
 init_compositor_detection
 run_installer_ui
+
+if [ "$DO_UNINSTALL" = true ]; then
+    uninstall_serpantinum "$PROJECT_ROOT"
+    exit 0
+fi
 
 if [ "$ENABLE_TELEMETRY" = true ] && [ -f "$MODULES_DIR/telemetry.sh" ]; then
     bash "$MODULES_DIR/telemetry.sh" --mode init --version "$TARGET_VERSION" --id "$TELEMETRY_ID" --enabled "$ENABLE_TELEMETRY"
