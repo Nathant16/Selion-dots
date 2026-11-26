@@ -7,7 +7,7 @@ import "../../reusables/guide"
 Rectangle {
     id: monDelegate
     required property var tab
-    required property var modelData
+    required property string modelData
     required property int index
     readonly property var rootObj: tab.rootObj
 
@@ -15,23 +15,101 @@ Rectangle {
     clip: true
     radius: ThemeBackend.borderRadius
 
-    property string monName: modelData.name
+    readonly property string monName: modelData
+    readonly property var monitorInfo: (monDelegate.tab && monDelegate.tab.monitorsByName && monDelegate.tab.monitorsByName[monName])
+        ? monDelegate.tab.monitorsByName[monName]
+        : ({ name: monName, dimensions: "1920x1080", framerate: "60", scale: 1.0, active: true, modes: ["1920x1080"] })
     property var monSettings: (monDelegate.tab && monDelegate.tab.displaySettings && monDelegate.tab.displaySettings.monitors && monDelegate.tab.displaySettings.monitors[monName]) ? monDelegate.tab.displaySettings.monitors[monName] : ({})
 
-    property bool monitorPowered: monSettings && monSettings.powerEnabled !== undefined ? monSettings.powerEnabled : (modelData && modelData.active !== undefined ? modelData.active : true)
+    function resolveEffectiveScale() {
+        if (monDelegate.monitorInfo && monDelegate.monitorInfo.scale !== undefined && Number(monDelegate.monitorInfo.scale) > 0) {
+            return monDelegate.tab.normalizeScaleFactor(monDelegate.monitorInfo.scale);
+        }
+        if (monDelegate.monSettings && monDelegate.monSettings.scale !== undefined && Number(monDelegate.monSettings.scale) > 0) {
+            return monDelegate.tab.normalizeScaleFactor(monDelegate.monSettings.scale);
+        }
+        return 1.0;
+    }
+
+    property bool monitorPowered: monSettings && monSettings.powerEnabled !== undefined ? monSettings.powerEnabled : (monitorInfo && monitorInfo.active !== undefined ? monitorInfo.active : true)
     property bool filterEnabled: monSettings && monSettings.enabled !== undefined ? monSettings.enabled : false
     property bool filterAuto: monSettings && monSettings.auto !== undefined ? monSettings.auto : false
     property real currentTemp: monSettings && monSettings.temperature !== undefined ? monSettings.temperature : 50
-    property real currentScale: (monSettings && monSettings.scale !== undefined) ? monSettings.scale : (modelData.scale !== undefined ? modelData.scale : 1.0)
-    property string currentFramerate: (monSettings && monSettings.framerate) ? String(monSettings.framerate) : (modelData && modelData.framerate ? String(modelData.framerate) : "60")
+    property real currentScale: resolveEffectiveScale()
+    property string currentFramerate: (monSettings && monSettings.framerate) ? String(monSettings.framerate) : (monitorInfo && monitorInfo.framerate ? String(monitorInfo.framerate) : "60")
+
+    readonly property var validHyprlandScales: {
+        if (!monDelegate.tab || monDelegate.tab.compositor !== "hyprland") return [];
+        let dimsStr = (monDelegate.monitorInfo && monDelegate.monitorInfo.dimensions) ? monDelegate.monitorInfo.dimensions : "1920x1080";
+        let parts = dimsStr.split("x");
+        let w = parseInt(parts[0], 10);
+        let h = parseInt(parts[1], 10);
+        if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) return [1.0];
+        return monDelegate.tab.validScalesForResolution(w, h);
+    }
+
+    function syncScaleSelector() {
+        let targetPct = Math.max(50, Math.min(300, Math.round(monDelegate.currentScale * 100)));
+        if (!scaleSelector.isEditing && Math.round(scaleSelector.value) !== targetPct) {
+            scaleSelector.value = targetPct;
+        }
+    }
+
+    function resolveHyprlandScaleForPct(targetPct, prevScale) {
+        let list = monDelegate.validHyprlandScales;
+        if (!list || list.length === 0) return Math.round(targetPct) / 100.0;
+        let oldPct = Math.round(prevScale * 100);
+        let diff = Math.round(targetPct) - oldPct;
+        if (diff === 5) {
+            for (let i = 0; i < list.length; i++) {
+                if (Math.round(list[i] * 100) > oldPct) return list[i];
+            }
+            return list[list.length - 1];
+        }
+        if (diff === -5) {
+            for (let i = list.length - 1; i >= 0; i--) {
+                if (Math.round(list[i] * 100) < oldPct) return list[i];
+            }
+            return list[0];
+        }
+        return monDelegate.tab.nearestValidScaleFromList(list, targetPct / 100.0);
+    }
+
+    function scheduleScalePercent(pct) {
+        let clampedPct = Math.max(50, Math.min(300, Math.round(pct)));
+        let scaleVal = Math.round(clampedPct) / 100.0;
+        if (monDelegate.tab && monDelegate.tab.compositor === "hyprland") {
+            scaleVal = monDelegate.resolveHyprlandScaleForPct(clampedPct, monDelegate.currentScale);
+        }
+        if (Math.abs(monDelegate.currentScale - scaleVal) > 0.001) {
+            monDelegate.currentScale = scaleVal;
+        }
+        monDelegate.syncScaleSelector();
+        monDelegate.tab.pendingMonScaleName = monDelegate.monName;
+        monDelegate.tab.pendingMonScaleVal = scaleVal;
+        monDelegate.tab.scaleDebounceTimer.restart();
+    }
+
+    Connections {
+        target: monDelegate.tab
+        function onScaleSettled(settledMon) {
+            if (settledMon === monDelegate.monName && !scaleSelector.isEditing && scaleSelector.holdDirection === 0) {
+                let nextScale = monDelegate.resolveEffectiveScale();
+                if (Math.abs(monDelegate.currentScale - nextScale) > 0.005) {
+                    monDelegate.currentScale = nextScale;
+                }
+                monDelegate.syncScaleSelector();
+            }
+        }
+    }
 
     readonly property var availableFramerates: {
-        let res = modelData.dimensions || "1920x1080";
-        if (modelData.resolutions_map && modelData.resolutions_map[res] && modelData.resolutions_map[res].length > 0) {
-            return modelData.resolutions_map[res];
+        let res = monitorInfo.dimensions || "1920x1080";
+        if (monitorInfo.resolutions_map && monitorInfo.resolutions_map[res] && monitorInfo.resolutions_map[res].length > 0) {
+            return monitorInfo.resolutions_map[res];
         }
-        if (modelData.framerates && modelData.framerates.length > 0) {
-            return modelData.framerates;
+        if (monitorInfo.framerates && monitorInfo.framerates.length > 0) {
+            return monitorInfo.framerates;
         }
         return [currentFramerate || "60"];
     }
@@ -80,24 +158,35 @@ Rectangle {
         if (monDelegate.tab.pendingMonName !== monName && !temperatureSlider.pressed) {
             currentTemp = monSettings.temperature !== undefined ? monSettings.temperature : 50;
         }
-        if (monSettings.scale !== undefined && monDelegate.tab.pendingMonScaleName !== monName && !uiScaleSlider.isDragging) {
-            currentScale = monSettings.scale;
+        if (!monDelegate.tab.isScaleLockedFor(monName) && !scaleSelector.isEditing && scaleSelector.holdDirection === 0) {
+            let nextScale = resolveEffectiveScale();
+            if (Math.abs(currentScale - nextScale) > 0.005) {
+                currentScale = nextScale;
+            }
         }
         if (monSettings.framerate !== undefined) {
             currentFramerate = String(monSettings.framerate);
         }
     }
 
-    onModelDataChanged: {
-        if (monSettings.powerEnabled === undefined && modelData.active !== undefined) {
-            monitorPowered = modelData.active;
+    onMonitorInfoChanged: {
+        if (!monitorInfo) return;
+        if (monSettings.powerEnabled === undefined && monitorInfo.active !== undefined) {
+            monitorPowered = monitorInfo.active;
         }
-        if (monDelegate.tab.pendingMonScaleName !== monName && !uiScaleSlider.isDragging) {
-            currentScale = (monSettings && monSettings.scale !== undefined) ? monSettings.scale : (modelData.scale !== undefined ? modelData.scale : 1.0);
+        if (!monDelegate.tab.isScaleLockedFor(monName) && !scaleSelector.isEditing && scaleSelector.holdDirection === 0) {
+            let nextScale = resolveEffectiveScale();
+            if (Math.abs(currentScale - nextScale) > 0.005) {
+                currentScale = nextScale;
+            }
         }
-        if (monSettings.framerate === undefined && modelData.framerate) {
-            currentFramerate = String(modelData.framerate);
+        if (monSettings.framerate === undefined && monitorInfo.framerate) {
+            currentFramerate = String(monitorInfo.framerate);
         }
+    }
+
+    onCurrentScaleChanged: {
+        monDelegate.syncScaleSelector();
     }
 
     ColumnLayout {
@@ -116,7 +205,7 @@ Rectangle {
             spacing: rootObj.s(8)
 
             Text {
-                text: modelData.name
+                text: monDelegate.monName
                 font.family: ThemeBackend.fontFamily
                 font.pixelSize: rootObj.s(16)
                 font.bold: true
@@ -126,7 +215,7 @@ Rectangle {
             Item { Layout.fillWidth: true }
 
             Text {
-                text: modelData.dimensions + " • " + modelData.framerate + "Hz"
+                text: (monDelegate.monitorInfo.dimensions || "1920x1080") + " • " + monDelegate.currentFramerate + "Hz • " + Math.round(monDelegate.currentScale * 100) + "%"
                 font.family: ThemeBackend.fontFamily
                 font.pixelSize: rootObj.s(12)
                 color: ThemeBackend.subtext0
@@ -301,9 +390,9 @@ Rectangle {
                 implicitWidth: rootObj.s(180)
                 implicitHeight: rootObj.s(32)
                 cornerRadius: rootObj.s(6)
-                options: (modelData.modes && modelData.modes.length > 0) ? modelData.modes : [modelData.dimensions || "1920x1080"]
+                options: (monDelegate.monitorInfo.modes && monDelegate.monitorInfo.modes.length > 0) ? monDelegate.monitorInfo.modes : [monDelegate.monitorInfo.dimensions || "1920x1080"]
                 currentIndex: {
-                    let cur = modelData.dimensions || "1920x1080";
+                    let cur = monDelegate.monitorInfo.dimensions || "1920x1080";
                     let idx = options.indexOf(cur);
                     return idx >= 0 ? idx : 0;
                 }
@@ -350,7 +439,6 @@ Rectangle {
 
         SettingsRow {
             id: displayScaleRow
-            readonly property bool isMango: monDelegate.tab.compositor === "mango"
             rootObj: monDelegate.rootObj
             settingId: "display_uiscale_" + monDelegate.monName
             section: monDelegate.monName
@@ -358,47 +446,33 @@ Rectangle {
             baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
             icon: "󰍍"
             title: I18n.t("guide.display.uiscale.title", "Display Scale (WM)")
-            description: displayScaleRow.isMango
-                ? I18n.t("guide.display.uiscale.desc_mango", "Integer WM scale only (Mango does not support fractional scaling — use Quickshell UI Scale in General)")
-                : I18n.t("guide.display.uiscale.desc", "Compositor and window scale for this monitor (e.g. 100%, 125%, 150%, 200%)")
+            description: I18n.t("guide.display.uiscale.desc", "Compositor and window scale for this monitor (50%–300%)")
 
-            Draggable {
-                id: uiScaleSlider
+            NumberSelector {
+                id: scaleSelector
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                Layout.rightMargin: rootObj.s(8)
-                implicitWidth: rootObj.s(220)
-                implicitHeight: rootObj.s(18)
-                from: displayScaleRow.isMango ? 100 : 50
-                to: displayScaleRow.isMango ? 300 : 250
-                stepSize: displayScaleRow.isMango ? 100 : 5
-                defaultValue: 100
-                alwaysShowHandle: displayScaleRow.isMango
-                showValueBubble: true
-                valueFormatter: function(v) { return Math.round(v) + "%" }
-                value: displayScaleRow.isMango
-                    ? Math.max(100, Math.min(300, Math.round(modelData && modelData.scale !== undefined ? modelData.scale : monDelegate.currentScale) * 100))
-                    : Math.round(monDelegate.currentScale * 100)
-                backgroundColor: ThemeBackend.surface0
+                implicitWidth: rootObj.s(180)
+                implicitHeight: rootObj.s(32)
+                cornerRadius: rootObj.s(6)
+                from: 50
+                to: 300
+                stepSize: 5
+                decimals: 0
+                suffix: "%"
+                baseColor: ThemeBackend.surface0
                 accentColor: ThemeBackend.mauve
-                handleColor: ThemeBackend.text
-                handleBorderColor: ThemeBackend.mantle
-                onMoved: function(val) {
-                    let rounded = Math.round(val);
-                    let scaleVal = rounded / 100.0;
-                    if (Math.abs(monDelegate.currentScale - scaleVal) > 0.001) {
-                        monDelegate.currentScale = scaleVal;
-                        monDelegate.tab.pendingMonScaleName = monDelegate.monName;
-                        monDelegate.tab.pendingMonScaleVal = scaleVal;
-                        monDelegate.tab.scaleDebounceTimer.restart();
-                    }
+                buttonColor: ThemeBackend.surface1
+                buttonTextColor: ThemeBackend.text
+                textColor: ThemeBackend.text
+                subTextColor: ThemeBackend.subtext0
+                borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
+                fontPixelSize: rootObj.s(11)
+                Component.onCompleted: {
+                    scaleSelector.value = Math.max(50, Math.min(300, Math.round(monDelegate.currentScale * 100)));
                 }
-                onDragFinished: {
-                    monDelegate.tab.scaleDebounceTimer.stop();
-                    if (monDelegate.tab.pendingMonScaleName !== "") {
-                        monDelegate.tab.applyMonitorScale(monDelegate.tab.pendingMonScaleName, monDelegate.tab.pendingMonScaleVal);
-                        monDelegate.tab.updateMonitorSetting(monDelegate.tab.pendingMonScaleName, "scale", monDelegate.tab.pendingMonScaleVal);
-                        monDelegate.tab.pendingMonScaleName = "";
-                    }
+                onTriggered: {
+                    let pct = Math.round(scaleSelector.value);
+                    monDelegate.scheduleScalePercent(pct);
                 }
             }
         }

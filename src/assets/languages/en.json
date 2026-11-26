@@ -324,8 +324,7 @@
       },
       "uiscale": {
         "title": "Display Scale (WM)",
-        "desc": "Compositor and window scale for this monitor (e.g. 100%, 125%, 150%, 200%)",
-        "desc_mango": "Integer WM scale only (Mango does not support fractional scaling — use Quickshell UI Scale in General)"
+        "desc": "Compositor and window scale for this monitor (50%–300%)"
       },
       "widgets": {
         "title": "Desktop widgets",

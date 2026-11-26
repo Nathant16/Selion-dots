@@ -13,10 +13,16 @@ def get_wayland_env():
     runtime_dir = env["XDG_RUNTIME_DIR"]
 
     if not env.get("WAYLAND_DISPLAY") and os.path.exists(runtime_dir):
-        for sock in sorted(glob.glob(f"{runtime_dir}/wayland-*")):
-            if not sock.endswith(".lock"):
-                env["WAYLAND_DISPLAY"] = os.path.basename(sock)
-                break
+        candidates = [
+            sock for sock in glob.glob(f"{runtime_dir}/wayland-*")
+            if not sock.endswith(".lock") and os.path.exists(sock)
+        ]
+        if candidates:
+            candidates.sort(
+                key=lambda s: (os.path.exists(f"{s}.lock"), os.path.getmtime(s)),
+                reverse=True,
+            )
+            env["WAYLAND_DISPLAY"] = os.path.basename(candidates[0])
 
     if not env.get("HYPRLAND_INSTANCE_SIGNATURE") and os.path.exists(f"{runtime_dir}/hypr"):
         socks = glob.glob(f"{runtime_dir}/hypr/*/.socket.sock")

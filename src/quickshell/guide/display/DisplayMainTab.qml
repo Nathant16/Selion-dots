@@ -63,18 +63,21 @@ DisplayMainState {
                         spacing: rootObj.s(14)
 
                         Repeater {
-                            model: displayTabRoot.monitorsList
+                            model: displayTabRoot.monitorNames
                             delegate: Rectangle {
-                                readonly property var mDims: modelData.dimensions ? modelData.dimensions.split("x") : ["1920", "1080"]
+                                required property string modelData
+                                readonly property var monitorInfo: (displayTabRoot.monitorsByName && displayTabRoot.monitorsByName[modelData]) ? displayTabRoot.monitorsByName[modelData] : ({ name: modelData, dimensions: "1920x1080", scale: 1.0, active: true })
+                                readonly property var mDims: monitorInfo.dimensions ? monitorInfo.dimensions.split("x") : ["1920", "1080"]
                                 readonly property real rawW: parseFloat(mDims[0]) || 1920
                                 readonly property real rawH: parseFloat(mDims[1]) || 1080
                                 readonly property real aspect: rawW / (rawH || 1)
+                                readonly property int scalePct: Math.round((monitorInfo.scale !== undefined ? Number(monitorInfo.scale) : 1.0) * 100)
                                 implicitHeight: rootObj.s(70)
                                 implicitWidth: Math.max(rootObj.s(90), Math.min(rootObj.s(160), implicitHeight * aspect))
                                 radius: rootObj.s(6)
-                                color: modelData.active !== false ? Qt.alpha(ThemeBackend.surface1, 0.7) : Qt.alpha(ThemeBackend.surface0, 0.3)
+                                color: monitorInfo.active !== false ? Qt.alpha(ThemeBackend.surface1, 0.7) : Qt.alpha(ThemeBackend.surface0, 0.3)
                                 border.width: 2
-                                border.color: modelData.active !== false ? ThemeBackend.mauve : ThemeBackend.surface2
+                                border.color: monitorInfo.active !== false ? ThemeBackend.mauve : ThemeBackend.surface2
 
                                 ColumnLayout {
                                     anchors.centerIn: parent
@@ -82,7 +85,7 @@ DisplayMainState {
 
                                     Text {
                                         Layout.alignment: Qt.AlignHCenter
-                                        text: modelData.name || "Display"
+                                        text: monitorInfo.name || modelData
                                         font.family: ThemeBackend.fontFamily
                                         font.pixelSize: rootObj.s(11)
                                         font.bold: true
@@ -91,7 +94,7 @@ DisplayMainState {
 
                                     Text {
                                         Layout.alignment: Qt.AlignHCenter
-                                        text: (modelData.dimensions || "1920x1080") + " (" + (modelData.scale || 1.0) + "x)"
+                                        text: (monitorInfo.dimensions || "1920x1080") + " (" + scalePct + "%)"
                                         font.family: ThemeBackend.fontFamily
                                         font.pixelSize: rootObj.s(9)
                                         color: ThemeBackend.subtext0
@@ -102,15 +105,15 @@ DisplayMainState {
                                         implicitHeight: rootObj.s(14)
                                         implicitWidth: stageBadgeText.implicitWidth + rootObj.s(10)
                                         radius: rootObj.s(7)
-                                        color: modelData.active !== false ? Qt.alpha(ThemeBackend.green, 0.2) : Qt.alpha(ThemeBackend.surface2, 0.4)
+                                        color: monitorInfo.active !== false ? Qt.alpha(ThemeBackend.green, 0.2) : Qt.alpha(ThemeBackend.surface2, 0.4)
 
                                         Text {
                                             id: stageBadgeText
                                             anchors.centerIn: parent
-                                            text: modelData.active !== false ? "ON" : "OFF"
+                                            text: monitorInfo.active !== false ? "ON" : "OFF"
                                             font.pixelSize: rootObj.s(8)
                                             font.bold: true
-                                            color: modelData.active !== false ? ThemeBackend.green : ThemeBackend.subtext0
+                                            color: monitorInfo.active !== false ? ThemeBackend.green : ThemeBackend.subtext0
                                         }
                                     }
                                 }
@@ -122,7 +125,7 @@ DisplayMainState {
         }
 
         Repeater {
-            model: displayTabRoot.monitorsList
+            model: displayTabRoot.monitorNames
             delegate: DisplayMonitorCard { tab: displayTabRoot }
         }
     }

@@ -34,12 +34,24 @@ Item {
         command: ["bash", "-c", "
             uid=$(id -u)
             rdir=\"${XDG_RUNTIME_DIR:-/run/user/$uid}\"
-            if [ -n \"$DRIFTWM_SOCKET\" ] || [ -d \"$rdir/driftwm\" ] || pgrep -x driftwm >/dev/null 2>&1; then echo driftwm; exit 0; fi
-            if [ -n \"$HYPRLAND_INSTANCE_SIGNATURE\" ] || [ -d \"$rdir/hypr\" ] || pgrep -x Hyprland >/dev/null 2>&1; then echo hyprland; exit 0; fi
-            if [ -n \"$NIRI_SOCKET\" ] || ls \"$rdir\"/niri*.sock >/dev/null 2>&1 || pgrep -x niri >/dev/null 2>&1; then echo niri; exit 0; fi
-            if [ -n \"$SWAYSOCK\" ] || ls \"$rdir\"/sway-ipc*.sock >/dev/null 2>&1 || pgrep -x sway >/dev/null 2>&1; then echo sway; exit 0; fi
-            if [ -n \"$MANGO_INSTANCE_SIGNATURE\" ] || ls \"$rdir\"/mango*.sock >/dev/null 2>&1 || pgrep -x mango >/dev/null 2>&1; then echo mango; exit 0; fi
-            if [ -n \"$UMBRIEL_SOCKET\" ] || ls \"$rdir\"/umbriel*.sock >/dev/null 2>&1 || pgrep -x umbriel >/dev/null 2>&1; then echo umbriel; exit 0; fi
+            if [ -n \"$DRIFTWM_SOCKET\" ] && [ -S \"$DRIFTWM_SOCKET\" ]; then echo driftwm; exit 0; fi
+            if [ -n \"$HYPRLAND_INSTANCE_SIGNATURE\" ] && [ -S \"$rdir/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket.sock\" ]; then echo hyprland; exit 0; fi
+            if [ -n \"$NIRI_SOCKET\" ] && [ -S \"$NIRI_SOCKET\" ]; then echo niri; exit 0; fi
+            if [ -n \"$SWAYSOCK\" ] && [ -S \"$SWAYSOCK\" ]; then echo sway; exit 0; fi
+            if [ -n \"$MANGO_INSTANCE_SIGNATURE\" ]; then echo mango; exit 0; fi
+            if [ -n \"$UMBRIEL_SOCKET\" ] && [ -S \"$UMBRIEL_SOCKET\" ]; then echo umbriel; exit 0; fi
+            if pgrep -x driftwm >/dev/null 2>&1; then echo driftwm; exit 0; fi
+            if pgrep -x Hyprland >/dev/null 2>&1; then echo hyprland; exit 0; fi
+            if pgrep -x niri >/dev/null 2>&1; then echo niri; exit 0; fi
+            if pgrep -x sway >/dev/null 2>&1; then echo sway; exit 0; fi
+            if pgrep -x mango >/dev/null 2>&1; then echo mango; exit 0; fi
+            if pgrep -x umbriel >/dev/null 2>&1; then echo umbriel; exit 0; fi
+            if ls \"$rdir\"/driftwm/*.sock >/dev/null 2>&1; then echo driftwm; exit 0; fi
+            if ls \"$rdir\"/hypr/*/.socket.sock >/dev/null 2>&1; then echo hyprland; exit 0; fi
+            if ls \"$rdir\"/niri*.sock >/dev/null 2>&1; then echo niri; exit 0; fi
+            if ls \"$rdir\"/sway-ipc*.sock >/dev/null 2>&1; then echo sway; exit 0; fi
+            if ls \"$rdir\"/mango*.sock >/dev/null 2>&1; then echo mango; exit 0; fi
+            if ls \"$rdir\"/umbriel*.sock >/dev/null 2>&1; then echo umbriel; exit 0; fi
             echo unknown
         "]
         stdout: SplitParser {

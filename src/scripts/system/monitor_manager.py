@@ -29,10 +29,16 @@ def get_wayland_env():
     runtime_dir = env["XDG_RUNTIME_DIR"]
 
     if not env.get("WAYLAND_DISPLAY") and os.path.exists(runtime_dir):
-        for sock in sorted(glob.glob(f"{runtime_dir}/wayland-*")):
-            if not sock.endswith(".lock"):
-                env["WAYLAND_DISPLAY"] = os.path.basename(sock)
-                break
+        candidates = [
+            sock for sock in glob.glob(f"{runtime_dir}/wayland-*")
+            if not sock.endswith(".lock") and os.path.exists(sock)
+        ]
+        if candidates:
+            candidates.sort(
+                key=lambda s: (os.path.exists(f"{s}.lock"), os.path.getmtime(s)),
+                reverse=True,
+            )
+            env["WAYLAND_DISPLAY"] = os.path.basename(candidates[0])
 
     if not env.get("HYPRLAND_INSTANCE_SIGNATURE") and os.path.exists(f"{runtime_dir}/hypr"):
         socks = glob.glob(f"{runtime_dir}/hypr/*/.socket.sock")
@@ -108,11 +114,20 @@ def update_serpantinum_settings(name, resolution, framerate=None, scale=None):
     except Exception as e:
         sys.stderr.write(f"Warning: Failed to update serpantinum settings: {e}\n")
 
+def _normalize_scale(scale):
+    """Clamp and round display scale factor to avoid floating-point noise."""
+    if scale is None:
+        return 1.0
+    val = max(0.5, min(3.0, round(float(scale), 4)))
+    return val
+
+
 def apply_driftwm(name, resolution, framerate, scale, env):
+    explicit_mode = bool(resolution or framerate)
     config_file = Path.home() / ".config" / "driftwm" / "config.toml"
     rate_str = f"@{framerate}" if framerate else "@60"
     mode_str = f"{resolution}{rate_str}" if resolution else "preferred"
-    scale_val = float(scale) if scale is not None else 1.0
+    scale_val = _normalize_scale(scale)
 
     if config_file.exists():
         try:
@@ -123,7 +138,7 @@ def apply_driftwm(name, resolution, framerate, scale, env):
 
             if match:
                 block = match.group(1)
-                if resolution:
+                if explicit_mode and resolution:
                     if re.search(r'\bmode\s*=', block):
                         block = re.sub(r'mode\s*=\s*"[^"]*"', f'mode = "{mode_str}"', block)
                     else:
@@ -147,22 +162,8 @@ def apply_driftwm(name, resolution, framerate, scale, env):
         except Exception as e:
             sys.stderr.write(f"Warning: failed to update driftwm config.toml: {e}\n")
 
-    # Apply live mode via wlr-randr first if available
-    if resolution:
-        wlr_cmds = [
-            ["wlr-randr", "--output", name, "--mode", f"{resolution}@{framerate}Hz", "--scale", str(scale_val)],
-            ["wlr-randr", "--output", name, "--mode", f"{resolution}@{framerate}", "--scale", str(scale_val)],
-            ["wlr-randr", "--output", name, "--mode", str(resolution), "--scale", str(scale_val)]
-        ]
-        applied = False
-        for cmd in wlr_cmds:
-            try:
-                res = subprocess.run(cmd, env=env, capture_output=True, timeout=2)
-                if res.returncode == 0:
-                    applied = True
-                    break
-            except Exception:
-                pass
+    # Apply live mode/scale via wlr-randr when available without resetting mode on scale-only changes
+    _apply_wlr_randr(name, resolution if explicit_mode else None, framerate if explicit_mode else None, scale_val, env)
 
     # Instruct driftwm to reload config and lock in the output mode
     try:
@@ -316,11 +317,14 @@ def _upsert_brace_block(text, header_re, match_name_fn, new_block, default_heade
 
 
 def apply_hyprland(name, resolution, framerate, scale, env):
+    explicit_mode = bool(resolution or framerate)
     if not resolution:
         resolution = resolve_current_resolution(name, env)
+    if not framerate:
+        framerate = resolve_current_framerate(name, env)
     rate_str = f"@{framerate}" if framerate else ""
     mode_str = f"{resolution}{rate_str}" if resolution else "preferred"
-    scale_val = float(scale) if scale is not None else 1.0
+    scale_val = _normalize_scale(scale)
 
     # 1. Persist first / check existing block position cleanly
     cfg_path = Path.home() / ".config" / "hypr" / "default" / "monitors.lua"
@@ -379,15 +383,18 @@ def apply_hyprland(name, resolution, framerate, scale, env):
                     mode_str = mm.group(1)
             break
 
-    # 2. Live apply via wlr-randr and hyprctl keyword monitor
-    _apply_wlr_randr(name, resolution, framerate, scale_val, env)
+    # 2. Live apply natively via hyprctl keyword monitor (fallback to wlr-randr only if needed)
+    hypr_ok = False
     try:
-        subprocess.run(
+        res = subprocess.run(
             ["hyprctl", "keyword", "monitor", f"{name},{mode_str},{position_str},{scale_val}"],
             env=env, capture_output=True, timeout=2
         )
+        hypr_ok = (res.returncode == 0)
     except Exception:
         pass
+    if not hypr_ok:
+        _apply_wlr_randr(name, resolution if explicit_mode else None, framerate if explicit_mode else None, scale_val, env)
 
     # 3. Persist only this monitor in ~/.config/hypr/default/monitors.lua
     new_blk = (
@@ -430,14 +437,17 @@ def apply_hyprland(name, resolution, framerate, scale, env):
 
 
 def apply_sway(name, resolution, framerate, scale, env):
+    explicit_mode = bool(resolution or framerate)
     if not resolution:
         resolution = resolve_current_resolution(name, env)
+    if not framerate:
+        framerate = resolve_current_framerate(name, env)
     rate_str = f"@{framerate}Hz" if framerate else ""
     mode_str = f"{resolution}{rate_str}" if resolution else ""
-    scale_val = float(scale) if scale is not None else 1.0
+    scale_val = _normalize_scale(scale)
 
-    # Live apply
-    if mode_str:
+    # Live apply (skip mode re-set on scale-only changes to prevent screen flicker)
+    if explicit_mode and mode_str:
         try:
             subprocess.run(["swaymsg", "output", name, "mode", mode_str], env=env, capture_output=True, timeout=2)
         except Exception:
@@ -475,14 +485,17 @@ def apply_sway(name, resolution, framerate, scale, env):
 
 
 def apply_niri(name, resolution, framerate, scale, env):
+    explicit_mode = bool(resolution or framerate)
     if not resolution:
         resolution = resolve_current_resolution(name, env)
+    if not framerate:
+        framerate = resolve_current_framerate(name, env)
     rate_str = f"@{framerate}" if framerate else ""
     mode_str = f"{resolution}{rate_str}" if resolution else ""
-    scale_val = float(scale) if scale is not None else 1.0
+    scale_val = _normalize_scale(scale)
 
-    # Live apply
-    if resolution:
+    # Live apply (skip mode re-set on scale-only changes)
+    if explicit_mode and resolution:
         live_mode = f"{resolution}@{float(framerate):.3f}" if framerate else str(resolution)
         for mcmd in (
             ["niri", "msg", "output", name, "mode", live_mode],
@@ -528,15 +541,17 @@ def apply_niri(name, resolution, framerate, scale, env):
 
 
 def apply_mango(name, resolution, framerate, scale, env):
+    explicit_mode = bool(resolution or framerate)
+    scale_val = _normalize_scale(scale)
+    if abs(scale_val - round(scale_val)) < 1e-6:
+        scale_val = int(round(scale_val))
+
+    _apply_wlr_randr(name, resolution if explicit_mode else None, framerate if explicit_mode else None, scale_val, env)
+
     if not resolution:
         resolution = resolve_current_resolution(name, env)
     if not framerate:
         framerate = resolve_current_framerate(name, env)
-    scale_val = float(scale) if scale is not None else 1.0
-    if abs(scale_val - round(scale_val)) < 1e-6:
-        scale_val = int(round(scale_val))
-
-    _apply_wlr_randr(name, resolution, framerate, scale_val, env)
 
     cfg_path = Path.home() / ".config" / "mango" / "default" / "monitors.conf"
     try:
@@ -576,15 +591,18 @@ def apply_mango(name, resolution, framerate, scale, env):
 
 
 def apply_umbriel(name, resolution, framerate, scale, env):
+    explicit_mode = bool(resolution or framerate)
     if not resolution:
         resolution = resolve_current_resolution(name, env)
+    if not framerate:
+        framerate = resolve_current_framerate(name, env)
     mode_str = f"{resolution}@{framerate}" if framerate and resolution else (resolution or "")
-    scale_val = float(scale) if scale is not None else 1.0
+    scale_val = _normalize_scale(scale)
 
     # Live runtime overrides (lasts until exit in Umbriel).
     live_applied = False
     try:
-        if mode_str:
+        if explicit_mode and mode_str:
             r1 = subprocess.run(["umbriel", "config", "set", f'output."{name}".mode', mode_str], env=env, capture_output=True, timeout=2)
             live_applied = r1.returncode == 0
         if scale is not None:
@@ -594,7 +612,7 @@ def apply_umbriel(name, resolution, framerate, scale, env):
         pass
 
     if not live_applied:
-        _apply_wlr_randr(name, resolution, framerate, scale_val, env)
+        _apply_wlr_randr(name, resolution if explicit_mode else None, framerate if explicit_mode else None, scale_val, env)
 
     # Persist per-output configuration in ~/.config/umbriel/config/monitors.toml
     cfg_path = Path.home() / ".config" / "umbriel" / "config" / "monitors.toml"

@@ -1,3 +1,9 @@
+### 2.9.1.3
+
+- feat(display): redesign per-monitor `Display Scale (WM)` in `DisplayMonitorCard.qml` using a `32px` rounded `NumberSelector` (`50%`–`300%`, `±5%` steps, wheel/hold support, and double-click direct `%` input) aligned with adjacent controls, remove the false integer-only lock on Mango (verified fractional scaling live), and round `%` labels cleanly in `DisplayMainTab.qml` and monitor card headers
+- fix(display): stabilize `DisplayMonitorCard` delegate identity (`monitorNames` + `monitorsByName`) in `DisplayMainState.qml` so cards are not destroyed mid-interaction, replace `Quickshell.execDetached` races with queued `Process` (`monitorApplyProc`) + `scaleLockClearTimer`/`scaleSettled` convergence, prefer live compositor `scale` over stale `settings.json`, react to screen/config reloads, and adapt `Hyprland` stepping to resolution-valid `n/120` fractions
+- fix(compositors,session): fix `Compositor.qml` so stale `/run/user/$UID/driftwm` or `hypr` directories never spoof the active WM; sort `WAYLAND_DISPLAY` sockets in `monitor_manager.py` and `monitors_detector.py` by active `.lock` and newest `mtime` across SDDM compositor switches; avoid redundant mode resets and preserve `@refresh` when applying scale-only updates
+
 ### 2.9.1.2
 
 - feat(scaling): separate WM per-monitor `Display Scale (WM)` in Display settings from independent `Quickshell UI Scale` (`general.uiScale`) in General settings, and wire `Scaler.s()` + `Main.qml` / `WindowRegistry.js` so top bar, widgets, launcher and Settings scale crisply without double-scaling under compositor scaling (with integer scale mode & hint for Mango)
