@@ -4,3 +4,4 @@ gap = 4
 [appearance]
 border_width = 0
 outer_border_width = 0
+corner_radius = 12

@@ -640,6 +640,13 @@ configure_keyboard_layout() {
             sed -i '/"ctrl+shift" = "switch-layout next"/a "shift+ctrl" = "switch-layout next"' "$drift_config" 2>/dev/null || true
         fi
     fi
+
+    # Umbriel
+    local umbriel_input="$HOME/.config/umbriel/config/input.toml"
+    if [ -f "$umbriel_input" ]; then
+        sed -i -E "s/^layout = \"[^\"]*\"/layout = \"$layout\"/" "$umbriel_input" 2>/dev/null || true
+        sed -i -E "s/^options = \"[^\"]*\"/options = \"$xkb_opts\"/" "$umbriel_input" 2>/dev/null || true
+    fi
 }
 
 configure_driftwm_bookmarks() {
@@ -767,6 +774,7 @@ deploy_package() {
                 niri) target_config_name="niri" ;;
                 sway) target_config_name="sway" ;;
                 mango) target_config_name="mango" ;;
+                umbriel) target_config_name="umbriel" ;;
                 *) target_config_name="$comp" ;;
             esac
 
@@ -855,6 +863,7 @@ deploy_package() {
                                     niri) target_config_name="niri" ;;
                                     sway) target_config_name="sway" ;;
                                     mango) target_config_name="mango" ;;
+                                    umbriel) target_config_name="umbriel" ;;
                                     *) target_config_name="$comp" ;;
                                 esac
                                 rm -f "$HOME/.config/$target_config_name/$comp_file"
@@ -903,6 +912,7 @@ deploy_package() {
                                 niri) target_config_name="niri" ;;
                                 sway) target_config_name="sway" ;;
                                 mango) target_config_name="mango" ;;
+                                umbriel) target_config_name="umbriel" ;;
                                 *) target_config_name="$comp" ;;
                             esac
                             local dest_target="$HOME/.config/$target_config_name/$comp_file"

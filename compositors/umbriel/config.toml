@@ -5,3 +5,9 @@ files = [
   "config/autostart.toml",
   "config/keybinds.toml",
 ]
+
+[environment]
+XCURSOR_THEME = "Windows-11M-Dark"
+XCURSOR_SIZE = "32"
+HYPRCURSOR_THEME = "Windows-11M-Dark"
+HYPRCURSOR_SIZE = "32"

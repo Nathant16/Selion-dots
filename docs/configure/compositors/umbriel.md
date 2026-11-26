@@ -53,18 +53,23 @@ Shell overlays and controls use `spawn serpantinum msg toggle <module>`, with th
 
 ```toml
 [keybinds]
-"Mod+D" = { action = "spawn serpantinum msg toggle launcher", repeat = false }
-"Mod+B" = { action = "spawn serpantinum msg toggle system", repeat = false }
+"Mod+A" = { action = "spawn serpantinum msg toggle launcher", repeat = false }
+"Mod+I" = { action = "spawn serpantinum msg toggle settings", repeat = false }
 ```
 
-Window and workspace controls use native Umbriel actions:
+Window and workspace controls use native Umbriel actions alongside Selion's unified shortcuts:
 
 | Key | Action |
 | --- | --- |
-| `Mod+Return`, `Mod+F`, `Mod+E` | Open kitty, Firefox and Ski |
+| `Mod+Return`, `Mod+KP_Enter`, `Mod+E` | Open kitty terminal and Ski file manager |
+| `Ctrl+Shift+Escape`, `Ctrl+Alt+Delete` | Open `btop` task manager (`kitty -e btop`) |
 | `Mod+Q` | `window-close` |
-| `Mod+Shift+F` | `window-toggle-floating` |
+| `Alt+Return`, `Mod+Alt+F` | `window-toggle-fullscreen`, `window-toggle-maximize-to-edges` |
+| `Mod+Space`, `Mod+Shift+F` | `window-toggle-floating` |
 | `Mod+BackSpace` | `scratchpad-toggle` |
+| `Mod+A`, `Mod+I`, `Mod+V`, `Mod+W`, `Mod+B`, `Mod+R` | Launcher, Settings, Clipboard, Wallpaper, Bar autohide, Reload |
+| `Mod+L`, `Mod+Shift+M` | Lock screen, Exit session (`serpantinum exit`) |
+| `Mod+Shift+C/Z/S/T/G/D/O` | VS Code, Zen Browser, Spotify, AyuGram, Steam, Discord, Obsidian |
 | `Mod+Left`, `Mod+Right` | `window-focus-left`, `window-focus-right` |
 | `Mod+Up`, `Mod+Down` | `workspace-previous`, `workspace-next` |
 | `Mod+Ctrl+Left`, `Mod+Ctrl+Right` | `column-move-left`, `column-move-right` |

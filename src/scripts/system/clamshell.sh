@@ -38,6 +38,8 @@ case "$ACTION" in
                 swaymsg output "$INTERNAL_MONITOR" disable >/dev/null 2>&1 || true
             elif [ -n "$NIRI_SOCKET" ]; then
                 niri msg action output "$INTERNAL_MONITOR" off >/dev/null 2>&1 || true
+            elif command -v wlr-randr >/dev/null 2>&1; then
+                wlr-randr --output "$INTERNAL_MONITOR" --off >/dev/null 2>&1 || true
             fi
         else
             # Standalone mode: lock screen and suspend
@@ -53,6 +55,8 @@ case "$ACTION" in
             swaymsg output "$INTERNAL_MONITOR" enable >/dev/null 2>&1 || true
         elif [ -n "$NIRI_SOCKET" ]; then
             niri msg action output "$INTERNAL_MONITOR" on >/dev/null 2>&1 || true
+        elif command -v wlr-randr >/dev/null 2>&1; then
+            wlr-randr --output "$INTERNAL_MONITOR" --on >/dev/null 2>&1 || true
         fi
         ;;
     status)

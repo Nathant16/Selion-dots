@@ -8,6 +8,7 @@ get_compositor_config_dir_name() {
         niri) echo "niri" ;;
         sway) echo "sway" ;;
         mango) echo "mango" ;;
+        umbriel) echo "umbriel" ;;
         *) echo "$comp" ;;
     esac
 }

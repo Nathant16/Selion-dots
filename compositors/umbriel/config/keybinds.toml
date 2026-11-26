@@ -1,13 +1,29 @@
 [keybinds]
+# Terminal, File Manager & Task Manager
 "Mod+Return" = { action = "spawn kitty", repeat = false }
-"Mod+F" = { action = "spawn firefox", repeat = false }
+"Mod+KP_Enter" = { action = "spawn kitty", repeat = false }
 "Mod+E" = { action = "spawn ski", repeat = false }
 "Ctrl+Shift+Escape" = { action = "spawn kitty -e btop", repeat = false }
 "Ctrl+Alt+Delete" = { action = "spawn kitty -e btop", repeat = false }
-"Mod+BackSpace" = { action = "scratchpad-toggle", repeat = false }
-"Mod+Q" = { action = "window-close", repeat = false }
-"Mod+Shift+F" = { action = "window-toggle-floating", repeat = false }
 
+# App Shortcuts (Synchronized with PC / userprefs)
+"Mod+Shift+C" = { action = "spawn code", repeat = false }
+"Mod+Shift+Z" = { action = "spawn zen-browser", repeat = false }
+"Mod+Shift+S" = { action = "spawn spotify", repeat = false }
+"Mod+Shift+T" = { action = "spawn AyuGram", repeat = false }
+"Mod+Shift+G" = { action = "spawn steam", repeat = false }
+"Mod+Shift+D" = { action = "spawn discord", repeat = false }
+"Mod+Shift+O" = { action = "spawn obsidian", repeat = false }
+
+# Window Actions
+"Mod+Q" = { action = "window-close", repeat = false }
+"Alt+Return" = { action = "window-toggle-fullscreen", repeat = false }
+"Mod+Alt+F" = { action = "window-toggle-maximize-to-edges", repeat = false }
+"Mod+Space" = { action = "window-toggle-floating", repeat = false }
+"Mod+Shift+F" = { action = "window-toggle-floating", repeat = false }
+"Mod+BackSpace" = { action = "scratchpad-toggle", repeat = false }
+
+# Brightness & Screenshots
 "XF86MonBrightnessDown" = "spawn serpantinum brightness lower"
 "XF86MonBrightnessUp" = "spawn serpantinum brightness raise"
 
@@ -16,11 +32,13 @@
 "Mod+Print" = { action = "spawn serpantinum screenshot --full", repeat = false }
 "Mod+Shift+Print" = { action = "spawn serpantinum screenshot --full --edit", repeat = false }
 
+# Lock, Exit & Media
 "XF86PowerOff" = { action = "spawn serpantinum lock", repeat = false }
 "Mod+L" = { action = "spawn serpantinum lock", repeat = false }
+"Mod+Shift+M" = { action = "spawn serpantinum exit", repeat = false }
 
-"Mod+Space" = { action = "spawn playerctl play-pause", repeat = false }
 "XF86AudioPlay" = { action = "spawn playerctl play-pause", repeat = false }
+"XF86AudioPause" = { action = "spawn playerctl play-pause", repeat = false }
 "XF86AudioPrev" = { action = "spawn playerctl previous", repeat = false }
 "XF86AudioNext" = { action = "spawn playerctl next", repeat = false }
 "XF86AudioMicMute" = { action = "spawn serpantinum volume mic-toggle", repeat = false }
@@ -28,18 +46,15 @@
 "XF86AudioLowerVolume" = "spawn serpantinum volume lower"
 "XF86AudioRaiseVolume" = "spawn serpantinum volume raise"
 
+# Shell, Launcher, Clipboard & Settings
+"Mod+A" = { action = "spawn serpantinum msg toggle launcher", repeat = false }
 "Mod+R" = { action = "spawn serpantinum reload", repeat = false }
-"Mod+C" = { action = "spawn serpantinum msg toggle clipboard", repeat = false }
-"Mod+D" = { action = "spawn serpantinum msg toggle launcher", repeat = false }
-"Mod+M" = { action = "spawn serpantinum msg toggle music", repeat = false }
-"Mod+B" = { action = "spawn serpantinum msg toggle system", repeat = false }
+"Mod+I" = { action = "spawn serpantinum msg toggle settings", repeat = false }
+"Mod+V" = { action = "spawn serpantinum msg toggle clipboard", repeat = false }
 "Mod+W" = { action = "spawn serpantinum msg toggle wallpaper", repeat = false }
-"Mod+S" = { action = "spawn serpantinum msg toggle calendar", repeat = false }
-"Mod+N" = { action = "spawn serpantinum msg toggle network", repeat = false }
-"Mod+V" = { action = "spawn serpantinum msg toggle volume", repeat = false }
-"Mod+H" = { action = "spawn serpantinum msg toggle settings", repeat = false }
-"Mod+A" = { action = "spawn serpantinum msg bar autohide", repeat = false }
+"Mod+B" = { action = "spawn serpantinum msg bar autohide", repeat = false }
 
+# Focus & Navigation
 "Mod+Left" = "window-focus-left"
 "Mod+Right" = "window-focus-right"
 "Mod+Up" = "workspace-previous"
@@ -55,6 +70,7 @@
 "Mod+Shift+Up" = "window-modify-secondary-extent -0.05"
 "Mod+Shift+Down" = "window-modify-secondary-extent +0.05"
 
+# Workspaces 1..9
 "Mod+1" = "workspace-switch 1"
 "Mod+2" = "workspace-switch 2"
 "Mod+3" = "workspace-switch 3"

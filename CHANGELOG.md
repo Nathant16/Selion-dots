@@ -1,5 +1,6 @@
 ### 2.9.1
 
+- feat(umbriel): unify Umbriel configuration and integration with Selion standards (unified shortcuts `Mod+A/I/V/W/B/R/L/Shift+M`, app launch hotkeys, `Alt+Return` fullscreen, `Mod+Space` floating, `Windows-11M-Dark` 32px cursor & environment, `us,ru` default keyboard layout with `configure_keyboard_layout()` support, `UMBRIEL_SOCKET` detection in `serpantinumd`, `PacmanFace` occupancy sync, and `corner_radius` sync in `sync_compositor_theme.py`)
 - feat(compositors): open task manager (`btop`) via `Ctrl+Shift+Esc` and `Ctrl+Alt+Del` as a standard window (`kitty -e btop`) across Hyprland, DriftWM, Sway, Niri, Mango, and Umbriel (removed `btop` floating/`pinned_to_screen` overrides and added Umbriel keybinds)
 - style(kitty): adjust default `kitty` font size from `16.0` to `15.0` in `config/kitty/kitty.conf` and migrate `13`/`16` configs during updates in `deploy.sh`
 - refactor(installer): remove the "Support the creator" and Ko-fi donation block from `install/tui.py` and keep only GitHub and Telegram in the Links card

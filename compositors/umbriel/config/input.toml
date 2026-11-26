@@ -1,6 +1,10 @@
 [input.keyboard]
-layout = "us"
+layout = "us,ru"
 options = "grp:alt_shift_toggle"
+
+[input.cursor]
+theme = "Windows-11M-Dark"
+size = 32
 
 [input.touchpad]
 tap = true

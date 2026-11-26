@@ -359,6 +359,10 @@ EOF
         local_ms=$(ls "$local_rdir"/mango-*.sock 2>/dev/null | head -n 1)
         [ -n "$local_ms" ] && export MANGO_INSTANCE_SIGNATURE="$local_ms" && export XDG_CURRENT_DESKTOP="mango"
     fi
+    if [ -z "$UMBRIEL_SOCKET" ]; then
+        local_us=$(ls "$local_rdir"/umbriel-*.sock 2>/dev/null | head -n 1)
+        [ -n "$local_us" ] && export UMBRIEL_SOCKET="$local_us" && export XDG_CURRENT_DESKTOP="umbriel"
+    fi
 
     # On NVIDIA, keep wallpaper video decoding off the NVIDIA GPU: NVDEC keeps it at
     # full clocks (~+8 W measured on a 1080p loop). Users can still override the variable.

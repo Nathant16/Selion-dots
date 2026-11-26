@@ -46,6 +46,11 @@ def ensure_environment():
                 if drift_socks:
                     os.environ["DRIFTWM_SOCKET"] = str(drift_socks[0])
 
+        if not os.environ.get("UMBRIEL_SOCKET"):
+            umbriel_socks = list(runtime_dir.glob("umbriel-*.sock"))
+            if umbriel_socks:
+                os.environ["UMBRIEL_SOCKET"] = str(umbriel_socks[0])
+
         if not os.environ.get("WAYLAND_DISPLAY"):
             wl_socks = sorted([p.name for p in runtime_dir.glob("wayland-[0-9]*") if not p.name.endswith(".lock") and not p.name.endswith(".sock")])
             if wl_socks:
@@ -557,6 +562,27 @@ blur = {"true" if should_blur_windows else "false"}
         except Exception:
             pass
 
+def sync_umbriel_theme(state_dir, rounding):
+    theme_file = state_dir / "theme_umbriel.toml"
+    try:
+        theme_file.write_text(f"[appearance]\ncorner_radius = {rounding}\n", encoding="utf-8")
+    except Exception:
+        pass
+
+    layout_cfg = Path.home() / ".config" / "umbriel" / "config" / "layout.toml"
+    if layout_cfg.is_file():
+        try:
+            text = layout_cfg.read_text(encoding="utf-8")
+            if re.search(r"^\s*corner_radius\s*=.*$", text, re.MULTILINE):
+                new_text = re.sub(r"^\s*corner_radius\s*=.*$", f"corner_radius = {rounding}", text, flags=re.MULTILINE)
+            elif re.search(r"^\[appearance\]", text, re.MULTILINE):
+                new_text = re.sub(r"^(\[appearance\]\s*)$", rf"\1\ncorner_radius = {rounding}", text, count=1, flags=re.MULTILINE)
+            else:
+                new_text = text.rstrip() + f"\n\n[appearance]\ncorner_radius = {rounding}\n"
+            layout_cfg.write_text(new_text, encoding="utf-8")
+        except Exception:
+            pass
+
 def sync_cursor():
     try:
         env_d = Path.home() / ".config" / "environment.d"
@@ -621,6 +647,7 @@ def main():
     write_niri_theme(state_dir, colors, rounding, app_opacity, blur_background)
     write_mango_theme(state_dir, colors, rounding, app_opacity, blur_background, apply_to_windows)
     write_driftwm_theme(state_dir, colors, rounding, app_opacity, blur_background, apply_to_windows)
+    sync_umbriel_theme(state_dir, rounding)
 
 if __name__ == "__main__":
     main()

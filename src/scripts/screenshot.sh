@@ -178,6 +178,9 @@ get_active_monitor() {
     if [ -z "$mon" ] && [ -n "${UMBRIEL_SOCKET:-}" ] && command -v umbriel &>/dev/null; then
         mon=$(umbriel workspaces --json 2>/dev/null | jq -r '.[] | select(.focused) | .output' 2>/dev/null | head -n1)
     fi
+    if [ -z "$mon" ] && [ -n "${DRIFTWM_SOCKET:-}" ] && command -v driftwm &>/dev/null; then
+        mon=$(driftwm msg state --json 2>/dev/null | jq -r '.Ok.State.outputs[]? | select(.active == true or .focused == true) | .name' 2>/dev/null | head -n1)
+    fi
     if [ -z "$mon" ] || [ "$mon" = "null" ]; then
         if command -v serpantinum-core &>/dev/null; then
             mon=$(serpantinum-core monitors 2>/dev/null | jq -r '.[0].name // empty' 2>/dev/null)
