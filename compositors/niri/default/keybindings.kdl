@@ -21,7 +21,7 @@ binds {
 
     // Window Actions
     Mod+Q { close-window; }
-    Alt+Return { maximize-window-to-edges; }
+    Alt+Return { fullscreen-window; }
     Mod+Alt+F { maximize-window-to-edges; }
     Mod+Space { toggle-window-floating; }
     Mod+Backspace { toggle-overview; }

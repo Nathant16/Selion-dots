@@ -1,0 +1,20 @@
+# █ █ █ █▄ █ █▀▄ █▀█ █ █ █   █▀█ █ █ █   █▀▀ █▀▀
+# ▀▄▀▄▀ █ ▀█ █▄▀ █▄█ ▀▄▀▄▀   █▀▄ █▄█ █▄▄ ██▄ ▄▄█
+
+# Dialogs & Tools
+[[window_rule]]
+match.app_id = "^(pavucontrol|pwvucontrol|blueman-manager|org\\.gnome\\.FileRoller|gnome-calculator|qalculate-gtk|org\\.gnome\\.Loupe|qt5ct|qt6ct|yad)$"
+default_floating = true
+
+[[window_rule]]
+match.is_dialog = true
+default_floating = true
+
+# Picture-in-Picture
+[[window_rule]]
+match.title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture|[Кк]артинка в картинке)(.*)$"
+default_floating = true
+default_pinned = true
+default_maximize = false
+default_floating_size = { width = 0.25, height = 0.25 }
+default_position = { x = 20, y = 20, anchor = "bottom_right" }

@@ -1,0 +1,15 @@
+# █▀▀▀ █▀▀█ █▀▄▀█  ▀  █▀▀▄ █▀▀▀
+# █ ▀█ █▄▄█ █ ▀ █ ▀█▀ █  █ █ ▀█
+# ▀▀▀▀ ▀  ▀ ▀   ▀ ▀▀▀ ▀  ▀ ▀▀▀▀
+
+[layout]
+gap = 0
+
+[appearance]
+border_width = 1
+
+[appearance.blur]
+enabled = false
+
+[appearance.shadow]
+enabled = false

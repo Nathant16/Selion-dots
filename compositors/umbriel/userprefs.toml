@@ -1,0 +1,19 @@
+# ██╗   ██╗ ██████╗███████╗██████╗   ██████╗ ██████╗ ███████╗███████╗ ██████╗
+# ██║   ██║██╔════╝██╔════╝██╔══██╗  ██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝
+# ██║   ██║╚█████╗ █████╗  ██████╔╝  ██████╔╝██████╔╝█████╗  █████╗  ╚█████╗
+# ██║   ██║ ╚═══██╗██╔══╝  ██╔══██╗  ██╔═══╝ ██╔══██╗██╔══╝  ██╔══╝   ╚═══██╗
+# ╚██████╔╝██████╔╝███████╗██║  ██║  ██║     ██║  ██║███████╗██║     ██████╔╝
+#  ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝  ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝     ╚═════╝
+# Set your personal Umbriel configuration here
+
+# ##==> Optimization for your operating mode (default.toml / powersaver.toml / gaming.toml)
+# #######################################
+[include.optional]
+files = [
+  "workflows/default.toml",
+]
+
+# ##==> Personal Overrides Below
+# #######################################
+# The default settings are located in ./config/
+# You can override them here

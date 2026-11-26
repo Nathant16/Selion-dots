@@ -155,8 +155,8 @@ function getLayout(name, mx, my, mw, mh, userScale, barPosition) {
     let t = base[name];
     let p = t.pos[barPosition] || t.pos["top"];
 
-    let finalW = t.w === "fill" ? mw : s(t.w, scale);
-    let finalH = t.h === "fill" ? mh : s(t.h, scale);
+    let finalW = t.w === "fill" ? mw : Math.min(mw, s(t.w, scale));
+    let finalH = t.h === "fill" ? mh : Math.min(mh, s(t.h, scale));
 
     let rx = 0;
     let ry = 0;

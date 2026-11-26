@@ -2,11 +2,26 @@
 files = [
   "config/input.toml",
   "config/layout.toml",
+  "config/windowrules.toml",
   "config/autostart.toml",
   "config/keybinds.toml",
 ]
 
+[include.optional]
+files = [
+  "config/monitors.toml",
+  "userprefs.toml",
+  "~/.local/state/serpantinum/theme_umbriel.toml",
+]
+
 [environment]
+QT_QPA_PLATFORM = "wayland;xcb"
+QT_QPA_PLATFORMTHEME = "qt6ct"
+QT_WAYLAND_DISABLE_WINDOWDECORATION = "1"
+MOZ_ENABLE_WAYLAND = "1"
+GDK_BACKEND = "wayland,x11,*"
+CLUTTER_BACKEND = "wayland"
+ELECTRON_OZONE_PLATFORM_HINT = "auto"
 XCURSOR_THEME = "Windows-11M-Dark"
 XCURSOR_SIZE = "32"
 HYPRCURSOR_THEME = "Windows-11M-Dark"

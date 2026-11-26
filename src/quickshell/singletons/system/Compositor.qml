@@ -8,13 +8,21 @@ Item {
     id: root
 
     property string detectedName: {
-        const desktop = (typeof SystemInfo !== "undefined" && SystemInfo.desktopEnv) ? SystemInfo.desktopEnv.toLowerCase() : "";
-        if (Quickshell.env("DRIFTWM_SOCKET") || desktop.indexOf("drift") !== -1) return "driftwm";
-        if (Quickshell.env("NIRI_SOCKET") || desktop.indexOf("niri") !== -1) return "niri";
-        if (Quickshell.env("MANGO_INSTANCE_SIGNATURE") || desktop.indexOf("mango") !== -1) return "mango";
-        if (Quickshell.env("UMBRIEL_SOCKET") || desktop.indexOf("umbriel") !== -1) return "umbriel";
-        if (Quickshell.env("SWAYSOCK") || desktop.indexOf("sway") !== -1) return "sway";
-        if (Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE") || desktop.indexOf("hyprland") !== -1) return "hyprland";
+        const sessionDesktop = (Quickshell.env("XDG_SESSION_DESKTOP") || Quickshell.env("DESKTOP_SESSION") || "").toLowerCase();
+        const desktop = ((typeof SystemInfo !== "undefined" && SystemInfo.desktopEnv) ? SystemInfo.desktopEnv : (Quickshell.env("XDG_CURRENT_DESKTOP") || "")).toLowerCase();
+        const combined = sessionDesktop + " " + desktop;
+        if (combined.indexOf("drift") !== -1) return "driftwm";
+        if (combined.indexOf("umbriel") !== -1) return "umbriel";
+        if (combined.indexOf("mango") !== -1) return "mango";
+        if (combined.indexOf("sway") !== -1) return "sway";
+        if (combined.indexOf("niri") !== -1) return "niri";
+        if (combined.indexOf("hypr") !== -1) return "hyprland";
+        if (Quickshell.env("DRIFTWM_SOCKET")) return "driftwm";
+        if (Quickshell.env("UMBRIEL_SOCKET")) return "umbriel";
+        if (Quickshell.env("MANGO_INSTANCE_SIGNATURE")) return "mango";
+        if (Quickshell.env("SWAYSOCK")) return "sway";
+        if (Quickshell.env("NIRI_SOCKET")) return "niri";
+        if (Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE")) return "hyprland";
         return "unknown";
     }
 
@@ -30,8 +38,8 @@ Item {
             if [ -n \"$HYPRLAND_INSTANCE_SIGNATURE\" ] || [ -d \"$rdir/hypr\" ] || pgrep -x Hyprland >/dev/null 2>&1; then echo hyprland; exit 0; fi
             if [ -n \"$NIRI_SOCKET\" ] || ls \"$rdir\"/niri*.sock >/dev/null 2>&1 || pgrep -x niri >/dev/null 2>&1; then echo niri; exit 0; fi
             if [ -n \"$SWAYSOCK\" ] || ls \"$rdir\"/sway-ipc*.sock >/dev/null 2>&1 || pgrep -x sway >/dev/null 2>&1; then echo sway; exit 0; fi
-            if [ -n \"$MANGO_INSTANCE_SIGNATURE\" ] || pgrep -x mango >/dev/null 2>&1; then echo mango; exit 0; fi
-            if [ -n \"$UMBRIEL_SOCKET\" ] || pgrep -x umbriel >/dev/null 2>&1; then echo umbriel; exit 0; fi
+            if [ -n \"$MANGO_INSTANCE_SIGNATURE\" ] || ls \"$rdir\"/mango*.sock >/dev/null 2>&1 || pgrep -x mango >/dev/null 2>&1; then echo mango; exit 0; fi
+            if [ -n \"$UMBRIEL_SOCKET\" ] || ls \"$rdir\"/umbriel*.sock >/dev/null 2>&1 || pgrep -x umbriel >/dev/null 2>&1; then echo umbriel; exit 0; fi
             echo unknown
         "]
         stdout: SplitParser {

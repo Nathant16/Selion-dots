@@ -2,7 +2,8 @@
 //  █ █ █ █  █ █  █ ▀█▀   █   █  █ █▄▄▀ ▀▀█
 //  █   █ ▀▀▀▀ ▀  ▀ ▀▀▀   ▀   ▀▀▀▀ ▀ ▀▀ ▀▀▀
 
-output "eDP-1" {
-    scale 1.0
-}
+// Niri automatically enables all connected outputs at their preferred mode.
+// Display Settings writes per-monitor blocks here, or you can override specific
+// outputs (e.g. output "DP-1" { scale 1.25 }) in userprefs.kdl.
+
 

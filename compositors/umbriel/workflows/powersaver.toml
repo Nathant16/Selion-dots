@@ -1,0 +1,12 @@
+# █▀▀█ █▀▀█ █   █ █▀▀ █▀▀█ █▀▀ █▀▀█ ▀█ █▀ █▀▀ █▀▀█
+# █  █ █  █ █▄█▄█ █▀▀ █▄▄▀ ▀▀█ █▄▄█  █▄█  █▀▀ █▄▄▀
+# █▀▀▀ ▀▀▀▀  ▀ ▀  ▀▀▀ ▀ ▀▀ ▀▀▀ ▀  ▀   ▀   ▀▀▀ ▀ ▀▀
+
+[layout]
+gap = 0
+
+[appearance.blur]
+enabled = false
+
+[appearance.shadow]
+enabled = false

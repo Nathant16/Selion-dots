@@ -101,7 +101,7 @@ Singleton {
         } else if (Compositor.name === "umbriel") {
             Quickshell.execDetached(["umbriel", "msg", "keyboard-layout-next"]);
         } else if (Compositor.name === "hyprland") {
-            Quickshell.execDetached(["hyprctl", "switchxkblayout", "main", "next"]);
+            Quickshell.execDetached(["hyprctl", "switchxkblayout", "all", "next"]);
         }
     }
 

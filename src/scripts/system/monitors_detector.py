@@ -21,12 +21,13 @@ def get_wayland_env():
     if not env.get("HYPRLAND_INSTANCE_SIGNATURE") and os.path.exists(f"{runtime_dir}/hypr"):
         socks = glob.glob(f"{runtime_dir}/hypr/*/.socket.sock")
         if socks:
-            env["HYPRLAND_INSTANCE_SIGNATURE"] = os.path.basename(os.path.dirname(socks[0]))
+            newest_sock = max(socks, key=os.path.getmtime)
+            env["HYPRLAND_INSTANCE_SIGNATURE"] = os.path.basename(os.path.dirname(newest_sock))
 
     if not env.get("SWAYSOCK"):
         sw_socks = glob.glob(f"{runtime_dir}/sway-ipc.*.sock")
         if sw_socks:
-            env["SWAYSOCK"] = sw_socks[0]
+            env["SWAYSOCK"] = max(sw_socks, key=os.path.getmtime)
 
     return env
 

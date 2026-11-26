@@ -39,6 +39,9 @@ QT_QPA_PLATFORMTHEME = "qt6ct"
 MOZ_ENABLE_WAYLAND = "1"
 XDG_CURRENT_DESKTOP = "driftwm:sway:wlroots"
 XDG_SESSION_DESKTOP = "driftwm"
+GDK_BACKEND = "wayland,x11,*"
+CLUTTER_BACKEND = "wayland"
+ELECTRON_OZONE_PLATFORM_HINT = "auto"
 XCURSOR_THEME = "Windows-11M-Dark"
 XCURSOR_SIZE = "32"
 HYPRCURSOR_THEME = "Windows-11M-Dark"
@@ -60,7 +63,7 @@ natural_scroll = true
 tap_and_drag = true
 click_method = "clickfinger"
 accel_speed = 0.0
-accel_profile = "adaptive"
+accel_profile = "flat"
 disable_while_typing = true
 
 [cursor]

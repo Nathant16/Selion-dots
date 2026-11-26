@@ -284,7 +284,7 @@ GuideTab {
                         model: [
                             { icon: "⛁", label: I18n.t("guide.about.system.os_name"), value: (typeof SystemInfo !== "undefined" && SystemInfo.osName !== "") ? SystemInfo.osName : I18n.t("guide.about.system.default_os") },
                             { icon: "󰌽", label: I18n.t("guide.about.system.kernel_version"), value: (typeof SystemInfo !== "undefined" && SystemInfo.kernelVersion !== "") ? SystemInfo.kernelVersion : I18n.t("guide.about.unknown") },
-                            { icon: "󰧨", label: I18n.t("guide.about.system.desktop"), value: (typeof SystemInfo !== "undefined" && SystemInfo.desktopEnv !== "") ? SystemInfo.desktopEnv : I18n.t("guide.about.unknown") },
+                            { icon: "󰧨", label: I18n.t("guide.about.system.desktop"), value: (typeof Compositor !== "undefined" && Compositor.name && Compositor.name !== "unknown") ? ({ "hyprland": "Hyprland", "niri": "Niri", "sway": "Sway", "mango": "Mango", "umbriel": "Umbriel", "driftwm": "DriftWM" }[Compositor.name] || Compositor.name) : ((typeof SystemInfo !== "undefined" && SystemInfo.desktopEnv !== "") ? SystemInfo.desktopEnv : I18n.t("guide.about.unknown")) },
                             { icon: "󰆍", label: I18n.t("guide.about.system.shell"), value: (typeof SystemInfo !== "undefined" && SystemInfo.shell !== "") ? SystemInfo.shell : I18n.t("guide.about.unknown") },
                             { icon: "󰔛", label: I18n.t("guide.about.system.uptime"), value: (typeof SystemInfo !== "undefined" && SystemInfo.uptime !== "") ? SystemInfo.uptime : I18n.t("guide.about.unknown") }
                         ]

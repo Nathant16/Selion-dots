@@ -20,6 +20,7 @@ GuideTab {
 
     property var defaultGeneralSettings: {
         "language": "en",
+        "uiScale": 1.0,
         "openGuideAtStartup": false,
         "wallpaperDir": "",
         "workspaceCount": 8,
@@ -31,6 +32,10 @@ GuideTab {
 
     property var generalSettings: Config.getSetting("general", defaultGeneralSettings)
     property string currentLanguage: generalSettings.language !== undefined ? generalSettings.language : I18n.currentLang
+    property real uiScale: {
+        let val = generalSettings.uiScale !== undefined ? Number(generalSettings.uiScale) : 1.0;
+        return (!isNaN(val) && val > 0) ? Math.max(0.5, Math.min(2.0, val)) : 1.0;
+    }
     property bool muteSfx: generalSettings.muteSfx !== undefined ? generalSettings.muteSfx : false
     property real sfxVolume: generalSettings.sfxVolume !== undefined ? generalSettings.sfxVolume : 100
     property bool quickactions: generalSettings.quickactions !== undefined ? generalSettings.quickactions : true
@@ -41,10 +46,20 @@ GuideTab {
     property alias latInput: locationSection.latInput
     property alias lonInput: locationSection.lonInput
     property alias sfxVolumeDebounceTimer: sfxVolumeDebounceTimer
+    property alias uiScaleDebounceTimer: uiScaleDebounceTimer
 
     Timer {
         id: sfxVolumeDebounceTimer
         interval: 100
+        repeat: false
+        onTriggered: {
+            generalTabRoot.updateGeneralSettings();
+        }
+    }
+
+    Timer {
+        id: uiScaleDebounceTimer
+        interval: 120
         repeat: false
         onTriggered: {
             generalTabRoot.updateGeneralSettings();
@@ -68,6 +83,8 @@ GuideTab {
         function onSettingsLoaded() {
             let gs = Config.getSetting("general", generalTabRoot.defaultGeneralSettings);
             generalTabRoot.currentLanguage = gs.language !== undefined ? gs.language : I18n.currentLang;
+            let rawScale = gs.uiScale !== undefined ? Number(gs.uiScale) : 1.0;
+            generalTabRoot.uiScale = (!isNaN(rawScale) && rawScale > 0) ? Math.max(0.5, Math.min(2.0, rawScale)) : 1.0;
             generalTabRoot.muteSfx = gs.muteSfx !== undefined ? gs.muteSfx : false;
             generalTabRoot.sfxVolume = gs.sfxVolume !== undefined ? gs.sfxVolume : 100;
             generalTabRoot.quickactions = gs.quickactions !== undefined ? gs.quickactions : true;
@@ -91,6 +108,7 @@ GuideTab {
         if (typeof Config !== "undefined" && !Config.dataReady) return;
         let current = Object.assign({}, Config.getSetting("general", generalTabRoot.defaultGeneralSettings));
         current.language = generalTabRoot.currentLanguage;
+        current.uiScale = Math.round(generalTabRoot.uiScale * 100) / 100;
         current.avatarPath = generalTabRoot.currentAvatarSourcePath;
         current.muteSfx = generalTabRoot.muteSfx;
         current.sfxVolume = generalTabRoot.sfxVolume;

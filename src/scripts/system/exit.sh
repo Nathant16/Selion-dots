@@ -5,6 +5,7 @@ rm -f /tmp/serpantinumd.lock /tmp/serpantinumd.pid 2>/dev/null
 if command -v systemctl &>/dev/null; then
     systemctl --user stop graphical-session.target 2>/dev/null
     systemctl --user stop graphical-session-pre.target 2>/dev/null
+    systemctl --user unset-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET HYPRLAND_INSTANCE_SIGNATURE SWAYSOCK MANGO_INSTANCE_SIGNATURE UMBRIEL_SOCKET DRIFTWM_SOCKET 2>/dev/null || true
 fi
 
 if command -v dinitctl &>/dev/null; then
@@ -98,7 +99,7 @@ quit_driftwm() {
 quit_hyprland() {
     local uid="$(id -u)"
     if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
-        HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 "/run/user/$uid/hypr/" 2>/dev/null | head -n1 || ls -1 /tmp/hypr/ 2>/dev/null | head -n1)
+        HYPRLAND_INSTANCE_SIGNATURE=$(ls -1t "/run/user/$uid/hypr/" 2>/dev/null | head -n1 || ls -1t /tmp/hypr/ 2>/dev/null | head -n1)
         export HYPRLAND_INSTANCE_SIGNATURE
     fi
     hyprctl dispatch 'hl.dsp.exit()' 2>/dev/null || \

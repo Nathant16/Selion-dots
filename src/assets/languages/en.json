@@ -227,8 +227,8 @@
         "desc": "Select system interface language"
       },
       "uiscale": {
-        "title": "UI scale",
-        "desc": "Set the overall interface scale factor"
+        "title": "Quickshell UI Scale",
+        "desc": "Scale top bar, widgets, launcher and settings independently of WM display scale"
       },
       "avatar": {
         "title": "Profile picture",
@@ -323,8 +323,9 @@
         "desc": "Adjust the color temperature strength"
       },
       "uiscale": {
-        "title": "UI scale",
-        "desc": "Set the display scale factor for this monitor"
+        "title": "Display Scale (WM)",
+        "desc": "Compositor and window scale for this monitor (e.g. 100%, 125%, 150%, 200%)",
+        "desc_mango": "Integer WM scale only (Mango does not support fractional scaling — use Quickshell UI Scale in General)"
       },
       "widgets": {
         "title": "Desktop widgets",

@@ -339,30 +339,77 @@ EOF
     gsettings set org.gnome.desktop.interface cursor-theme 'Windows-11M-Dark' 2>/dev/null || true
     gsettings set org.gnome.desktop.interface cursor-size 32 2>/dev/null || true
     local_rdir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-    if [ -z "$DRIFTWM_SOCKET" ] && [ -d "$local_rdir/driftwm" ]; then
-        local_ds=$(find "$local_rdir/driftwm" -name "ipc-*.sock" 2>/dev/null | head -n 1)
-        [ -n "$local_ds" ] && export DRIFTWM_SOCKET="$local_ds" && export XDG_CURRENT_DESKTOP="driftwm"
+    local_sess="${XDG_SESSION_DESKTOP,,} ${DESKTOP_SESSION,,}"
+    active_wm=""
+    case "$local_sess" in
+        *drift*) active_wm="driftwm" ;;
+        *umbriel*) active_wm="umbriel" ;;
+        *mango*) active_wm="mango" ;;
+        *sway*) active_wm="sway" ;;
+        *niri*) active_wm="niri" ;;
+        *hypr*) active_wm="hyprland" ;;
+    esac
+    if [ -z "$active_wm" ]; then
+        if pgrep -x driftwm >/dev/null 2>&1; then active_wm="driftwm"
+        elif pgrep -x umbriel >/dev/null 2>&1; then active_wm="umbriel"
+        elif pgrep -x mango >/dev/null 2>&1; then active_wm="mango"
+        elif pgrep -x sway >/dev/null 2>&1; then active_wm="sway"
+        elif pgrep -x niri >/dev/null 2>&1; then active_wm="niri"
+        elif pgrep -x Hyprland >/dev/null 2>&1; then active_wm="hyprland"
+        fi
     fi
-    if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ] && [ -d "$local_rdir/hypr" ]; then
-        local_hs=$(ls -d "$local_rdir/hypr"/* 2>/dev/null | head -n 1)
-        [ -n "$local_hs" ] && export HYPRLAND_INSTANCE_SIGNATURE="$(basename "$local_hs")" && export XDG_CURRENT_DESKTOP="Hyprland"
-    fi
-    if [ -z "$SWAYSOCK" ]; then
-        local_ss=$(ls "$local_rdir"/sway-ipc.*.sock 2>/dev/null | head -n 1)
-        [ -n "$local_ss" ] && export SWAYSOCK="$local_ss" && export XDG_CURRENT_DESKTOP="sway"
-    fi
-    if [ -z "$NIRI_SOCKET" ]; then
-        local_ns=$(ls "$local_rdir"/niri*.sock 2>/dev/null | head -n 1)
-        [ -n "$local_ns" ] && export NIRI_SOCKET="$local_ns" && export XDG_CURRENT_DESKTOP="niri"
-    fi
-    if [ -z "$MANGO_INSTANCE_SIGNATURE" ]; then
-        local_ms=$(ls "$local_rdir"/mango-*.sock 2>/dev/null | head -n 1)
-        [ -n "$local_ms" ] && export MANGO_INSTANCE_SIGNATURE="$local_ms" && export XDG_CURRENT_DESKTOP="mango"
-    fi
-    if [ -z "$UMBRIEL_SOCKET" ]; then
-        local_us=$(ls "$local_rdir"/umbriel-*.sock 2>/dev/null | head -n 1)
-        [ -n "$local_us" ] && export UMBRIEL_SOCKET="$local_us" && export XDG_CURRENT_DESKTOP="umbriel"
-    fi
+
+    # Drop any leaked compositor socket variables belonging to previous sessions
+    case "$active_wm" in
+        driftwm)
+            unset HYPRLAND_INSTANCE_SIGNATURE SWAYSOCK NIRI_SOCKET MANGO_INSTANCE_SIGNATURE UMBRIEL_SOCKET
+            if [ -z "$DRIFTWM_SOCKET" ] && [ -d "$local_rdir/driftwm" ]; then
+                local_ds=$(find "$local_rdir/driftwm" -name "ipc-*.sock" 2>/dev/null | head -n 1)
+                [ -n "$local_ds" ] && export DRIFTWM_SOCKET="$local_ds"
+            fi
+            export XDG_CURRENT_DESKTOP="driftwm"
+            ;;
+        umbriel)
+            unset HYPRLAND_INSTANCE_SIGNATURE SWAYSOCK NIRI_SOCKET MANGO_INSTANCE_SIGNATURE DRIFTWM_SOCKET
+            if [ -z "$UMBRIEL_SOCKET" ]; then
+                local_us=$(ls -t "$local_rdir"/umbriel-*.sock 2>/dev/null | head -n 1)
+                [ -n "$local_us" ] && export UMBRIEL_SOCKET="$local_us"
+            fi
+            export XDG_CURRENT_DESKTOP="Umbriel"
+            ;;
+        niri)
+            unset HYPRLAND_INSTANCE_SIGNATURE SWAYSOCK MANGO_INSTANCE_SIGNATURE UMBRIEL_SOCKET DRIFTWM_SOCKET
+            if [ -z "$NIRI_SOCKET" ]; then
+                local_ns=$(ls -t "$local_rdir"/niri*.sock 2>/dev/null | head -n 1)
+                [ -n "$local_ns" ] && export NIRI_SOCKET="$local_ns"
+            fi
+            export XDG_CURRENT_DESKTOP="niri"
+            ;;
+        sway)
+            unset HYPRLAND_INSTANCE_SIGNATURE NIRI_SOCKET MANGO_INSTANCE_SIGNATURE UMBRIEL_SOCKET DRIFTWM_SOCKET
+            if [ -z "$SWAYSOCK" ]; then
+                local_ss=$(ls -t "$local_rdir"/sway-ipc.*.sock 2>/dev/null | head -n 1)
+                [ -n "$local_ss" ] && export SWAYSOCK="$local_ss"
+            fi
+            export XDG_CURRENT_DESKTOP="sway"
+            ;;
+        mango)
+            unset HYPRLAND_INSTANCE_SIGNATURE SWAYSOCK NIRI_SOCKET UMBRIEL_SOCKET DRIFTWM_SOCKET
+            if [ -z "$MANGO_INSTANCE_SIGNATURE" ]; then
+                local_ms=$(ls -t "$local_rdir"/mango-*.sock 2>/dev/null | head -n 1)
+                [ -n "$local_ms" ] && export MANGO_INSTANCE_SIGNATURE="$local_ms"
+            fi
+            export XDG_CURRENT_DESKTOP="mango"
+            ;;
+        hyprland)
+            unset SWAYSOCK NIRI_SOCKET MANGO_INSTANCE_SIGNATURE UMBRIEL_SOCKET DRIFTWM_SOCKET
+            if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ] && [ -d "$local_rdir/hypr" ]; then
+                local_hs=$(ls -dt "$local_rdir/hypr"/* 2>/dev/null | head -n 1)
+                [ -n "$local_hs" ] && export HYPRLAND_INSTANCE_SIGNATURE="$(basename "$local_hs")"
+            fi
+            export XDG_CURRENT_DESKTOP="Hyprland"
+            ;;
+    esac
 
     # On NVIDIA, keep wallpaper video decoding off the NVIDIA GPU: NVDEC keeps it at
     # full clocks (~+8 W measured on a 1080p loop). Users can still override the variable.

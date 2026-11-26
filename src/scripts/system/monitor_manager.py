@@ -37,12 +37,13 @@ def get_wayland_env():
     if not env.get("HYPRLAND_INSTANCE_SIGNATURE") and os.path.exists(f"{runtime_dir}/hypr"):
         socks = glob.glob(f"{runtime_dir}/hypr/*/.socket.sock")
         if socks:
-            env["HYPRLAND_INSTANCE_SIGNATURE"] = os.path.basename(os.path.dirname(socks[0]))
+            newest_sock = max(socks, key=os.path.getmtime)
+            env["HYPRLAND_INSTANCE_SIGNATURE"] = os.path.basename(os.path.dirname(newest_sock))
 
     if not env.get("SWAYSOCK"):
         sw_socks = glob.glob(f"{runtime_dir}/sway-ipc.*.sock")
         if sw_socks:
-            env["SWAYSOCK"] = sw_socks[0]
+            env["SWAYSOCK"] = max(sw_socks, key=os.path.getmtime)
 
     return env
 
@@ -169,7 +170,7 @@ def apply_driftwm(name, resolution, framerate, scale, env):
     except Exception:
         pass
 
-def resolve_current_resolution(name, env):
+def _resolve_current_mode(name, env):
     try:
         from monitors_detector import get_wlr_randr, get_hyprland_monitors
         monitors = get_wlr_randr(env) or get_hyprland_monitors(env)
@@ -178,22 +179,30 @@ def resolve_current_resolution(name, env):
                 cur_mode = next((mode for mode in m.get("modes", []) if mode.get("current")), None)
                 if not cur_mode and m.get("modes"):
                     cur_mode = m["modes"][0]
-                if cur_mode and cur_mode.get("width") and cur_mode.get("height"):
-                    return f"{cur_mode['width']}x{cur_mode['height']}"
-                if m.get("width") and m.get("height"):
-                    return f"{m['width']}x{m['height']}"
+                return m, cur_mode
     except Exception:
         pass
+    return None, None
+
+
+def resolve_current_resolution(name, env):
+    m, cur_mode = _resolve_current_mode(name, env)
+    if cur_mode and cur_mode.get("width") and cur_mode.get("height"):
+        return f"{cur_mode['width']}x{cur_mode['height']}"
+    if m and m.get("width") and m.get("height"):
+        return f"{m['width']}x{m['height']}"
     return None
 
-def apply_hyprland(name, resolution, framerate, scale, env):
-    if not resolution:
-        resolution = resolve_current_resolution(name, env)
-    rate_str = f"@{framerate}" if framerate else ""
-    mode_str = f"{resolution}{rate_str}" if resolution else "preferred"
-    scale_val = float(scale) if scale is not None else 1.0
 
-    # 1. Live apply via wlr-randr (standard Wayland protocol supported across compositors)
+def resolve_current_framerate(name, env):
+    _, cur_mode = _resolve_current_mode(name, env)
+    if cur_mode and cur_mode.get("refresh"):
+        return str(int(round(float(cur_mode["refresh"]))))
+    return None
+
+
+def _apply_wlr_randr(name, resolution, framerate, scale_val, env):
+    """Apply mode and/or scale dynamically via wlr-randr."""
     if resolution:
         wlr_cmds = []
         if framerate:
@@ -211,48 +220,224 @@ def apply_hyprland(name, resolution, framerate, scale, env):
                 pass
             wlr_cmds.append(["wlr-randr", "--output", name, "--custom-mode", f"{resolution}@{framerate}Hz", "--scale", str(scale_val)])
             wlr_cmds.append(["wlr-randr", "--output", name, "--mode", f"{resolution}@{framerate}Hz", "--scale", str(scale_val)])
+            wlr_cmds.append(["wlr-randr", "--output", name, "--mode", f"{resolution}@{framerate}", "--scale", str(scale_val)])
         wlr_cmds.append(["wlr-randr", "--output", name, "--mode", str(resolution), "--scale", str(scale_val)])
         for wcmd in wlr_cmds:
             try:
                 res = subprocess.run(wcmd, env=env, capture_output=True, timeout=2)
                 if res.returncode == 0:
-                    break
+                    return True
             except Exception:
                 pass
+    elif scale_val is not None:
+        try:
+            res = subprocess.run(["wlr-randr", "--output", name, "--scale", str(scale_val)], env=env, capture_output=True, timeout=2)
+            return res.returncode == 0
+        except Exception:
+            pass
+    return False
 
-    # 2. Also try hyprctl keyword monitor
-    cmd = ["hyprctl", "keyword", "monitor", f"{name},{mode_str},auto,{scale_val}"]
+
+def _find_brace_blocks(text, header_re):
+    """Find top-level header { ... } spans in brace-delimited configs."""
+    spans = []
+    pos = 0
+    while pos < len(text):
+        m = header_re.search(text, pos)
+        if not m:
+            break
+        start = m.start()
+        brace_idx = text.find("{", m.end() - 1)
+        if brace_idx == -1:
+            break
+        depth = 0
+        i = brace_idx
+        in_str = False
+        esc = False
+        while i < len(text):
+            ch = text[i]
+            if esc:
+                esc = False
+            elif ch == "\\" and in_str:
+                esc = True
+            elif ch == '"':
+                in_str = not in_str
+            elif not in_str:
+                if ch == "{":
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                    if depth == 0:
+                        end = i + 1
+                        if end < len(text) and text[end] == "\n":
+                            end += 1
+                        spans.append((start, end, text[start:end]))
+                        pos = end
+                        break
+            i += 1
+        else:
+            break
+    return spans
+
+
+def _upsert_brace_block(text, header_re, match_name_fn, new_block, default_header, drop_placeholder_fn=None):
+    """Update or insert one named block inside a brace-delimited config while keeping other blocks."""
+    spans = _find_brace_blocks(text, header_re)
+    if not spans:
+        prefix = text.rstrip()
+        if not prefix:
+            prefix = default_header.rstrip()
+        return prefix + "\n\n" + new_block.rstrip() + "\n", ""
+
+    pieces = []
+    last = 0
+    replaced = False
+    replaced_old = ""
+    for start, end, blk in spans:
+        pieces.append(text[last:start])
+        if drop_placeholder_fn and drop_placeholder_fn(blk):
+            last = end
+            continue
+        if match_name_fn(blk):
+            if not replaced:
+                pieces.append(new_block.rstrip() + "\n\n")
+                replaced = True
+                replaced_old = blk
+        else:
+            pieces.append(blk if blk.endswith("\n") else blk + "\n")
+        last = end
+    pieces.append(text[last:])
+
+    out = "".join(pieces)
+    if not replaced:
+        out = out.rstrip() + "\n\n" + new_block.rstrip() + "\n"
+    out = re.sub(r"\n{3,}", "\n\n", out).rstrip() + "\n"
+    return out, replaced_old
+
+
+def apply_hyprland(name, resolution, framerate, scale, env):
+    if not resolution:
+        resolution = resolve_current_resolution(name, env)
+    rate_str = f"@{framerate}" if framerate else ""
+    mode_str = f"{resolution}{rate_str}" if resolution else "preferred"
+    scale_val = float(scale) if scale is not None else 1.0
+
+    # 1. Persist first / check existing block position cleanly
+    cfg_path = Path.home() / ".config" / "hypr" / "default" / "monitors.lua"
+    position_str = "auto"
+    existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
+
+    call_re = re.compile(r'^[ \t]*hl\.monitor\(\s*\{', re.MULTILINE)
+    spans = []
+    pos = 0
+    while pos < len(existing):
+        m = call_re.search(existing, pos)
+        if not m:
+            break
+        start = m.start()
+        paren_idx = existing.find("(", m.start())
+        depth = 0
+        i = paren_idx
+        in_str = False
+        esc = False
+        while i < len(existing):
+            ch = existing[i]
+            if esc:
+                esc = False
+            elif ch == "\\" and in_str:
+                esc = True
+            elif ch in ('"', "'") and not in_str:
+                quote_char = ch
+                in_str = True
+            elif in_str and ch == quote_char:
+                in_str = False
+            elif not in_str:
+                if ch == "(":
+                    depth += 1
+                elif ch == ")":
+                    depth -= 1
+                    if depth == 0:
+                        end = i + 1
+                        if end < len(existing) and existing[end] == "\n":
+                            end += 1
+                        spans.append((start, end, existing[start:end]))
+                        pos = end
+                        break
+            i += 1
+        else:
+            break
+
+    esc_name = re.escape(name)
+    for _, _, blk in spans:
+        if re.search(rf'output\s*=\s*["\']{esc_name}["\']', blk):
+            pm = re.search(r'position\s*=\s*["\']([^"\']+)["\']', blk)
+            if pm:
+                position_str = pm.group(1)
+            if not resolution:
+                mm = re.search(r'mode\s*=\s*["\']([^"\']+)["\']', blk)
+                if mm:
+                    mode_str = mm.group(1)
+            break
+
+    # 2. Live apply via wlr-randr and hyprctl keyword monitor
+    _apply_wlr_randr(name, resolution, framerate, scale_val, env)
     try:
-        subprocess.run(cmd, env=env, capture_output=True, timeout=2)
+        subprocess.run(
+            ["hyprctl", "keyword", "monitor", f"{name},{mode_str},{position_str},{scale_val}"],
+            env=env, capture_output=True, timeout=2
+        )
     except Exception:
         pass
 
-    # 2. Persist to ~/.config/hypr/default/monitors.lua
-    cfg_path = Path.home() / ".config" / "hypr" / "default" / "monitors.lua"
+    # 3. Persist only this monitor in ~/.config/hypr/default/monitors.lua
+    new_blk = (
+        f'hl.monitor({{\n'
+        f'    output = "{name}",\n'
+        f'    mode = "{mode_str}",\n'
+        f'    position = "{position_str}",\n'
+        f'    scale = {scale_val},\n'
+        f'}})\n'
+    )
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
-        content = (
-            '-- Autogenerated monitors configuration for Serpantinum\n\n'
-            f'hl.monitor({{\n'
-            f'    output = "{name}",\n'
-            f'    mode = "{mode_str}",\n'
-            f'    position = "auto",\n'
-            f'    scale = {scale_val},\n'
-            f'}})\n'
-        )
-        cfg_path.write_text(content, encoding="utf-8")
+        if not spans:
+            header = existing.rstrip() or "-- Autogenerated monitors configuration for Serpantinum"
+            updated = header + "\n\n" + new_blk
+        else:
+            pieces = []
+            last = 0
+            replaced = False
+            for start, end, blk in spans:
+                pieces.append(existing[last:start])
+                if re.search(r'output\s*=\s*["\']\s*["\']', blk):
+                    last = end
+                    continue
+                if re.search(rf'output\s*=\s*["\']{esc_name}["\']', blk):
+                    if not replaced:
+                        pieces.append(new_blk + "\n")
+                        replaced = True
+                else:
+                    pieces.append(blk if blk.endswith("\n") else blk + "\n")
+                last = end
+            pieces.append(existing[last:])
+            updated = "".join(pieces)
+            if not replaced:
+                updated = updated.rstrip() + "\n\n" + new_blk
+            updated = re.sub(r"\n{3,}", "\n\n", updated).rstrip() + "\n"
+        cfg_path.write_text(updated, encoding="utf-8")
     except Exception as e:
         sys.stderr.write(f"Warning: failed to write hyprland monitors.lua: {e}\n")
+
 
 def apply_sway(name, resolution, framerate, scale, env):
     if not resolution:
         resolution = resolve_current_resolution(name, env)
-    rate_str = f"@{framerate}Hz" if framerate else "@60Hz"
+    rate_str = f"@{framerate}Hz" if framerate else ""
     mode_str = f"{resolution}{rate_str}" if resolution else ""
     scale_val = float(scale) if scale is not None else 1.0
 
     # Live apply
-    if resolution:
+    if mode_str:
         try:
             subprocess.run(["swaymsg", "output", name, "mode", mode_str], env=env, capture_output=True, timeout=2)
         except Exception:
@@ -263,96 +448,198 @@ def apply_sway(name, resolution, framerate, scale, env):
         except Exception:
             pass
 
-    # Persist to ~/.config/sway/default/monitors
+    # Persist to ~/.config/sway/default/monitors without clobbering other outputs
     cfg_path = Path.home() / ".config" / "sway" / "default" / "monitors"
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
-        mode_part = f"mode {mode_str} " if mode_str else ""
-        content = (
-            '# Autogenerated monitor configuration for Serpantinum\n'
+        existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
+        esc_name = re.escape(name)
+        header_re = re.compile(r'^[ \t]*output\s+(?:"[^"]+"|\S+)\s*\{', re.MULTILINE)
+        mode_part = f"    mode {mode_str}\n" if mode_str else ""
+        new_block = (
             f'output "{name}" {{\n'
-            f'    {mode_part}scale {scale_val}\n'
-            '}\n'
+            f'{mode_part}'
+            f'    scale {scale_val}\n'
+            f'}}\n'
         )
-        cfg_path.write_text(content, encoding="utf-8")
+        updated, _ = _upsert_brace_block(
+            existing,
+            header_re,
+            lambda b: bool(re.match(rf'^[ \t]*output\s+"?{esc_name}"?\s*\{{', b)),
+            new_block,
+            "# Autogenerated monitor configuration for Serpantinum",
+        )
+        cfg_path.write_text(updated, encoding="utf-8")
     except Exception as e:
         sys.stderr.write(f"Warning: failed to write sway monitors config: {e}\n")
 
+
 def apply_niri(name, resolution, framerate, scale, env):
-    rate_str = f"@{framerate}" if framerate else "@60"
+    if not resolution:
+        resolution = resolve_current_resolution(name, env)
+    rate_str = f"@{framerate}" if framerate else ""
     mode_str = f"{resolution}{rate_str}" if resolution else ""
     scale_val = float(scale) if scale is not None else 1.0
 
     # Live apply
     if resolution:
-        try:
-            subprocess.run(["niri", "msg", "output", name, "mode", mode_str], env=env, capture_output=True, timeout=2)
-        except Exception:
-            pass
+        live_mode = f"{resolution}@{float(framerate):.3f}" if framerate else str(resolution)
+        for mcmd in (
+            ["niri", "msg", "output", name, "mode", live_mode],
+            ["niri", "msg", "output", name, "mode", mode_str],
+            ["niri", "msg", "output", name, "mode", str(resolution)],
+        ):
+            try:
+                res = subprocess.run(mcmd, env=env, capture_output=True, timeout=2)
+                if res.returncode == 0:
+                    break
+            except Exception:
+                pass
     if scale is not None:
         try:
             subprocess.run(["niri", "msg", "output", name, "scale", str(scale_val)], env=env, capture_output=True, timeout=2)
         except Exception:
             pass
 
-    # Persist to ~/.config/niri/default/monitors.kdl
+    # Persist to ~/.config/niri/default/monitors.kdl without clobbering other outputs
     cfg_path = Path.home() / ".config" / "niri" / "default" / "monitors.kdl"
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
+        existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
+        esc_name = re.escape(name)
+        header_re = re.compile(r'^[ \t]*output\s+"[^"]+"\s*\{', re.MULTILINE)
         mode_line = f'    mode "{mode_str}"\n' if mode_str else ""
-        content = (
-            '// Autogenerated monitors configuration for Serpantinum\n'
+        new_block = (
             f'output "{name}" {{\n'
             f'{mode_line}'
             f'    scale {scale_val}\n'
-            '}\n'
+            f'}}\n'
         )
-        cfg_path.write_text(content, encoding="utf-8")
+        updated, _ = _upsert_brace_block(
+            existing,
+            header_re,
+            lambda b: bool(re.match(rf'^[ \t]*output\s+"{esc_name}"\s*\{{', b)),
+            new_block,
+            "// Autogenerated monitors configuration for Serpantinum",
+        )
+        cfg_path.write_text(updated, encoding="utf-8")
     except Exception as e:
         sys.stderr.write(f"Warning: failed to write niri monitors.kdl: {e}\n")
 
-def apply_mango(name, resolution, framerate, scale, env):
-    mode_str = f"{resolution}@{framerate}" if framerate and resolution else (resolution or "")
-    scale_val = float(scale) if scale is not None else 1.0
 
-    if resolution:
-        try:
-            subprocess.run(["mmsg", "dispatch", f"output {name} mode {mode_str}"], env=env, capture_output=True, timeout=2)
-        except Exception:
-            pass
+def apply_mango(name, resolution, framerate, scale, env):
+    if not resolution:
+        resolution = resolve_current_resolution(name, env)
+    if not framerate:
+        framerate = resolve_current_framerate(name, env)
+    scale_val = float(scale) if scale is not None else 1.0
+    if abs(scale_val - round(scale_val)) < 1e-6:
+        scale_val = int(round(scale_val))
+
+    _apply_wlr_randr(name, resolution, framerate, scale_val, env)
 
     cfg_path = Path.home() / ".config" / "mango" / "default" / "monitors.conf"
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
-        content = (
-            '# Autogenerated monitor configuration for Serpantinum\n'
-            f'monitor={name},{mode_str},auto,{scale_val}\n'
-        )
-        cfg_path.write_text(content, encoding="utf-8")
+        existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
+        esc_name = re.escape(name)
+
+        rule_parts = [f"name:{name}"]
+        if resolution and "x" in str(resolution):
+            w, h = str(resolution).split("x", 1)
+            rule_parts.extend([f"width:{w}", f"height:{h}"])
+        if framerate:
+            rule_parts.append(f"refresh:{int(round(float(framerate)))}")
+        rule_parts.append(f"scale:{scale_val}")
+        new_line = "monitor_rule=" + ",".join(rule_parts)
+
+        lines = existing.splitlines()
+        out_lines = []
+        replaced = False
+        line_re = re.compile(rf'^\s*(?:monitor_rule|monitor)\s*=(?:[^,\n]*,)?\s*(?:name:)?{esc_name}(?:,|$)')
+        for line in lines:
+            if line_re.search(line):
+                if not replaced:
+                    out_lines.append(new_line)
+                    replaced = True
+                continue
+            out_lines.append(line)
+
+        if not out_lines:
+            out_lines = ["# Autogenerated monitor configuration for Serpantinum", new_line]
+        elif not replaced:
+            out_lines.append(new_line)
+
+        cfg_path.write_text("\n".join(out_lines).rstrip() + "\n", encoding="utf-8")
     except Exception as e:
         sys.stderr.write(f"Warning: failed to write mango monitors.conf: {e}\n")
 
+
 def apply_umbriel(name, resolution, framerate, scale, env):
+    if not resolution:
+        resolution = resolve_current_resolution(name, env)
     mode_str = f"{resolution}@{framerate}" if framerate and resolution else (resolution or "")
     scale_val = float(scale) if scale is not None else 1.0
 
-    # Native config command persists the setting in ~/.config/umbriel.
+    # Live runtime overrides (lasts until exit in Umbriel).
+    live_applied = False
     try:
         if mode_str:
-            subprocess.run(["umbriel", "config", "set", f'output."{name}".mode', mode_str], env=env, capture_output=True, timeout=2)
+            r1 = subprocess.run(["umbriel", "config", "set", f'output."{name}".mode', mode_str], env=env, capture_output=True, timeout=2)
+            live_applied = r1.returncode == 0
         if scale is not None:
-            subprocess.run(["umbriel", "config", "set", f'output."{name}".scale', str(scale_val)], env=env, capture_output=True, timeout=2)
+            r2 = subprocess.run(["umbriel", "config", "set", f'output."{name}".scale', str(scale_val)], env=env, capture_output=True, timeout=2)
+            live_applied = live_applied or (r2.returncode == 0)
     except Exception:
         pass
 
-    # Fallback live apply for running sessions.
+    if not live_applied:
+        _apply_wlr_randr(name, resolution, framerate, scale_val, env)
+
+    # Persist per-output configuration in ~/.config/umbriel/config/monitors.toml
+    cfg_path = Path.home() / ".config" / "umbriel" / "config" / "monitors.toml"
     try:
+        cfg_path.parent.mkdir(parents=True, exist_ok=True)
+        existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
+        esc_name = re.escape(name)
+        header_re = re.compile(rf'^\[output\.(?:"{esc_name}"|{esc_name})\]\s*$', re.MULTILINE)
+        lines = existing.splitlines()
+        block_lines = [f'[output."{name}"]']
         if mode_str:
-            subprocess.run(["wlr-randr", "--output", name, "--mode", mode_str, "--scale", str(scale_val)], env=env, capture_output=True, timeout=2)
-        elif scale is not None:
-            subprocess.run(["wlr-randr", "--output", name, "--scale", str(scale_val)], env=env, capture_output=True, timeout=2)
-    except Exception:
-        pass
+            block_lines.append(f'mode = "{mode_str}"')
+        block_lines.append(f"scale = {scale_val}")
+
+        out_lines = []
+        i = 0
+        replaced = False
+        while i < len(lines):
+            if header_re.match(lines[i].strip()):
+                i += 1
+                existing_mode = ""
+                while i < len(lines) and not lines[i].strip().startswith("["):
+                    m_mode = re.match(r'^\s*mode\s*=\s*"([^"]*)"', lines[i])
+                    if m_mode:
+                        existing_mode = m_mode.group(1)
+                    i += 1
+                if not replaced:
+                    if not mode_str and existing_mode:
+                        block_lines.insert(1, f'mode = "{existing_mode}"')
+                    out_lines.extend(block_lines)
+                    replaced = True
+                continue
+            out_lines.append(lines[i])
+            i += 1
+
+        if not out_lines:
+            out_lines = ["# Autogenerated monitor configuration for Serpantinum", ""] + block_lines
+        elif not replaced:
+            if out_lines and out_lines[-1].strip():
+                out_lines.append("")
+            out_lines.extend(block_lines)
+
+        cfg_path.write_text("\n".join(out_lines).rstrip() + "\n", encoding="utf-8")
+    except Exception as e:
+        sys.stderr.write(f"Warning: failed to write umbriel monitors.toml: {e}\n")
 
 def apply_generic(name, resolution, framerate, scale, env):
     scale_val = float(scale) if scale is not None else 1.0

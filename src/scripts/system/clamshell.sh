@@ -23,8 +23,8 @@ for mon in /sys/class/drm/*/status; do
 done
 
 # Resolve Hyprland instance signature if not set
-if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ] && [ -d "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/hypr" ]; then
-    local_hs=$(ls -d "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/hypr"/* 2>/dev/null | head -n 1)
+if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ] && [ -d "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/hypr" ] && pgrep -x Hyprland >/dev/null 2>&1; then
+    local_hs=$(ls -dt "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/hypr"/* 2>/dev/null | head -n 1)
     [ -n "$local_hs" ] && export HYPRLAND_INSTANCE_SIGNATURE="$(basename "$local_hs")"
 fi
 

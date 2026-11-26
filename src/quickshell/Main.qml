@@ -277,7 +277,7 @@ PanelWindow {
             if (isNaN(h)) h = 40;
             return Math.max(28, Math.min(48, h)) / 40;
         }
-        property int barThickness: Math.round(48 * thicknessRatio)
+        property int barThickness: Math.round(48 * thicknessRatio * (masterWindow.globalUiScale || 1.0))
         property string bp: masterWindow.barPosition
         property bool activeBar: !masterWindow.isBarEffectivelyHidden
 
@@ -439,7 +439,7 @@ PanelWindow {
             sVal = parsed.uiScale;
         }
 
-        let targetScale = (sVal !== undefined && typeof sVal === "number" && !isNaN(sVal) && sVal > 0) ? sVal : 1.0;
+        let targetScale = (sVal !== undefined && typeof sVal === "number" && !isNaN(sVal) && sVal > 0) ? Math.max(0.5, Math.min(2.0, sVal)) : 1.0;
         if (masterWindow.globalUiScale !== targetScale) {
             masterWindow.globalUiScale = targetScale;
         }
@@ -453,6 +453,9 @@ PanelWindow {
     Connections {
         target: (typeof Config !== "undefined") ? Config : null
         function onSettingsLoaded() {
+            masterWindow.applyConfigSettings();
+        }
+        function onRawSettingsChanged() {
             masterWindow.applyConfigSettings();
         }
     }
@@ -517,10 +520,10 @@ PanelWindow {
         let tw = t.w, th = t.h;
         if (item) {
             if (typeof item.targetMasterWidth === "number" && !isNaN(item.targetMasterWidth) && item.targetMasterWidth >= 50) {
-                tw = item.targetMasterWidth;
+                tw = Math.min(masterWindow.width > 0 ? masterWindow.width : item.targetMasterWidth, item.targetMasterWidth);
             }
             if (typeof item.targetMasterHeight === "number" && !isNaN(item.targetMasterHeight) && item.targetMasterHeight >= 50) {
-                th = item.targetMasterHeight;
+                th = Math.min(masterWindow.height > 0 ? masterWindow.height : item.targetMasterHeight, item.targetMasterHeight);
             }
         }
 

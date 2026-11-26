@@ -73,7 +73,7 @@ function fastfetch
     command fastfetch $argv
 end
 
-# Универсальный выход из графической сессии (Hyprland / Sway / DriftWM / Niri / Mango) в SDDM
+# Универсальный выход из графической сессии (Hyprland / Sway / DriftWM / Niri / Mango / Umbriel) в SDDM
 function logout --description "Выход из графической сессии в SDDM"
     set -l exit_script "$HOME/.local/share/serpantinum/src/scripts/system/exit.sh"
     if test -f "$exit_script"
@@ -90,6 +90,8 @@ function logout --description "Выход из графической сесси
             end
         end
         mmsg dispatch quit 2>/dev/null; or pkill -SIGTERM -x mango 2>/dev/null; or loginctl terminate-session (loginctl session-status --no-legend 2>/dev/null | awk '{print $1; exit}') 2>/dev/null; or loginctl terminate-user $USER
+    else if test "$DESKTOP_SESSION" = "umbriel" -o "$XDG_CURRENT_DESKTOP" = "Umbriel"; or pgrep -x umbriel >/dev/null
+        umbriel msg session-quit skip-confirmation 2>/dev/null; or umbriel msg session-quit 2>/dev/null; or pkill -SIGTERM -x umbriel 2>/dev/null; or loginctl terminate-user $USER
     else if test "$DESKTOP_SESSION" = "driftwm" -o "$XDG_CURRENT_DESKTOP" = "driftwm:wlroots"; or pgrep -x driftwm >/dev/null
         driftwm msg action quit 2>/dev/null; or loginctl terminate-user $USER
     else if test "$DESKTOP_SESSION" = "niri" -o "$XDG_CURRENT_DESKTOP" = "niri"; or pgrep -x niri >/dev/null

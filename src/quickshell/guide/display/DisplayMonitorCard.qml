@@ -349,15 +349,18 @@ Rectangle {
         }
 
         SettingsRow {
-            visible: monDelegate.tab.compositor !== "mango"
+            id: displayScaleRow
+            readonly property bool isMango: monDelegate.tab.compositor === "mango"
             rootObj: monDelegate.rootObj
             settingId: "display_uiscale_" + monDelegate.monName
             section: monDelegate.monName
-            searchKeywords: "display ui scale scaling hidpi dpi fractional zoom monitor " + monDelegate.monName
+            searchKeywords: "display wm monitor scale scaling hidpi dpi fractional zoom compositor windows " + monDelegate.monName
             baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
             icon: "󰍍"
-            title: I18n.t("guide.display.uiscale.title", "UI Scale")
-            description: I18n.t("guide.display.uiscale.desc", "Scale interface size for this display")
+            title: I18n.t("guide.display.uiscale.title", "Display Scale (WM)")
+            description: displayScaleRow.isMango
+                ? I18n.t("guide.display.uiscale.desc_mango", "Integer WM scale only (Mango does not support fractional scaling — use Quickshell UI Scale in General)")
+                : I18n.t("guide.display.uiscale.desc", "Compositor and window scale for this monitor (e.g. 100%, 125%, 150%, 200%)")
 
             Draggable {
                 id: uiScaleSlider
@@ -365,13 +368,16 @@ Rectangle {
                 Layout.rightMargin: rootObj.s(8)
                 implicitWidth: rootObj.s(220)
                 implicitHeight: rootObj.s(18)
-                from: 50
-                to: 250
-                stepSize: 5
+                from: displayScaleRow.isMango ? 100 : 50
+                to: displayScaleRow.isMango ? 300 : 250
+                stepSize: displayScaleRow.isMango ? 100 : 5
                 defaultValue: 100
+                alwaysShowHandle: displayScaleRow.isMango
                 showValueBubble: true
                 valueFormatter: function(v) { return Math.round(v) + "%" }
-                value: Math.round(monDelegate.currentScale * 100)
+                value: displayScaleRow.isMango
+                    ? Math.max(100, Math.min(300, Math.round(modelData && modelData.scale !== undefined ? modelData.scale : monDelegate.currentScale) * 100))
+                    : Math.round(monDelegate.currentScale * 100)
                 backgroundColor: ThemeBackend.surface0
                 accentColor: ThemeBackend.mauve
                 handleColor: ThemeBackend.text

@@ -1,6 +1,7 @@
 {
   "general": {
     "language": "en",
+    "uiScale": 1.0,
     "avatarPath": "",
     "muteSfx": false,
     "weatherInterval": 30,

@@ -1,3 +1,11 @@
+### 2.9.1.2
+
+- feat(scaling): separate WM per-monitor `Display Scale (WM)` in Display settings from independent `Quickshell UI Scale` (`general.uiScale`) in General settings, and wire `Scaler.s()` + `Main.qml` / `WindowRegistry.js` so top bar, widgets, launcher and Settings scale crisply without double-scaling under compositor scaling (with integer scale mode & hint for Mango)
+- fix(display): rewrite `apply_hyprland`, `apply_sway`, `apply_niri`, `apply_mango`, and `apply_umbriel` in `monitor_manager.py` to update only the target `--name` output while preserving multi-monitor setups; fix Mango `monitor_rule=` syntax and persist Umbriel outputs in `~/.config/umbriel/config/monitors.toml`
+- fix(compositors): remove hardcoded `output "eDP-1"` from `compositors/niri/default/monitors.kdl`, bind Niri `Alt+Return` to `fullscreen-window`, and unify `flat`/`clickfinger` touchpad & Wayland env defaults across Sway, DriftWM, Niri, and Umbriel
+- feat(umbriel): complete Umbriel integration with `[environment]`, `config/windowrules.toml`, `userprefs.toml` + `workflows/` (`default`, `gaming`, `powersaver`), `config/monitors.toml` optional include, full Matugen/theme/blur/opacity sync in `sync_compositor_theme.py`, Fish `logout` helper support, and `README.md` documentation
+- fix(hyprland,session): use `hyprctl switchxkblayout all next` in `KeyboardLayout.qml` so panel layout switching works on non-`main` laptop/USB keyboards, fix `serpantinumd` / `Compositor.qml` / `exit.sh` / `monitors_detector.py` / `clamshell.sh` / `battery` to avoid stale socket/env leaks across WMs, and display active compositor name in `AboutTab.qml`
+
 ### 2.9.1.1
 
 - fix(updater): bump version to `2.9.1.1` so `2.9.1` installations pick up the post-tag Umbriel/Links fixes, trigger `Updater.checkUpdate()` on entering the About tab, increase network timeout to 12s, and only record `last_check` on successful checks
