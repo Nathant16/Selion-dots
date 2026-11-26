@@ -14,7 +14,9 @@ DockWindowApps {
 
     WlrLayershell.namespace: "qs-dock"
     WlrLayershell.layer: (dockWindowRoot.dockOnTop || dockWindowRoot.editMode) ? WlrLayer.Top : WlrLayer.Bottom
-    focusable: dockWindowRoot.editMode
+    WlrLayershell.keyboardFocus: dockWindowRoot.editMode
+        ? (Compositor.name === "mango" ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand)
+        : WlrKeyboardFocus.None
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
 
@@ -240,6 +242,8 @@ DockWindowApps {
         }
     }
 
+    property string registeredScreenName: ""
+
     Component.onCompleted: {
         if (Compositor.name === "niri") {
             NiriState.subscribe();
@@ -263,11 +267,16 @@ DockWindowApps {
         loadApps();
         loadAllDesktopApps();
         initTimer.start();
-        ShellSurfaces.register("docks", modelData.name, dockWindowRoot);
+        let screenName = (modelData && modelData.name) ? modelData.name : (dockWindowRoot.screen ? dockWindowRoot.screen.name : "");
+        dockWindowRoot.registeredScreenName = screenName;
+        if (screenName) {
+            ShellSurfaces.register("docks", screenName, dockWindowRoot);
+        }
     }
 
     Component.onDestruction: {
-        ShellSurfaces.unregister("docks", modelData.name, dockWindowRoot);
+        let screenName = dockWindowRoot.registeredScreenName || ((modelData && modelData.name) ? modelData.name : "");
+        ShellSurfaces.unregister("docks", screenName, dockWindowRoot);
         if (Compositor.name === "niri") {
             NiriState.unsubscribe();
         }

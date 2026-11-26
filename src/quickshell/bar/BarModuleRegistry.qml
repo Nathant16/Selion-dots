@@ -23,21 +23,21 @@ QtObject {
             name: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.actions", "Menu") : "Menu",
             icon: "󰍜",
             defaultVariant: "button",
-            face: "faces/left/LeftFace.qml",
+            face: "faces/left/ActionsFace.qml",
             variants: {
                 "button": {
                     id: "button",
                     name: typeof I18n !== "undefined" ? I18n.t("guide.bar.menu.style.name.button", "Button") : "Button",
                     desc: typeof I18n !== "undefined" ? I18n.t("guide.bar.menu.style.button", "Interactive icon buttons with background") : "Interactive icon buttons with background",
                     icon: "󰍜",
-                    face: "faces/left/LeftFace.qml"
+                    face: "faces/left/ActionsFace.qml"
                 },
                 "icon": {
                     id: "icon",
                     name: typeof I18n !== "undefined" ? I18n.t("guide.bar.menu.style.name.icon", "Icon") : "Icon",
                     desc: typeof I18n !== "undefined" ? I18n.t("guide.bar.menu.style.icon", "Clean icons without background") : "Clean icons without background",
                     icon: "󰍜",
-                    face: "faces/left/LeftFace.qml"
+                    face: "faces/left/ActionsFace.qml"
                 }
             }
         },
@@ -67,6 +67,20 @@ QtObject {
                     desc: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.workspaces.style.pacman", "Animated arcade dots") : "Animated arcade dots",
                     icon: "󰮯",
                     face: "faces/workspaces/PacmanFace.qml"
+                },
+                "morph": {
+                    id: "morph",
+                    name: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.workspaces.style.name.morph", "Morph") : "Morph",
+                    desc: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.workspaces.style.morph", "Expressive morphing shapes") : "Expressive morphing shapes",
+                    icon: "󰠱",
+                    face: "faces/workspaces/MorphFace.qml"
+                },
+                "trace": {
+                    id: "trace",
+                    name: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.workspaces.style.name.trace", "Trace") : "Trace",
+                    desc: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.workspaces.style.trace", "Connected nodes with traveling pulse") : "Connected nodes with traveling pulse",
+                    icon: "󰌗",
+                    face: "faces/workspaces/TraceFace.qml"
                 }
             }
         },
@@ -79,8 +93,24 @@ QtObject {
         "media": {
             name: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.media", "Media") : "Media",
             icon: "󰎈",
-            defaultVariant: "default",
-            face: "faces/media/MediaFace.qml"
+            defaultVariant: "classic",
+            face: "faces/media/MediaFace.qml",
+            variants: {
+                "classic": {
+                    id: "classic",
+                    name: typeof I18n !== "undefined" ? I18n.t("guide.bar.media.style.name.classic", "Classic") : "Classic",
+                    desc: typeof I18n !== "undefined" ? I18n.t("guide.bar.media.style.classic", "Album thumbnail on a plain background") : "Album thumbnail on a plain background",
+                    icon: "󰎈",
+                    face: "faces/media/MediaFace.qml"
+                },
+                "ambient": {
+                    id: "ambient",
+                    name: typeof I18n !== "undefined" ? I18n.t("guide.bar.media.style.name.ambient", "Ambient") : "Ambient",
+                    desc: typeof I18n !== "undefined" ? I18n.t("guide.bar.media.style.ambient", "Blurred album art behind the controls") : "Blurred album art behind the controls",
+                    icon: "󰝚",
+                    face: "faces/media/MediaFace.qml"
+                }
+            }
         },
         "vis": {
             name: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.vis", "Visualizer") : "Visualizer",
@@ -120,6 +150,13 @@ QtObject {
                     desc: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.timedate.style.badge", "Pill-capsule segmented cards") : "Pill-capsule segmented cards",
                     icon: "󰃰",
                     face: "faces/timedate/BadgeFace.qml"
+                },
+                "pill": {
+                    id: "pill",
+                    name: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.timedate.style.name.pill", "Pill") : "Pill",
+                    desc: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.timedate.style.pill", "Compact colored time pill") : "Compact colored time pill",
+                    icon: "󰔟",
+                    face: "faces/timedate/PillFace.qml"
                 }
             }
         },
@@ -138,8 +175,24 @@ QtObject {
         "sysmon": {
             name: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.sysmon", "System Monitor") : "System Monitor",
             icon: "󰍛",
-            defaultVariant: "default",
-            face: "faces/sysmon/SysMonFace.qml"
+            defaultVariant: "wave",
+            face: "faces/sysmon/SysMonFace.qml",
+            variants: {
+                "wave": {
+                    id: "wave",
+                    name: typeof I18n !== "undefined" ? I18n.t("guide.bar.sysmon.style.name.wave", "Wave") : "Wave",
+                    desc: typeof I18n !== "undefined" ? I18n.t("guide.bar.sysmon.style.wave", "Rings filled with a liquid wave") : "Rings filled with a liquid wave",
+                    icon: "󰍛",
+                    face: "faces/sysmon/SysMonFace.qml"
+                },
+                "circle": {
+                    id: "circle",
+                    name: typeof I18n !== "undefined" ? I18n.t("guide.bar.sysmon.style.name.circle", "Circle") : "Circle",
+                    desc: typeof I18n !== "undefined" ? I18n.t("guide.bar.sysmon.style.circle", "Clean progress rings") : "Clean progress rings",
+                    icon: "󰍛",
+                    face: "faces/sysmon/SysMonFace.qml"
+                }
+            }
         },
         "kb": {
             name: typeof I18n !== "undefined" ? I18n.t("guide.bar.modules.keyboard", "Keyboard") : "Keyboard",
@@ -303,6 +356,14 @@ QtObject {
             if (bs.batStyle) return bs.batStyle;
             return "classic";
         }
+        if (norm === "sysmon") {
+            if (bs.sysmonStyle) return bs.sysmonStyle;
+            return "wave";
+        }
+        if (norm === "media") {
+            if (bs.mediaStyle) return bs.mediaStyle;
+            return "classic";
+        }
 
         let t = types[norm];
         return t ? (t.defaultVariant || "default") : "default";
@@ -371,7 +432,7 @@ QtObject {
         types = updated;
     }
 
-    readonly property var menuItemIds: ["settings", "launcher", "nightlight", "caffeine", "shuffle"]
+    readonly property var menuItemIds: ["settings", "launcher", "nightlight", "caffeine", "shuffle", "colorpicker", "clipboard"]
 
     function menuItemIcon(id) {
         if (id === "settings") return "󰒓";
@@ -379,6 +440,8 @@ QtObject {
         if (id === "nightlight") return "󰖔";
         if (id === "caffeine") return "󰅶";
         if (id === "shuffle") return "󰒝";
+        if (id === "colorpicker") return "󰈋";
+        if (id === "clipboard") return "󰆒";
         return "";
     }
 

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if ! declare -f os_release_get >/dev/null; then
+    source "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/os_release.sh"
+fi
+
 RESET=$'\e[0m'
 BOLD=$'\e[1m'
 DIM=$'\e[2m'
@@ -16,561 +20,31 @@ KEYBOARD_LAYOUT="us,ru"
 KEYBOARD_TOGGLE="alt_shift"
 OPT_FAST_REPOS=false
 SELECTED_COMPOSITORS=()
+SELECTED_ADDITIONAL_PKGS=()
 DETECTED_COMPOSITOR_LABEL=""
 MULTIPLE_COMPOSITORS_DETECTED=false
 UNSUPPORTED_COMPOSITOR_DETECTED=false
 IS_REINSTALL=false
 DO_UNINSTALL=false
+TUI_HANDLED=false
 
 OPT_SDDM=true
 REPLACE_DM=false
 SDDM_WAYLAND="$PM_SDDM_WAYLAND_DEFAULT"
 
 USER_NAME="${USER:-$(whoami)}"
-OS_NAME=$(grep '^PRETTY_NAME=' /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"')
+OS_NAME="$(os_release_get PRETTY_NAME || true)"
+[[ -z "$OS_NAME" ]] && OS_NAME="$(os_release_get NAME || true)"
 [[ -z "$OS_NAME" ]] && OS_NAME="$(t "installer.os.default_os")"
-CPU_INFO=$(grep -m 1 'model name' /proc/cpuinfo 2>/dev/null | cut -d: -f2 | xargs || true)
+CPU_INFO=$(grep -m 1 'model name' /proc/cpuinfo 2>/dev/null | cut -d: -f2 | sed -E 's/^[ \t]+|[ \t]+$//' || true)
 [[ -z "$CPU_INFO" ]] && CPU_INFO="$(t "installer.os.unknown_cpu")"
 
 GPU_RAW=$(lspci -nn 2>/dev/null | grep -iE 'vga|3d|display' || true)
-GPU_INFO=$(echo "$GPU_RAW" | sed -E 's/^[^:]+:[^:]+: //; s/ \[[0-9a-f]{4}:[0-9a-f]{4}\]//g; s/ \(rev [0-9a-f]+\)//g' | paste -sd ', ' - | xargs)
+GPU_INFO=""
+if [ -n "$GPU_RAW" ]; then
+    GPU_INFO=$(printf '%s\n' "$GPU_RAW" | sed -E 's/^[^:]+:[^:]+: //; s/ \[[0-9a-f]{4}:[0-9a-f]{4}\]//g; s/ \(rev [0-9a-f]+\)//g' | awk 'NR==1{out=$0} NR>1{out=out ", " $0} END{gsub(/^[ \t]+|[ \t]+$/, "", out); print out}' || true)
+fi
 [[ -z "$GPU_INFO" ]] && GPU_INFO="$(t "installer.os.unknown_gpu")"
-
-cleanup_terminal() {
-    printf "\e[?25h" 2>/dev/null || true
-    stty echo icanon 2>/dev/null || true
-}
-trap cleanup_terminal EXIT INT TERM
-
-read_key() {
-    local key=""
-    local rest=""
-    IFS= read -rsn1 key 2>/dev/null
-    if [[ "$key" == $'\x1b' ]]; then
-        read -rsn2 -t 0.05 rest 2>/dev/null
-        if [[ "$rest" == "[A" || "$rest" == "OA" ]]; then
-            echo "UP"
-            return
-        elif [[ "$rest" == "[B" || "$rest" == "OB" ]]; then
-            echo "DOWN"
-            return
-        elif [[ "$rest" == "[C" || "$rest" == "OC" ]]; then
-            echo "RIGHT"
-            return
-        elif [[ "$rest" == "[D" || "$rest" == "OD" ]]; then
-            echo "LEFT"
-            return
-        elif [[ "$rest" == *"["* ]]; then
-            local trailing=""
-            while read -rsn1 -t 0.05 trailing 2>/dev/null; do
-                [[ -z "$trailing" ]] && break
-            done
-            echo "ESC"
-            return
-        elif [[ -z "$rest" ]]; then
-            echo "ESC"
-            return
-        fi
-        echo "ESC"
-        return
-    elif [[ -z "$key" || "$key" == $'\n' || "$key" == $'\r' ]]; then
-        echo "ENTER"
-        return
-    elif [[ "$key" == " " ]]; then
-        echo "SPACE"
-        return
-    fi
-    echo "$key"
-}
-
-is_compositor_installed() {
-    local comp="$1"
-    case "$comp" in
-        hyprland)
-            command -v Hyprland &>/dev/null || command -v hyprland &>/dev/null || pm_is_installed hyprland
-            ;;
-        driftwm)
-            command -v driftwm &>/dev/null || pm_is_installed driftwm || pm_is_installed driftwm-bin
-            ;;
-        niri)
-            command -v niri &>/dev/null || pm_is_installed niri
-            ;;
-        sway)
-            command -v sway &>/dev/null || pm_is_installed sway
-            ;;
-        mango)
-            command -v mango &>/dev/null || command -v mangowm &>/dev/null || command -v mangowc &>/dev/null || pm_is_installed mangowm || pm_is_installed mangowc || pm_is_installed mango
-            ;;
-        umbriel)
-            command -v umbriel &>/dev/null || pm_is_installed "$(compositor_package_name umbriel)"
-            ;;
-        *)
-            command -v "$comp" &>/dev/null || pm_is_installed "$comp"
-            ;;
-    esac
-}
-
-init_compositor_detection() {
-    local supported_compositors=("hyprland" "driftwm" "niri" "sway" "mango" "umbriel")
-    local installed=()
-    for comp in "${supported_compositors[@]}"; do
-        if is_compositor_installed "$comp"; then
-            installed+=("$comp")
-        fi
-    done
-
-    local is_update=false
-    if [[ "$INSTALL_STATE" == "current" || "$INSTALL_STATE" == "legacy" || -f "$HOME/.local/state/serpantinum/version" || -f "$HOME/.local/state/imperative-dots-version" ]]; then
-        is_update=true
-    fi
-
-    if [ "$is_update" = true ]; then
-        if [ ${#installed[@]} -gt 0 ]; then
-            SELECTED_COMPOSITORS=("${installed[@]}")
-            DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
-            MULTIPLE_COMPOSITORS_DETECTED=false
-            UNSUPPORTED_COMPOSITOR_DETECTED=false
-            return 0
-        elif [ -f "$HOME/.local/state/serpantinum/version" ]; then
-            local saved_comps
-            saved_comps=$(awk -F= '/^SELECTED_COMPOSITORS=/{gsub(/"/, "", $2); print $2}' "$HOME/.local/state/serpantinum/version" 2>/dev/null || true)
-            if [ -n "$saved_comps" ]; then
-                read -r -a SELECTED_COMPOSITORS <<< "$saved_comps"
-                DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
-                MULTIPLE_COMPOSITORS_DETECTED=false
-                UNSUPPORTED_COMPOSITOR_DETECTED=false
-                return 0
-            fi
-        fi
-    fi
-
-    local running=""
-    local de="${XDG_CURRENT_DESKTOP,,}"
-    local session="${DESKTOP_SESSION,,}"
-
-    if [[ -n "$MANGO_INSTANCE_SIGNATURE" ]] || pgrep -x "mango" &>/dev/null || [[ "$de" == *"mango"* ]] || [[ "$session" == *"mango"* ]]; then
-        running="mango"
-    elif [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]] || pgrep -x "Hyprland" &>/dev/null || pgrep -x "hyprland" &>/dev/null || [[ "$de" == *"hyprland"* ]] || [[ "$session" == *"hyprland"* ]]; then
-        running="hyprland"
-    elif [[ -n "$DRIFTWM_SOCKET" ]] || pgrep -x "driftwm" &>/dev/null || [[ "$de" == *"drift"* ]] || [[ "$session" == *"drift"* ]]; then
-        running="driftwm"
-    elif [[ -n "$SWAYSOCK" ]] || pgrep -x "sway" &>/dev/null || [[ "$de" == *"sway"* ]] || [[ "$session" == *"sway"* ]]; then
-        running="sway"
-    elif pgrep -x "niri" &>/dev/null || [[ "$de" == *"niri"* ]] || [[ "$session" == *"niri"* ]]; then
-        running="niri"
-    elif [[ -n "$UMBRIEL_SOCKET" ]] || pgrep -x "umbriel" &>/dev/null || [[ "$de" == *"umbriel"* ]] || [[ "$session" == *"umbriel"* ]]; then
-        running="umbriel"
-    fi
-
-    if [ -n "$running" ]; then
-        SELECTED_COMPOSITORS=("$running")
-        DETECTED_COMPOSITOR_LABEL="$running"
-    elif [ ${#installed[@]} -gt 1 ]; then
-        MULTIPLE_COMPOSITORS_DETECTED=true
-        SELECTED_COMPOSITORS=()
-    elif [ ${#installed[@]} -eq 1 ]; then
-        SELECTED_COMPOSITORS=("${installed[0]}")
-        DETECTED_COMPOSITOR_LABEL="${installed[0]}"
-    else
-        UNSUPPORTED_COMPOSITOR_DETECTED=true
-        DETECTED_COMPOSITOR_LABEL="$(t "installer.ui.unsupported_compositor")"
-        SELECTED_COMPOSITORS=()
-    fi
-}
-
-_pad_label() {
-    local text="$1"
-    local width="${2:-18}"
-    local pad=$(( width - ${#text} ))
-    (( pad < 1 )) && pad=1
-    printf "%s%*s" "$text" "$pad" ""
-}
-
-draw_banner() {
-    clear 2>/dev/null || true
-    printf "%s%s" "$BOLD" "$C_CYAN"
-    cat << "EOF"
-███████╗███████╗██╗     ██╗ ██████╗ ███╗   ██╗
-██╔════╝██╔════╝██║     ██║██╔═══██╗████╗  ██║
-███████╗█████╗  ██║     ██║██║   ██║██╔██╗ ██║
-╚════██║██╔══╝  ██║     ██║██║   ██║██║╚██╗██║
-███████║███████╗███████╗██║╚██████╔╝██║ ╚████║
-╚══════╝╚══════╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
-EOF
-    printf "%s\n" "$RESET"
-
-    local OSC8_GH=$'\e]8;;https://github.com/'"${REPO_SLUG}"$'\a'
-    local OSC8_TG=$'\e]8;;https://t.me/Nathant16\a'
-    local OSC8_END=$'\e]8;;\a'
-
-    local lbl_gh="$(t "installer.ui.github")"
-    local lbl_tg="$(t "installer.ui.telegram")"
-    local lbl_user="$(t "installer.ui.user")"
-    local lbl_os="$(t "installer.ui.os")"
-    local lbl_cpu="$(t "installer.ui.cpu")"
-    local lbl_gpu="$(t "installer.ui.gpu")"
-    local lbl_ver="$(t "installer.ui.target_version")"
-    local lbl_mode="$(t "installer.ui.install_mode")"
-
-    local col_w=18
-    for lbl in "$lbl_gh" "$lbl_tg" "$lbl_user" "$lbl_os" "$lbl_cpu" "$lbl_gpu" "$lbl_ver" "$lbl_mode"; do
-        (( ${#lbl} + 2 > col_w )) && col_w=$(( ${#lbl} + 2 ))
-    done
-
-    printf "\033[K%s--------------------------------------------------------------------------------%s\n" "$C_BLUE" "$RESET"
-    printf "\033[K%s%s %s%s%shttps://github.com/%s%s\n" "$BOLD" "$C_GREEN" "$(_pad_label "$lbl_gh" "$col_w")" "$RESET" "$OSC8_GH" "$REPO_SLUG" "$OSC8_END"
-    printf "\033[K%s%s %s%s%shttps://t.me/Nathant16%s\n" "$BOLD" "$C_CYAN" "$(_pad_label "$lbl_tg" "$col_w")" "$RESET" "$OSC8_TG" "$OSC8_END"
-    printf "\033[K%s--------------------------------------------------------------------------------%s\n" "$C_BLUE" "$RESET"
-    printf "\033[K%s %s%s%s\n" "$BOLD" "$(_pad_label "$lbl_user" "$col_w")" "$RESET" "$USER_NAME"
-    printf "\033[K%s %s%s%s\n" "$BOLD" "$(_pad_label "$lbl_os" "$col_w")" "$RESET" "$OS_NAME"
-    printf "\033[K%s %s%s%s\n" "$BOLD" "$(_pad_label "$lbl_cpu" "$col_w")" "$RESET" "$CPU_INFO"
-    printf "\033[K%s %s%s%s\n" "$BOLD" "$(_pad_label "$lbl_gpu" "$col_w")" "$RESET" "$GPU_INFO"
-    printf "\033[K%s--------------------------------------------------------------------------------%s\n" "$C_BLUE" "$RESET"
-    printf "\033[K%s %s%s%s (%s)\n" "$BOLD" "$(_pad_label "$lbl_ver" "$col_w")" "$RESET" "$TARGET_VERSION" "$TARGET_COMMIT"
-    printf "\033[K%s %s%s%s\n" "$BOLD" "$(_pad_label "$lbl_mode" "$col_w")" "$RESET" "$INSTALL_STATE"
-    printf "\033[K%s================================================================================%s\n\n" "$C_BLUE" "$RESET"
-}
-
-draw_status_bar() {
-    local left="${1:-}"
-    local right="${2:-}"
-    if [ -n "$right" ]; then
-        printf "\033[K%s%s%s %s(%s)%s\n" "$C_CYAN" "$left" "$RESET" "$DIM" "$right" "$RESET"
-    elif [ -n "$left" ]; then
-        printf "\033[K%s%s%s\n" "$C_CYAN" "$left" "$RESET"
-    fi
-}
-
-show_package_overview() {
-    local target_list=("${REQUIRED_PKGS[@]}")
-    for comp in "${SELECTED_COMPOSITORS[@]}"; do
-        target_list+=("$comp")
-    done
-    if [ "$OPT_SDDM" = true ]; then
-        local sddm_pkgs=()
-        mapfile -t sddm_pkgs < <(sddm_packages)
-        target_list+=("${sddm_pkgs[@]}")
-    fi
-    target_list+=("${PM_EXTRA_PKGS[@]}")
-
-    local missing_raw
-    missing_raw=$(pm_missing_pkgs "${target_list[@]}")
-
-    declare -A is_missing
-    while IFS= read -r p; do
-        [[ -n "$p" ]] && is_missing["$p"]=1
-    done <<< "$missing_raw"
-
-    local overview_items=()
-    for pkg in "${target_list[@]}"; do
-        if [[ -n "${is_missing[$pkg]}" ]]; then
-            overview_items+=("$(t "installer.ui.package_missing" "pkg=$pkg")")
-        else
-            overview_items+=("$(t "installer.ui.package_installed" "pkg=$pkg")")
-        fi
-    done
-
-    cleanup_terminal
-    printf "%s\n" "${overview_items[@]}" | fzf \
-        --ansi \
-        --layout=reverse \
-        --border=rounded \
-        --margin=1,2 \
-        --height=25 \
-        --prompt="$(t "installer.ui.packages_prompt")" \
-        --header="$(t "installer.ui.packages_header")" > /dev/null || true
-    stty -echo icanon 2>/dev/null || true
-    printf "\e[?25l"
-}
-
-remove_compositor() {
-    local target="$1"
-    local updated=()
-    for c in "${SELECTED_COMPOSITORS[@]}"; do
-        if [[ "$c" != "$target" ]]; then
-            updated+=("$c")
-        fi
-    done
-    SELECTED_COMPOSITORS=("${updated[@]}")
-}
-
-manage_compositors_menu() {
-    draw_banner
-    stty -echo 2>/dev/null || true
-    printf "\e[?25l"
-    printf "%s%s$(t "installer.ui.compositors_title")%s\n\n" "$BOLD" "$C_CYAN" "$RESET"
-
-    local cursor=0
-    local rendered_lines=0
-
-    while true; do
-        local status_hypr="$(t "installer.ui.not_installed")"
-        local status_drift="$(t "installer.ui.not_installed")"
-        local status_niri="$(t "installer.ui.not_installed")"
-        local status_sway="$(t "installer.ui.not_installed")"
-        local status_mango="$(t "installer.ui.not_installed")"
-        local status_umbriel="$(t "installer.ui.not_installed")"
-
-        is_compositor_installed hyprland && status_hypr="$(t "installer.ui.installed")"
-        is_compositor_installed driftwm && status_drift="$(t "installer.ui.installed")"
-        is_compositor_installed niri && status_niri="$(t "installer.ui.installed")"
-        is_compositor_installed sway && status_sway="$(t "installer.ui.installed")"
-        is_compositor_installed mango && status_mango="$(t "installer.ui.installed")"
-        is_compositor_installed umbriel && status_umbriel="$(t "installer.ui.installed")"
-
-        local S_HYPR="${DIM}[ ]${RESET}"
-        local S_DRIFT="${DIM}[ ]${RESET}"
-        local S_NIRI="${DIM}[ ]${RESET}"
-        local S_SWAY="${DIM}[ ]${RESET}"
-        local S_MANGO="${DIM}[ ]${RESET}"
-        local S_UMBRIEL="${DIM}[ ]${RESET}"
-
-        [[ " ${SELECTED_COMPOSITORS[*]} " =~ " hyprland " ]] && S_HYPR="${C_GREEN}[✓]${RESET}"
-        [[ " ${SELECTED_COMPOSITORS[*]} " =~ " driftwm " ]] && S_DRIFT="${C_GREEN}[✓]${RESET}"
-        [[ " ${SELECTED_COMPOSITORS[*]} " =~ " niri " ]] && S_NIRI="${C_GREEN}[✓]${RESET}"
-        [[ " ${SELECTED_COMPOSITORS[*]} " =~ " sway " ]] && S_SWAY="${C_GREEN}[✓]${RESET}"
-        [[ " ${SELECTED_COMPOSITORS[*]} " =~ " mango " ]] && S_MANGO="${C_GREEN}[✓]${RESET}"
-        [[ " ${SELECTED_COMPOSITORS[*]} " =~ " umbriel " ]] && S_UMBRIEL="${C_GREEN}[✓]${RESET}"
-
-        local items=(
-            "1. $S_HYPR Hyprland $status_hypr"
-            "2. $S_DRIFT DriftWM $status_drift"
-            "3. $S_NIRI Niri $status_niri"
-            "4. $S_SWAY Sway $status_sway"
-            "5. $S_MANGO Mango $status_mango"
-            "6. $S_UMBRIEL Umbriel $status_umbriel"
-            "7. ${BOLD}${C_GREEN}$(t "installer.ui.done")${RESET}"
-        )
-
-        if [ "$rendered_lines" -gt 0 ]; then
-            printf "\033[%dA" "$rendered_lines"
-        fi
-
-        for i in "${!items[@]}"; do
-            if [ "$i" -eq "$cursor" ]; then
-                printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
-            else
-                printf "\r\033[K    %s\n" "${items[$i]}"
-            fi
-        done
-        rendered_lines=${#items[@]}
-
-        local key
-        key=$(read_key)
-
-        case "$key" in
-            UP|[kK])
-                if [ "$cursor" -gt 0 ]; then
-                    cursor=$(( cursor - 1 ))
-                else
-                    cursor=$(( ${#items[@]} - 1 ))
-                fi
-                ;;
-            DOWN|[jJ])
-                if [ "$cursor" -lt $(( ${#items[@]} - 1 )) ]; then
-                    cursor=$(( cursor + 1 ))
-                else
-                    cursor=0
-                fi
-                ;;
-            "1")
-                if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " hyprland " ]]; then
-                    remove_compositor "hyprland"
-                else
-                    SELECTED_COMPOSITORS+=("hyprland")
-                fi
-                ;;
-            "2")
-                if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " driftwm " ]]; then
-                    remove_compositor "driftwm"
-                else
-                    SELECTED_COMPOSITORS+=("driftwm")
-                fi
-                ;;
-            "3")
-                if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " niri " ]]; then
-                    remove_compositor "niri"
-                else
-                    SELECTED_COMPOSITORS+=("niri")
-                fi
-                ;;
-            "4")
-                if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " sway " ]]; then
-                    remove_compositor "sway"
-                else
-                    SELECTED_COMPOSITORS+=("sway")
-                fi
-                ;;
-            "5")
-                if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " mango " ]]; then
-                    remove_compositor "mango"
-                else
-                    SELECTED_COMPOSITORS+=("mango")
-                fi
-                ;;
-            "6")
-                if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " umbriel " ]]; then
-                    remove_compositor "umbriel"
-                else
-                    SELECTED_COMPOSITORS+=("umbriel")
-                fi
-                ;;
-            "7"|ESC|[qQ])
-                DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
-                break
-                ;;
-            ENTER|SPACE)
-                case "$cursor" in
-                    0)
-                        if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " hyprland " ]]; then
-                            remove_compositor "hyprland"
-                        else
-                            SELECTED_COMPOSITORS+=("hyprland")
-                        fi
-                        ;;
-                    1)
-                        if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " driftwm " ]]; then
-                            remove_compositor "driftwm"
-                        else
-                            SELECTED_COMPOSITORS+=("driftwm")
-                        fi
-                        ;;
-                    2)
-                        if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " niri " ]]; then
-                            remove_compositor "niri"
-                        else
-                            SELECTED_COMPOSITORS+=("niri")
-                        fi
-                        ;;
-                    3)
-                        if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " sway " ]]; then
-                            remove_compositor "sway"
-                        else
-                            SELECTED_COMPOSITORS+=("sway")
-                        fi
-                        ;;
-                    4)
-                        if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " mango " ]]; then
-                            remove_compositor "mango"
-                        else
-                            SELECTED_COMPOSITORS+=("mango")
-                        fi
-                        ;;
-                    5)
-                        if [[ " ${SELECTED_COMPOSITORS[*]} " =~ " umbriel " ]]; then
-                            remove_compositor "umbriel"
-                        else
-                            SELECTED_COMPOSITORS+=("umbriel")
-                        fi
-                        ;;
-                    6)
-                        DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
-                        break
-                        ;;
-                esac
-                ;;
-        esac
-    done
-}
-
-manage_sddm_menu() {
-    draw_banner
-    stty -echo 2>/dev/null || true
-    printf "\e[?25l"
-    printf "%s%s$(t "installer.ui.sddm_title")%s\n\n" "$BOLD" "$C_CYAN" "$RESET"
-
-    local current_dm=""
-    local dms=("gdm" "gdm3" "lightdm" "sddm" "lxdm" "lxdm-gtk3" "ly")
-    for dm in "${dms[@]}"; do
-        if systemctl is-enabled "$dm.service" &>/dev/null || systemctl is-active "$dm.service" &>/dev/null; then
-            current_dm="$dm"
-            break
-        fi
-    done
-
-    if [ -n "$current_dm" ]; then
-        printf "$(t "installer.ui.sddm_detected_active" "dm=${BOLD}${C_YELLOW}%s${RESET}")\n\n" "$current_dm"
-    else
-        printf "%s\n\n" "$(t "installer.ui.sddm_detected_none")"
-    fi
-
-    local cursor=0
-    local rendered_lines=0
-
-    while true; do
-        local S_SDDM="${DIM}[Disabled]${RESET}"
-        local S_RDM="${DIM}[No]${RESET}"
-        local S_WAY="${DIM}[X11/Default]${RESET}"
-
-        [ "$OPT_SDDM" = true ] && S_SDDM="${C_GREEN}[Enabled]${RESET}"
-        [ "$REPLACE_DM" = true ] && S_RDM="${C_GREEN}[Yes]${RESET}"
-        [ "$SDDM_WAYLAND" = true ] && S_WAY="${C_GREEN}[Wayland]${RESET}"
-
-        local items=()
-        items+=("1. $(t "installer.ui.sddm_opt_install") $S_SDDM")
-        if [ -n "$current_dm" ] && [ "$current_dm" != "sddm" ]; then
-            items+=("2. $(t "installer.ui.sddm_opt_disable" "dm=$current_dm") $S_RDM")
-        fi
-        items+=("3. $(t "installer.ui.sddm_opt_wayland") $S_WAY")
-        items+=("4. ${BOLD}${C_GREEN}$(t "installer.ui.done")${RESET}")
-
-        if [ "$rendered_lines" -gt 0 ]; then
-            printf "\033[%dA" "$rendered_lines"
-        fi
-
-        for i in "${!items[@]}"; do
-            if [ "$i" -eq "$cursor" ]; then
-                printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
-            else
-                printf "\r\033[K    %s\n" "${items[$i]}"
-            fi
-        done
-        rendered_lines=${#items[@]}
-
-        local key
-        key=$(read_key)
-
-        case "$key" in
-            UP|[kK])
-                if [ "$cursor" -gt 0 ]; then
-                    cursor=$(( cursor - 1 ))
-                else
-                    cursor=$(( ${#items[@]} - 1 ))
-                fi
-                ;;
-            DOWN|[jJ])
-                if [ "$cursor" -lt $(( ${#items[@]} - 1 )) ]; then
-                    cursor=$(( cursor + 1 ))
-                else
-                    cursor=0
-                fi
-                ;;
-            ENTER|SPACE)
-                local selected_str="${items[$cursor]}"
-                case "$selected_str" in
-                    *"1."*)
-                        OPT_SDDM=$([ "$OPT_SDDM" = true ] && echo false || echo true)
-                        if [ "$OPT_SDDM" = true ] && [ -n "$current_dm" ] && [ "$current_dm" != "sddm" ]; then
-                            REPLACE_DM=true
-                        fi
-                        ;;
-                    *"2."*)
-                        REPLACE_DM=$([ "$REPLACE_DM" = true ] && echo false || echo true)
-                        ;;
-                    *"3."*)
-                        SDDM_WAYLAND=$([ "$SDDM_WAYLAND" = true ] && echo false || echo true)
-                        ;;
-                    *"4."*)
-                        break
-                        ;;
-                esac
-                ;;
-            ESC|[qQ])
-                break
-                ;;
-        esac
-    done
-}
 
 PKGS_DEVELOPMENT=(
     "visual-studio-code-bin:Visual Studio Code (Microsoft official build)"
@@ -630,379 +104,149 @@ AVAILABLE_ADDITIONAL_PKGS=(
     "${PKGS_OFFICE[@]}"
     "${PKGS_MEDIA[@]}"
 )
-SELECTED_ADDITIONAL_PKGS=()
 
-toggle_additional_pkg() {
-    local target="$1"
-    local updated=()
-    local found=false
-    for p in "${SELECTED_ADDITIONAL_PKGS[@]}"; do
-        if [ "$p" == "$target" ]; then
-            found=true
-        else
-            updated+=("$p")
+cleanup_terminal() {
+    printf "\e[?25h" 2>/dev/null || true
+    stty echo icanon 2>/dev/null || true
+}
+trap cleanup_terminal EXIT INT TERM
+
+is_compositor_installed() {
+    local comp="$1"
+    case "$comp" in
+        hyprland)
+            command -v Hyprland &>/dev/null || command -v hyprland &>/dev/null || pm_is_installed hyprland
+            ;;
+        driftwm)
+            command -v driftwm &>/dev/null || pm_is_installed driftwm || pm_is_installed driftwm-bin
+            ;;
+        niri)
+            command -v niri &>/dev/null || pm_is_installed niri
+            ;;
+        sway)
+            command -v sway &>/dev/null || pm_is_installed sway
+            ;;
+        mango)
+            command -v mango &>/dev/null || command -v mangowm &>/dev/null || command -v mangowc &>/dev/null || pm_is_installed mangowm || pm_is_installed mangowc || pm_is_installed mango
+            ;;
+        umbriel)
+            command -v umbriel &>/dev/null || pm_is_installed "$(compositor_package_name umbriel)"
+            ;;
+        *)
+            command -v "$comp" &>/dev/null || pm_is_installed "$comp"
+            ;;
+    esac
+}
+
+init_compositor_detection() {
+    local supported_compositors=("hyprland" "driftwm" "niri" "sway" "mango" "umbriel")
+    local installed=()
+    local state_home="${XDG_STATE_HOME:-$HOME/.local/state}"
+    local version_file="$state_home/serpantinum/version"
+
+    for comp in "${supported_compositors[@]}"; do
+        if is_compositor_installed "$comp"; then
+            installed+=("$comp")
         fi
     done
-    if [ "$found" = false ]; then
-        updated+=("$target")
+
+    local is_update=false
+    if [[ "$INSTALL_STATE" == "current" || "$INSTALL_STATE" == "legacy" || -f "$version_file" || -f "$state_home/imperative-dots-version" ]]; then
+        is_update=true
     fi
-    SELECTED_ADDITIONAL_PKGS=("${updated[@]}")
-}
 
-count_selected_in_category() {
-    local -n arr="$1"
-    local count=0
-    for entry in "${arr[@]}"; do
-        local pkg="${entry%%:*}"
-        if [[ " ${SELECTED_ADDITIONAL_PKGS[*]} " =~ " ${pkg} " ]]; then
-            count=$(( count + 1 ))
-        fi
-    done
-    echo "$count"
-}
-
-category_items_menu() {
-    local cat_title="$1"
-    local -n cat_pkgs="$2"
-    local cursor=0
-
-    draw_banner
-    draw_status_bar " Additional packages > $cat_title " " Toggle packages, then select Back "
-    stty -echo 2>/dev/null || true
-    printf "\e[?25l"
-    printf "\n%s%s=== $cat_title ===%s\n\n" "$BOLD" "$C_CYAN" "$RESET"
-
-    local rendered_lines=0
-
-    while true; do
-        local items=()
-        for idx in "${!cat_pkgs[@]}"; do
-            local entry="${cat_pkgs[$idx]}"
-            local pkg="${entry%%:*}"
-            local label="${entry#*:}"
-            local check="${DIM}[ ]${RESET}"
-            if [[ " ${SELECTED_ADDITIONAL_PKGS[*]} " =~ " ${pkg} " ]]; then
-                check="${C_GREEN}[✓]${RESET}"
-            fi
-            local num=$(( idx + 1 ))
-            items+=("$num. $check $label")
-        done
-        local done_num=$(( ${#cat_pkgs[@]} + 1 ))
-        items+=("$done_num. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Back to Categories")${RESET}")
-
-        if [ "$rendered_lines" -gt 0 ]; then
-            printf "\033[%dA" "$rendered_lines"
-        fi
-
-        for i in "${!items[@]}"; do
-            if [ "$i" -eq "$cursor" ]; then
-                printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
-            else
-                printf "\r\033[K    %s\n" "${items[$i]}"
-            fi
-        done
-        rendered_lines=${#items[@]}
-
-        local key
-        key=$(read_key)
-
-        case "$key" in
-            UP|[kK])
-                if [ "$cursor" -gt 0 ]; then
-                    cursor=$(( cursor - 1 ))
-                else
-                    cursor=$(( ${#items[@]} - 1 ))
-                fi
-                ;;
-            DOWN|[jJ])
-                if [ "$cursor" -lt $(( ${#items[@]} - 1 )) ]; then
-                    cursor=$(( cursor + 1 ))
-                else
-                    cursor=0
-                fi
-                ;;
-            ESC|[qQ])
-                break
-                ;;
-            ENTER|SPACE)
-                if [ "$cursor" -eq ${#cat_pkgs[@]} ]; then
-                    break
-                else
-                    local chosen_entry="${cat_pkgs[$cursor]}"
-                    local chosen_pkg="${chosen_entry%%:*}"
-                    toggle_additional_pkg "$chosen_pkg"
-                fi
-                ;;
-            *)
-                if [[ "$key" =~ ^[0-9]+$ ]]; then
-                    local sel_idx=$(( key - 1 ))
-                    if [ "$sel_idx" -ge 0 ] && [ "$sel_idx" -lt ${#cat_pkgs[@]} ]; then
-                        local chosen_entry="${cat_pkgs[$sel_idx]}"
-                        local chosen_pkg="${chosen_entry%%:*}"
-                        toggle_additional_pkg "$chosen_pkg"
-                    elif [ "$sel_idx" -eq ${#cat_pkgs[@]} ]; then
-                        break
-                    fi
-                fi
-                ;;
-        esac
-    done
-}
-
-additional_packages_menu() {
-    local cursor=0
-
-    while true; do
-        draw_banner
-        draw_status_bar "$(t "installer.ui.additional_pkgs_prompt" " Additional packages > ")" "$(t "installer.ui.additional_pkgs_header" " Select category, then choose packages ")"
-        stty -echo 2>/dev/null || true
-        printf "\e[?25l"
-        printf "\n%s%s$(t "installer.ui.additional_pkgs_title" "=== Select package categories ===")%s\n\n" "$BOLD" "$C_CYAN" "$RESET"
-
-        local rendered_lines=0
-
-        while true; do
-            local c_dev; c_dev=$(count_selected_in_category PKGS_DEVELOPMENT)
-            local c_soc; c_soc=$(count_selected_in_category PKGS_SOCIAL)
-            local c_brw; c_brw=$(count_selected_in_category PKGS_BROWSERS)
-            local c_gam; c_gam=$(count_selected_in_category PKGS_GAMES)
-            local c_off; c_off=$(count_selected_in_category PKGS_OFFICE)
-            local c_med; c_med=$(count_selected_in_category PKGS_MEDIA)
-
-            local s_dev="${DIM}[None]${RESET}"; [ "$c_dev" -gt 0 ] && s_dev="${C_GREEN}[$c_dev Selected]${RESET}"
-            local s_soc="${DIM}[None]${RESET}"; [ "$c_soc" -gt 0 ] && s_soc="${C_GREEN}[$c_soc Selected]${RESET}"
-            local s_brw="${DIM}[None]${RESET}"; [ "$c_brw" -gt 0 ] && s_brw="${C_GREEN}[$c_brw Selected]${RESET}"
-            local s_gam="${DIM}[None]${RESET}"; [ "$c_gam" -gt 0 ] && s_gam="${C_GREEN}[$c_gam Selected]${RESET}"
-            local s_off="${DIM}[None]${RESET}"; [ "$c_off" -gt 0 ] && s_off="${C_GREEN}[$c_off Selected]${RESET}"
-            local s_med="${DIM}[None]${RESET}"; [ "$c_med" -gt 0 ] && s_med="${C_GREEN}[$c_med Selected]${RESET}"
-
-            local items=()
-            items+=("1. Development $s_dev")
-            items+=("2. Social Media $s_soc")
-            items+=("3. Web Browsers $s_brw")
-            items+=("4. Games $s_gam")
-            items+=("5. Office $s_off")
-            items+=("6. Media & Entertainment $s_med")
-            items+=("7. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Done")${RESET}")
-
-            if [ "$rendered_lines" -gt 0 ]; then
-                printf "\033[%dA" "$rendered_lines"
-            fi
-
-            for i in "${!items[@]}"; do
-                if [ "$i" -eq "$cursor" ]; then
-                    printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
-                else
-                    printf "\r\033[K    %s\n" "${items[$i]}"
-                fi
-            done
-            rendered_lines=${#items[@]}
-
-            local key
-            key=$(read_key)
-
-            case "$key" in
-                UP|[kK])
-                    if [ "$cursor" -gt 0 ]; then
-                        cursor=$(( cursor - 1 ))
-                    else
-                        cursor=$(( ${#items[@]} - 1 ))
-                    fi
-                    ;;
-                DOWN|[jJ])
-                    if [ "$cursor" -lt $(( ${#items[@]} - 1 )) ]; then
-                        cursor=$(( cursor + 1 ))
-                    else
-                        cursor=0
-                    fi
-                    ;;
-                ESC|[qQ])
-                    return 0
-                    ;;
-                ENTER|SPACE)
-                    case "$cursor" in
-                        0) category_items_menu "Development Packages" PKGS_DEVELOPMENT; break ;;
-                        1) category_items_menu "Social Media Packages" PKGS_SOCIAL; break ;;
-                        2) category_items_menu "Web Browsers" PKGS_BROWSERS; break ;;
-                        3) category_items_menu "Game Packages" PKGS_GAMES; break ;;
-                        4) category_items_menu "Office Packages" PKGS_OFFICE; break ;;
-                        5) category_items_menu "Media & Entertainment" PKGS_MEDIA; break ;;
-                        6) return 0 ;;
-                    esac
-                    ;;
-                *)
-                    case "$key" in
-                        1) category_items_menu "Development Packages" PKGS_DEVELOPMENT; break ;;
-                        2) category_items_menu "Social Media Packages" PKGS_SOCIAL; break ;;
-                        3) category_items_menu "Web Browsers" PKGS_BROWSERS; break ;;
-                        4) category_items_menu "Game Packages" PKGS_GAMES; break ;;
-                        5) category_items_menu "Office Packages" PKGS_OFFICE; break ;;
-                        6) category_items_menu "Media & Entertainment" PKGS_MEDIA; break ;;
-                        7) return 0 ;;
-                    esac
-                    ;;
-            esac
-        done
-    done
-}
-
-manage_keyboard_menu() {
-    draw_banner
-    stty -echo 2>/dev/null || true
-    printf "\e[?25l"
-    printf "%s%s=== Keyboard Layout & Switch Shortcut ===%s\n\n" "$BOLD" "$C_CYAN" "$RESET"
-
-    local cursor=0
-    local rendered_lines=0
-
-    while true; do
-        local S_TOGGLE="Alt+Shift / Shift+Alt [Recommended]"
-        case "$KEYBOARD_TOGGLE" in
-            alt_shift)  S_TOGGLE="Alt+Shift / Shift+Alt [Recommended]" ;;
-            ctrl_shift) S_TOGGLE="Ctrl+Shift / Shift+Ctrl" ;;
-            win_space)  S_TOGGLE="Super+Space / Win+Space" ;;
-            caps_lock)  S_TOGGLE="Caps Lock" ;;
-        esac
-
-        local items=()
-        items+=("1. Switch Shortcut: ${BOLD}${C_GREEN}[$S_TOGGLE]${RESET}")
-        items+=("2. Layouts: ${BOLD}${C_GREEN}[$KEYBOARD_LAYOUT]${RESET}")
-        items+=("3. ${BOLD}${C_GREEN}$(t "installer.ui.done" "Back to Main Menu")${RESET}")
-
-        if [ "$rendered_lines" -gt 0 ]; then
-            printf "\033[%dA" "$rendered_lines"
-        fi
-
-        for i in "${!items[@]}"; do
-            if [ "$i" -eq "$cursor" ]; then
-                printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
-            else
-                printf "\r\033[K    %s\n" "${items[$i]}"
-            fi
-        done
-        rendered_lines=${#items[@]}
-
-        local key
-        key=$(read_key)
-
-        case "$key" in
-            UP|[kK])
-                if [ "$cursor" -gt 0 ]; then
-                    cursor=$(( cursor - 1 ))
-                else
-                    cursor=$(( ${#items[@]} - 1 ))
-                fi
-                ;;
-            DOWN|[jJ])
-                if [ "$cursor" -lt $(( ${#items[@]} - 1 )) ]; then
-                    cursor=$(( cursor + 1 ))
-                else
-                    cursor=0
-                fi
-                ;;
-            ENTER|SPACE)
-                local selected_str="${items[$cursor]}"
-                case "$selected_str" in
-                    *"1."*)
-                        case "$KEYBOARD_TOGGLE" in
-                            alt_shift)  KEYBOARD_TOGGLE="ctrl_shift" ;;
-                            ctrl_shift) KEYBOARD_TOGGLE="win_space" ;;
-                            win_space)  KEYBOARD_TOGGLE="caps_lock" ;;
-                            caps_lock)  KEYBOARD_TOGGLE="alt_shift" ;;
-                            *)          KEYBOARD_TOGGLE="alt_shift" ;;
-                        esac
-                        ;;
-                    *"2."*)
-                        case "$KEYBOARD_LAYOUT" in
-                            "us,ru") KEYBOARD_LAYOUT="us" ;;
-                            "us")    KEYBOARD_LAYOUT="us,ua" ;;
-                            "us,ua") KEYBOARD_LAYOUT="us,by" ;;
-                            "us,by") KEYBOARD_LAYOUT="us,kz" ;;
-                            "us,kz") KEYBOARD_LAYOUT="us,de" ;;
-                            *)       KEYBOARD_LAYOUT="us,ru" ;;
-                        esac
-                        ;;
-                    *"3."*)
-                        break
-                        ;;
-                esac
-                ;;
-            "1")
-                case "$KEYBOARD_TOGGLE" in
-                    alt_shift)  KEYBOARD_TOGGLE="ctrl_shift" ;;
-                    ctrl_shift) KEYBOARD_TOGGLE="win_space" ;;
-                    win_space)  KEYBOARD_TOGGLE="caps_lock" ;;
-                    caps_lock)  KEYBOARD_TOGGLE="alt_shift" ;;
-                    *)          KEYBOARD_TOGGLE="alt_shift" ;;
-                esac
-                ;;
-            "2")
-                case "$KEYBOARD_LAYOUT" in
-                    "us,ru") KEYBOARD_LAYOUT="us" ;;
-                    "us")    KEYBOARD_LAYOUT="us,ua" ;;
-                    "us,ua") KEYBOARD_LAYOUT="us,by" ;;
-                    "us,by") KEYBOARD_LAYOUT="us,kz" ;;
-                    "us,kz") KEYBOARD_LAYOUT="us,de" ;;
-                    *)       KEYBOARD_LAYOUT="us,ru" ;;
-                esac
-                ;;
-            "3"|ESC|[qQ])
-                break
-                ;;
-        esac
-    done
-}
-
-confirm_uninstall() {
-    draw_banner
-    stty -echo 2>/dev/null || true
-    printf "\e[?25l"
-    printf "%s%s%s%s\n\n" "$BOLD" "$C_RED" "$(t "installer.ui.uninstall_title")" "$RESET"
-    printf "%s\n" "$(t "installer.ui.uninstall_removes")"
-    printf "%s\n\n" "$(t "installer.ui.uninstall_keeps")"
-
-    local cursor=0
-    local rendered_lines=0
-    local items=(
-        "1. $(t "installer.ui.uninstall_cancel")"
-        "2. ${BOLD}${C_RED}$(t "installer.ui.uninstall_confirm")${RESET}"
-    )
-
-    while true; do
-        if [ "$rendered_lines" -gt 0 ]; then
-            printf "\033[%dA" "$rendered_lines"
-        fi
-
-        for i in "${!items[@]}"; do
-            if [ "$i" -eq "$cursor" ]; then
-                printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
-            else
-                printf "\r\033[K    %s\n" "${items[$i]}"
-            fi
-        done
-        rendered_lines=${#items[@]}
-
-        local key
-        key=$(read_key)
-
-        case "$key" in
-            UP|[kK]|DOWN|[jJ])
-                cursor=$(( 1 - cursor ))
-                ;;
-            "1"|ESC|[qQ]|[nN])
-                return 1
-                ;;
-            "2")
+    if [ "$is_update" = true ]; then
+        if [ ${#installed[@]} -gt 0 ]; then
+            SELECTED_COMPOSITORS=("${installed[@]}")
+            DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
+            MULTIPLE_COMPOSITORS_DETECTED=false
+            UNSUPPORTED_COMPOSITOR_DETECTED=false
+            return 0
+        elif [ -f "$version_file" ]; then
+            local saved_comps
+            saved_comps=$(awk -F= '/^SELECTED_COMPOSITORS=/{gsub(/"/, "", $2); print $2}' "$version_file" 2>/dev/null || true)
+            if [ -n "$saved_comps" ]; then
+                read -r -a SELECTED_COMPOSITORS <<< "$saved_comps"
+                DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
+                MULTIPLE_COMPOSITORS_DETECTED=false
+                UNSUPPORTED_COMPOSITOR_DETECTED=false
                 return 0
-                ;;
-            ENTER|SPACE)
-                if [ "$cursor" -eq 1 ]; then
-                    return 0
-                fi
-                return 1
-                ;;
-        esac
+            fi
+        fi
+    fi
+
+    local running=""
+    local de="${XDG_CURRENT_DESKTOP,,}"
+    local session="${DESKTOP_SESSION,,}"
+
+    if [[ -n "$MANGO_INSTANCE_SIGNATURE" ]] || pgrep -x "mango" &>/dev/null || [[ "$de" == *"mango"* ]] || [[ "$session" == *"mango"* ]]; then
+        running="mango"
+    elif [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]] || pgrep -x "Hyprland" &>/dev/null || pgrep -x "hyprland" &>/dev/null || [[ "$de" == *"hyprland"* ]] || [[ "$session" == *"hyprland"* ]]; then
+        running="hyprland"
+    elif [[ -n "$DRIFTWM_SOCKET" ]] || pgrep -x "driftwm" &>/dev/null || [[ "$de" == *"drift"* ]] || [[ "$session" == *"drift"* ]]; then
+        running="driftwm"
+    elif [[ -n "$SWAYSOCK" ]] || pgrep -x "sway" &>/dev/null || [[ "$de" == *"sway"* ]] || [[ "$session" == *"sway"* ]]; then
+        running="sway"
+    elif pgrep -x "niri" &>/dev/null || [[ "$de" == *"niri"* ]] || [[ "$session" == *"niri"* ]]; then
+        running="niri"
+    elif [[ -n "$UMBRIEL_SOCKET" ]] || pgrep -x "umbriel" &>/dev/null || [[ "$de" == *"umbriel"* ]] || [[ "$session" == *"umbriel"* ]]; then
+        running="umbriel"
+    fi
+
+    if [ -n "$running" ]; then
+        SELECTED_COMPOSITORS=("$running")
+        DETECTED_COMPOSITOR_LABEL="$running"
+    elif [ -f "$version_file" ]; then
+        local saved_comps
+        saved_comps=$(awk -F= '/^SELECTED_COMPOSITORS=/{gsub(/"/, "", $2); print $2}' "$version_file" 2>/dev/null || true)
+        if [ -n "$saved_comps" ]; then
+            read -r -a SELECTED_COMPOSITORS <<< "$saved_comps"
+            DETECTED_COMPOSITOR_LABEL="$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")"
+        fi
+    fi
+
+    if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
+        if [ ${#installed[@]} -gt 1 ]; then
+            MULTIPLE_COMPOSITORS_DETECTED=true
+            SELECTED_COMPOSITORS=()
+        elif [ ${#installed[@]} -eq 1 ]; then
+            SELECTED_COMPOSITORS=("${installed[0]}")
+            DETECTED_COMPOSITOR_LABEL="${installed[0]}"
+        else
+            UNSUPPORTED_COMPOSITOR_DETECTED=true
+            DETECTED_COMPOSITOR_LABEL="$(t "installer.ui.unsupported_compositor")"
+            SELECTED_COMPOSITORS=()
+        fi
+    fi
+}
+
+detect_current_dm() {
+    if declare -f pm_detect_current_dm >/dev/null; then
+        local pm_dm
+        pm_dm="$(pm_detect_current_dm)"
+        if [ -n "$pm_dm" ]; then
+            echo "$pm_dm"
+            return 0
+        fi
+    fi
+
+    local dms=("gdm" "gdm3" "lightdm" "sddm" "lxdm" "lxdm-gtk3" "ly" "greetd" "emptty")
+    local dm
+    for dm in "${dms[@]}"; do
+        if command -v systemctl &>/dev/null; then
+            if systemctl is-enabled "$dm.service" &>/dev/null || systemctl is-active "$dm.service" &>/dev/null; then
+                echo "$dm"
+                return 0
+            fi
+        elif [ -L "/var/service/$dm" ] || [ -d "/var/service/$dm" ]; then
+            echo "$dm"
+            return 0
+        elif command -v rc-service &>/dev/null && rc-service "$dm" status &>/dev/null; then
+            echo "$dm"
+            return 0
+        fi
     done
+    echo ""
 }
 
 run_installer_ui() {
@@ -1014,289 +258,188 @@ run_installer_ui() {
         INSTALL_FULL_WALLPAPERS="${INSTALL_FULL_WALLPAPERS:-true}"
         ENABLE_TELEMETRY="${ENABLE_TELEMETRY:-false}"
         OPT_FAST_REPOS="${OPT_FAST_REPOS:-false}"
+        KEYBOARD_LAYOUT="${KEYBOARD_LAYOUT:-us,ru}"
+        KEYBOARD_TOGGLE="${KEYBOARD_TOGGLE:-alt_shift}"
+        TUI_HANDLED=false
         return 0
     fi
 
-    local cursor=0
-    OPT_FAST_REPOS="${OPT_FAST_REPOS:-false}"
+    local current_dm
+    current_dm="$(detect_current_dm)"
 
-    while true; do
-        draw_banner
-        stty -echo 2>/dev/null || true
-        printf "\e[?25l"
-
-        local rendered_lines=0
-
-        while true; do
-            local COMP_MENU_ITEM=""
-            if [ "$MULTIPLE_COMPOSITORS_DETECTED" = true ]; then
-                if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
-                    COMP_MENU_ITEM="${C_RED}$(t "installer.ui.target_compositor_none")${RESET}"
-                else
-                    COMP_MENU_ITEM="${C_GREEN}$(t "installer.ui.target_compositor_selected" "comps=$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")")${RESET}"
-                fi
-            elif [ "$UNSUPPORTED_COMPOSITOR_DETECTED" = true ]; then
-                if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
-                    COMP_MENU_ITEM="${C_RED}$(t "installer.ui.target_compositor_req" "label=${DETECTED_COMPOSITOR_LABEL}")${RESET}"
-                else
-                    COMP_MENU_ITEM="$(t "installer.ui.target_compositor_label" "comps=$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")")"
-                fi
-            else
-                if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
-                    COMP_MENU_ITEM="${C_RED}$(t "installer.ui.target_compositor_req" "label=${DETECTED_COMPOSITOR_LABEL}")${RESET}"
-                else
-                    COMP_MENU_ITEM="$(t "installer.ui.target_compositor_label" "comps=$(IFS=, ; echo "${SELECTED_COMPOSITORS[*]}")")"
-                fi
-            fi
-
-            local S_SDDM="${DIM}[OFF]${RESET}"
-            local S_TEL="${DIM}[OFF]${RESET}"
-            local S_WP="${DIM}[3 Random]${RESET}"
-            local S_ADD="${DIM}[None]${RESET}"
-            local S_MIRRORS="${DIM}[OFF]${RESET}"
-            local S_KB="${C_GREEN}[Alt+Shift ($KEYBOARD_LAYOUT)]${RESET}"
-            case "$KEYBOARD_TOGGLE" in
-                ctrl_shift) S_KB="${C_GREEN}[Ctrl+Shift ($KEYBOARD_LAYOUT)]${RESET}" ;;
-                win_space)  S_KB="${C_GREEN}[Super+Space ($KEYBOARD_LAYOUT)]${RESET}" ;;
-                caps_lock)  S_KB="${C_GREEN}[Caps Lock ($KEYBOARD_LAYOUT)]${RESET}" ;;
-            esac
-
-            [ "$OPT_SDDM" = true ] && S_SDDM="${C_GREEN}[ON]${RESET}"
-            [ "$ENABLE_TELEMETRY" = true ] && S_TEL="${C_GREEN}[ON]${RESET}"
-            [ "$INSTALL_FULL_WALLPAPERS" = true ] && S_WP="${C_GREEN}[Full Pack]${RESET}"
-            [ "$OPT_FAST_REPOS" = true ] && S_MIRRORS="${C_GREEN}[ON]${RESET}"
-            [ ${#SELECTED_ADDITIONAL_PKGS[@]} -gt 0 ] && S_ADD="${C_GREEN}[${#SELECTED_ADDITIONAL_PKGS[@]} Selected]${RESET}"
-
-            local items=()
-            items+=("1. $(t "installer.ui.menu_overview" "count=${#REQUIRED_PKGS[@]}")")
-            items+=("2. $COMP_MENU_ITEM")
-            items+=("3. $(t "installer.ui.menu_sddm") $S_SDDM")
-            items+=("4. $(t "installer.ui.menu_wallpapers") $S_WP")
-            items+=("5. $(t "installer.ui.menu_additional_pkgs" "Additional Packages") $S_ADD")
-            items+=("6. $(t "installer.ui.menu_keyboard" "Keyboard Layout & Shortcut") $S_KB")
-            items+=("7. $(t "installer.ui.menu_fast_mirrors" "Fast mirrors & Chaotic-AUR") $S_MIRRORS")
-            items+=("8. $(t "installer.ui.menu_telemetry") $S_TEL")
-
-            if [[ "$INSTALL_STATE" == "current" ]]; then
-                items+=("9. ${BOLD}${C_GREEN}$(t "installer.ui.menu_update")${RESET}")
-                items+=("10. ${BOLD}${C_YELLOW}$(t "installer.ui.menu_reinstall")${RESET}")
-                items+=("11. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
-                items+=("12. ${BOLD}${C_RED}$(t "installer.ui.menu_uninstall")${RESET}")
-            else
-                items+=("9. ${BOLD}${C_GREEN}$(t "installer.ui.menu_install")${RESET}")
-                items+=("10. ${DIM}$(t "installer.ui.menu_exit")${RESET}")
-            fi
-
-            if [ "$rendered_lines" -gt 0 ]; then
-                printf "\033[%dA" "$rendered_lines"
-            fi
-
-            for i in "${!items[@]}"; do
-                if [ "$i" -eq "$cursor" ]; then
-                    printf "\r\033[K%s%s ▸ %s%s\n" "$BOLD" "$C_CYAN" "$RESET" "${items[$i]}"
-                else
-                    printf "\r\033[K    %s\n" "${items[$i]}"
-                fi
-            done
-            rendered_lines=${#items[@]}
-
-            local key
-            key=$(read_key)
-
-            case "$key" in
-                UP|[kK])
-                    if [ "$cursor" -gt 0 ]; then
-                        cursor=$(( cursor - 1 ))
-                    else
-                        cursor=$(( ${#items[@]} - 1 ))
-                    fi
-                    ;;
-                DOWN|[jJ])
-                    if [ "$cursor" -lt $(( ${#items[@]} - 1 )) ]; then
-                        cursor=$(( cursor + 1 ))
-                    else
-                        cursor=0
-                    fi
-                    ;;
-                "1")
-                    show_package_overview
-                    break
-                    ;;
-                "2")
-                    manage_compositors_menu
-                    break
-                    ;;
-                "3")
-                    manage_sddm_menu
-                    break
-                    ;;
-                "4")
-                    INSTALL_FULL_WALLPAPERS=$([ "$INSTALL_FULL_WALLPAPERS" = true ] && echo false || echo true)
-                    ;;
-                "5")
-                    additional_packages_menu
-                    break
-                    ;;
-                "6")
-                    manage_keyboard_menu
-                    break
-                    ;;
-                "7")
-                    OPT_FAST_REPOS=$([ "$OPT_FAST_REPOS" = true ] && echo false || echo true)
-                    ;;
-                "8")
-                    ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
-                    ;;
-                "9")
-                    if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
-                        printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
-                        sleep 1.5
-                        break
-                    fi
-                    IS_REINSTALL=false
-                    cleanup_terminal
-                    return 0
-                    ;;
-                "10")
-                    if [[ "$INSTALL_STATE" == "current" ]]; then
-                        if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
-                            printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
-                            sleep 1.5
-                            break
-                        fi
-                        IS_REINSTALL=true
-                        cleanup_terminal
-                        return 0
-                    else
-                        cleanup_terminal
-                        clear 2>/dev/null || true
-                        exit 0
-                    fi
-                    ;;
-                "11")
-                    if [[ "$INSTALL_STATE" == "current" ]]; then
-                        cleanup_terminal
-                        clear 2>/dev/null || true
-                        exit 0
-                    fi
-                    ;;
-                "12")
-                    if [[ "$INSTALL_STATE" == "current" ]]; then
-                        if confirm_uninstall; then
-                            DO_UNINSTALL=true
-                            cleanup_terminal
-                            return 0
-                        fi
-                        break
-                    fi
-                    ;;
-                ESC|[qQ])
-                    cleanup_terminal
-                    clear 2>/dev/null || true
-                    exit 0
-                    ;;
-                ENTER|SPACE)
-                    case "$cursor" in
-                        0)
-                            show_package_overview
-                            break
-                            ;;
-                        1)
-                            manage_compositors_menu
-                            break
-                            ;;
-                        2)
-                            manage_sddm_menu
-                            break
-                            ;;
-                        3)
-                            INSTALL_FULL_WALLPAPERS=$([ "$INSTALL_FULL_WALLPAPERS" = true ] && echo false || echo true)
-                            ;;
-                        4)
-                            additional_packages_menu
-                            break
-                            ;;
-                        5)
-                            manage_keyboard_menu
-                            break
-                            ;;
-                        6)
-                            OPT_FAST_REPOS=$([ "$OPT_FAST_REPOS" = true ] && echo false || echo true)
-                            ;;
-                        7)
-                            ENABLE_TELEMETRY=$([ "$ENABLE_TELEMETRY" = true ] && echo false || echo true)
-                            ;;
-                        8)
-                            if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
-                                printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
-                                sleep 1.5
-                                break
-                            fi
-                            IS_REINSTALL=false
-                            cleanup_terminal
-                            return 0
-                            ;;
-                        9)
-                            if [[ "$INSTALL_STATE" == "current" ]]; then
-                                if [ ${#SELECTED_COMPOSITORS[@]} -eq 0 ]; then
-                                    printf "\n%s[!] %s%s\n" "$C_RED" "$(t "installer.ui.error_no_compositor")" "$RESET"
-                                    sleep 1.5
-                                    break
-                                fi
-                                IS_REINSTALL=true
-                                cleanup_terminal
-                                return 0
-                            else
-                                cleanup_terminal
-                                clear 2>/dev/null || true
-                                exit 0
-                            fi
-                            ;;
-                        10)
-                            if [[ "$INSTALL_STATE" == "current" ]]; then
-                                cleanup_terminal
-                                clear 2>/dev/null || true
-                                exit 0
-                            fi
-                            ;;
-                        11)
-                            if [[ "$INSTALL_STATE" == "current" ]]; then
-                                if confirm_uninstall; then
-                                    DO_UNINSTALL=true
-                                    cleanup_terminal
-                                    return 0
-                                fi
-                                break
-                            fi
-                            ;;
-                    esac
-                    ;;
-            esac
-        done
+    local comp_installed_pairs=""
+    local comp pkg
+    for comp in hyprland driftwm niri sway mango umbriel; do
+        if is_compositor_installed "$comp"; then
+            comp_installed_pairs+="${comp}=1"$'\n'
+        else
+            comp_installed_pairs+="${comp}=0"$'\n'
+        fi
     done
+
+    local base_sddm_pkgs=(sddm qt6-declarative qt6-svg "${PM_SDDM_EXTRA_PKGS[@]}")
+    local sddm_needs_weston=false
+    if ! find_sddm_binary kwin_wayland >/dev/null && ! find_sddm_binary weston >/dev/null; then
+        sddm_needs_weston=true
+    fi
+
+    local all_candidates=("${REQUIRED_PKGS[@]}" "${base_sddm_pkgs[@]}" "${PM_EXTRA_PKGS[@]}" "weston")
+    for comp in hyprland driftwm niri sway mango umbriel; do
+        all_candidates+=("$(compositor_package_name "$comp")")
+    done
+    local entry
+    for entry in "${AVAILABLE_ADDITIONAL_PKGS[@]}"; do
+        all_candidates+=("${entry%%:*}")
+    done
+
+    local missing_raw
+    missing_raw="$(pm_missing_pkgs "${all_candidates[@]}")"
+
+    local ctx_file res_file
+    ctx_file="$(mktemp)"
+    res_file="$(mktemp)"
+
+    CTX_FILE="$ctx_file" \
+    CTX_PROJECT_ROOT="$PROJECT_ROOT" \
+    CTX_MODULES_DIR="$MODULES_DIR" \
+    CTX_REPO_SLUG="$REPO_SLUG" \
+    CTX_INSTALL_STATE="$INSTALL_STATE" \
+    CTX_OLD_VERSION="$OLD_VERSION" \
+    CTX_TARGET_VERSION="$TARGET_VERSION" \
+    CTX_TARGET_COMMIT="$TARGET_COMMIT" \
+    CTX_OLD_COMMIT="$OLD_COMMIT" \
+    CTX_USER_NAME="$USER_NAME" \
+    CTX_OS_NAME="$OS_NAME" \
+    CTX_CPU_INFO="$CPU_INFO" \
+    CTX_GPU_INFO="$GPU_INFO" \
+    CTX_TELEMETRY_ID="$TELEMETRY_ID" \
+    CTX_ENABLE_TELEMETRY="$ENABLE_TELEMETRY" \
+    CTX_OPT_SDDM="$OPT_SDDM" \
+    CTX_REPLACE_DM="$REPLACE_DM" \
+    CTX_SDDM_WAYLAND="$SDDM_WAYLAND" \
+    CTX_INSTALL_FULL_WALLPAPERS="$INSTALL_FULL_WALLPAPERS" \
+    CTX_KEYBOARD_LAYOUT="${KEYBOARD_LAYOUT:-us,ru}" \
+    CTX_KEYBOARD_TOGGLE="${KEYBOARD_TOGGLE:-alt_shift}" \
+    CTX_OPT_FAST_REPOS="${OPT_FAST_REPOS:-false}" \
+    CTX_SELECTED_COMPOSITORS="$(printf '%s\n' "${SELECTED_COMPOSITORS[@]}")" \
+    CTX_SELECTED_ADDITIONAL_PKGS="$(printf '%s\n' "${SELECTED_ADDITIONAL_PKGS[@]}")" \
+    CTX_DETECTED_COMPOSITOR_LABEL="$DETECTED_COMPOSITOR_LABEL" \
+    CTX_MULTIPLE_COMPOSITORS="$MULTIPLE_COMPOSITORS_DETECTED" \
+    CTX_UNSUPPORTED_COMPOSITOR="$UNSUPPORTED_COMPOSITOR_DETECTED" \
+    CTX_CURRENT_DM="$current_dm" \
+    CTX_COMP_INSTALLED="$comp_installed_pairs" \
+    CTX_REQUIRED_PKGS="$(printf '%s\n' "${REQUIRED_PKGS[@]}")" \
+    CTX_PM_EXTRA_PKGS="$(printf '%s\n' "${PM_EXTRA_PKGS[@]}")" \
+    CTX_SDDM_PKGS="$(printf '%s\n' "${base_sddm_pkgs[@]}")" \
+    CTX_SDDM_NEEDS_WESTON="$sddm_needs_weston" \
+    CTX_ALL_CANDIDATES="$(printf '%s\n' "${all_candidates[@]}")" \
+    CTX_MISSING_PKGS="$missing_raw" \
+    CTX_PKGS_DEV="$(printf '%s\n' "${PKGS_DEVELOPMENT[@]}")" \
+    CTX_PKGS_SOC="$(printf '%s\n' "${PKGS_SOCIAL[@]}")" \
+    CTX_PKGS_BRW="$(printf '%s\n' "${PKGS_BROWSERS[@]}")" \
+    CTX_PKGS_GAM="$(printf '%s\n' "${PKGS_GAMES[@]}")" \
+    CTX_PKGS_OFF="$(printf '%s\n' "${PKGS_OFFICE[@]}")" \
+    CTX_PKGS_MED="$(printf '%s\n' "${PKGS_MEDIA[@]}")" \
+    python3 -c '
+import json, os
+
+def lines(name):
+    return [x for x in os.environ.get(name, "").splitlines() if x]
+
+def to_bool(name):
+    return os.environ.get(name, "").lower() == "true"
+
+def parse_cat(cid, title, env_name):
+    items = []
+    for raw in lines(env_name):
+        pkg, _, label = raw.partition(":")
+        items.append({"pkg": pkg, "label": label or pkg})
+    return {"id": cid, "title": title, "items": items}
+
+missing = set(lines("CTX_MISSING_PKGS"))
+pkg_status = {p: (p not in missing) for p in lines("CTX_ALL_CANDIDATES")}
+
+comp_installed = {}
+for item in lines("CTX_COMP_INSTALLED"):
+    if "=" in item:
+        k, v = item.split("=", 1)
+        comp_installed[k] = (v == "1")
+
+if comp_installed.get("driftwm"):
+    pkg_status["driftwm-bin"] = True
+
+payload = {
+    "project_root": os.environ["CTX_PROJECT_ROOT"],
+    "modules_dir": os.environ["CTX_MODULES_DIR"],
+    "repo_slug": os.environ["CTX_REPO_SLUG"],
+    "install_state": os.environ["CTX_INSTALL_STATE"],
+    "old_version": os.environ["CTX_OLD_VERSION"],
+    "target_version": os.environ["CTX_TARGET_VERSION"],
+    "target_commit": os.environ["CTX_TARGET_COMMIT"],
+    "old_commit": os.environ["CTX_OLD_COMMIT"],
+    "user_name": os.environ["CTX_USER_NAME"],
+    "os_name": os.environ["CTX_OS_NAME"],
+    "cpu_info": os.environ["CTX_CPU_INFO"],
+    "gpu_info": os.environ["CTX_GPU_INFO"],
+    "telemetry_id": os.environ["CTX_TELEMETRY_ID"],
+    "enable_telemetry": to_bool("CTX_ENABLE_TELEMETRY"),
+    "opt_sddm": to_bool("CTX_OPT_SDDM"),
+    "replace_dm": to_bool("CTX_REPLACE_DM"),
+    "sddm_wayland": to_bool("CTX_SDDM_WAYLAND"),
+    "install_full_wallpapers": to_bool("CTX_INSTALL_FULL_WALLPAPERS"),
+    "keyboard_layout": os.environ["CTX_KEYBOARD_LAYOUT"],
+    "keyboard_toggle": os.environ["CTX_KEYBOARD_TOGGLE"],
+    "opt_fast_repos": to_bool("CTX_OPT_FAST_REPOS"),
+    "selected_compositors": lines("CTX_SELECTED_COMPOSITORS"),
+    "selected_additional_pkgs": lines("CTX_SELECTED_ADDITIONAL_PKGS"),
+    "detected_compositor_label": os.environ["CTX_DETECTED_COMPOSITOR_LABEL"],
+    "multiple_compositors_detected": to_bool("CTX_MULTIPLE_COMPOSITORS"),
+    "unsupported_compositor_detected": to_bool("CTX_UNSUPPORTED_COMPOSITOR"),
+    "current_dm": os.environ["CTX_CURRENT_DM"],
+    "compositor_installed": comp_installed,
+    "required_pkgs": lines("CTX_REQUIRED_PKGS"),
+    "pm_extra_pkgs": lines("CTX_PM_EXTRA_PKGS"),
+    "sddm_pkgs": lines("CTX_SDDM_PKGS"),
+    "sddm_needs_weston": to_bool("CTX_SDDM_NEEDS_WESTON"),
+    "package_installed": pkg_status,
+    "additional_pkg_categories": [
+        parse_cat("dev", "Development", "CTX_PKGS_DEV"),
+        parse_cat("social", "Social Media", "CTX_PKGS_SOC"),
+        parse_cat("browsers", "Web Browsers", "CTX_PKGS_BRW"),
+        parse_cat("games", "Games", "CTX_PKGS_GAM"),
+        parse_cat("office", "Office", "CTX_PKGS_OFF"),
+        parse_cat("media", "Media & Entertainment", "CTX_PKGS_MED"),
+    ],
+}
+
+with open(os.environ["CTX_FILE"], "w", encoding="utf-8") as fh:
+    json.dump(payload, fh)
+'
+
+    local tui_status=0
+    python3 "$INSTALL_DIR/tui.py" --context "$ctx_file" --result "$res_file" || tui_status=$?
+
+    local action="exit"
+    if [ -s "$res_file" ]; then
+        action="$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1])).get("action", "exit"))' "$res_file" 2>/dev/null || echo "exit")"
+    fi
+
+    rm -f "$ctx_file" "$res_file"
+    TUI_HANDLED=true
+
+    if [ "$tui_status" -ne 0 ]; then
+        exit "$tui_status"
+    fi
+
+    if [ "$action" = "reboot" ]; then
+        sudo reboot now
+    fi
 }
 
 draw_completion_screen() {
     local target_ver="$1"
     local target_commit="$2"
     cleanup_terminal
-    clear 2>/dev/null || true
-    printf "%s%s" "$BOLD" "$C_GREEN"
-    cat << "EOF"
-             ▀  █▀▀▄ █▀▀ ▀▀█▀▀ █▀▀█ █   █   █▀▀█ ▀▀█▀▀  ▀  █▀▀█ █▀▀▄
-            ▀█▀ █  █ ▀▀█   █   █▄▄█ █   █   █▄▄█   █   ▀█▀ █  █ █  █
-            ▀▀▀ ▀  ▀ ▀▀▀   ▀   ▀  ▀ █▄▄ █▄▄ ▀  ▀   ▀   ▀▀▀ ▀▀▀▀ ▀  ▀
-
-                    █▀▀ █▀▀█ █▀▄▀█ █▀▀█ █   █▀▀ ▀▀█▀▀ █▀▀
-                    █   █  █ █ █ █ █  █ █   █▀▀   █   █▀▀
-                    ▀▀▀ ▀▀▀▀ ▀   ▀ █▀▀▀ █▄▄ ▀▀▀   ▀   ▀▀▀
-EOF
-    printf "%s\n\n" "$RESET"
-    printf "%s%s  %s%s\n\n" "$BOLD" "$C_CYAN" "$(t "installer.ui.tagline")" "$RESET"
-    printf "%s%s================================================================================%s\n" "$BOLD" "$C_BLUE" "$RESET"
-    printf " %s%sGitHub:%s   https://github.com/%s\n" "$BOLD" "$C_GREEN" "$RESET" "$REPO_SLUG"
-    printf " %s%sTelegram:%s https://t.me/Nathant16\n" "$BOLD" "$C_CYAN" "$RESET"
-    printf "%s%s================================================================================%s\n\n" "$BOLD" "$C_BLUE" "$RESET"
     printf "%s%s%s\n" "$C_GREEN" "$(t "installer.ui.installed_success" "ver=$target_ver" "commit=$target_commit")" "$RESET"
     if [ ${#FAILED_PKGS[@]} -gt 0 ]; then
         printf "\n%s%s%s%s\n" "$BOLD" "$C_RED" "$(t "installer.ui.failed_packages")" "$RESET"
@@ -1304,7 +447,7 @@ EOF
             printf "  - %s%s%s\n" "$C_YELLOW" "$fp" "$RESET"
         done
     fi
-    printf "\n%s\n\n" "$(t "installer.ui.restart_prompt")"
+    printf "%s\n" "$(t "installer.ui.restart_prompt")"
 
     if [ "${NONINTERACTIVE:-0}" = "1" ] || [ "${AUTO_INSTALL:-0}" = "1" ]; then
         return 0
@@ -1313,13 +456,11 @@ EOF
     local restart_choice=""
     local prompt_msg
     prompt_msg="$(t "installer.ui.ask_reboot")"
-
     if [ -t 0 ]; then
         read -r -p "$prompt_msg" restart_choice
     elif [ -e /dev/tty ]; then
         read -r -p "$prompt_msg" restart_choice < /dev/tty
     fi
-
     if [[ "$restart_choice" =~ ^[Yy]$ ]]; then
         sudo reboot now
     fi

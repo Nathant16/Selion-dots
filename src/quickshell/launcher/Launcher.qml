@@ -57,6 +57,7 @@ PanelWindow {
     property string tabAppsTitle: (typeof I18n !== "undefined") ? I18n.t("applauncher.tab_applications", "Applications") : "Applications"
     property string tabFilesTitle: (typeof I18n !== "undefined") ? I18n.t("applauncher.tab_files", "Files") : "Files"
     property string tabEmojisTitle: (typeof I18n !== "undefined") ? I18n.t("applauncher.tab_emojis", "Emojis") : "Emojis"
+    property string tabWindowsTitle: (typeof I18n !== "undefined") ? I18n.t("applauncher.tab_windows", "Windows") : "Windows"
 
     function saveLastTab() {
         if (lastTabWatcher.path !== "") {
@@ -73,6 +74,8 @@ PanelWindow {
             executeFilter(searchInput.text);
         } else if (currentTabIndex === 1) {
             executeFileSearch(searchInput.text);
+        } else if (currentTabIndex === 3) {
+            executeWindowFilter(searchInput.text);
         } else {
             executeEmojiFilter(searchInput.text);
         }
@@ -89,7 +92,7 @@ PanelWindow {
                 let val = text().trim();
                 if (val !== "") {
                     let idx = parseInt(val);
-                    if (!isNaN(idx) && (idx >= 0 && idx <= 2)) {
+                    if (!isNaN(idx) && (idx >= 0 && idx <= 3)) {
                         launcherWindow.currentTabIndex = idx;
                         tabSwitch.currentIndex = idx;
                     }
@@ -147,6 +150,8 @@ PanelWindow {
             executeFilter("");
         } else if (currentTabIndex === 1) {
             executeFileSearch("");
+        } else if (currentTabIndex === 3) {
+            executeWindowFilter("");
         } else {
             executeEmojiFilter("");
         }
@@ -166,12 +171,15 @@ PanelWindow {
             launcherWindow.tabAppsTitle = (typeof I18n !== "undefined") ? I18n.t("applauncher.tab_applications", "Applications") : "Applications";
             launcherWindow.tabFilesTitle = (typeof I18n !== "undefined") ? I18n.t("applauncher.tab_files", "Files") : "Files";
             launcherWindow.tabEmojisTitle = (typeof I18n !== "undefined") ? I18n.t("applauncher.tab_emojis", "Emojis") : "Emojis";
+            launcherWindow.tabWindowsTitle = (typeof I18n !== "undefined") ? I18n.t("applauncher.tab_windows", "Windows") : "Windows";
             if (launcherWindow.isVisible) {
                 launcherWindow.loadApps();
                 if (launcherWindow.currentTabIndex === 0) {
                     launcherWindow.executeFilter(searchInput.text);
                 } else if (launcherWindow.currentTabIndex === 1) {
                     launcherWindow.executeFileSearch(searchInput.text);
+                } else if (launcherWindow.currentTabIndex === 3) {
+                    launcherWindow.executeWindowFilter(searchInput.text);
                 } else {
                     launcherWindow.executeEmojiFilter(searchInput.text);
                 }
@@ -298,7 +306,7 @@ PanelWindow {
 
     readonly property bool isFullscreenActive: isOsdFullscreen || isToplevelFullscreen || isHyprlandFullscreen
 
-    readonly property bool isBarEffectivelyHidden: barAutohide || isFullscreenActive
+    readonly property bool isBarEffectivelyHidden: barAutohide || isFullscreenActive || !Config.isBarEnabledOnScreen(launcherWindow.screen)
 
     property real barHeight: {
         let dummy = configRevision;
@@ -426,7 +434,9 @@ PanelWindow {
                                 widgetTarget: "",
                                 isFile: true,
                                 filePath: p.path,
-                                isDir: p.isDir
+                                isDir: p.isDir,
+                                isWindow: false,
+                                windowId: ""
                             });
                         }
                         if (launcherWindow.currentTabIndex === 1) {
@@ -508,6 +518,15 @@ PanelWindow {
     }
 
     Timer {
+        id: windowDebounceTimer
+        interval: 60
+        repeat: false
+        onTriggered: {
+            executeWindowFilter(launcherWindow.pendingQuery);
+        }
+    }
+
+    Timer {
         id: emojiDebounceTimer
         interval: 60
         repeat: false
@@ -529,15 +548,19 @@ PanelWindow {
                 filterDebounceTimer.stop();
                 fileDebounceTimer.stop();
                 emojiDebounceTimer.stop();
+                windowDebounceTimer.stop();
             } else {
                 filterDebounceTimer.stop();
                 fileDebounceTimer.stop();
                 emojiDebounceTimer.stop();
+                windowDebounceTimer.stop();
             }
             if (launcherWindow.currentTabIndex === 0) {
                 executeFilter("");
             } else if (launcherWindow.currentTabIndex === 1) {
                 executeFileSearch("");
+            } else if (launcherWindow.currentTabIndex === 3) {
+                executeWindowFilter("");
             } else {
                 executeEmojiFilter("");
             }
@@ -557,6 +580,7 @@ PanelWindow {
             filterDebounceTimer.stop();
             fileDebounceTimer.stop();
             emojiDebounceTimer.stop();
+            windowDebounceTimer.stop();
             focusTimer.stop();
             focusRetryTimer.stop();
             focusFinalTimer.stop();
@@ -687,7 +711,9 @@ PanelWindow {
                     widgetTarget: "",
                     isFile: false,
                     filePath: "",
-                    isDir: false
+                    isDir: false,
+                    isWindow: false,
+                    windowId: ""
                 });
             }
         }
@@ -719,7 +745,9 @@ PanelWindow {
                 widgetTarget: w.id,
                 isFile: false,
                 filePath: "",
-                isDir: false
+                isDir: false,
+                isWindow: false,
+                windowId: ""
             });
         }
 
@@ -837,6 +865,105 @@ PanelWindow {
         fileSearchProcess.running = true;
     }
 
+    function filterWindows(query) {
+        launcherWindow.pendingQuery = query;
+        windowDebounceTimer.restart();
+    }
+
+    readonly property bool windowsTabActive: isVisible && currentTabIndex === 3
+    property bool windowTrackerSubscribed: false
+
+    onWindowsTabActiveChanged: {
+        if (windowsTabActive && !windowTrackerSubscribed) {
+            WindowTracker.subscribe();
+            windowTrackerSubscribed = true;
+        } else if (!windowsTabActive && windowTrackerSubscribed) {
+            WindowTracker.unsubscribe();
+            windowTrackerSubscribed = false;
+        }
+    }
+
+    Component.onDestruction: {
+        if (windowTrackerSubscribed) {
+            WindowTracker.unsubscribe();
+        }
+    }
+
+    Connections {
+        target: WindowTracker
+        function onUpdated() {
+            if (!launcherWindow.windowsTabActive) return;
+            let selected = (appList.currentIndex >= 0 && appList.currentIndex < appModel.count) ? appModel.get(appList.currentIndex).windowId : "";
+            launcherWindow.executeWindowFilter(searchInput.text);
+            if (selected === "") return;
+            for (let i = 0; i < appModel.count; i++) {
+                if (appModel.get(i).windowId === selected) {
+                    appList.currentIndex = i;
+                    break;
+                }
+            }
+        }
+    }
+
+    function executeWindowFilter(query) {
+        launcherWindow.isKeyboardNav = false;
+        if (keyboardNavTimer.running) keyboardNavTimer.stop();
+
+        let q = query ? query.toLowerCase().trim() : "";
+        let wins = WindowTracker.windows.slice();
+        wins.sort(function(a, b) {
+            if (a.output !== b.output) return String(a.output).localeCompare(String(b.output));
+            if (a.workspace !== b.workspace) return a.workspace - b.workspace;
+            return a.seq - b.seq;
+        });
+
+        let items = [];
+        for (let i = 0; i < wins.length; i++) {
+            let w = wins[i];
+            let entry = w.desktopId ? (DesktopEntries.byId(w.desktopId) || DesktopEntries.byId(w.desktopId.replace(/\.desktop$/, ""))) : null;
+            let appName = (entry && entry.name) ? entry.name : (w.appId || "");
+            let title = w.title || appName;
+
+            if (q.length > 0) {
+                let hay = (title + " " + appName + " " + (w.appId || "") + " " + (w.workspaceLabel || "")).toLowerCase();
+                if (!hay.includes(q) && !isSubsequence(q, title.toLowerCase())) continue;
+            }
+
+            let parts = [];
+            if (appName && appName !== title) parts.push(appName);
+            if (w.workspaceLabel) {
+                parts.push(typeof I18n !== "undefined" ? I18n.t("applauncher.window_workspace", { ws: w.workspaceLabel }) : ("Workspace " + w.workspaceLabel));
+            }
+            if (w.output) parts.push(w.output);
+
+            let icon = (entry && entry.icon) ? entry.icon : w.appId;
+
+            items.push({
+                name: title,
+                description: parts.join(" · "),
+                desktop_id: w.desktopId,
+                icon: icon,
+                fontIcon: icon ? "" : "󰖯",
+                score: 0,
+                isCommand: false,
+                command: "",
+                isCalc: false,
+                isSearch: false,
+                searchUrl: "",
+                calcResult: "",
+                isWidget: false,
+                widgetTarget: "",
+                isFile: false,
+                filePath: "",
+                isDir: false,
+                isWindow: true,
+                windowId: w.id
+            });
+        }
+
+        applyModelItems(items);
+    }
+
     function isSubsequence(sub, str) {
         let i = 0;
         let j = 0;
@@ -870,7 +997,9 @@ PanelWindow {
                 || cur.widgetTarget !== target.widgetTarget
                 || cur.isFile !== target.isFile
                 || cur.filePath !== target.filePath
-                || cur.isDir !== target.isDir) {
+                || cur.isDir !== target.isDir
+                || cur.isWindow !== target.isWindow
+                || cur.windowId !== target.windowId) {
                 appModel.set(i, target);
             }
         }
@@ -922,7 +1051,9 @@ PanelWindow {
                     widgetTarget: "",
                     isFile: false,
                     filePath: "",
-                    isDir: false
+                    isDir: false,
+                    isWindow: false,
+                    windowId: ""
                 });
             } else {
                 filtered.push({
@@ -942,7 +1073,9 @@ PanelWindow {
                     widgetTarget: "",
                     isFile: false,
                     filePath: "",
-                    isDir: false
+                    isDir: false,
+                    isWindow: false,
+                    windowId: ""
                 });
             }
         }
@@ -969,7 +1102,9 @@ PanelWindow {
                 widgetTarget: "",
                 isFile: false,
                 filePath: "",
-                isDir: false
+                isDir: false,
+                isWindow: false,
+                windowId: ""
             });
             applyModelItems(filtered);
             return;
@@ -994,7 +1129,9 @@ PanelWindow {
                 widgetTarget: "",
                 isFile: false,
                 filePath: "",
-                isDir: false
+                isDir: false,
+                isWindow: false,
+                windowId: ""
             });
         }
 
@@ -1049,7 +1186,9 @@ PanelWindow {
                     widgetTarget: app.widgetTarget || "",
                     isFile: false,
                     filePath: "",
-                    isDir: false
+                    isDir: false,
+                    isWindow: false,
+                    windowId: ""
                 });
             }
         }
@@ -1091,6 +1230,18 @@ PanelWindow {
                 + "  xdg-open \"$(dirname \"$p\")\" >/dev/null 2>&1 &\n"
                 + "fi";
             Quickshell.execDetached(["bash", "-c", script, "_", item.filePath]);
+            closeLauncher();
+            return;
+        }
+
+        if (item.isWindow) {
+            let wins = WindowTracker.windows;
+            for (let i = 0; i < wins.length; i++) {
+                if (wins[i].id === item.windowId) {
+                    WindowTracker.focusWindow(wins[i]);
+                    break;
+                }
+            }
             closeLauncher();
             return;
         }
@@ -1310,6 +1461,8 @@ PanelWindow {
                     placeholderText: {
                         if (launcherWindow.currentTabIndex === 1) {
                             return typeof I18n !== "undefined" ? I18n.t("applauncher.placeholder_files", "Search files or enter path...") : "Search files or enter path...";
+                        } else if (launcherWindow.currentTabIndex === 3) {
+                            return typeof I18n !== "undefined" ? I18n.t("applauncher.placeholder_windows", "Search open windows...") : "Search open windows...";
                         } else if (launcherWindow.currentTabIndex === 2) {
                             return typeof I18n !== "undefined" ? I18n.t("applauncher.placeholder_emojis", "Search emojis by name or keyword...") : "Search emojis by name or keyword...";
                         }
@@ -1332,6 +1485,8 @@ PanelWindow {
                             filterApps(newText);
                         } else if (launcherWindow.currentTabIndex === 1) {
                             filterFiles(newText);
+                        } else if (launcherWindow.currentTabIndex === 3) {
+                            filterWindows(newText);
                         } else {
                             filterEmojis(newText);
                         }
@@ -1341,18 +1496,20 @@ PanelWindow {
                             filterApps("");
                         } else if (launcherWindow.currentTabIndex === 1) {
                             filterFiles("");
+                        } else if (launcherWindow.currentTabIndex === 3) {
+                            filterWindows("");
                         } else {
                             filterEmojis("");
                         }
                     }
 
                     Keys.onTabPressed: function(event) {
-                        launcherWindow.currentTabIndex = (launcherWindow.currentTabIndex + 1) % 3;
+                        launcherWindow.currentTabIndex = (launcherWindow.currentTabIndex + 1) % 4;
                         tabSwitch.currentIndex = launcherWindow.currentTabIndex;
                         event.accepted = true;
                     }
                     Keys.onBacktabPressed: function(event) {
-                        launcherWindow.currentTabIndex = (launcherWindow.currentTabIndex + 2) % 3;
+                        launcherWindow.currentTabIndex = (launcherWindow.currentTabIndex + 3) % 4;
                         tabSwitch.currentIndex = launcherWindow.currentTabIndex;
                         event.accepted = true;
                     }
@@ -1436,7 +1593,7 @@ PanelWindow {
                     accentColor: ThemeBackend.mauve
                     textColor: ThemeBackend.text
                     activeTextColor: ThemeBackend.crust
-                    options: [launcherWindow.tabAppsTitle, launcherWindow.tabFilesTitle, launcherWindow.tabEmojisTitle]
+                    options: [launcherWindow.tabAppsTitle, launcherWindow.tabFilesTitle, launcherWindow.tabEmojisTitle, launcherWindow.tabWindowsTitle]
                     currentIndex: launcherWindow.currentTabIndex
                     onValueChanged: function(index, value) {
                         launcherWindow.currentTabIndex = index;

@@ -9,6 +9,7 @@ Singleton {
     id: root
 
     property string layout: "US"
+    property string fullLayout: ""
     property bool ready: false
     property int subscribers: 0
     readonly property bool active: subscribers > 0
@@ -37,10 +38,6 @@ Singleton {
             applyDriftLayout();
             return;
         }
-        if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") {
-            DriftState.unsubscribeKeyboard();
-            return;
-        }
         if (Compositor.name === "sway") {
             SwayState.subscribeKeyboard();
             applySwayLayout();
@@ -62,13 +59,13 @@ Singleton {
     }
 
     function stop() {
+        root.ready = false;
         if (Compositor.name === "niri") {
             NiriState.unsubscribe();
             return;
         }
         if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") {
-            DriftState.subscribeKeyboard();
-            applyDriftLayout();
+            DriftState.unsubscribeKeyboard();
             return;
         }
         if (Compositor.name === "sway") {
@@ -96,38 +93,53 @@ Singleton {
         if (Compositor.name === "niri") {
             Quickshell.execDetached(["niri", "msg", "action", "switch-layout", "next"]);
         } else if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") {
-            DriftState.subscribeKeyboard();
-            applyDriftLayout();
-            return;
-        }
-        if (Compositor.name === "sway") {
+            DriftState.switchLayout();
+        } else if (Compositor.name === "sway") {
             Quickshell.execDetached(["swaymsg", "input", "type:keyboard", "xkb_switch_layout", "next"]);
         } else if (Compositor.name === "mango") {
             Quickshell.execDetached(["mmsg", "dispatch", "switch_keyboard_layout"]);
         } else if (Compositor.name === "umbriel") {
             Quickshell.execDetached(["umbriel", "msg", "keyboard-layout-next"]);
-        } else {
+        } else if (Compositor.name === "hyprland") {
             Quickshell.execDetached(["hyprctl", "switchxkblayout", "main", "next"]);
         }
     }
 
     function applyNiriLayout() {
         if (!NiriState.keyboardReady) return;
+        let name = NiriState.keyboardLayout;
+        if (name !== "") {
+            root.applyLayoutName(name);
+            return;
+        }
         let txt = NiriState.shortKeyboardLayout;
-        if (txt !== "") root.layout = txt;
+        if (txt !== "") {
+            root.layout = txt;
+            root.fullLayout = txt;
+        }
         root.ready = true;
     }
 
     Connections {
         target: NiriState
         enabled: Compositor.name === "niri" && root.active
+        function onKeyboardLayoutChanged() { root.applyNiriLayout(); }
         function onShortKeyboardLayoutChanged() { root.applyNiriLayout(); }
         function onKeyboardReadyChanged() { root.applyNiriLayout(); }
     }
 
     function applyDriftLayout() {
         if (!DriftState.keyboardReady) return;
-        root.layout = DriftState.shortKeyboardLayout;
+        let name = DriftState.keyboardLayout;
+        if (name !== "") {
+            root.applyLayoutName(name);
+            return;
+        }
+        let txt = DriftState.shortKeyboardLayout;
+        if (txt !== "") {
+            root.layout = txt;
+            root.fullLayout = txt;
+        }
         root.ready = true;
     }
 
@@ -140,13 +152,20 @@ Singleton {
 
     function applySwayLayout() {
         if (!SwayState.keyboardReady) return;
+        let name = SwayState.keyboardLayout;
+        if (name !== "") {
+            root.applyLayoutName(name);
+            return;
+        }
         root.layout = SwayState.shortKeyboardLayout;
+        root.fullLayout = SwayState.shortKeyboardLayout;
         root.ready = true;
     }
 
     Connections {
         target: SwayState
         enabled: Compositor.name === "sway" && root.active
+        function onKeyboardLayoutChanged() { root.applySwayLayout(); }
         function onShortKeyboardLayoutChanged() { root.applySwayLayout(); }
         function onKeyboardReadyChanged() { root.applySwayLayout(); }
     }
@@ -176,8 +195,11 @@ Singleton {
     }
 
     function applyLayoutName(name) {
-        let txt = (name && name !== "null") ? String(name) : "US";
-        root.layout = txt.substring(0, 2).toUpperCase();
+        let raw = (name && name !== "null") ? String(name).trim() : "";
+        let txt = raw !== "" ? raw : "US";
+        let shortCode = txt.substring(0, 2).toUpperCase();
+        root.layout = shortCode;
+        root.fullLayout = raw !== "" ? raw : shortCode;
         root.ready = true;
     }
 

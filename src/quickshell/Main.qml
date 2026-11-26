@@ -24,7 +24,7 @@ PanelWindow {
     Shortcut {
         sequence: "Escape"
         context: Qt.WindowShortcut
-        enabled: masterWindow.isVisible && !masterWindow.isClosing
+        enabled: masterWindow.isVisible && !masterWindow.isClosing && !(widgetStack.currentItem && widgetStack.currentItem.handlesEscape === true)
         onActivated: switchWidget("hidden", "")
     }
 
@@ -254,7 +254,7 @@ PanelWindow {
         return false;
     }
 
-    readonly property bool isBarEffectivelyHidden: barAutohide || isFullscreenActive
+    readonly property bool isBarEffectivelyHidden: barAutohide || isFullscreenActive || !Config.isBarEnabledOnScreen(masterWindow.screen)
     readonly property bool screenReady: masterWindow.width >= 100 && masterWindow.height >= 100
     readonly property bool isCurrentDraggable: {
         let t = getLayout(masterWindow.currentActive);

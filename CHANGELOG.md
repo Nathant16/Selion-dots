@@ -1,3 +1,11 @@
+### 2.9.0
+
+- feat(upstream): merge upstream Serpantinum v2.5.3, v2.5.4 and latest commits (interactive Python TUI installer, launcher Windows tab, screen color picker overlay, Morph & Trace workspace styles, Pill time style, Ambient media & Graph sysmon styles, Snake widget, per-monitor bar display toggle, per-urgency notification timeouts, Niri blurred overview backdrop, Gentoo Portage backend, and multi-locale updates)
+- feat(installer): adapt `install/tui.py` and `step_runner.sh` with full Selion integration (DriftWM support, Additional Packages catalog, Keyboard Layout & Shortcut selection, Fast mirrors & Chaotic-AUR toggle, hibernation setup, and non-interactive mode)
+- style(kitty): increase default terminal font scale from 13.0 to 16.0 in `config/kitty/kitty.conf` and `deploy.sh`
+- fix(driftwm,niri): fix `KeyboardLayout.qml` DriftWM subscription/switching branches and add Niri `wallpaper-overview` layer-rule to `compositors/niri/default/windowrules.kdl`
+- chore: merge all 23 locale JSONs preserving Selion translations and branding alongside upstream keys
+
 ### 2.8.0
 
 - feat(upstream): merge upstream Serpantinum v2.5.2 (Umbriel compositor, wallpaper transitions, installer uninstall, package-manager fixes, Croatian/Serbian translations)
