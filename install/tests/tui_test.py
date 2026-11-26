@@ -232,6 +232,9 @@ class InteractionAndPreviewSafetyTests(unittest.TestCase):
                 app.begin_action(mode)
             self.assertEqual(app.screen, "complete")
             self.assertTrue(all(s.status in ("done", "skipped") for s in app.steps))
+            complete_text = "\n".join(tui.strip_ansi(ln) for ln in app.render_complete_screen())
+            self.assertNotIn("ko-fi", complete_text.lower())
+            self.assertNotIn("support the creator", complete_text.lower())
             app.handle_complete_key("y")
             self.assertEqual(app.state.action_result, "exit")
             if mode != "uninstall":

@@ -939,7 +939,7 @@ deploy_package() {
         python3 "$TARGET_BASE/bin/serpantinum_theme_sync.py" 2>/dev/null || true
     fi
 
-    # Ensure kitty.conf base settings (font_size 16.0, JetBrainsMono, fish) are present
+    # Ensure kitty.conf base settings (font_size 15.0, JetBrainsMono, fish) are present
     local kitty_dest="$HOME/.config/kitty/kitty.conf"
     local kitty_src="$REPO_ROOT/config/kitty/kitty.conf"
     if [ -f "$kitty_src" ]; then
@@ -959,8 +959,8 @@ deploy_package() {
         if ! grep -q "JetBrainsMono Nerd Font" "$kitty_dest"; then
             sed -i 's/font_family[[:space:]]\+JetBrains Mono/font_family      JetBrainsMono Nerd Font/' "$kitty_dest" 2>/dev/null || true
         fi
-        if grep -qE "font_size[[:space:]]+13(\.0)?" "$kitty_dest"; then
-            sed -i -E 's/font_size[[:space:]]+13(\.0)?/font_size        16.0/' "$kitty_dest" 2>/dev/null || true
+        if grep -qE "font_size[[:space:]]+(13|16)(\.0)?([[:space:]]|$)" "$kitty_dest"; then
+            sed -i -E 's/font_size[[:space:]]+(13|16)(\.0)?([[:space:]]|$)/font_size        15.0\3/' "$kitty_dest" 2>/dev/null || true
         fi
         if grep -q "background_opacity" "$kitty_dest"; then
             sed -i -E 's/background_opacity[[:space:]]+[0-9.]+/background_opacity 1.0/' "$kitty_dest" 2>/dev/null || true

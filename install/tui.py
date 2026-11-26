@@ -935,7 +935,7 @@ class InstallerState:
 
 def build_preview_state(project_root, state_mode, auth_demo):
     version_file = os.path.join(project_root, "version.txt")
-    target_version = "2.9.0"
+    target_version = "2.9.1"
     if os.path.isfile(version_file):
         try:
             with open(version_file, "r", encoding="utf-8") as fh:
@@ -961,7 +961,7 @@ def build_preview_state(project_root, state_mode, auth_demo):
         modules_dir=os.path.join(project_root, "install", "modules"),
         repo_slug=os.environ.get("REPO_SLUG", "Nathant16/Selion-dots"),
         install_state=state_mode,
-        old_version="2.8.0" if state_mode == "current" else "1.9.4",
+        old_version="2.9.0" if state_mode == "current" else "1.9.4",
         target_version=target_version,
         target_commit="9a311fd",
         old_commit="6bf19be" if state_mode == "current" else "",
@@ -1664,25 +1664,20 @@ class InstallerTUI:
 
             gh_url = f"https://github.com/{self.state.repo_slug}"
             tg_url = "https://t.me/Nathant16"
-            tw_url = "https://twitter.com/ilyamirox"
-            rd_url = "https://reddit.com/u/ilyamiro1"
-            kf_url = "https://ko-fi.com/ilyamiro"
+            rel_url = f"https://github.com/{self.state.repo_slug}/releases"
+            orig_url = "https://github.com/ilyamiro/serpantinum"
 
             def lk(lbl, link_str):
                 l_col = 10
                 l_txt = th.style(pad_right(truncate_plain(lbl, l_col - 1), l_col), fg=th.c_muted)
                 return "  " + l_txt + link_str
 
-            social_links = (
-                th.link(tw_url, "@ilyamirox", fg=th.c_accent_hi)
-                + th.style(" · ", fg=th.c_muted)
-                + th.link(rd_url, "u/ilyamiro1", fg=th.c_warn)
-            )
+            link_w = max(8, right_in - 13)
             link_rows = [
-                lk(self.t("installer.ui.github").rstrip(":"), th.link(gh_url, truncate_plain(f"github.com/{self.state.repo_slug}", max(8, right_in - 13)), fg=th.c_success)),
+                lk(self.t("installer.ui.github").rstrip(":"), th.link(gh_url, truncate_plain(f"github.com/{self.state.repo_slug}", link_w), fg=th.c_success)),
                 lk(self.t("installer.ui.telegram").rstrip(":"), th.link(tg_url, "t.me/Nathant16", fg=th.c_accent)),
-                lk(self.t("installer.ui.social").rstrip(":"), social_links),
-                lk(self.t("installer.ui.donate").rstrip(":"), th.link(kf_url, "ko-fi.com/ilyamiro", fg=th.c_lavender, bold=True)),
+                lk(self.t("installer.ui.releases").rstrip(":"), th.link(rel_url, truncate_plain(f"github.com/{self.state.repo_slug}/releases", link_w), fg=th.c_accent_hi)),
+                lk(self.t("installer.ui.origin").rstrip(":"), th.link(orig_url, truncate_plain("github.com/ilyamiro/serpantinum", link_w), fg=th.c_subtext)),
             ]
 
             sys_box = self.frame_box(sys_rows, left_card_w, border_color=th.c_border, title=th.style(self.t("installer.ui.section_system"), fg=th.c_accent, bold=True))
@@ -2542,7 +2537,7 @@ class InstallerTUI:
 
         compact = self.term.rows < 26
         show_extra_summary = self.term.rows >= 29
-        body_est = 7 if self.run_mode == "uninstall" else (19 if show_extra_summary else 16) + (3 if self.state.failed_pkgs else 0)
+        body_est = 7 if self.run_mode == "uninstall" else (15 if show_extra_summary else 12) + (3 if self.state.failed_pkgs else 0)
         avail_logo_rows = max(0, self.term.rows - body_est - (1 if not compact else 0))
 
         status_line = th.style("✓  ", fg=th.c_success, bold=True) + th.style(self.t(title_key), fg=th.c_text, bold=True)
@@ -2619,21 +2614,6 @@ class InstallerTUI:
                     border_color=th.c_success,
                     title=th.style(self.t("installer.ui.complete_summary"), fg=th.c_accent, bold=True),
                     right_badge=preview_badge,
-                )
-            )
-
-            kf_link = th.link("https://ko-fi.com/ilyamiro", "https://ko-fi.com/ilyamiro", fg=th.c_lavender, bold=True)
-            coffee = self.t("installer.ui.buy_coffee")
-            sup_lines = [
-                "  " + th.style(truncate_plain(coffee, inner_w - 4), fg=th.c_subtext),
-                "  " + th.style("Ko-fi: ", fg=th.c_muted) + kf_link,
-            ]
-            lines.extend(
-                self.frame_box(
-                    sup_lines,
-                    block_w,
-                    border_color=th.c_border,
-                    title=th.style("♥ " + self.t("installer.ui.support_creator").rstrip(":"), fg=th.c_gold, bold=True),
                 )
             )
 

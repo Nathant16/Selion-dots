@@ -1,3 +1,9 @@
+### 2.9.1
+
+- feat(compositors): open task manager (`btop`) via `Ctrl+Shift+Esc` and `Ctrl+Alt+Del` as a standard window (`kitty -e btop`) across Hyprland, DriftWM, Sway, Niri, Mango, and Umbriel (removed `btop` floating/`pinned_to_screen` overrides and added Umbriel keybinds)
+- style(kitty): adjust default `kitty` font size from `16.0` to `15.0` in `config/kitty/kitty.conf` and migrate `13`/`16` configs during updates in `deploy.sh`
+- refactor(installer): remove the "Support the creator" and Ko-fi donation block from `install/tui.py` and keep Selion release/origin links in the Links card
+
 ### 2.9.0
 
 - feat(upstream): merge upstream Serpantinum v2.5.3, v2.5.4 and latest commits (interactive Python TUI installer, launcher Windows tab, screen color picker overlay, Morph & Trace workspace styles, Pill time style, Ambient media & Graph sysmon styles, Snake widget, per-monitor bar display toggle, per-urgency notification timeouts, Niri blurred overview backdrop, Gentoo Portage backend, and multi-locale updates)
