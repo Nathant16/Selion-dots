@@ -9,7 +9,7 @@ window-rule {
 
 // System dialogs & tools
 window-rule {
-    match app-id=r#"^(btop|pavucontrol|pwvucontrol|blueman-manager|org\.gnome\.FileRoller|gnome-calculator|qalculate-gtk|org\.gnome\.Loupe|qt5ct|qt6ct)$"#
+    match app-id=r#"^(pavucontrol|pwvucontrol|blueman-manager|org\.gnome\.FileRoller|gnome-calculator|qalculate-gtk|org\.gnome\.Loupe|qt5ct|qt6ct)$"#
     open-floating true
 }
 

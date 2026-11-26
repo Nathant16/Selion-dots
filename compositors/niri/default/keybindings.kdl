@@ -7,8 +7,8 @@ binds {
     Mod+Return { spawn "kitty"; }
     Mod+KP_Enter { spawn "kitty"; }
     Mod+E { spawn "ski"; }
-    Ctrl+Shift+Escape { spawn "kitty" "--class" "btop" "-e" "btop"; }
-    Ctrl+Alt+Delete { spawn "kitty" "--class" "btop" "-e" "btop"; }
+    Ctrl+Shift+Escape { spawn "kitty" "-e" "btop"; }
+    Ctrl+Alt+Delete { spawn "kitty" "-e" "btop"; }
 
     // App Shortcuts (Synchronized with PC / userprefs)
     Mod+Shift+C { spawn "code"; }

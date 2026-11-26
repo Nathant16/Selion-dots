@@ -2,6 +2,8 @@
 "Mod+Return" = { action = "spawn kitty", repeat = false }
 "Mod+F" = { action = "spawn firefox", repeat = false }
 "Mod+E" = { action = "spawn ski", repeat = false }
+"Ctrl+Shift+Escape" = { action = "spawn kitty -e btop", repeat = false }
+"Ctrl+Alt+Delete" = { action = "spawn kitty -e btop", repeat = false }
 "Mod+BackSpace" = { action = "scratchpad-toggle", repeat = false }
 "Mod+Q" = { action = "window-close", repeat = false }
 "Mod+Shift+F" = { action = "window-toggle-floating", repeat = false }

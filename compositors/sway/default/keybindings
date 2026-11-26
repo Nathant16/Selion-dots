@@ -8,8 +8,8 @@
 bindsym --to-code $mod+Return exec $terminal
 bindsym --to-code $mod+KP_Enter exec $terminal
 bindsym --to-code $mod+E exec ski
-bindsym --to-code Ctrl+Shift+Escape exec $terminal --class btop -e btop
-bindsym --to-code Ctrl+Alt+Delete exec $terminal --class btop -e btop
+bindsym --to-code Ctrl+Shift+Escape exec $terminal -e btop
+bindsym --to-code Ctrl+Alt+Delete exec $terminal -e btop
 
 # App Shortcuts (Synchronized with PC / userprefs)
 bindsym --to-code $mod+Shift+C exec code
