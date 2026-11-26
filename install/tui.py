@@ -1664,8 +1664,6 @@ class InstallerTUI:
 
             gh_url = f"https://github.com/{self.state.repo_slug}"
             tg_url = "https://t.me/Nathant16"
-            rel_url = f"https://github.com/{self.state.repo_slug}/releases"
-            orig_url = "https://github.com/ilyamiro/serpantinum"
 
             def lk(lbl, link_str):
                 l_col = 10
@@ -1676,9 +1674,9 @@ class InstallerTUI:
             link_rows = [
                 lk(self.t("installer.ui.github").rstrip(":"), th.link(gh_url, truncate_plain(f"github.com/{self.state.repo_slug}", link_w), fg=th.c_success)),
                 lk(self.t("installer.ui.telegram").rstrip(":"), th.link(tg_url, "t.me/Nathant16", fg=th.c_accent)),
-                lk(self.t("installer.ui.releases").rstrip(":"), th.link(rel_url, truncate_plain(f"github.com/{self.state.repo_slug}/releases", link_w), fg=th.c_accent_hi)),
-                lk(self.t("installer.ui.origin").rstrip(":"), th.link(orig_url, truncate_plain("github.com/ilyamiro/serpantinum", link_w), fg=th.c_subtext)),
             ]
+            while len(link_rows) < len(sys_rows):
+                link_rows.append("")
 
             sys_box = self.frame_box(sys_rows, left_card_w, border_color=th.c_border, title=th.style(self.t("installer.ui.section_system"), fg=th.c_accent, bold=True))
             link_box = self.frame_box(link_rows, right_card_w, border_color=th.c_border, title=th.style(self.t("installer.ui.section_links"), fg=th.c_accent, bold=True))

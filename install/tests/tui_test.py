@@ -239,6 +239,13 @@ class InteractionAndPreviewSafetyTests(unittest.TestCase):
             self.assertEqual(app.state.action_result, "exit")
             if mode != "uninstall":
                 self.assertIn("Preview", app.toast_text)
+        main_app = RenderAndAlignmentTests.make_app(self, cols=110, rows=36)
+        main_text = "\n".join(tui.strip_ansi(ln) for ln in main_app.render_main_screen())
+        self.assertIn("GitHub", main_text)
+        self.assertIn("Telegram", main_text)
+        self.assertNotIn("Releases", main_text)
+        self.assertNotIn("Origin", main_text)
+        self.assertNotIn("ko-fi", main_text.lower())
 
     def test_no_compositor_blocks_install_with_toast(self):
         state = tui.build_preview_state(str(REPO), "fresh", False)
