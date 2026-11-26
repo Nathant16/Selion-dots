@@ -22,6 +22,9 @@ GuideTab {
         if (typeof SystemInfo !== "undefined") {
             SystemInfo.fetch();
         }
+        if (typeof Updater !== "undefined") {
+            Updater.checkUpdate();
+        }
     }
 
     onVisibleChanged: {

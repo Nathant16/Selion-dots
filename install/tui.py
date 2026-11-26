@@ -935,7 +935,7 @@ class InstallerState:
 
 def build_preview_state(project_root, state_mode, auth_demo):
     version_file = os.path.join(project_root, "version.txt")
-    target_version = "2.9.1"
+    target_version = "2.9.1.1"
     if os.path.isfile(version_file):
         try:
             with open(version_file, "r", encoding="utf-8") as fh:
@@ -961,7 +961,7 @@ def build_preview_state(project_root, state_mode, auth_demo):
         modules_dir=os.path.join(project_root, "install", "modules"),
         repo_slug=os.environ.get("REPO_SLUG", "Nathant16/Selion-dots"),
         install_state=state_mode,
-        old_version="2.9.0" if state_mode == "current" else "1.9.4",
+        old_version="2.9.1" if state_mode == "current" else "1.9.4",
         target_version=target_version,
         target_commit="9a311fd",
         old_commit="6bf19be" if state_mode == "current" else "",

@@ -78,15 +78,9 @@ def parse_v(v):
     nums = re.findall(r"\d+", v)
     return [int(x) for x in nums] if nums else [0]
 
-try:
-    os.makedirs(state_dir, exist_ok=True)
-    with open(last_check_file, "w") as f:
-        f.write(str(time.time()))
-except Exception:
-    pass
-
 local_ver = get_local_ver()
 remote_ver = local_ver
+check_ok = package_managed
 
 if not package_managed:
     try:
@@ -98,10 +92,19 @@ if not package_managed:
                 "Pragma": "no-cache"
             }
         )
-        res = urllib.request.urlopen(req, timeout=5)
+        res = urllib.request.urlopen(req, timeout=12)
         remote_ver = res.read().decode("utf-8").strip()
+        check_ok = True
     except Exception:
         remote_ver = local_ver
+
+if check_ok:
+    try:
+        os.makedirs(state_dir, exist_ok=True)
+        with open(last_check_file, "w") as f:
+            f.write(str(time.time()))
+    except Exception:
+        pass
 
 has_update = parse_v(remote_ver) > parse_v(local_ver)
 

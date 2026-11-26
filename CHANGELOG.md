@@ -1,3 +1,7 @@
+### 2.9.1.1
+
+- fix(updater): bump version to `2.9.1.1` so `2.9.1` installations pick up the post-tag Umbriel/Links fixes, trigger `Updater.checkUpdate()` on entering the About tab, increase network timeout to 12s, and only record `last_check` on successful checks
+
 ### 2.9.1
 
 - feat(umbriel): unify Umbriel configuration and integration with Selion standards (unified shortcuts `Mod+A/I/V/W/B/R/L/Shift+M`, app launch hotkeys, `Alt+Return` fullscreen, `Mod+Space` floating, `Windows-11M-Dark` 32px cursor & environment, `us,ru` default keyboard layout with `configure_keyboard_layout()` support, `UMBRIEL_SOCKET` detection in `serpantinumd`, `PacmanFace` occupancy sync, and `corner_radius` sync in `sync_compositor_theme.py`)
