@@ -1,3 +1,7 @@
+### 2.9.1.8
+
+- **Theming / Antigravity IDE Support**: Added built-in `antigravity` app theme definition in `src/assets/matugen/apps/antigravity/` (`Antigravity` under `editors` in Settings -> Theme -> Themed apps), targeting both `$XDG_CONFIG_HOME/Antigravity IDE/User/settings.json` (`antigravity-ide`) and `$XDG_CONFIG_HOME/Antigravity/User/settings.json` (`antigravity`) with full Material palette + chat panel (`chat.*`, `inlineChat*`) color customizations.
+
 ### 2.9.1.7
 
 - **Display / Fullscreen Stabilization (All Compositors)**: Eliminated screen blanking, flicker, and washed-out colors when maximizing or fullscreening Electron/Chromium apps (`antigravity-ide`), browsers, or media players on HDR/VRR-capable monitors:

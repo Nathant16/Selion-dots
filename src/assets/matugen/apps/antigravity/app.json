@@ -1,0 +1,61 @@
+{
+  "name": "Antigravity",
+  "category": "editors",
+  "icon": "󰚩",
+  "detect": {
+    "bin": [
+      "antigravity-ide",
+      "antigravity"
+    ],
+    "path": [
+      "$XDG_CONFIG_HOME/Antigravity IDE",
+      "$XDG_CONFIG_HOME/Antigravity"
+    ]
+  },
+  "templates": [
+    {
+      "input": "colors.json",
+      "output": "$XDG_CACHE_HOME/serpantinum/apps/antigravity.json"
+    }
+  ],
+  "integrate": [
+    {
+      "type": "json",
+      "file": "$XDG_CONFIG_HOME/Antigravity IDE/User/settings.json",
+      "values_from": "$XDG_CACHE_HOME/serpantinum/apps/antigravity.json",
+      "values_by_mode": {
+        "dark": {
+          "workbench.colorTheme": "Default Dark Modern"
+        },
+        "light": {
+          "workbench.colorTheme": "Default Light Modern"
+        }
+      },
+      "create": true,
+      "when": {
+        "path": [
+          "$XDG_CONFIG_HOME/Antigravity IDE"
+        ]
+      }
+    },
+    {
+      "type": "json",
+      "file": "$XDG_CONFIG_HOME/Antigravity/User/settings.json",
+      "values_from": "$XDG_CACHE_HOME/serpantinum/apps/antigravity.json",
+      "values_by_mode": {
+        "dark": {
+          "workbench.colorTheme": "Default Dark Modern"
+        },
+        "light": {
+          "workbench.colorTheme": "Default Light Modern"
+        }
+      },
+      "create": true,
+      "when": {
+        "path": [
+          "$XDG_CONFIG_HOME/Antigravity"
+        ]
+      }
+    }
+  ]
+}
