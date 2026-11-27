@@ -90,7 +90,8 @@ def build_gpu_env(setup: str, vaapi: bool) -> dict:
         core_env = [
             ("LIBVA_DRIVER_NAME", "nvidia"),
             ("__GLX_VENDOR_LIBRARY_NAME", "nvidia"),
-            ("__GL_VRR_ALLOWED", "1"),
+            # Keep driver VRR disabled to avoid fullscreen flicker/mode switches when VRR is off
+            ("__GL_VRR_ALLOWED", "0"),
         ]
         if vaapi:
             core_env.append(("NVD_BACKEND", "direct"))

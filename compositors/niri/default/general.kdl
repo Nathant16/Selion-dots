@@ -15,3 +15,9 @@ environment {
     XCURSOR_SIZE "32"
 }
 
+// Prevent direct scanout plane bypass and dynamic 8/10-bpc switches on fullscreen
+debug {
+    disable-direct-scanout
+    keep-max-bpc-unchanged
+}
+

@@ -7,4 +7,7 @@
 # Override specific displays in userprefs (e.g. output DP-1 mode 2560x1440@165Hz)
 output * {
     scale 1.0
+    adaptive_sync off
+    render_bit_depth 8
+    allow_tearing no
 }

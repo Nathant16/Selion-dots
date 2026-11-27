@@ -26,3 +26,11 @@ XCURSOR_THEME = "Windows-11M-Dark"
 XCURSOR_SIZE = "32"
 HYPRCURSOR_THEME = "Windows-11M-Dark"
 HYPRCURSOR_SIZE = "32"
+WLR_SCENE_DISABLE_DIRECT_SCANOUT = "1"
+
+[output."*"]
+direct_scanout = false
+hdr = "off"
+vrr = "disabled"
+bit_depth = 8
+tearing = false

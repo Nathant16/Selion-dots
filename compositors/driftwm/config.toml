@@ -28,6 +28,9 @@ restore_windows = false
 restore_camera = false
 restore_bookmarks = true
 
+[backend]
+disable_direct_scanout = true
+
 # █▀▀ █▀▀▄ ▀█ █▀  ▀  █▀▀█ █▀▀█ █▀▀▄ █▀▄▀█ █▀▀ █▀▀▄ ▀▀█▀▀
 # █▀▀ █  █  █▄█  ▀█▀ █▄▄▀ █  █ █  █ █ ▀ █ █▀▀ █  █   █
 # ▀▀▀ ▀  ▀   ▀   ▀▀▀ ▀ ▀▀ ▀▀▀▀ ▀  ▀ ▀   ▀ ▀▀▀ ▀  ▀   ▀

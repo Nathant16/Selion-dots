@@ -1,3 +1,13 @@
+### 2.9.1.7
+
+- **Display / Fullscreen Stabilization (All Compositors)**: Eliminated screen blanking, flicker, and washed-out colors when maximizing or fullscreening Electron/Chromium apps (`antigravity-ide`), browsers, or media players on HDR/VRR-capable monitors:
+  - **Hyprland**: Disabled automatic fullscreen HDR mode switching (`cm_auto_hdr = 0`), DisplayPort content-type OSD switching (`send_content_type = false`), hardware KMS CTM bypass (`non_shader_cm = 0`), and `direct_scanout = 0` under `render`, while preserving desktop sRGB color management and setting `__GL_VRR_ALLOWED = "0"` for proprietary NVIDIA.
+  - **Niri**: Added `debug { disable-direct-scanout; keep-max-bpc-unchanged }` in `default/general.kdl`.
+  - **Sway**: Enforced `adaptive_sync off`, `render_bit_depth 8`, and `allow_tearing no` in `default/monitors` and `monitor_manager.py`, plus `WLR_SCENE_DISABLE_DIRECT_SCANOUT=1` via `environment.d/20-wlroots-display.conf`.
+  - **Mango**: Disabled `allow_tearing=0` in `default/general.conf` and added `env=WLR_SCENE_DISABLE_DIRECT_SCANOUT,1` in `default/gpu-env.conf`.
+  - **Umbriel**: Configured `[output."*"]` (`direct_scanout = false`, `hdr = "off"`, `vrr = "disabled"`, `bit_depth = 8`, `tearing = false`) in `config.toml` and `monitor_manager.py`, plus `WLR_SCENE_DISABLE_DIRECT_SCANOUT = "1"`.
+  - **DriftWM**: Added `[backend] disable_direct_scanout = true` in `config.toml`.
+
 ### 2.9.1.6
 
 - fix(installer,ipc): clear `SERPANTINUM_INSTALLER`, `SERPANTINUM_DIR`, `MAIN_QML`, `QS_DIR`, `I18N_DIR`, and `QS_*_DIR` overrides in `restart_serpantinumd_if_running()` (`install/modules/daemons.sh`), `bin/serpantinumd`, and `bin/serpantinum` (and preserve explicit `MAIN_QML`/`QS_DIR` in `src/scripts/caching.sh`), so updating live never leaves `quickshell` running from `~/.cache/serpantinum-installer/src/quickshell/Shell.qml` and breaking `serpantinum` IPC keybindings

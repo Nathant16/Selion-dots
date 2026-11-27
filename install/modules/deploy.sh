@@ -1231,6 +1231,18 @@ EOF_ENV
         done
     fi
 
+    # Prevent wlroots direct scanout flicker/washed-out fullscreen switches (e.g. Sway)
+    mkdir -p "$HOME/.config/environment.d" 2>/dev/null || true
+    cat << 'EOF_WLR_ENV' > "$HOME/.config/environment.d/20-wlroots-display.conf"
+WLR_SCENE_DISABLE_DIRECT_SCANOUT=1
+EOF_WLR_ENV
+    if command -v systemctl &>/dev/null; then
+        systemctl --user import-environment WLR_SCENE_DISABLE_DIRECT_SCANOUT 2>/dev/null || true
+    fi
+    if command -v dbus-update-activation-environment &>/dev/null; then
+        dbus-update-activation-environment --systemd WLR_SCENE_DISABLE_DIRECT_SCANOUT 2>/dev/null || true
+    fi
+
     # Initial theme and border synchronization for all compositors
     if [ -f "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" ]; then
         python3 "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" 2>/dev/null || true

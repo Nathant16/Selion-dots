@@ -470,6 +470,9 @@ def apply_sway(name, resolution, framerate, scale, env):
             f'output "{name}" {{\n'
             f'{mode_part}'
             f'    scale {scale_val}\n'
+            f'    adaptive_sync off\n'
+            f'    render_bit_depth 8\n'
+            f'    allow_tearing no\n'
             f'}}\n'
         )
         updated, _ = _upsert_brace_block(
@@ -626,6 +629,11 @@ def apply_umbriel(name, resolution, framerate, scale, env):
         if mode_str:
             block_lines.append(f'mode = "{mode_str}"')
         block_lines.append(f"scale = {scale_val}")
+        block_lines.append("direct_scanout = false")
+        block_lines.append('hdr = "off"')
+        block_lines.append('vrr = "disabled"')
+        block_lines.append("bit_depth = 8")
+        block_lines.append("tearing = false")
 
         out_lines = []
         i = 0

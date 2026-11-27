@@ -90,7 +90,7 @@ if gpu_setup == "nvidia-only" then
     env_vars = {
         { "LIBVA_DRIVER_NAME", "nvidia" },
         { "__GLX_VENDOR_LIBRARY_NAME", "nvidia" }, -- Disable in gpu-env.lua / userprefs if screensharing breaks
-        { "__GL_VRR_ALLOWED", "1" },
+        { "__GL_VRR_ALLOWED", "0" }, -- Keep driver VRR off to prevent fullscreen mode/color switches
         -- { "GBM_BACKEND", "nvidia-drm" }, -- Legacy fallback; may crash Firefox on modern drivers
     }
     if has_nvidia_vaapi() then

@@ -36,6 +36,13 @@ hl.config({
         enable_hyprcursor = false,
         warp_on_change_workspace = true,
     },
+    render = {
+        -- Keep desktop sRGB CM intact while blocking fullscreen HDR/OSD/KMS-bypass switches
+        direct_scanout = 0,
+        cm_auto_hdr = 0,
+        send_content_type = false,
+        non_shader_cm = 0,
+    },
 })
 
 hl.env("XCURSOR_THEME", "Windows-11M-Dark")
