@@ -10,6 +10,10 @@ REPO_SLUG="$(printf '%s' "$RAW_SLUG" | tr -d '\r\n\t ' | sed 's/[^a-zA-Z0-9_\/-]
 CACHE_BASE="${XDG_CACHE_HOME:-$HOME/.cache}/serpantinum-installer"
 export REPO_SLUG
 export SERPANTINUM_INSTALLER=1
+if [ "${SUDO_PROMPT:-}" = "[serpantinum-sudo] " ]; then
+    unset SUDO_PROMPT
+fi
+unset SERP_FAILED_PKGS_FILE OLD_VERSION TARGET_VERSION OLD_COMMIT TARGET_COMMIT
 
 if [ -n "${BASH_SOURCE[0]}" ] && [ -f "${BASH_SOURCE[0]}" ]; then
     INSTALL_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"

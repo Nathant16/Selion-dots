@@ -270,6 +270,9 @@ env -u MAIN_QML -u QS_DIR -u SERPANTINUM_DIR -u I18N_DIR \
     MAIN_QML="$SB3/installer_cache/src/quickshell/Shell.qml" \
     QS_DIR="$SB3/installer_cache/src/quickshell" \
     I18N_DIR="$SB3/installer_cache/src/assets/languages" \
+    SUDO_PROMPT="[serpantinum-sudo] " \
+    PROJECT_ROOT="$SB3/installer_cache" \
+    SERP_FAILED_PKGS_FILE="$SB3/installer_cache/.failed_pkgs" \
     QS_STARTED_LOG="$SB3/qs_started.log" \
     QS_IPC_LOG="$SB3/qs_ipc.log" \
     WAYLAND_DISPLAY="wayland-1" \
@@ -286,6 +289,11 @@ for _ in $(seq 1 40); do
     fi
     sleep 0.1
 done
+
+QS_CHILD_PID="$(cut -d'|' -f1 "$SB3/qs_started.log" | head -n1)"
+assert_eq "daemon strips SUDO_PROMPT from quickshell env" "" "$(tr '\0' '\n' < "/proc/$QS_CHILD_PID/environ" 2>/dev/null | grep '^SUDO_PROMPT=' || true)"
+assert_eq "daemon strips PROJECT_ROOT from quickshell env" "" "$(tr '\0' '\n' < "/proc/$QS_CHILD_PID/environ" 2>/dev/null | grep '^PROJECT_ROOT=' || true)"
+assert_eq "daemon strips SERP_FAILED_PKGS_FILE from quickshell env" "" "$(tr '\0' '\n' < "/proc/$QS_CHILD_PID/environ" 2>/dev/null | grep '^SERP_FAILED_PKGS_FILE=' || true)"
 
 env -u MAIN_QML -u QS_DIR -u SERPANTINUM_DIR \
     HOME="$SB3/home" \

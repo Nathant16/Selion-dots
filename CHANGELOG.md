@@ -1,3 +1,9 @@
+### 2.9.1.9
+
+- **Updater / Sudo Prompt Fix**:
+  - Scrubbed leaked installer environment variables (`SUDO_PROMPT`, `SERP_FAILED_PKGS_FILE`, `PROJECT_ROOT`, `MODULES_DIR`, version/state variables) when restarting `serpantinumd` (`daemons.sh`, `bin/serpantinumd`), in `AboutTab.qml`, and at the entry of `install/install.sh`, preventing raw `[serpantinum-sudo] ` prompts from leaking into desktop shells and updater terminals.
+  - Updated `bootstrap_installer_deps` in `install/modules/deps.sh` to verify unresolved `PM_BOOTSTRAP_TOOLS` entries (such as `pciutils`, `fontconfig`, `base-devel`) via `pm_missing_pkgs` instead of relying solely on `command -v`, avoiding unnecessary `sudo` prompts before the TUI launches on updates while still preparing repos inside `install_dependencies`.
+
 ### 2.9.1.8
 
 - **Theming / Antigravity IDE Support**: Added built-in `antigravity` app theme definition in `src/assets/matugen/apps/antigravity/` (`Antigravity` under `editors` in Settings -> Theme -> Themed apps), targeting both `$XDG_CONFIG_HOME/Antigravity IDE/User/settings.json` (`antigravity-ide`) and `$XDG_CONFIG_HOME/Antigravity/User/settings.json` (`antigravity`) with full Material palette + chat panel (`chat.*`, `inlineChat*`) color customizations.

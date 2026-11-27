@@ -102,16 +102,28 @@ check_supported_os() {
 
 bootstrap_installer_deps() {
     suppress_tty_sleep
-    pm_prepare_repos
 
-    local missing=()
+    local unresolved=() tool missing=()
     for tool in "${PM_BOOTSTRAP_TOOLS[@]}"; do
         if ! command -v "$tool" &>/dev/null; then
-            missing+=("$tool")
+            unresolved+=("$tool")
         fi
     done
 
+    if [ ${#unresolved[@]} -gt 0 ]; then
+        if declare -f pm_missing_pkgs >/dev/null; then
+            local missing_raw
+            missing_raw="$(pm_missing_pkgs "${unresolved[@]}" 2>/dev/null || true)"
+            while IFS= read -r tool; do
+                [ -n "$tool" ] && missing+=("$tool")
+            done <<< "$missing_raw"
+        else
+            missing=("${unresolved[@]}")
+        fi
+    fi
+
     if [ ${#missing[@]} -gt 0 ]; then
+        if declare -f pm_prepare_repos >/dev/null; then pm_prepare_repos; fi
         pm_bootstrap_install "${missing[@]}"
     fi
 
@@ -240,6 +252,7 @@ install_dependencies() {
     shift 2 2>/dev/null || true
     local compositors=("$@")
 
+    if declare -f pm_prepare_repos >/dev/null; then pm_prepare_repos; fi
     pm_remove_conflicting_pkg "quickshell-git"
 
     local target_list=("${REQUIRED_PKGS[@]}")

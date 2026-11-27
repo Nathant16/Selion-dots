@@ -310,5 +310,38 @@ set -e
 assert_eq "install.sh bootstrap selects emerge on single-quoted Gentoo even when pacman exists" "99" "$BOOT_RC"
 assert_contains "install.sh bootstrap invokes emerge for git" "emerge --ask=n --noreplace --quiet-build=y dev-vcs/git" "$(cat "$BOOT_LOG")"
 
+# Verify bootstrap_installer_deps resolves package-name tools via pm_missing_pkgs without calling sudo/pm_bootstrap_install
+DEPS_SB="$TMP_ROOT/deps_bootstrap"
+mkdir -p "$DEPS_SB/bin"
+for t in bash printf echo grep tr read setterm realpath dirname; do
+    if p="$(command -v "$t" 2>/dev/null)"; then ln -sf "$p" "$DEPS_SB/bin/$t"; fi
+done
+: > "$DEPS_SB/calls.log"
+PATH="$DEPS_SB/bin" CALLS_LOG="$DEPS_SB/calls.log" bash -c '
+    source "'"$REPO_ROOT"'/install/modules/deps.sh"
+    PM_BOOTSTRAP_TOOLS=(bash pciutils fontconfig base-devel)
+    pm_missing_pkgs() { echo "pm_missing_pkgs:$*" >> "$CALLS_LOG"; }
+    pm_prepare_repos() { echo "pm_prepare_repos" >> "$CALLS_LOG"; }
+    pm_bootstrap_install() { echo "pm_bootstrap_install:$*" >> "$CALLS_LOG"; }
+    pm_bootstrap_helper() { echo "pm_bootstrap_helper" >> "$CALLS_LOG"; }
+    bootstrap_installer_deps
+'
+assert_contains "bootstrap checks unresolved package names via pm_missing_pkgs" "pm_missing_pkgs:pciutils fontconfig base-devel" "$(cat "$DEPS_SB/calls.log")"
+assert_fail "bootstrap skips sudo/pm_bootstrap_install when packages exist" grep -q "pm_bootstrap_install" "$DEPS_SB/calls.log"
+assert_fail "bootstrap skips pm_prepare_repos when nothing is missing" grep -q "pm_prepare_repos" "$DEPS_SB/calls.log"
+
+: > "$DEPS_SB/calls2.log"
+PATH="$DEPS_SB/bin" CALLS_LOG="$DEPS_SB/calls2.log" bash -c '
+    source "'"$REPO_ROOT"'/install/modules/deps.sh"
+    PM_BOOTSTRAP_TOOLS=(bash pciutils base-devel)
+    pm_missing_pkgs() { echo "base-devel"; }
+    pm_prepare_repos() { echo "pm_prepare_repos" >> "$CALLS_LOG"; }
+    pm_bootstrap_install() { echo "pm_bootstrap_install:$*" >> "$CALLS_LOG"; }
+    pm_bootstrap_helper() { echo "pm_bootstrap_helper" >> "$CALLS_LOG"; }
+    bootstrap_installer_deps
+'
+assert_contains "bootstrap runs pm_prepare_repos only when packages missing" "pm_prepare_repos" "$(cat "$DEPS_SB/calls2.log")"
+assert_contains "bootstrap installs missing packages returned by pm_missing_pkgs" "pm_bootstrap_install:base-devel" "$(cat "$DEPS_SB/calls2.log")"
+
 echo "Passed: $PASS, Failed: $FAIL"
 [ "$FAIL" -eq 0 ]

@@ -182,7 +182,9 @@ GuideTab {
                             fillDuration: 1200
 
                             onTriggered: {
-                                let cmd = "if command -v kitty >/dev/null 2>&1; then kitty --hold bash -c 'eval \"$(curl -fsSL -H Cache-Control:no-cache https://raw.githubusercontent.com/Nathant16/Selion-dots/master/install/install.sh)\"'; else ${TERM:-xterm} -hold -e bash -c 'eval \"$(curl -fsSL -H Cache-Control:no-cache https://raw.githubusercontent.com/Nathant16/Selion-dots/master/install/install.sh)\"'; fi";
+                                let cleanEnv = "unset SUDO_PROMPT SERPANTINUM_INSTALLER SERP_FAILED_PKGS_FILE PROJECT_ROOT OLD_VERSION TARGET_VERSION OLD_COMMIT TARGET_COMMIT; ";
+                                let inner = cleanEnv + "eval \"$(curl -fsSL -H Cache-Control:no-cache https://raw.githubusercontent.com/Nathant16/Selion-dots/master/install/install.sh)\"";
+                                let cmd = "if command -v kitty >/dev/null 2>&1; then kitty --hold bash -c '" + inner + "'; else ${TERM:-xterm} -hold -e bash -c '" + inner + "'; fi";
                                 Quickshell.execDetached(["bash", "-c", cmd]);
                                 rootObj.dismissHost();
                             }
