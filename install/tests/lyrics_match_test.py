@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for LyricsMatch.js fullwidth punctuation normalization in Qt6."""
+"""Tests for LyricsMatch.js normalization and credit filtering in Qt6."""
 
 import shutil
 import subprocess
@@ -13,7 +13,7 @@ LYRICS_QML = REPO_ROOT / "src/quickshell/singletons/audio/Lyrics.qml"
 
 
 class TestLyricsNormalization(unittest.TestCase):
-    def test_fullwidth_punctuation_normalized_via_qml6(self):
+    def _run_qml_check(self, js_body: str) -> None:
         qml_bin = shutil.which("qml6") or shutil.which("qml")
         if not qml_bin:
             self.skipTest("qml6 runtime not available")
@@ -23,11 +23,21 @@ class TestLyricsNormalization(unittest.TestCase):
             shutil.copy(LYRICS_MATCH_JS, tmp / "LyricsMatch.js")
             harness = tmp / "check.qml"
             harness.write_text(
-                """import QtQuick
-import "LyricsMatch.js" as LM
+                f'import QtQuick\nimport "LyricsMatch.js" as LM\n\nItem {{\n    Component.onCompleted: {{\n{js_body}\n        Qt.exit(0);\n    }}\n}}\n',
+                encoding="utf-8",
+            )
+            proc = subprocess.run(
+                [qml_bin, str(harness)],
+                env={"QT_QPA_PLATFORM": "offscreen", "PATH": "/usr/bin:/bin"},
+                capture_output=True,
+                text=True,
+                timeout=15,
+            )
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
 
-Item {
-    Component.onCompleted: {
+    def test_fullwidth_punctuation_normalized_via_qml6(self):
+        self._run_qml_check(
+            """
         var sample = [
             {
                 time: 20.86,
@@ -60,21 +70,30 @@ Item {
         if (LM.cleanString("Track （feat. Artist）") !== "Track") {
             console.error("BAD_CLEAN:" + LM.cleanString("Track （feat. Artist）"));
             Qt.exit(1);
+        }"""
+        )
+
+    def test_netease_credits_filtered_while_keeping_lyrics(self):
+        self._run_qml_check(
+            """
+        var sample = [
+            { time: 0, text: "作词 : JPEGMAFIA", words: [{ time: 0, endTime: 1, text: " 作词 : JPEGMAFIA" }] },
+            { time: 1, text: "作曲 : JPEGMAFIA", words: [{ time: 1, endTime: 2, text: " 作曲 : JPEGMAFIA" }] },
+            { time: 1.5, text: "編曲：Producer", words: [] },
+            { time: 9.46, text: "Yeah", words: [{ time: 9.46, endTime: 9.76, text: "Yeah" }] }
+        ];
+        var out = LM.normalizeLyricsList(sample);
+        if (out.length !== 1 || out[0].text !== "Yeah") {
+            console.error("BAD_CREDIT_FILTER:" + JSON.stringify(out));
+            Qt.exit(1);
         }
-        Qt.exit(0);
-    }
-}
-""",
-                encoding="utf-8",
-            )
-            proc = subprocess.run(
-                [qml_bin, str(harness)],
-                env={"QT_QPA_PLATFORM": "offscreen", "PATH": "/usr/bin:/bin"},
-                capture_output=True,
-                text=True,
-                timeout=15,
-            )
-            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        var onlyCredits = [{ time: 0, text: "作词 : Test", words: [] }];
+        var fallback = LM.normalizeLyricsList(onlyCredits);
+        if (fallback.length !== 1) {
+            console.error("BAD_FALLBACK:" + JSON.stringify(fallback));
+            Qt.exit(1);
+        }"""
+        )
 
     def test_lyrics_qml_renders_no_space_after_open_paren(self):
         src = LYRICS_QML.read_text(encoding="utf-8")

@@ -1,3 +1,7 @@
+### 2.9.1.12
+
+- **Lyrics / NetEase Credits Cleanup**: Automatically filtered NetEase CJK metadata header lines (`作词 : ...`, `作曲 : ...`, `编曲 : ...`, etc.) in `LyricsMatch.js` (`normalizeLyricsList`), removing `▯▯ : Artist` credit lines cleanly without needing CJK fallback fonts.
+
 ### 2.9.1.11
 
 - **Lyrics / Fullwidth Punctuation Fix**: Normalized fullwidth ASCII characters (`\uFF01`–`\uFF5E`, `\u3000`, `【】`, e.g. NetEase `（Word）` -> `(Word)`) in `LyricsMatch.js` and `Lyrics.qml` (`applyLyrics`) and avoided spurious inner spaces after opening brackets in word-by-word active lines, eliminating missing-glyph boxes (`▯`) on systems without CJK fallback fonts.

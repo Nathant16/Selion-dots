@@ -18,9 +18,17 @@ function normalizeLyricsText(str) {
     return s;
 }
 
+var NETEASE_CREDIT_RE = /^(?:作[词詞]|作曲|[编編]曲|制[作做]人?|[监監][制製]|混音(?:[师師])?|母[带帶](?:[处處]理|工程[师師]?)?|[录錄]音(?:[师師])?|和[声聲](?:[编編][写寫])?|[统統][筹籌]|策[划劃]|吉他|[贝貝]斯|[键鍵][盘盤]|人[声聲][编編][辑輯]|[词詞曲])\s*[:：]/;
+
+function isCreditLine(text) {
+    var trimmed = normalizeLyricsText(text).trim();
+    return trimmed !== "" && NETEASE_CREDIT_RE.test(trimmed);
+}
+
 function normalizeLyricsList(list) {
     if (!Array.isArray(list)) return [];
-    var out = [];
+    var all = [];
+    var filtered = [];
     for (var i = 0; i < list.length; i++) {
         var item = list[i];
         if (!item) continue;
@@ -36,13 +44,17 @@ function normalizeLyricsList(list) {
                 });
             }
         }
-        out.push({
+        var normItem = {
             time: item.time,
             text: normalizeLyricsText(item.text),
             words: words
-        });
+        };
+        all.push(normItem);
+        if (!isCreditLine(normItem.text)) {
+            filtered.push(normItem);
+        }
     }
-    return out;
+    return filtered.length > 0 ? filtered : all;
 }
 
 function cleanString(str) {
