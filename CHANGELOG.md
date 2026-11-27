@@ -1,3 +1,7 @@
+### 2.9.1.11
+
+- **Lyrics / Fullwidth Punctuation Fix**: Normalized fullwidth ASCII characters (`\uFF01`–`\uFF5E`, `\u3000`, `【】`, e.g. NetEase `（Word）` -> `(Word)`) in `LyricsMatch.js` and `Lyrics.qml` (`applyLyrics`) and avoided spurious inner spaces after opening brackets in word-by-word active lines, eliminating missing-glyph boxes (`▯`) on systems without CJK fallback fonts.
+
 ### 2.9.1.10
 
 - **Theming / Spotify (Spicetify)**: Restored built-in `spicetify` app theme support (`Spotify (Spicetify)` in Settings -> Theme -> Themed apps):

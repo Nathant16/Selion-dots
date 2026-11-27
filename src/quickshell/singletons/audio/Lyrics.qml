@@ -138,7 +138,7 @@ Item {
             if (i < modelData.words.length - 1) {
                 let nextW = modelData.words[i + 1];
                 if (!w.text.endsWith(" ") && !nextW.text.startsWith(" ")) {
-                    if (/\S/.test(w.text) && !/^[,.\!?:;)\]]/.test(nextW.text)) {
+                    if (/\S/.test(w.text) && !/[\(\[\u201C\u2018]$/.test(w.text) && !/^[,.\!?:;)\]]/.test(nextW.text)) {
                         space = " ";
                     }
                 }
@@ -652,14 +652,15 @@ Item {
     function applyLyrics(parsedList, key, shouldSaveToDisk) {
         if (key !== root.activeFetchKey) return;
         searchTimeoutTimer.stop();
-        root.lyrics = parsedList;
-        root.hasLyrics = parsedList && parsedList.length > 0;
+        let normalized = LyricsMatch.normalizeLyricsList(parsedList);
+        root.lyrics = normalized;
+        root.hasLyrics = normalized.length > 0;
         root.loading = false;
         if (root.hasLyrics) {
             let mem = getMemCache();
-            if (mem) mem[key] = parsedList;
+            if (mem) mem[key] = normalized;
             if (shouldSaveToDisk !== false) {
-                saveLyricsToDisk(key, parsedList);
+                saveLyricsToDisk(key, normalized);
             }
         }
     }

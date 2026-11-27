@@ -5,9 +5,49 @@
 
 var MIN_ACCEPT_SCORE = 55;
 
+function normalizeLyricsText(str) {
+    if (str === null || str === undefined) return "";
+    var s = String(str);
+    // NetEase and other CJK sources emit fullwidth ASCII punctuation (e.g. （Word）)
+    // that turn into missing-glyph boxes in monospace/Nerd fonts without CJK fallbacks.
+    s = s.replace(/[\uFF01-\uFF5E]/g, function(ch) {
+        return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0);
+    });
+    s = s.replace(/\u3000/g, " ");
+    s = s.replace(/\u3010/g, "[").replace(/\u3011/g, "]");
+    return s;
+}
+
+function normalizeLyricsList(list) {
+    if (!Array.isArray(list)) return [];
+    var out = [];
+    for (var i = 0; i < list.length; i++) {
+        var item = list[i];
+        if (!item) continue;
+        var words = [];
+        if (Array.isArray(item.words)) {
+            for (var j = 0; j < item.words.length; j++) {
+                var w = item.words[j];
+                if (!w) continue;
+                words.push({
+                    time: w.time,
+                    endTime: w.endTime,
+                    text: normalizeLyricsText(w.text)
+                });
+            }
+        }
+        out.push({
+            time: item.time,
+            text: normalizeLyricsText(item.text),
+            words: words
+        });
+    }
+    return out;
+}
+
 function cleanString(str) {
     if (!str) return "";
-    var s = String(str);
+    var s = normalizeLyricsText(str);
     s = s.replace(/\.(?:mp3|flac|wav|m4a|ogg|aac|wma|opus)$/i, "");
     s = s.replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'");
     s = s.replace(/\s*[\(\[\{](?:feat\.?|ft\.?|with|official|video|audio|lyrics?|remaster(?:ed)?|deluxe|version|live|radio\s*edit|explicit|clean|bonus|mono|stereo)[^)\]\}]*[)\]\}]/gi, "");
