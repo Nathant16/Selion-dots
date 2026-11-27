@@ -1,0 +1,51 @@
+{
+  "name": "Telegram / AyuGram",
+  "category": "apps",
+  "icon": "",
+  "hint": "telegram",
+  "detect": {
+    "bin": [
+      "AyuGram",
+      "ayugram-desktop",
+      "telegram-desktop",
+      "Telegram",
+      "64gram-desktop",
+      "kotatogram-desktop",
+      "materialgram"
+    ],
+    "flatpak": [
+      "org.telegram.desktop",
+      "com.ayugram.desktop"
+    ],
+    "path": [
+      "$XDG_DATA_HOME/AyuGramDesktop",
+      "$XDG_DATA_HOME/TelegramDesktop",
+      "$XDG_CONFIG_HOME/AyuGramDesktop",
+      "$XDG_CONFIG_HOME/telegram-desktop"
+    ]
+  },
+  "templates": [
+    {
+      "input": "serpantinum.tdesktop-palette",
+      "output": "$XDG_CONFIG_HOME/telegram-desktop/themes/serpantinum.tdesktop-palette"
+    },
+    {
+      "input": "serpantinum.tdesktop-palette",
+      "output": "$XDG_DATA_HOME/AyuGramDesktop/themes/serpantinum.tdesktop-palette",
+      "when": {
+        "path": [
+          "$XDG_DATA_HOME/AyuGramDesktop"
+        ]
+      }
+    },
+    {
+      "input": "serpantinum.tdesktop-palette",
+      "output": "$XDG_DATA_HOME/TelegramDesktop/themes/serpantinum.tdesktop-palette",
+      "when": {
+        "path": [
+          "$XDG_DATA_HOME/TelegramDesktop"
+        ]
+      }
+    }
+  ]
+}

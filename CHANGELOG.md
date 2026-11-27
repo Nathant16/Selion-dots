@@ -1,3 +1,7 @@
+### 2.9.1.13
+
+- **Theming / Telegram & AyuGram**: Restored built-in `telegram` app preset (`Telegram / AyuGram`) with detection for `AyuGram` / `AyuGramDesktop`, `telegram-desktop`, `64gram-desktop`, `kotatogram-desktop`, and `materialgram`, generating `serpantinum.tdesktop-palette` for both `$XDG_CONFIG_HOME/telegram-desktop/themes/` and client data folders (`$XDG_DATA_HOME/AyuGramDesktop/themes/`, `$XDG_DATA_HOME/TelegramDesktop/themes/`).
+
 ### 2.9.1.12
 
 - **Lyrics / NetEase Credits Cleanup**: Automatically filtered NetEase CJK metadata header lines (`作词 : ...`, `作曲 : ...`, `编曲 : ...`, etc.) in `LyricsMatch.js` (`normalizeLyricsList`), removing `▯▯ : Artist` credit lines cleanly without needing CJK fallback fonts.
