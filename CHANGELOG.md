@@ -1,3 +1,9 @@
+### 2.9.1.14
+
+- **DriftWM / Keyboard Layout Sync**: Fixed inverted EN/RU layout indicator on the bar under `driftwm`:
+  - Connected `onKeyboardLayoutChanged()` for `DriftState` in `KeyboardLayout.qml` (matching Niri and Sway).
+  - Updated `DriftState.handleDriftState` to commit `keyboardLayout` before `shortKeyboardLayout` and `keyboardReady`, preventing `onShortKeyboardLayoutChanged` from reading the previous layout during switches.
+
 ### 2.9.1.13
 
 - **Theming / Telegram & AyuGram**: Restored built-in `telegram` app preset (`Telegram / AyuGram`) with detection for `AyuGram` / `AyuGramDesktop`, `telegram-desktop`, `64gram-desktop`, `kotatogram-desktop`, and `materialgram`, generating `serpantinum.tdesktop-palette` for both `$XDG_CONFIG_HOME/telegram-desktop/themes/` and client data folders (`$XDG_DATA_HOME/AyuGramDesktop/themes/`, `$XDG_DATA_HOME/TelegramDesktop/themes/`).

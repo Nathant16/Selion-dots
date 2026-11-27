@@ -146,6 +146,7 @@ Singleton {
     Connections {
         target: (typeof DriftState !== "undefined") ? DriftState : null
         enabled: Compositor.name === "driftwm" && root.active
+        function onKeyboardLayoutChanged() { root.applyDriftLayout(); }
         function onShortKeyboardLayoutChanged() { root.applyDriftLayout(); }
         function onKeyboardReadyChanged() { root.applyDriftLayout(); }
     }

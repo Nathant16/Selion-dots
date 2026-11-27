@@ -220,13 +220,16 @@ CompositorStateBase {
         }
 
         // 3. Keyboard Layout
-        if (state.layout_short !== undefined && state.layout_short !== null) {
-            let kl = String(state.layout_short).trim().toUpperCase();
-            if (kl !== "") {
-                root.shortKeyboardLayout = kl;
-                root.keyboardLayout = state.layout ? String(state.layout) : kl;
-                root.keyboardReady = true;
-            }
+        let rawFull = (state.layout !== undefined && state.layout !== null) ? String(state.layout).trim() : "";
+        let rawShort = (state.layout_short !== undefined && state.layout_short !== null) ? String(state.layout_short).trim().toUpperCase() : "";
+        if (rawFull !== "" || rawShort !== "") {
+            let nextFull = rawFull !== "" ? rawFull : rawShort;
+            let nextShort = rawShort !== "" ? rawShort : nextFull.substring(0, 2).toUpperCase();
+            // Assign full layout before short code so listeners reading keyboardLayout
+            // on shortKeyboardLayoutChanged never observe the previous layout.
+            if (root.keyboardLayout !== nextFull) root.keyboardLayout = nextFull;
+            if (root.shortKeyboardLayout !== nextShort) root.shortKeyboardLayout = nextShort;
+            if (!root.keyboardReady) root.keyboardReady = true;
         }
 
         // 4. Camera, Zoom & Outputs
