@@ -1,0 +1,44 @@
+{
+  "name": "Spotify (Spicetify)",
+  "category": "apps",
+  "icon": "󰓇",
+  "hint": "restart",
+  "detect": {
+    "bin": [
+      "spicetify"
+    ]
+  },
+  "templates": [
+    {
+      "input": "color.ini",
+      "output": "$XDG_CONFIG_HOME/spicetify/Themes/Serpantinum/color.ini"
+    },
+    {
+      "input": "user.css",
+      "output": "$XDG_CONFIG_HOME/spicetify/Themes/Serpantinum/user.css"
+    }
+  ],
+  "integrate": [
+    {
+      "type": "ini",
+      "file": "$XDG_CONFIG_HOME/spicetify/config-xpui.ini",
+      "sep": " = ",
+      "values": {
+        "Setting": {
+          "current_theme": "Serpantinum",
+          "color_scheme": "Serpantinum",
+          "inject_css": "1",
+          "replace_colors": "1"
+        }
+      },
+      "when": {
+        "path": [
+          "$XDG_CONFIG_HOME/spicetify/config-xpui.ini"
+        ]
+      }
+    }
+  ],
+  "reload": [
+    "cfg=\"${XDG_CONFIG_HOME:-$HOME/.config}/spicetify/config-xpui.ini\"; sp=\"$(awk -F= '/^[[:space:]]*spotify_path[[:space:]]*=/{gsub(/^[[:space:]]+|[[:space:]]+$/, \"\", $2); print $2; exit}' \"$cfg\" 2>/dev/null)\"; sp=\"${sp/#\\~/$HOME}\"; ver=\"$(awk -F= '/^[[:space:]]*version[[:space:]]*=/{gsub(/^[[:space:]]+|[[:space:]]+$/, \"\", $2); print $2; exit}' \"$cfg\" 2>/dev/null)\"; [ -n \"$ver\" ] && [ -n \"$sp\" ] && [ -w \"$sp/Apps\" ] && spicetify apply -q -n"
+  ]
+}

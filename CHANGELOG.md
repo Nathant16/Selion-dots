@@ -1,3 +1,10 @@
+### 2.9.1.10
+
+- **Theming / Spotify (Spicetify)**: Restored built-in `spicetify` app theme support (`Spotify (Spicetify)` in Settings -> Theme -> Themed apps):
+  - Added `~/.spicetify` to `EXTRA_BIN_DIRS` in `apptheme.py` so user-local Spicetify installs are detected automatically.
+  - Renders `Themes/Serpantinum/color.ini` and `Themes/Serpantinum/user.css` and cleanly toggles `[Setting]` (`current_theme`, `color_scheme`, `inject_css`, `replace_colors`) in `spicetify/config-xpui.ini` with full restore on disable.
+  - Safely runs `spicetify apply -q -n` only when `[Backup]` exists and `spotify_path/Apps` is writable by the user — never touching system `/opt/spotify`, `~/.config/spotify`, or custom launcher wrappers, and never interrupting or auto-launching Spotify.
+
 ### 2.9.1.9
 
 - **Updater / Sudo Prompt Fix**:

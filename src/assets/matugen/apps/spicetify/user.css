@@ -1,0 +1,8 @@
+:root {
+    --serpantinum-accent: {{colors.primary.default.hex}};
+}
+
+.main-playButton-PlayButton,
+button[data-testid="play-button"] {
+    color: {{colors.on_primary.default.hex}} !important;
+}

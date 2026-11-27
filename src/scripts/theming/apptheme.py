@@ -25,6 +25,7 @@ EXTRA_BIN_DIRS = (
     "~/.local/bin",
     "~/.nix-profile/bin",
     "~/.cargo/bin",
+    "~/.spicetify",
     "/run/current-system/sw/bin",
     "/etc/profiles/per-user/{user}/bin",
     "/var/lib/flatpak/exports/bin",
