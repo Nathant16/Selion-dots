@@ -7,6 +7,8 @@ if [ -z "$SERPANTINUM_DIR" ]; then
     export SERPANTINUM_DIR="$(dirname "$BIN_DIR")/src"
 fi
 
+source "$SERPANTINUM_DIR/scripts/daemon_lock.sh"
+daemon_init_paths
 source "$SERPANTINUM_DIR/scripts/caching.sh"
 source "$SERPANTINUM_DIR/scripts/config.sh"
 source "$SERPANTINUM_DIR/scripts/i18n.sh"
@@ -16,35 +18,11 @@ if [ -z "$MAIN_QML" ]; then
 fi
 
 is_alive() {
-    local pid="$1"
-    [ -n "$pid" ] || return 1
-    kill -0 "$pid" 2>/dev/null || return 1
-    local stat
-    stat=$(<"/proc/$pid/stat") 2>/dev/null || return 1
-    [[ "$stat" =~ \)\ Z ]] && return 1
-    return 0
+    daemon_is_alive "$@"
 }
 
 terminate_and_wait() {
-    local pid="$1"
-    local timeout="${2:-2}"
-    local count=0
-    local max_count=$(( timeout * 20 ))
-
-    if [ -z "$pid" ] || ! is_alive "$pid"; then
-        return 0
-    fi
-
-    kill -TERM "$pid" 2>/dev/null
-
-    while is_alive "$pid"; do
-        if [ "$count" -ge "$max_count" ]; then
-            kill -KILL "$pid" 2>/dev/null
-            break
-        fi
-        sleep 0.05
-        ((count++))
-    done
+    daemon_terminate_and_wait "$@"
 }
 
 get_all_children() {
@@ -139,40 +117,31 @@ if [ "$COMMAND" == "restart" ]; then
 fi
 
 if [ "$COMMAND" == "stop" ]; then
-    pid=""
-    if [ -f "/tmp/serpantinumd.pid" ]; then
-        pid="$(cat "/tmp/serpantinumd.pid" 2>/dev/null)"
-    fi
+    daemon_stop_scoped
+    pkill -TERM -u "$DAEMON_UID" -f "wl-paste --watch echo 1" 2>/dev/null || true
+    bash "$SERPANTINUM_DIR/scripts/gamma.sh" stop >/dev/null 2>&1 || true
+    command -v serpantinum-core >/dev/null 2>&1 && serpantinum-core quit >/dev/null 2>&1 || true
+    command -v serpantinum-audio >/dev/null 2>&1 && serpantinum-audio ctl quit >/dev/null 2>&1 || true
 
-    if [ -n "$pid" ] && is_alive "$pid"; then
-        terminate_and_wait "$pid" 3
-    else
-        pkill -TERM -f "serpantinum-core screentime track" 2>/dev/null
-        if [ -n "$MAIN_QML" ]; then
-            pkill -TERM -f "quickshell.*$MAIN_QML" 2>/dev/null
+    wait_lock_count=0
+    while [ "$wait_lock_count" -lt 20 ]; do
+        if ( exec 9>"$DAEMON_LOCK_FILE" && flock -n 9 ) 2>/dev/null; then
+            break
         fi
-        sleep 0.2
-    fi
-
-    pkill -KILL -f "serpantinum-core screentime track" 2>/dev/null
-    if [ -n "$MAIN_QML" ]; then
-        pkill -KILL -f "quickshell.*$MAIN_QML" 2>/dev/null
-    fi
-    pkill -TERM -f "wl-paste --watch echo 1" 2>/dev/null
-    bash "$SERPANTINUM_DIR/scripts/gamma.sh" stop >/dev/null 2>&1
-    command -v serpantinum-core >/dev/null 2>&1 && serpantinum-core quit >/dev/null 2>&1
-    command -v serpantinum-audio >/dev/null 2>&1 && serpantinum-audio ctl quit >/dev/null 2>&1
-
-    rm -f "/tmp/serpantinumd.pid" 2>/dev/null
-    rm -f "/tmp/serpantinumd.lock" 2>/dev/null
+        sleep 0.05
+        wait_lock_count=$((wait_lock_count + 1))
+    done
     echo "$(t "daemon.cli.stopped")"
     exit 0
 fi
 
 if [ "$COMMAND" == "status" ]; then
     pid=""
-    if [ -f "/tmp/serpantinumd.pid" ]; then
-        pid="$(cat "/tmp/serpantinumd.pid" 2>/dev/null)"
+    if [ -f "$DAEMON_PID_FILE" ]; then
+        pid="$(cat "$DAEMON_PID_FILE" 2>/dev/null)"
+    elif [ -z "${SERPANTINUM_RUNTIME_DIR:-}" ] && [ -f "$LEGACY_DAEMON_PID_FILE" ]; then
+        pid="$(cat "$LEGACY_DAEMON_PID_FILE" 2>/dev/null)"
+        [ -n "$pid" ] && daemon_proc_matches_scope "$pid" || pid=""
     fi
     if [ -n "$pid" ] && is_alive "$pid"; then
         echo "$(t "daemon.cli.status_running" PID="$pid")"
@@ -202,37 +171,47 @@ wallpaper_decoder() {
 }
 
 if [ "$COMMAND" == "start" ]; then
-    exec 9>"/tmp/serpantinumd.lock"
+    exec 9>"$DAEMON_LOCK_FILE"
 
     if ! flock -n 9; then
         existing_pid=""
-        [ -f "/tmp/serpantinumd.pid" ] && existing_pid="$(cat "/tmp/serpantinumd.pid" 2>/dev/null)"
+        pid_wait=0
+        while [ "$pid_wait" -lt 10 ]; do
+            [ -f "$DAEMON_PID_FILE" ] && existing_pid="$(cat "$DAEMON_PID_FILE" 2>/dev/null)"
+            if [ -n "$existing_pid" ] && is_alive "$existing_pid"; then
+                break
+            fi
+            sleep 0.05
+            pid_wait=$((pid_wait + 1))
+        done
 
         if [ -n "$existing_pid" ] && is_alive "$existing_pid"; then
-            old_wdisp=$(tr '\0' '\n' < "/proc/$existing_pid/environ" 2>/dev/null | grep '^WAYLAND_DISPLAY=' | cut -d= -f2)
-            local_rdir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-            old_sock="$local_rdir/${old_wdisp:-wayland-0}"
-            if ([ -n "$WAYLAND_DISPLAY" ] && [ -n "$old_wdisp" ] && [ "$WAYLAND_DISPLAY" != "$old_wdisp" ]) || [ ! -e "$old_sock" ]; then
-                terminate_and_wait "$existing_pid" 2
-            else
+            if daemon_session_matches_display "$existing_pid"; then
                 echo "$(t "daemon.already_running")"
                 exit 1
             fi
+            terminate_and_wait "$existing_pid" 2
+            daemon_cleanup_stray_duplicates
         fi
 
-        pkill -KILL -f "serpantinum-core screentime track" 2>/dev/null
-        if [ -n "$MAIN_QML" ]; then
-            pkill -KILL -f "quickshell.*$MAIN_QML" 2>/dev/null
-        fi
-        sleep 0.2
+        lock_wait=0
+        acquired=false
+        while [ "$lock_wait" -lt 20 ]; do
+            if flock -n 9; then
+                acquired=true
+                break
+            fi
+            sleep 0.05
+            lock_wait=$((lock_wait + 1))
+        done
 
-        if ! flock -n 9; then
+        if [ "$acquired" != true ]; then
             echo "$(t "daemon.already_running")"
             exit 1
         fi
     fi
 
-    echo $$ > "/tmp/serpantinumd.pid"
+    printf '%s\n' "$$" > "$DAEMON_PID_FILE"
 
     CLEANUP_DONE=false
     LAUNCH_PID=""
@@ -251,7 +230,7 @@ if [ "$COMMAND" == "start" ]; then
         for group in "$QS_PID" "$LAUNCH_PID"; do
             [ -n "$group" ] && kill -TERM -- "-$group" 2>/dev/null
         done
-        pkill -TERM -f "serpantinum-core screentime track" 2>/dev/null
+        daemon_kill_matching_group screentime TERM
 
         local count=0
         while [ "$count" -lt 20 ]; do
@@ -259,24 +238,28 @@ if [ "$COMMAND" == "start" ]; then
                 break
             fi
             sleep 0.05
-            ((count++))
+            count=$((count + 1))
         done
 
         for group in "$QS_PID" "$LAUNCH_PID"; do
             [ -n "$group" ] && kill -KILL -- "-$group" 2>/dev/null
         done
-        pkill -KILL -f "serpantinum-core screentime track" 2>/dev/null
+        daemon_kill_matching_group screentime KILL
         bash "$SERPANTINUM_DIR/scripts/gamma.sh" stop 9>&- >/dev/null 2>&1
         command -v serpantinum-core >/dev/null 2>&1 && serpantinum-core quit 9>&- >/dev/null 2>&1
         command -v serpantinum-audio >/dev/null 2>&1 && serpantinum-audio ctl quit 9>&- >/dev/null 2>&1
 
         exec 9>&- 2>/dev/null
-        rm -f "/tmp/serpantinumd.pid" 2>/dev/null
-        rm -f "/tmp/serpantinumd.lock" 2>/dev/null
+        if [ "$(cat "$DAEMON_PID_FILE" 2>/dev/null)" = "$$" ]; then
+            rm -f "$DAEMON_PID_FILE" 2>/dev/null
+        fi
         exit 0
     }
 
     trap cleanup SIGINT SIGTERM SIGHUP EXIT
+
+    # Clear any orphaned/legacy instances from upgrades before launching our single shell
+    daemon_cleanup_stray_duplicates 9>&-
 
     [ "$VERBOSE" = true ] && echo "$(t "daemon.launching")"
 
@@ -305,11 +288,11 @@ if [ "$COMMAND" == "start" ]; then
     fi
 
     # Ensure serpantinum-core daemon is running
-    command -v serpantinum-core >/dev/null 2>&1 && serpantinum-core start >/dev/null 2>&1
+    command -v serpantinum-core >/dev/null 2>&1 && serpantinum-core start 9>&- >/dev/null 2>&1
 
     # Apply saved power optimizations on startup
     if [ -f "$SERPANTINUM_DIR/scripts/system/battery" ]; then
-        python3 "$SERPANTINUM_DIR/scripts/system/battery" apply-opts >/dev/null 2>&1 &
+        python3 "$SERPANTINUM_DIR/scripts/system/battery" apply-opts 9>&- >/dev/null 2>&1 &
     fi
 
     (
@@ -335,10 +318,10 @@ XCURSOR_SIZE=32
 HYPRCURSOR_THEME=Windows-11M-Dark
 HYPRCURSOR_SIZE=32
 EOF
-    systemctl --user import-environment XCURSOR_SIZE XCURSOR_THEME HYPRCURSOR_SIZE HYPRCURSOR_THEME 2>/dev/null || true
-    hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd XCURSOR_SIZE XCURSOR_THEME HYPRCURSOR_SIZE HYPRCURSOR_THEME 2>/dev/null || true
-    gsettings set org.gnome.desktop.interface cursor-theme 'Windows-11M-Dark' 2>/dev/null || true
-    gsettings set org.gnome.desktop.interface cursor-size 32 2>/dev/null || true
+    systemctl --user import-environment XCURSOR_SIZE XCURSOR_THEME HYPRCURSOR_SIZE HYPRCURSOR_THEME 9>&- 2>/dev/null || true
+    hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd XCURSOR_SIZE XCURSOR_THEME HYPRCURSOR_SIZE HYPRCURSOR_THEME 9>&- 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface cursor-theme 'Windows-11M-Dark' 9>&- 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface cursor-size 32 9>&- 2>/dev/null || true
     local_rdir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
     local_sess="${XDG_SESSION_DESKTOP,,} ${DESKTOP_SESSION,,}"
     active_wm=""

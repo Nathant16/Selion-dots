@@ -123,6 +123,7 @@ case "$STEP" in
         if [ "${ENABLE_TELEMETRY:-false}" = true ] && [ -f "$MODULES_DIR/telemetry.sh" ]; then
             bash "$MODULES_DIR/telemetry.sh" --mode done --version "$TARGET_VERSION" --old-version "$OLD_VERSION" --install-state "$INSTALL_STATE" --compositor "${SELECTED_COMPOSITORS[*]}" --id "$TELEMETRY_ID" --enabled "$ENABLE_TELEMETRY" --failed "${FAILED_PKGS[*]}"
         fi
+        restart_serpantinumd_if_running "$HOME/.local/share/serpantinum"
         printf '[ OK ] %s\n' "$(t "installer.steps.finalize")"
         ;;
     uninstall_stop)

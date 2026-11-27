@@ -5,36 +5,58 @@ if [ -z "$SERPANTINUM_DIR" ]; then
     export SERPANTINUM_DIR="$(dirname "$BIN_DIR")/src"
 fi
 
+source "$SERPANTINUM_DIR/scripts/daemon_lock.sh"
+daemon_init_paths
+
 is_alive() {
-    local pid="$1"
-    [ -n "$pid" ] || return 1
-    kill -0 "$pid" 2>/dev/null || return 1
-    local stat
-    stat=$(<"/proc/$pid/stat") 2>/dev/null || return 1
-    [[ "$stat" =~ \)\ Z ]] && return 1
-    return 0
+    daemon_is_alive "$@"
 }
 
 ensure_daemon() {
     local pid=""
-    [ -f "/tmp/serpantinumd.pid" ] && read -r pid < "/tmp/serpantinumd.pid" 2>/dev/null
+    [ -f "$DAEMON_PID_FILE" ] && read -r pid < "$DAEMON_PID_FILE" 2>/dev/null
+    if [ -n "$pid" ] && is_alive "$pid" && daemon_session_matches_display "$pid"; then
+        return 0
+    fi
 
-    if [ -z "$pid" ] || ! is_alive "$pid"; then
-        rm -f "/tmp/serpantinumd.pid" 2>/dev/null
-        rm -f "/tmp/serpantinumd.lock" 2>/dev/null
+    if [ -z "${SERPANTINUM_RUNTIME_DIR:-}" ] && [ -f "$LEGACY_DAEMON_PID_FILE" ]; then
+        local lpid=""
+        read -r lpid < "$LEGACY_DAEMON_PID_FILE" 2>/dev/null
+        if [ -n "$lpid" ] && is_alive "$lpid" && daemon_proc_matches_scope "$lpid" && daemon_session_matches_display "$lpid"; then
+            return 0
+        fi
+    fi
 
-        [ "$VERBOSE" = true ] && echo "$(t "cli.starting_daemon")"
-        "$BIN_DIR/serpantinumd" start > /dev/null 2>&1 &
-
-        local count=0
-        while [ "$count" -lt 15 ]; do
-            if [ -f "/tmp/serpantinumd.pid" ] && is_alive "$(cat "/tmp/serpantinumd.pid" 2>/dev/null)"; then
-                break
+    # If another serpantinumd holds the lock (e.g. starting up), wait for its PID rather than spawning a second instance.
+    if ( exec 9>"$DAEMON_LOCK_FILE" && ! flock -n 9 ) 2>/dev/null; then
+        local lock_wait=0
+        while [ "$lock_wait" -lt 20 ]; do
+            pid=""
+            [ -f "$DAEMON_PID_FILE" ] && read -r pid < "$DAEMON_PID_FILE" 2>/dev/null
+            if [ -n "$pid" ] && is_alive "$pid"; then
+                if ! daemon_session_matches_display "$pid"; then
+                    break
+                fi
+                return 0
             fi
-            sleep 0.1
-            ((count++))
+            sleep 0.05
+            lock_wait=$((lock_wait + 1))
         done
     fi
+
+    [ "$VERBOSE" = true ] && echo "$(t "cli.starting_daemon")"
+    "$BIN_DIR/serpantinumd" start > /dev/null 2>&1 &
+
+    local count=0
+    while [ "$count" -lt 20 ]; do
+        pid=""
+        [ -f "$DAEMON_PID_FILE" ] && read -r pid < "$DAEMON_PID_FILE" 2>/dev/null
+        if [ -n "$pid" ] && is_alive "$pid"; then
+            break
+        fi
+        sleep 0.1
+        count=$((count + 1))
+    done
 }
 
 if [[ "$1" == "msg" && -n "$2" && "$2" != "-h" && "$2" != "--help" ]]; then
@@ -53,25 +75,7 @@ if [ -z "$MAIN_QML" ]; then
 fi
 
 terminate_and_wait() {
-    local pid="$1"
-    local timeout="${2:-2}"
-    local count=0
-    local max_count=$(( timeout * 20 ))
-
-    if [ -z "$pid" ] || ! is_alive "$pid"; then
-        return 0
-    fi
-
-    kill -TERM "$pid" 2>/dev/null
-
-    while is_alive "$pid"; do
-        if [ "$count" -ge "$max_count" ]; then
-            kill -KILL "$pid" 2>/dev/null
-            break
-        fi
-        sleep 0.05
-        ((count++))
-    done
+    daemon_terminate_and_wait "$@"
 }
 
 get_installed_version() {
@@ -233,31 +237,7 @@ if [ $# -eq 0 ]; then
 fi
 
 stop_daemon() {
-    local pid=""
-    if [ -f "/tmp/serpantinumd.pid" ]; then
-        pid="$(cat "/tmp/serpantinumd.pid" 2>/dev/null)"
-    fi
-
-    if [ -n "$pid" ] && is_alive "$pid"; then
-        terminate_and_wait "$pid" 3
-    else
-        pkill -TERM -f "serpantinum-core screentime track" 2>/dev/null
-        if [ -n "$MAIN_QML" ]; then
-            pkill -TERM -f "quickshell.*$MAIN_QML" 2>/dev/null
-        fi
-        sleep 0.2
-    fi
-
-    pkill -KILL -f "serpantinum-core screentime track" 2>/dev/null
-    if [ -n "$MAIN_QML" ]; then
-        pkill -KILL -f "quickshell.*$MAIN_QML" 2>/dev/null
-    fi
-    bash "$SERPANTINUM_DIR/scripts/gamma.sh" stop >/dev/null 2>&1
-    command -v serpantinum-core >/dev/null 2>&1 && serpantinum-core quit >/dev/null 2>&1
-    command -v serpantinum-audio >/dev/null 2>&1 && serpantinum-audio ctl quit >/dev/null 2>&1
-
-    rm -f "/tmp/serpantinumd.pid" 2>/dev/null
-    rm -f "/tmp/serpantinumd.lock" 2>/dev/null
+    "$BIN_DIR/serpantinumd" stop >/dev/null 2>&1 || true
 }
 
 cli_usage() {

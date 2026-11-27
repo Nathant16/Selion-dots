@@ -51,6 +51,7 @@ Item {
 
         hwProc.running = false;
         hwProc.running = true;
+        root.probeFingerprint();
 
         return {
             "username": root.username,
@@ -328,7 +329,9 @@ Item {
     Process {
         id: fingerprintProc
         running: false
-        command: ["bash", "-c", "if command -v serpantinum-core >/dev/null 2>&1; then serpantinum-core system fingerprint; elif command -v fprintd-list >/dev/null 2>&1; then out=$(fprintd-list \"$USER\" 2>&1) || exit 1; ! printf '%s\\n' \"$out\" | grep -qiE 'No devices available|found 0 devices' && printf '%s\\n' \"$out\" | grep -qiE 'Device at /net/reactivated/Fprint/Device/|found [1-9][0-9]* devices|Fingerprints for user|has no fingers enrolled'; else exit 1; fi"]
+        // serpantinum-core system fingerprint only checks PAM config (which deploy.sh writes everywhere);
+        // probe fprintd hardware via D-Bus or fprintd-list instead.
+        command: ["bash", "-c", "if command -v busctl >/dev/null 2>&1 && out=$(busctl --system call net.reactivated.Fprint /net/reactivated/Fprint/Manager net.reactivated.Fprint.Manager GetDevices 2>/dev/null); then printf '%s\\n' \"$out\" | grep -qE '^ao [1-9][0-9]*'; elif command -v fprintd-list >/dev/null 2>&1; then out=$(LC_ALL=C fprintd-list \"${USER:-$(id -un)}\" 2>&1) || exit 1; ! printf '%s\\n' \"$out\" | grep -qiE 'No devices available|found 0 devices' && printf '%s\\n' \"$out\" | grep -qiE 'Device at /net/reactivated/Fprint/Device/|found [1-9][0-9]* devices|Fingerprints for user|has no fingers enrolled'; else exit 1; fi"]
         onExited: (exitCode) => {
             root.hasFingerprint = (exitCode === 0);
         }

@@ -15,3 +15,15 @@ restart_daemon_if_running() {
     done
     "$name" start >/dev/null 2>&1 || true
 }
+
+restart_serpantinumd_if_running() {
+    local target_base="${1:-$HOME/.local/share/serpantinum}"
+    local daemon_bin="$target_base/bin/serpantinumd"
+    [ -x "$daemon_bin" ] || return 0
+    [ -n "${WAYLAND_DISPLAY:-}" ] || return 0
+    local uid
+    uid="$(id -u)"
+    if pgrep -u "$uid" -f "$target_base/(bin/serpantinumd|src/quickshell/Shell\\.qml)" >/dev/null 2>&1; then
+        "$daemon_bin" restart </dev/null >/dev/null 2>&1 || true
+    fi
+}

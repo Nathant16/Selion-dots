@@ -1,18 +1,35 @@
 #!/usr/bin/env bash
 
-rm -f /tmp/serpantinumd.lock /tmp/serpantinumd.pid 2>/dev/null
+UID_SELF="$(id -u)"
 
-if command -v systemctl &>/dev/null; then
-    systemctl --user stop graphical-session.target 2>/dev/null
-    systemctl --user stop graphical-session-pre.target 2>/dev/null
-    systemctl --user unset-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET HYPRLAND_INSTANCE_SIGNATURE SWAYSOCK MANGO_INSTANCE_SIGNATURE UMBRIEL_SOCKET DRIFTWM_SOCKET 2>/dev/null || true
-fi
+cleanup_user_session_env() {
+    if command -v systemctl &>/dev/null; then
+        systemctl --user unset-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET HYPRLAND_INSTANCE_SIGNATURE SWAYSOCK MANGO_INSTANCE_SIGNATURE UMBRIEL_SOCKET DRIFTWM_SOCKET 2>/dev/null || true
+        systemctl --user stop --no-block graphical-session.target graphical-session-pre.target 2>/dev/null || true
+    fi
 
-if command -v dinitctl &>/dev/null; then
-    dinitctl --user stop graphical-session 2>/dev/null
-fi
+    if command -v dinitctl &>/dev/null; then
+        dinitctl --user stop graphical-session 2>/dev/null || true
+    fi
+}
 
-sleep 0.2
+is_proc_running() {
+    pgrep -u "$UID_SELF" -x "$1" &>/dev/null
+}
+
+wait_proc_exit() {
+    local proc="$1"
+    local max_tenths="${2:-60}"
+    local i=0
+    while [ "$i" -lt "$max_tenths" ]; do
+        if ! is_proc_running "$proc"; then
+            return 0
+        fi
+        sleep 0.1
+        i=$((i + 1))
+    done
+    return 1
+}
 
 TARGET="${1:-}"
 
@@ -31,17 +48,17 @@ fi
 
 # Fallback: check which compositor process is actually running right now
 if [ -z "$TARGET" ]; then
-    if pgrep -x mango &>/dev/null; then
+    if is_proc_running mango; then
         TARGET="mango"
-    elif pgrep -x driftwm &>/dev/null; then
+    elif is_proc_running driftwm; then
         TARGET="driftwm"
-    elif pgrep -x niri &>/dev/null; then
+    elif is_proc_running niri; then
         TARGET="niri"
-    elif pgrep -x sway &>/dev/null; then
+    elif is_proc_running sway; then
         TARGET="sway"
-    elif pgrep -x Hyprland &>/dev/null; then
+    elif is_proc_running Hyprland; then
         TARGET="hyprland"
-    elif pgrep -x umbriel &>/dev/null; then
+    elif is_proc_running umbriel; then
         TARGET="umbriel"
     fi
 fi
@@ -57,96 +74,115 @@ terminate_session() {
     fi
 }
 
+# Wait for graceful compositor teardown (and any parent watchdog like
+# start-hyprland / niri-session) before signaling or calling loginctl. Killing
+# sddm-helper via loginctl terminate-session makes SDDM log
+# ERROR_INTERNAL ("Process crashed") and fail to respawn the greeter.
+finish_wm_exit() {
+    local proc="$1"
+    local wrapper="${2:-}"
+
+    cleanup_user_session_env
+
+    if wait_proc_exit "$proc" 60; then
+        [ -n "$wrapper" ] && wait_proc_exit "$wrapper" 20 || true
+        return 0
+    fi
+
+    if [ -n "$wrapper" ] && is_proc_running "$wrapper"; then
+        pkill -SIGTERM -u "$UID_SELF" -x "$wrapper" 2>/dev/null || true
+        wait_proc_exit "$wrapper" 20 || true
+    fi
+
+    if is_proc_running "$proc"; then
+        pkill -SIGTERM -u "$UID_SELF" -x "$proc" 2>/dev/null || true
+        wait_proc_exit "$proc" 20 || true
+    fi
+
+    if is_proc_running "$proc" || { [ -n "$wrapper" ] && is_proc_running "$wrapper"; }; then
+        terminate_session
+    fi
+}
+
 quit_mango() {
-    local uid="$(id -u)"
+    local rt="${XDG_RUNTIME_DIR:-/run/user/$UID_SELF}"
     local sock="$MANGO_INSTANCE_SIGNATURE"
     if [ -z "$sock" ] || [ ! -S "$sock" ]; then
-        sock="$(find "/run/user/$uid" -maxdepth 1 -name "mango-*.sock" 2>/dev/null | head -n1)"
+        sock="$(find "$rt" -maxdepth 1 -name "mango-*.sock" 2>/dev/null | head -n1)"
     fi
     if [ -n "$sock" ] && [ -S "$sock" ]; then
         export MANGO_INSTANCE_SIGNATURE="$sock"
     fi
 
     if command -v mmsg &>/dev/null && [ -n "$MANGO_INSTANCE_SIGNATURE" ]; then
-        mmsg dispatch quit 2>/dev/null
+        mmsg dispatch quit &>/dev/null || true
     fi
 
-    sleep 0.2
-    if ! pgrep -x mango &>/dev/null; then
-        return 0
-    fi
-
-    pkill -SIGTERM -x mango 2>/dev/null
-    sleep 0.2
-    if ! pgrep -x mango &>/dev/null; then
-        return 0
-    fi
-
-    terminate_session
+    finish_wm_exit "mango"
 }
 
 quit_driftwm() {
-    driftwm msg action quit 2>/dev/null || \
-    driftwm msg quit 2>/dev/null || \
-    pkill -SIGTERM -x driftwm 2>/dev/null
+    driftwm msg action quit &>/dev/null || \
+    driftwm msg quit &>/dev/null || true
 
-    sleep 0.2
-    if pgrep -x driftwm &>/dev/null; then
-        terminate_session
-    fi
+    finish_wm_exit "driftwm"
 }
 
 quit_hyprland() {
-    local uid="$(id -u)"
-    if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
-        HYPRLAND_INSTANCE_SIGNATURE=$(ls -1t "/run/user/$uid/hypr/" 2>/dev/null | head -n1 || ls -1t /tmp/hypr/ 2>/dev/null | head -n1)
-        export HYPRLAND_INSTANCE_SIGNATURE
+    if command -v uwsm &>/dev/null && uwsm check is-active &>/dev/null; then
+        uwsm stop &>/dev/null || true
+    else
+        local rt="${XDG_RUNTIME_DIR:-/run/user/$UID_SELF}"
+        if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ] || [ ! -S "$rt/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket.sock" ]; then
+            local cand=""
+            for cand in "$rt"/hypr/*/.socket.sock /tmp/hypr/*/.socket.sock; do
+                [ -S "$cand" ] || continue
+                HYPRLAND_INSTANCE_SIGNATURE="$(basename "$(dirname "$cand")")"
+                export HYPRLAND_INSTANCE_SIGNATURE
+                break
+            done
+        fi
+        if command -v hyprshutdown &>/dev/null; then
+            hyprshutdown &>/dev/null || \
+            hyprctl dispatch 'hl.dsp.exit()' &>/dev/null || \
+            hyprctl dispatch exit &>/dev/null || true
+        else
+            hyprctl dispatch 'hl.dsp.exit()' &>/dev/null || \
+            hyprctl dispatch exit &>/dev/null || true
+        fi
     fi
-    hyprctl dispatch 'hl.dsp.exit()' 2>/dev/null || \
-    hyprctl dispatch exit 2>/dev/null || \
-    pkill -SIGTERM -x Hyprland 2>/dev/null
 
-    sleep 0.2
-    if pgrep -x Hyprland &>/dev/null; then
-        terminate_session
-    fi
+    finish_wm_exit "Hyprland" "start-hyprland"
 }
 
 quit_niri() {
-    local uid="$(id -u)"
-    if [ -z "$NIRI_SOCKET" ]; then
-        NIRI_SOCKET=$(ls "/run/user/$uid"/niri.*.sock 2>/dev/null | head -n1)
+    local rt="${XDG_RUNTIME_DIR:-/run/user/$UID_SELF}"
+    if [ -z "$NIRI_SOCKET" ] || [ ! -S "$NIRI_SOCKET" ]; then
+        NIRI_SOCKET="$(ls "$rt"/niri.*.sock 2>/dev/null | head -n1)"
         export NIRI_SOCKET
     fi
-    niri msg action quit --skip-confirmation 2>/dev/null || \
-    niri msg action quit 2>/dev/null || \
-    pkill -SIGTERM -x niri 2>/dev/null
+    niri msg action quit --skip-confirmation &>/dev/null || \
+    niri msg action quit &>/dev/null || true
 
-    sleep 0.2
-    if pgrep -x niri &>/dev/null; then
-        terminate_session
-    fi
+    finish_wm_exit "niri" "niri-session"
 }
 
 quit_umbriel() {
-    umbriel msg session-quit skip-confirmation 2>/dev/null || \
-    umbriel msg session-quit 2>/dev/null || \
-    pkill -SIGTERM -x umbriel 2>/dev/null
+    umbriel msg session-quit skip-confirmation &>/dev/null || \
+    umbriel msg session-quit &>/dev/null || true
 
-    sleep 0.2
-    if pgrep -x umbriel &>/dev/null; then
-        terminate_session
-    fi
+    finish_wm_exit "umbriel"
 }
 
 quit_sway() {
-    swaymsg exit 2>/dev/null || \
-    pkill -SIGTERM -x sway 2>/dev/null
-
-    sleep 0.2
-    if pgrep -x sway &>/dev/null; then
-        terminate_session
+    local rt="${XDG_RUNTIME_DIR:-/run/user/$UID_SELF}"
+    if [ -z "$SWAYSOCK" ] || [ ! -S "$SWAYSOCK" ]; then
+        SWAYSOCK="$(ls "$rt"/sway-ipc.*.sock 2>/dev/null | head -n1)"
+        export SWAYSOCK
     fi
+    swaymsg exit &>/dev/null || true
+
+    finish_wm_exit "sway"
 }
 
 case "$TARGET" in
@@ -169,19 +205,20 @@ case "$TARGET" in
         quit_sway
         ;;
     *)
-        if pgrep -x mango &>/dev/null; then
+        if is_proc_running mango; then
             quit_mango
-        elif pgrep -x driftwm &>/dev/null; then
+        elif is_proc_running driftwm; then
             quit_driftwm
-        elif pgrep -x niri &>/dev/null; then
+        elif is_proc_running niri; then
             quit_niri
-        elif pgrep -x sway &>/dev/null; then
+        elif is_proc_running sway; then
             quit_sway
-        elif pgrep -x Hyprland &>/dev/null; then
+        elif is_proc_running Hyprland; then
             quit_hyprland
-        elif pgrep -x umbriel &>/dev/null; then
+        elif is_proc_running umbriel; then
             quit_umbriel
         else
+            cleanup_user_session_env
             terminate_session
         fi
         ;;

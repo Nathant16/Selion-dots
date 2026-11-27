@@ -1202,9 +1202,14 @@ def _apply(ctx, enabled_override, mode, force, only, color_scheme=False):
             continue
         fingerprint = sha((palette_hash + app.raw_bytes() + json.dumps([str(o[2]) for o in outputs])).encode())
         previous = state["applied"].get(app.id, {})
+        lines_intact = all(
+            Path(p).is_file() and MARK_BEGIN in read_text(Path(p))
+            for p in previous.get("lines", {})
+        )
         fresh = (
             not force
             and previous.get("fingerprint") == fingerprint
+            and lines_intact
             and all(file_hash(dest) == previous.get("hashes", {}).get(str(dest)) for _, _, dest in outputs)
         )
         plans[app.id] = {"fingerprint": fingerprint, "fresh": fresh, "jobs": []}

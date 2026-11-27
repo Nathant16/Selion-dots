@@ -190,6 +190,7 @@ setup_hibernation
 hand_over_from_easyeffects
 setup_sddm "$PROJECT_ROOT" "$INSTALL_STATE" "$IS_REINSTALL"
 write_version_state "$TARGET_VERSION" "$TARGET_COMMIT" "$TELEMETRY_ID" "$ENABLE_TELEMETRY" "${SELECTED_COMPOSITORS[*]}" "$OPT_SDDM" "$SDDM_WAYLAND" "$INSTALL_FULL_WALLPAPERS" "$KEYBOARD_LAYOUT" "$KEYBOARD_TOGGLE" "$OPT_FAST_REPOS"
+restart_serpantinumd_if_running "$HOME/.local/share/serpantinum"
 
 if [[ "$INSTALL_STATE" == "legacy" || "$INSTALL_STATE" == "fresh" || "$IS_REINSTALL" == true ]]; then
     rm -f "$HOME/.local/state/serpantinum/first_launch.done" "$HOME/.local/state/quickshell/first_launch.done"

@@ -487,10 +487,11 @@ QtObject {
         }
     }
 
-    property Process fingerprintProbe: Process {
-        command: ["bash", "-c", "if command -v serpantinum-core >/dev/null 2>&1; then serpantinum-core system fingerprint; elif command -v fprintd-list >/dev/null 2>&1; then out=$(fprintd-list \"$USER\" 2>&1) || exit 1; ! printf '%s\\n' \"$out\" | grep -qiE 'No devices available|found 0 devices' && printf '%s\\n' \"$out\" | grep -qiE 'Device at /net/reactivated/Fprint/Device/|found [1-9][0-9]* devices|Fingerprints for user|has no fingers enrolled'; else exit 1; fi"]
-        running: true
-        onExited: (exitCode) => root.setFingerprintSupported(exitCode === 0)
+    property Connections systemInfoConnections: Connections {
+        target: SystemInfo
+        function onHasFingerprintChanged() {
+            root.setFingerprintSupported(SystemInfo.hasFingerprint);
+        }
     }
 
     property Timer saveTimer: Timer {
@@ -522,6 +523,7 @@ QtObject {
 
     Component.onCompleted: {
         root.fingerprintSupported = SystemInfo.hasFingerprint;
+        SystemInfo.probeFingerprint();
         root.applyDefaults();
     }
 }

@@ -980,6 +980,16 @@ deploy_package() {
         fi
     fi
 
+    if [ -s "${XDG_STATE_HOME:-$HOME/.local/state}/serpantinum/matugen/palette.json" ] && [ -f "$TARGET_BASE/src/scripts/theming/apptheme.py" ]; then
+        QS_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/serpantinum" \
+        QS_SETTINGS="${XDG_CONFIG_HOME:-$HOME/.config}/serpantinum/settings.json" \
+        python3 "$TARGET_BASE/src/scripts/theming/apptheme.py" apply --only kitty >/dev/null 2>&1 || true
+    fi
+    if [ -f "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" ] && [ -f "$kitty_dest" ]; then
+        QS_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/serpantinum" \
+        python3 "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" >/dev/null 2>&1 || true
+    fi
+
     # Set default user shell to fish if installed
     if command -v fish >/dev/null 2>&1; then
         local fish_bin

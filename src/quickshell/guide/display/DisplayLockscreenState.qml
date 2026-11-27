@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import "../"
 import "../../"
 import "../../lock/redactor"
@@ -42,17 +41,7 @@ GuideTab {
     property int currentPasswordMaxAttempts: lockscreenSettings.passwordMaxAttempts !== undefined ? lockscreenSettings.passwordMaxAttempts : 5
     property int currentFingerprintMaxAttempts: lockscreenSettings.fingerprintMaxAttempts !== undefined ? lockscreenSettings.fingerprintMaxAttempts : 5
 
-    Process {
-        id: fingerprintProbe
-        command: ["bash", "-c", "if command -v serpantinum-core >/dev/null 2>&1; then serpantinum-core system fingerprint; elif command -v fprintd-list >/dev/null 2>&1; then out=$(fprintd-list \"$USER\" 2>&1) || exit 1; ! printf '%s\\n' \"$out\" | grep -qiE 'No devices available|found 0 devices' && printf '%s\\n' \"$out\" | grep -qiE 'Device at /net/reactivated/Fprint/Device/|found [1-9][0-9]* devices|Fingerprints for user|has no fingers enrolled'; else exit 1; fi"]
-        onExited: (exitCode) => {
-            let ok = (exitCode === 0);
-            displayLockscreenRoot.fingerprintSupported = ok;
-            SystemInfo.hasFingerprint = ok;
-        }
-    }
-
-    Component.onCompleted: fingerprintProbe.running = true
+    Component.onCompleted: SystemInfo.probeFingerprint()
 
     function isVideoPath(path) {
         let lp = String(path || "").toLowerCase();

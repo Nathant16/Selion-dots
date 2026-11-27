@@ -224,6 +224,8 @@ ShellRoot {
                         "    SAVED=\"$(cat \"$F1\" 2>/dev/null)\"; " +
                         "    if [ -n \"$SAVED\" ] && [ -f \"$SAVED\" ]; then WP=\"$SAVED\"; fi; " +
                         "fi; " +
+                        "STATE_DIR=\"${QS_STATE_DIR:-$HOME/.local/state/serpantinum}\"; " +
+                        "if [ ! -s \"$STATE_DIR/qs_colors.json\" ] || [ ! -s \"$STATE_DIR/matugen/palette.json\" ] || [ ! -s \"$STATE_DIR/matugen/apps-state.json\" ]; then FALLBACK=1; fi; " +
                         "if [ -z \"$WP\" ]; then " +
                         "    FALLBACK=1; " +
                         "    if [ -f \"${F1%/*}/current_default\" ]; then " +
@@ -269,7 +271,7 @@ ShellRoot {
                                     videoSnapshotProcess.targetPath = savedPath;
                                     videoSnapshotProcess.running = false;
                                     videoSnapshotProcess.running = true;
-                                } else if (isFallback && typeof Matugen !== "undefined" && typeof Matugen.generate === "function") {
+                                } else if (isFallback && typeof ThemeBackend !== "undefined" && ThemeBackend.isMatugenTheme() && typeof Matugen !== "undefined" && typeof Matugen.generate === "function") {
                                     Matugen.generate(savedPath);
                                 }
                                 if (savedName !== "") {

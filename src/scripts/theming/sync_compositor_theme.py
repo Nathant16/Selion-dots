@@ -9,8 +9,11 @@ import sys
 import os
 import re
 import json
+import fcntl
 import shutil
+import tempfile
 import subprocess
+from contextlib import contextmanager
 from pathlib import Path
 
 DEFAULT_ROUNDING = 12
@@ -106,8 +109,12 @@ def load_active_colors(state_dir):
                 continue
     return colors
 
+def _config_home():
+    return Path(os.environ.get("XDG_CONFIG_HOME") or (Path.home() / ".config"))
+
+
 def get_settings():
-    settings_path = Path.home() / ".config" / "serpantinum" / "settings.json"
+    settings_path = _config_home() / "serpantinum" / "settings.json"
     if settings_path.is_file():
         try:
             with open(settings_path, "r", encoding="utf-8") as f:
@@ -158,34 +165,71 @@ def get_ski_opacity(element_opacity, apply_to_windows=True):
     val = int(round((200.0 + float(element_opacity)) / 3.0))
     return max(50, min(100, val))
 
-def sync_apps(app_opacity, ski_opacity, blur_background, apply_to_windows):
+def _atomic_write_if_changed(path, content):
+    try:
+        if path.is_file() and path.read_text(encoding="utf-8") == content:
+            return False
+    except OSError:
+        pass
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp_name = tempfile.mkstemp(prefix=".tmp-", dir=str(path.parent))
+    tmp_path = Path(tmp_name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(content)
+            handle.flush()
+        os.replace(str(tmp_path), str(path))
+    except Exception:
+        try:
+            tmp_path.unlink(missing_ok=True)
+        except OSError:
+            pass
+        raise
+    return True
+
+
+@contextmanager
+def _apptheme_lock(state_dir):
+    lock_path = state_dir / "matugen" / "apptheme.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(lock_path, "w", encoding="utf-8") as handle:
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
+
+
+def sync_apps(app_opacity, ski_opacity, blur_background, apply_to_windows, state_dir=None):
     # 1. Kitty configuration
     # Compositors (DriftWM, Hyprland, Sway, Niri) apply window-level opacity rules.
     # Setting background_opacity to app_opacity causes double multiplication
     # (opacity^2), making kitty far more transparent than other windows (like ski).
     # Keep background_opacity at 1.0 so compositor opacity is uniform across all windows.
-    kitty_cfg = Path.home() / ".config" / "kitty" / "kitty.conf"
+    resolved_state = state_dir or Path(os.environ.get("QS_STATE_DIR") or (Path.home() / ".local" / "state" / "serpantinum"))
+    kitty_cfg = _config_home() / "kitty" / "kitty.conf"
     if kitty_cfg.is_file():
         try:
-            with open(kitty_cfg, "r", encoding="utf-8") as f:
-                content = f.read()
+            with _apptheme_lock(resolved_state):
+                content = kitty_cfg.read_text(encoding="utf-8")
+                updated = content
 
-            if re.search(r'^\s*background_opacity\s+.*$', content, re.MULTILINE):
-                content = re.sub(r'^\s*background_opacity\s+.*$', 'background_opacity 1.0', content, flags=re.MULTILINE)
-            else:
-                content = content.rstrip() + '\nbackground_opacity 1.0\n'
+                if re.search(r'^\s*background_opacity\s+.*$', updated, re.MULTILINE):
+                    updated = re.sub(r'^\s*background_opacity\s+.*$', 'background_opacity 1.0', updated, flags=re.MULTILINE)
+                else:
+                    updated = updated.rstrip() + ('\n' if updated.strip() else '') + 'background_opacity 1.0\n'
 
-            blur_val = 1 if (blur_background and apply_to_windows) else 0
-            if re.search(r'^\s*background_blur\s+.*$', content, re.MULTILINE):
-                content = re.sub(r'^\s*background_blur\s+.*$', f'background_blur {blur_val}', content, flags=re.MULTILINE)
-            else:
-                content = content.rstrip() + f'\nbackground_blur {blur_val}\n'
+                blur_val = 1 if (blur_background and apply_to_windows) else 0
+                if re.search(r'^\s*background_blur\s+.*$', updated, re.MULTILINE):
+                    updated = re.sub(r'^\s*background_blur\s+.*$', f'background_blur {blur_val}', updated, flags=re.MULTILINE)
+                else:
+                    updated = updated.rstrip() + f'\nbackground_blur {blur_val}\n'
 
-            with open(kitty_cfg, "w", encoding="utf-8") as f:
-                f.write(content)
+                wrote = _atomic_write_if_changed(kitty_cfg, updated)
 
-            # Signal kitty to reload config
-            subprocess.run(["pkill", "-USR1", "-x", "kitty"], capture_output=True)
+            if wrote:
+                # Signal kitty to reload config only when kitty.conf actually changed
+                subprocess.run(["pkill", "-USR1", "-x", "kitty"], capture_output=True)
         except Exception:
             pass
 
@@ -649,7 +693,7 @@ def sync_cursor():
 def main():
     ensure_environment()
     sync_cursor()
-    state_dir = Path.home() / ".local" / "state" / "serpantinum"
+    state_dir = Path(os.environ.get("QS_STATE_DIR") or (Path.home() / ".local" / "state" / "serpantinum"))
     state_dir.mkdir(parents=True, exist_ok=True)
 
     colors = load_active_colors(state_dir)
@@ -673,7 +717,7 @@ def main():
     app_opacity = get_app_opacity(element_opacity, apply_to_windows)
     ski_opacity = get_ski_opacity(element_opacity, apply_to_windows)
 
-    sync_apps(app_opacity, ski_opacity, blur_background, apply_to_windows)
+    sync_apps(app_opacity, ski_opacity, blur_background, apply_to_windows, state_dir=state_dir)
     write_hyprland_theme(state_dir, colors, rounding, app_opacity, blur_background, apply_to_windows)
     write_sway_theme(state_dir, colors, rounding, app_opacity, blur_background)
     write_niri_theme(state_dir, colors, rounding, app_opacity, blur_background)
