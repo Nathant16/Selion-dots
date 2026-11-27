@@ -1,22 +1,40 @@
 #!/usr/bin/env python3
 """Tests for cross-WM GPU profile detection and env config generation."""
 
+import importlib
+import importlib.util
 import os
 import shutil
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import Any
 
-try:
-    import tomllib
-except ImportError:
-    tomllib = None
 
+def _load_toml_parser() -> Any:
+    """Return stdlib tomllib (3.11+) or tomli if available."""
+    for mod_name in ("tomllib", "tomli"):
+        if importlib.util.find_spec(mod_name) is not None:
+            return importlib.import_module(mod_name)
+    return None
+
+
+def _load_gpu_env(repo_root: Path) -> Any:
+    """Load gpu_env directly by file path so static analyzers resolve imports cleanly."""
+    module_path = repo_root / "src" / "scripts" / "system" / "gpu_env.py"
+    spec = importlib.util.spec_from_file_location("gpu_env", module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Failed to load module spec for {module_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["gpu_env"] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+toml_parser = _load_toml_parser()
 REPO_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO_ROOT / "src" / "scripts" / "system"))
-
-import gpu_env  # noqa: E402
+gpu_env = _load_gpu_env(REPO_ROOT)
 
 
 class TestGpuEnv(unittest.TestCase):
@@ -75,11 +93,11 @@ class TestGpuEnv(unittest.TestCase):
                 self.assertNotIn("WLR_NO_HARDWARE_CURSORS", (cfg / "driftwm/config.toml").read_text(encoding="utf-8"))
                 self.assertIn("LIBVA_DRIVER_NAME", (cfg / "driftwm/config.toml").read_text(encoding="utf-8"))
 
-                if tomllib is not None:
+                if toml_parser is not None:
                     with open(cfg / "umbriel/config.toml", "rb") as f:
-                        umb = tomllib.load(f)
+                        umb = toml_parser.load(f)
                     with open(cfg / "driftwm/config.toml", "rb") as f:
-                        drift = tomllib.load(f)
+                        drift = toml_parser.load(f)
                     self.assertEqual("1", umb["environment"]["WLR_NO_HARDWARE_CURSORS"])
                     self.assertEqual("nvidia", drift["env"]["LIBVA_DRIVER_NAME"])
 
@@ -91,11 +109,11 @@ class TestGpuEnv(unittest.TestCase):
                 self.assertNotIn("WLR_NO_HARDWARE_CURSORS", (cfg / "umbriel/config.toml").read_text(encoding="utf-8"))
                 self.assertNotIn("LIBVA_DRIVER_NAME", (cfg / "driftwm/config.toml").read_text(encoding="utf-8"))
 
-                if tomllib is not None:
+                if toml_parser is not None:
                     with open(cfg / "umbriel/config.toml", "rb") as f:
-                        tomllib.load(f)
+                        toml_parser.load(f)
                     with open(cfg / "driftwm/config.toml", "rb") as f:
-                        tomllib.load(f)
+                        toml_parser.load(f)
             finally:
                 if old_override is None:
                     os.environ.pop("GPU_SETUP", None)
