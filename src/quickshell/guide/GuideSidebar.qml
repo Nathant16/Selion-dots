@@ -165,6 +165,7 @@ Rectangle {
                         required property int index
 
                         readonly property int tabIndex: index
+                        visible: popup.isTabVisible(tabDelegate.modelData)
                         opacity: popup.getTabOpacity(tabIndex)
                         transform: Translate { x: (I18n.rtl ? popup.s(24) : popup.s(-24)) * (1.0 - popup.getTabProgress(tabIndex)) }
                         readonly property bool hasSubtabs: Boolean(modelData.subtabs && modelData.subtabs.length > 0)

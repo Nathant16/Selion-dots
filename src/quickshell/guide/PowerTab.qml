@@ -12,6 +12,7 @@ GuideTab {
     id: powerTabRoot
 
     property bool hasBattery: false
+    property bool hasBacklight: SystemInfo.hasBacklight
     property int capacity: 0
     property string status: "Unknown"
     property real powerWatts: 0.0
@@ -176,6 +177,9 @@ GuideTab {
                 try {
                     let d = JSON.parse(this.text);
                     powerTabRoot.hasBattery = Boolean(d.has_battery);
+                    if (d.has_backlight !== undefined) {
+                        powerTabRoot.hasBacklight = Boolean(d.has_backlight);
+                    }
                     powerTabRoot.capacity = Number(d.capacity) || 0;
                     powerTabRoot.status = String(d.status || "Unknown");
                     powerTabRoot.powerWatts = Number(d.power_w) || 0.0;
@@ -331,10 +335,13 @@ GuideTab {
                 }
             }
 
+            readonly property bool hasPowerSaverOptions: cpuFreqGroup.visible || autoBrightnessGroup.visible || displayRefreshGroup.visible || powerTabRoot.optimizationsModel.length > 0
+
             // 2. Power Saver Settings Section (smoothly expands ONLY when Power Saver profile is active)
             CollapsibleSection {
                 id: saverSection
-                open: powerTabRoot.activeProfile === "power-saver" || powerTabRoot.activeProfile === "low-power"
+                visible: settingsCol.hasPowerSaverOptions
+                open: settingsCol.hasPowerSaverOptions && (powerTabRoot.activeProfile === "power-saver" || powerTabRoot.activeProfile === "low-power")
                 row: saverBlob
 
                 SettingsBlob {
@@ -347,6 +354,7 @@ GuideTab {
                     SettingsGroup {
                         id: cpuFreqGroup
                         visible: powerTabRoot.cpuFreqSupported && powerTabRoot.cpuFreqLabels.length > 0
+                        searchable: visible
                         settingId: "power_cpu_freq"
                         searchKeywords: "cpu frequency limit clock speed underclock downclock eco max freq"
                         rootObj: powerTabRoot.rootObj
@@ -411,6 +419,8 @@ GuideTab {
                     // Auto-reduce brightness (SettingsGroup with Toggle and NumberSelector subSetting)
                     SettingsGroup {
                         id: autoBrightnessGroup
+                        visible: powerTabRoot.hasBattery && powerTabRoot.hasBacklight
+                        searchable: visible
                         settingId: "power_auto_brightness"
                         searchKeywords: "auto brightness reduce drop dim battery saver"
                         rootObj: powerTabRoot.rootObj
@@ -434,6 +444,7 @@ GuideTab {
                         subSettings: [
                             SettingsRow {
                                 id: targetBriRow
+                                searchable: autoBrightnessGroup.visible
                                 rootObj: powerTabRoot.rootObj
                                 baseColor: "transparent"
                                 showIcon: false
@@ -481,6 +492,7 @@ GuideTab {
                     SettingsGroup {
                         id: displayRefreshGroup
                         visible: powerTabRoot.displayRefreshSupported && powerTabRoot.displayRefreshLabels.length > 0
+                        searchable: visible
                         settingId: "power_display_refresh"
                         searchKeywords: "display screen refresh rate hz 48 60 120 144 hertz monitor eco saver"
                         rootObj: powerTabRoot.rootObj
@@ -504,6 +516,7 @@ GuideTab {
                         subSettings: [
                             SettingsRow {
                                 id: displayRefreshSubRow
+                                searchable: displayRefreshGroup.visible
                                 rootObj: powerTabRoot.rootObj
                                 baseColor: "transparent"
                                 showIcon: false
@@ -574,6 +587,7 @@ GuideTab {
 
                 SettingsGroup {
                     id: conservationGroup
+                    searchable: powerTabRoot.hasBattery
                     settingId: "power_conservation"
                     searchKeywords: "battery conservation protection limit 80 health prolong"
                     rootObj: powerTabRoot.rootObj
@@ -598,6 +612,7 @@ GuideTab {
                     subSettings: [
                         SettingsRow {
                             id: limitRow
+                            searchable: powerTabRoot.hasBattery
                             rootObj: powerTabRoot.rootObj
                             baseColor: "transparent"
                             showIcon: false

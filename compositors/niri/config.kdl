@@ -11,6 +11,7 @@
 // ▀▀▀ ▀  ▀   ▀   ▀▀▀ ▀ ▀▀ ▀▀▀▀ ▀  ▀ ▀   ▀ ▀▀▀ ▀  ▀   ▀
 
 include "default/gpu-env.kdl"
+include optional=true "default/gpu-env-auto.kdl"
 
 
 // █▀▀ █▀▀█ █  █ █▀▀█ █▀▀ █▀▀

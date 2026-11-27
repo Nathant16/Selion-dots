@@ -52,15 +52,16 @@ Item {
             if (items.length > 0) out.push({ id: sec.id, name: sec.name, icon: sec.icon, items: items });
         }
 
+        let isWidgetAvailable = id => id !== "battery" || SystemInfo.hasBatSupply;
         let widgetItem = id => ({ kind: "widget", id: id, icon: types[id].icon || "", name: types[id].name || id });
 
         for (let cat of WidgetRegistry.categories) {
-            let items = Object.keys(types).filter(id => types[id].category === cat.id).map(widgetItem);
+            let items = Object.keys(types).filter(id => types[id].category === cat.id && isWidgetAvailable(id)).map(widgetItem);
             items.forEach(it => placed[it.id] = true);
             if (items.length > 0) out.push({ id: cat.id, name: cat.name, icon: cat.icon, items: items });
         }
 
-        let rest = Object.keys(types).filter(id => !placed[id]).map(widgetItem);
+        let rest = Object.keys(types).filter(id => !placed[id] && isWidgetAvailable(id)).map(widgetItem);
         if (rest.length > 0) {
             out.push({
                 id: "__other",

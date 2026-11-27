@@ -346,7 +346,15 @@ GuideTab {
 
         let allKeys = BarModuleRegistry.moduleIds();
         for (let i = 0; i < allKeys.length; i++) {
-            if (!used[allKeys[i]]) availableModel.append(getModuleInfo(allKeys[i]));
+            let key = allKeys[i];
+            if (!used[key] && (key !== "bt" || OsdController.hasBtAdapter)) availableModel.append(getModuleInfo(key));
+        }
+    }
+
+    Connections {
+        target: OsdController
+        function onHasBtAdapterChanged() {
+            barTabRoot.loadModuleModels();
         }
     }
 

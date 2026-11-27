@@ -15,6 +15,7 @@ BarModuleCard {
     styleIcon: "󰂲"
     styleTitle: I18n.t("guide.bar.bt.style.title", "Style")
     styleDescription: I18n.t("guide.bar.bt.style.desc", "Choose the visual appearance of the bluetooth module")
+    styleSearchable: OsdController.hasBtAdapter
     onStyleSelected: id => card.tab.setBtStyle(id)
 
     widgetComponent: Component {
@@ -28,6 +29,7 @@ BarModuleCard {
     SettingsRow {
         rootObj: card.rootObj
         settingId: "bar_bt_show_icon"
+        searchable: OsdController.hasBtAdapter
         searchKeywords: "bluetooth icon symbol indicator"
         baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
         icon: "󰂲"
@@ -51,6 +53,7 @@ BarModuleCard {
     SettingsRow {
         rootObj: card.rootObj
         settingId: "bar_bt_show_name"
+        searchable: OsdController.hasBtAdapter
         searchKeywords: "bluetooth device name title connected"
         baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
         icon: "󰂯"

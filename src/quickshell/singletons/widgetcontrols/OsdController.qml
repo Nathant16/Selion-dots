@@ -27,9 +27,31 @@ Item {
     readonly property real sysMicVolume: activeSource && activeSource.audio ? Math.round(activeSource.audio.volume * 100) : 0
     readonly property bool sysMicMuted: activeSource && activeSource.audio ? activeSource.audio.muted : false
 
+    property bool hasWifiDevice: false
+    readonly property bool hasBtAdapter: Boolean(Bluetooth.defaultAdapter)
+    readonly property bool hasRadios: hasWifiDevice || hasBtAdapter
+
     readonly property bool wifiRadioEnabled: Networking.wifiEnabled
     readonly property bool btRadioEnabled: Boolean(Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled)
-    readonly property bool sysAirplane: !wifiRadioEnabled && !btRadioEnabled
+    readonly property bool sysAirplane: hasRadios && (!hasWifiDevice || !wifiRadioEnabled) && (!hasBtAdapter || !btRadioEnabled)
+    readonly property bool brightnessSupported: (brightnessInitialized && brightnessBackend !== "" && brightnessBackend !== "none") || SystemInfo.hasBacklight
+
+    function updateWifiPresence() {
+        if (typeof Networking === "undefined" || !Networking || !Networking.devices) {
+            controller.hasWifiDevice = false;
+            return;
+        }
+        let devs = Networking.devices.values || Networking.devices;
+        let count = devs.length !== undefined ? devs.length : (devs.count !== undefined ? devs.count : 0);
+        for (let i = 0; i < count; i++) {
+            let d = devs[i] !== undefined ? devs[i] : (devs.get ? devs.get(i) : null);
+            if (d && d.type === DeviceType.Wifi) {
+                controller.hasWifiDevice = true;
+                return;
+            }
+        }
+        controller.hasWifiDevice = false;
+    }
 
     property int sysBrightness: 0
 
@@ -131,6 +153,23 @@ Item {
 
     Component.onCompleted: {
         controller.syncKeyboardLayoutSetting();
+        controller.updateWifiPresence();
+    }
+
+    Item {
+        visible: false
+        Connections {
+            target: (typeof Networking !== "undefined" && Networking) ? Networking : null
+            ignoreUnknownSignals: true
+            function onDevicesChanged() { controller.updateWifiPresence(); }
+        }
+        Repeater {
+            model: (typeof Networking !== "undefined" && Networking && Networking.devices) ? Networking.devices : null
+            delegate: Item {
+                Component.onCompleted: controller.updateWifiPresence()
+                Component.onDestruction: controller.updateWifiPresence()
+            }
+        }
     }
 
     Component.onDestruction: {
@@ -205,6 +244,10 @@ Item {
 
     onSysAirplaneChanged: {
         if (!controller.isInitialized) return;
+        if (!controller.hasRadios) {
+            controller.lastAirplane = false;
+            return;
+        }
         if (controller.lastAirplane !== controller.sysAirplane) {
             controller.lastAirplane = controller.sysAirplane;
             controller.show("airplane", controller.sysAirplane ? "on" : "off");
@@ -212,7 +255,7 @@ Item {
     }
 
     onSysBrightnessChanged: {
-        if (!controller.isInitialized) return;
+        if (!controller.isInitialized || !controller.brightnessSupported) return;
         if (controller.lastBrightness !== controller.sysBrightness) {
             controller.lastBrightness = controller.sysBrightness;
             controller.show("brightness");
@@ -265,7 +308,10 @@ Item {
                 }
                 controller.brightnessBackend = state.backend || "";
                 let val = state.percent;
-                if (typeof val !== "number" || val < 0) return;
+                if (typeof val !== "number" || val < 0 || controller.brightnessBackend === "" || controller.brightnessBackend === "none") {
+                    controller.brightnessInitialized = false;
+                    return;
+                }
                 if (!controller.brightnessInitialized) {
                     controller.lastBrightness = val;
                     controller.brightnessInitialized = true;

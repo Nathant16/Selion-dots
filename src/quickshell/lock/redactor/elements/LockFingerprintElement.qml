@@ -1,4 +1,5 @@
 import QtQuick
+import "../"
 import "../../"
 import "../../../"
 
@@ -9,7 +10,7 @@ Item {
     property bool showText: true
     property var ctx: null
 
-    visible: !el.ctx || el.ctx.root.fingerprintAvailable
+    visible: el.ctx ? el.ctx.root.fingerprintAvailable : LockLayoutStore.fingerprintSupported
     implicitWidth: Scaler.s(200)
     implicitHeight: Scaler.s(72)
 

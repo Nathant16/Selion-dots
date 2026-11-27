@@ -27,6 +27,8 @@ Rectangle {
     property string styleTitle
     property string styleDescription
     property bool stylesFirst: false
+    property bool showStyle: true
+    property bool styleSearchable: true
 
     signal styleSelected(string id)
 
@@ -75,7 +77,7 @@ Rectangle {
 
         Loader {
             Layout.fillWidth: true
-            active: card.stylesFirst && card.styles.length > 0
+            active: card.showStyle && card.stylesFirst && card.styles.length > 0
             visible: active
             sourceComponent: styleRow
         }
@@ -88,7 +90,7 @@ Rectangle {
 
         Loader {
             Layout.fillWidth: true
-            active: !card.stylesFirst && card.styles.length > 0
+            active: card.showStyle && !card.stylesFirst && card.styles.length > 0
             visible: active
             sourceComponent: styleRow
         }
@@ -101,6 +103,7 @@ Rectangle {
             rootObj: card.rootObj
             settingId: card.styleSettingId
             searchKeywords: card.styleKeywords
+            searchable: card.styleSearchable
             baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
             icon: card.styleIcon
             title: card.styleTitle

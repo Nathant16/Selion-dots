@@ -21,10 +21,25 @@ BarModulesSettings {
         selectedModuleFile.setText(id + "\n");
     }
 
+    function isModuleChipVisible(id) {
+        return id !== "bt" || OsdController.hasBtAdapter;
+    }
+
+    Connections {
+        target: OsdController
+        function onHasBtAdapterChanged() {
+            if (!OsdController.hasBtAdapter && barModulesRoot.selectedModule === "bt") {
+                barModulesRoot.selectModule("left");
+            }
+        }
+    }
+
     function handleHorizontalKey(dir) {
-        const n = moduleOrder.length;
-        const i = moduleOrder.indexOf(selectedModule);
-        selectModule(moduleOrder[(i + dir + n) % n]);
+        const visibleOrder = moduleOrder.filter(id => isModuleChipVisible(id));
+        const n = visibleOrder.length;
+        if (n === 0) return false;
+        const i = visibleOrder.indexOf(selectedModule);
+        selectModule(visibleOrder[(i + dir + n) % n]);
         return true;
     }
 
@@ -35,7 +50,9 @@ BarModulesSettings {
         printErrors: false
         onLoaded: {
             const id = text().trim();
-            if (barModulesRoot.moduleOrder.indexOf(id) !== -1) barModulesRoot.selectedModule = id;
+            if (barModulesRoot.moduleOrder.indexOf(id) !== -1 && barModulesRoot.isModuleChipVisible(id)) {
+                barModulesRoot.selectedModule = id;
+            }
         }
     }
 
@@ -105,6 +122,7 @@ BarModulesSettings {
                     readonly property var info: BarModuleRegistry.types[modelData] || ({})
 
                     height: rootObj.s(30)
+                    visible: barModulesRoot.isModuleChipVisible(modelData)
                     cornerRadius: ThemeBackend.borderRadius
                     horizontalPadding: rootObj.s(10)
                     buttonIcon: info.icon || ""

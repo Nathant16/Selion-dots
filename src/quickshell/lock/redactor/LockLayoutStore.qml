@@ -38,7 +38,7 @@ QtObject {
     ]
 
     readonly property real noFingerprintShift: 69
-    property bool fingerprintSupported: true
+    property bool fingerprintSupported: false
 
     property real panelW: root.defaultPanelW
     property real panelH: root.defaultPanelH
@@ -87,17 +87,21 @@ QtObject {
         };
     }
 
-    function defaultScreenItems() {
-        return [
-            root.makeEntry("clock", "lockscreen", root.screenW * 0.5 - 210, root.screenH * 0.36 - 100, 420, 200),
-            root.makeEntry("fingerprint", "classic", root.screenW * 0.5, root.screenH * 0.92, 0, 0)
+    function defaultScreenItems(supported) {
+        let hasFingerprint = supported === undefined ? root.fingerprintSupported : supported;
+        let items = [
+            root.makeEntry("clock", "lockscreen", root.screenW * 0.5 - 210, root.screenH * 0.36 - 100, 420, 200)
         ];
+        if (hasFingerprint) {
+            items.push(root.makeEntry("fingerprint", "classic", root.screenW * 0.5, root.screenH * 0.92, 0, 0));
+        }
+        return items;
     }
 
     function defaultPanelItems(supported) {
         let hasFingerprint = supported === undefined ? root.fingerprintSupported : supported;
         let dy = hasFingerprint ? 0 : root.noFingerprintShift;
-        return [
+        let items = [
             root.makeEntry("widget:weather", "full", 20, 20, 380, 190),
             root.makeEntry("widget:cpu", "default", 20, 218, 186, 160),
             root.makeEntry("widget:ram", "default", 214, 218, 186, 160),
@@ -108,11 +112,27 @@ QtObject {
             root.makeEntry("lockstatus", "filled", 645, 236 + dy, 185, 44),
             root.makeEntry("password", "filled", 450, 288 + dy, 380, 44),
             root.makeEntry("keyboard", "button", 600, 364 + dy, 0, 0),
-            root.makeEntry("battery", "button", 685, 364 + dy, 0, 0),
-            root.makeEntry("fingerprint", "classic", 640, 450, 0, 0),
+            root.makeEntry("battery", "button", 685, 364 + dy, 0, 0)
+        ];
+        if (hasFingerprint) {
+            items.push(root.makeEntry("fingerprint", "classic", 640, 450, 0, 0));
+        }
+        items.push(
             root.makeEntry("notifications", "card", 860, 20, 400, 422),
             root.makeEntry("widget:music", "full", 860, 450, 400, 96)
-        ];
+        );
+        return items;
+    }
+
+    function screenMatchesDefaults(supported) {
+        let defaults = root.defaultScreenItems(supported);
+        if (root.screenItems.count !== defaults.length) return false;
+        for (let i = 0; i < defaults.length; i++) {
+            let e = root.screenItems.get(i);
+            let d = defaults[i];
+            if (e.itype !== d.itype || e.ivariant !== d.ivariant || Math.round(e.ix) !== Math.round(d.ix) || Math.round(e.iy) !== Math.round(d.iy)) return false;
+        }
+        return true;
     }
 
     function panelMatchesDefaults(supported) {
@@ -128,11 +148,14 @@ QtObject {
 
     function setFingerprintSupported(supported) {
         if (supported === root.fingerprintSupported) return;
-        let followsDefaults = root.panelMatchesDefaults(root.fingerprintSupported) && root.panelW === root.defaultPanelW && root.panelH === root.defaultPanelH;
+        let prev = root.fingerprintSupported;
+        let screenFollows = root.screenMatchesDefaults(prev);
+        let followsDefaults = root.panelMatchesDefaults(prev) && root.panelW === root.defaultPanelW && root.panelH === root.defaultPanelH;
         root.fingerprintSupported = supported;
-        if (!followsDefaults) return;
+        if (!screenFollows && !followsDefaults) return;
         root.applying = true;
-        root.fill(root.panelItems, root.defaultPanelItems());
+        if (screenFollows) root.fill(root.screenItems, root.defaultScreenItems(supported));
+        if (followsDefaults) root.fill(root.panelItems, root.defaultPanelItems(supported));
         root.applying = false;
         root.revision++;
     }
@@ -465,7 +488,7 @@ QtObject {
     }
 
     property Process fingerprintProbe: Process {
-        command: ["bash", "-c", "command -v serpantinum-core >/dev/null && serpantinum-core system fingerprint || (command -v fprintd-list >/dev/null && fprintd-list \"$USER\" 2>&1 | grep -qv 'No devices available')"]
+        command: ["bash", "-c", "if command -v serpantinum-core >/dev/null 2>&1; then serpantinum-core system fingerprint; elif command -v fprintd-list >/dev/null 2>&1; then out=$(fprintd-list \"$USER\" 2>&1) || exit 1; ! printf '%s\\n' \"$out\" | grep -qiE 'No devices available|found 0 devices' && printf '%s\\n' \"$out\" | grep -qiE 'Device at /net/reactivated/Fprint/Device/|found [1-9][0-9]* devices|Fingerprints for user|has no fingers enrolled'; else exit 1; fi"]
         running: true
         onExited: (exitCode) => root.setFingerprintSupported(exitCode === 0)
     }
@@ -497,5 +520,8 @@ QtObject {
         }
     }
 
-    Component.onCompleted: root.applyDefaults()
+    Component.onCompleted: {
+        root.fingerprintSupported = SystemInfo.hasFingerprint;
+        root.applyDefaults();
+    }
 }

@@ -26,7 +26,7 @@ GuideTab {
         return displayLockscreenRoot.defaultLockscreenSettings;
     }
 
-    property bool fingerprintSupported: false
+    property bool fingerprintSupported: SystemInfo.hasFingerprint
     property string currentBackgroundMode: lockscreenSettings.backgroundMode === "custom" ? "custom" : "follow"
     property string currentCustomBackground: lockscreenSettings.customBackground ? String(lockscreenSettings.customBackground) : ""
     property string currentPromptBackdropMode: lockscreenSettings.promptBackdropMode === "wallpaper" ? "wallpaper" : "desktop"
@@ -44,8 +44,12 @@ GuideTab {
 
     Process {
         id: fingerprintProbe
-        command: ["bash", "-c", "command -v serpantinum-core >/dev/null && serpantinum-core system fingerprint || (command -v fprintd-list >/dev/null && fprintd-list \"$USER\" 2>&1 | grep -qv 'No devices available')"]
-        onExited: (exitCode) => displayLockscreenRoot.fingerprintSupported = exitCode === 0
+        command: ["bash", "-c", "if command -v serpantinum-core >/dev/null 2>&1; then serpantinum-core system fingerprint; elif command -v fprintd-list >/dev/null 2>&1; then out=$(fprintd-list \"$USER\" 2>&1) || exit 1; ! printf '%s\\n' \"$out\" | grep -qiE 'No devices available|found 0 devices' && printf '%s\\n' \"$out\" | grep -qiE 'Device at /net/reactivated/Fprint/Device/|found [1-9][0-9]* devices|Fingerprints for user|has no fingers enrolled'; else exit 1; fi"]
+        onExited: (exitCode) => {
+            let ok = (exitCode === 0);
+            displayLockscreenRoot.fingerprintSupported = ok;
+            SystemInfo.hasFingerprint = ok;
+        }
     }
 
     Component.onCompleted: fingerprintProbe.running = true

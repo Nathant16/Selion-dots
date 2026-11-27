@@ -218,6 +218,7 @@ def get_json_data():
     if not has_bat:
         return {
             "has_battery": False,
+            "has_backlight": bool(bl_dirs),
             "capacity": 0,
             "status": "AC",
             "power_w": 0.0,
@@ -283,6 +284,7 @@ def get_json_data():
 
     return {
         "has_battery": True,
+        "has_backlight": bool(bl_dirs),
         "capacity": capacity,
         "status": status,
         "power_w": round(power_now_w, 2),
@@ -520,8 +522,8 @@ def apply_profile_optimizations(prof):
         restore_display_refresh_rate()
 
     elif prof == "power-saver":
-        # 1. Smoothly fade brightness to power_saver_brightness over 5s if auto_brightness is on
-        if saved.get("auto_brightness", True):
+        # 1. Smoothly fade brightness to power_saver_brightness over 5s on laptops with backlight
+        if saved.get("auto_brightness", True) and get_battery_dir() and glob.glob("/sys/class/backlight/*"):
             cur_b = get_brightness()
             existing_pre = saved.get("pre_saver_brightness", 0)
             if not existing_pre or int(existing_pre) <= 0:
@@ -1367,6 +1369,7 @@ def apply_single_opt(opt_id, enabled):
 
 def get_optimizations_list():
     saved = load_opts_config()
+    has_bt = bool(glob.glob("/sys/class/bluetooth/*"))
     meta = [
         {
             "id": "bus_device_pm",
@@ -1381,12 +1384,6 @@ def get_optimizations_list():
             "icon": "󰤨",
         },
         {
-            "id": "bluetooth_sleep",
-            "title": "Bluetooth Auto Power-Off",
-            "desc": "Turn off Bluetooth radio when no devices connected",
-            "icon": "󰂯",
-        },
-        {
             "id": "storage_kernel_pm",
             "title": "Storage & Kernel Timers (NVMe & Watchdog)",
             "desc": "Reduce kernel wakeups (disable NMI watchdog) and delay SSD flush",
@@ -1399,6 +1396,13 @@ def get_optimizations_list():
             "icon": "󰕾",
         }
     ]
+    if has_bt:
+        meta.insert(2, {
+            "id": "bluetooth_sleep",
+            "title": "Bluetooth Auto Power-Off",
+            "desc": "Turn off Bluetooth radio when no devices connected",
+            "icon": "󰂯",
+        })
     if os.path.exists("/usr/local/bin/ryzenadj") or shutil.which("ryzenadj"):
         meta.append({
             "id": "ryzen_tdp",
@@ -1465,7 +1469,7 @@ def apply_all_optimizations():
                 write_val(os.path.join(p, "scaling_max_freq"), max_f)
     if saved.get("display_refresh_save", True):
         apply_saver_display_refresh_rate()
-    if saved.get("auto_brightness", True):
+    if saved.get("auto_brightness", True) and get_battery_dir() and glob.glob("/sys/class/backlight/*"):
         cur_b = get_brightness()
         existing_pre = saved.get("pre_saver_brightness", 0)
         if not existing_pre or int(existing_pre) <= 0:

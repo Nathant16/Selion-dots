@@ -245,7 +245,9 @@ QtObject {
 
     function lockTypeList(scope) {
         return registry.lockTypeIds
-            .filter(id => registry.allowedIn(id, scope) && registry.isDeletable(id))
+            .filter(id => registry.allowedIn(id, scope) && registry.isDeletable(id)
+                && (id !== "fingerprint" || LockLayoutStore.fingerprintSupported)
+                && (id !== "battery" || !SystemInfo.isDesktop))
             .map(id => ({ id: id, icon: registry.typeIcon(id), name: registry.typeName(id) }));
     }
 }

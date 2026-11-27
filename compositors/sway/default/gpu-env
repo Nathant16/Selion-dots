@@ -3,3 +3,6 @@
 #  █▄▄█  █     ▀▄▄▀ 　  █▄▄▀  █▄▄▄   █    █▄▄▄  █▄▄█   █
 
 # GPU Auto-detection
+# Sway imports session GPU variables from ~/.config/environment.d/90-serpantinum-gpu.conf
+# managed by gpu_env.py; propagate systemd user environment on startup.
+exec sh -c 'if [ -x /usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator ]; then set -a; eval "$(/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator)"; set +a; fi; dbus-update-activation-environment --systemd --all'

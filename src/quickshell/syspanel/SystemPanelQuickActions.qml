@@ -318,6 +318,7 @@ Item {
         }
 
         QuickActionBtn {
+            visible: view.panel.hasWifiDevice
             iconText: isActive ? "󰤨" : "󰤮"
             activeColor: ThemeBackend.blue
             isActive: view.panel.wifiRadioEnabled
@@ -332,6 +333,7 @@ Item {
         }
 
         QuickActionBtn {
+            visible: view.panel.hasBtAdapter
             iconText: isActive ? "󰂯" : "󰂲"
             activeColor: ThemeBackend.mauve
             isActive: view.panel.btRadioEnabled
@@ -348,24 +350,26 @@ Item {
         }
 
         QuickActionBtn {
+            visible: view.panel.hasRadios
             iconText: "󰀝"
             activeColor: ThemeBackend.red
-            isActive: !view.panel.wifiRadioEnabled && !view.panel.btRadioEnabled
+            isActive: view.panel.hasRadios && (!view.panel.hasWifiDevice || !view.panel.wifiRadioEnabled) && (!view.panel.hasBtAdapter || !view.panel.btRadioEnabled)
             onLeftClicked: {
                 Sounds.playSfx("system/quick_click.wav");
                 let enableAirplane = !isActive;
                 if (enableAirplane) {
                     view.panel.btStateBeforeAirplane = view.panel.btRadioEnabled;
                     view.panel.wifiStateBeforeAirplane = view.panel.wifiRadioEnabled;
-                    Networking.wifiEnabled = false;
+                    if (view.panel.hasWifiDevice) Networking.wifiEnabled = false;
                     if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.enabled = false;
                 } else {
                     let restoreWifi = view.panel.wifiStateBeforeAirplane;
                     let restoreBt = view.panel.btStateBeforeAirplane;
                     if (!restoreWifi && !restoreBt) {
-                        restoreWifi = true;
+                        if (view.panel.hasWifiDevice) restoreWifi = true;
+                        else if (view.panel.hasBtAdapter) restoreBt = true;
                     }
-                    Networking.wifiEnabled = restoreWifi;
+                    if (view.panel.hasWifiDevice) Networking.wifiEnabled = restoreWifi;
                     if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.enabled = restoreBt;
                 }
             }

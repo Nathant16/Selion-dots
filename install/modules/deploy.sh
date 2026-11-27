@@ -1020,12 +1020,27 @@ deploy_package() {
         sudo udevadm trigger --subsystem-match=usb 2>/dev/null || true
     fi
 
-    # Deploy battery threshold rules for laptops
-    if [ -f "$TARGET_BASE/src/assets/udev/51-battery-threshold.rules" ]; then
+    # Deploy battery threshold rules only on machines with a battery
+    local has_laptop_battery=0
+    if compgen -G '/sys/class/power_supply/BAT*' >/dev/null 2>&1 || \
+       [ -e /sys/class/power_supply/macsmc-battery/charge_control_limit_max ]; then
+        has_laptop_battery=1
+    else
+        for _ps in /sys/class/power_supply/*; do
+            [ -f "$_ps/type" ] || continue
+            if grep -qi 'Battery' "$_ps/type" 2>/dev/null && ! grep -qi 'Device' "$_ps/scope" 2>/dev/null; then
+                has_laptop_battery=1
+                break
+            fi
+        done
+    fi
+    if [ "$has_laptop_battery" -eq 1 ] && [ -f "$TARGET_BASE/src/assets/udev/51-battery-threshold.rules" ]; then
         sudo mkdir -p /etc/udev/rules.d 2>/dev/null || true
         sudo cp "$TARGET_BASE/src/assets/udev/51-battery-threshold.rules" /etc/udev/rules.d/51-battery-threshold.rules 2>/dev/null || true
         sudo udevadm control --reload-rules 2>/dev/null || true
         sudo udevadm trigger --subsystem-match=power_supply 2>/dev/null || true
+    else
+        sudo rm -f /etc/udev/rules.d/51-battery-threshold.rules 2>/dev/null || true
     fi
 
     # Deploy power & sysfs sudoers rules for battery thresholds and performance tuning
@@ -1052,10 +1067,20 @@ deploy_package() {
         sudo chmod 644 /etc/polkit-1/rules.d/50-net.reactivated.fprint.rules 2>/dev/null || true
     fi
 
-    # Deploy logind clamshell configuration: ignore lid switch when external monitor is connected
-    if [ -d "/etc/systemd" ]; then
+    # Deploy logind clamshell configuration only on laptops with a lid switch / laptop chassis
+    local has_lid_switch=0
+    if compgen -G '/proc/acpi/button/lid/*' >/dev/null 2>&1; then
+        has_lid_switch=1
+    elif [ -r /sys/class/dmi/id/chassis_type ]; then
+        case "$(cat /sys/class/dmi/id/chassis_type 2>/dev/null | tr -d '[:space:]')" in
+            8|9|10|11|14|30|31|32) has_lid_switch=1 ;;
+        esac
+    fi
+    if [ "$has_lid_switch" -eq 1 ] && [ -d "/etc/systemd" ]; then
         sudo mkdir -p /etc/systemd/logind.conf.d 2>/dev/null || true
         printf '[Login]\nHandleLidSwitch=suspend\nHandleLidSwitchDocked=ignore\n' | sudo tee /etc/systemd/logind.conf.d/99-serpantinum-clamshell.conf >/dev/null 2>&1 || true
+    else
+        sudo rm -f /etc/systemd/logind.conf.d/99-serpantinum-clamshell.conf 2>/dev/null || true
     fi
 
     # Deploy Twemoji fontconfig and ensure emoji font availability
@@ -1150,6 +1175,11 @@ EOF_ENV
     # Initial theme and border synchronization for all compositors
     if [ -f "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" ]; then
         python3 "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" 2>/dev/null || true
+    fi
+
+    # Detect GPU setup and sync compositor GPU environment profiles
+    if [ -f "$TARGET_BASE/src/scripts/system/gpu_env.py" ]; then
+        python3 "$TARGET_BASE/src/scripts/system/gpu_env.py" --apply >/dev/null 2>&1 || true
     fi
 
     # Automatic theme, fonts and cursor integration for Flatpak sandboxed applications

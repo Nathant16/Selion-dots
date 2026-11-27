@@ -53,7 +53,7 @@ BarFaceBase {
         return true;
     }
 
-    readonly property bool isDesktop: !SystemInfo.hasBatSupply
+    readonly property bool hasBtAdapter: isPreview || Boolean(Bluetooth.defaultAdapter)
     property string btStatus: isPreview ? "On" : "Off"
     property string btIcon: isPreview ? "🎧" : "󰂲"
     property string btDevice: isPreview ? "Headphones" : "Off"
@@ -183,13 +183,13 @@ BarFaceBase {
 
     property real targetLength: {
         if (module && !module.moduleActive) return 0;
-        if (root.isDesktop) return 0;
+        if (!root.hasBtAdapter) return 0;
         if (root.btStyle === "text") {
             return (textLength > 0) ? (textLength + s(root.isCompact ? (isVertical ? 14 : 12) : 16)) : 0;
         }
         return (pillLength > 0) ? (pillLength + s(root.isCompact ? 8 : 10)) : 0;
     }
-    property bool isFaceVisible: showLayout && !isDesktop && targetLength > 0
+    property bool isFaceVisible: showLayout && hasBtAdapter && targetLength > 0
 
     function syncImplicitSize() {
         let cross = module ? module.thickness : (parent ? (isVertical ? parent.width : parent.height) : 0);
@@ -289,7 +289,7 @@ BarFaceBase {
             accentColor: isActive ? (root.isCompact ? Qt.lighter(ThemeBackend.mauve, 1.08) : ThemeBackend.mauve) : (root.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0)
             textColor: isActive ? ThemeBackend.base : (root.isCompact ? Qt.lighter(ThemeBackend.text, 1.05) : ThemeBackend.text)
 
-            property real targetWidth: (root.isDesktop || (!root.showIcon && !root.showName)) ? 0 : implicitWidth
+            property real targetWidth: (!root.hasBtAdapter || (!root.showIcon && !root.showName)) ? 0 : implicitWidth
             width: targetWidth
             Behavior on width { NumberAnimation { duration: 480; easing.type: Easing.OutQuint } }
 

@@ -15,6 +15,8 @@ BarModuleCard {
     styleIcon: "󰂄"
     styleTitle: I18n.t("guide.bar.bat.style.title", "Battery style")
     styleDescription: I18n.t("guide.bar.bat.style.desc", "Choose the visual appearance of the battery indicator")
+    showStyle: !card.tab.isDesktop
+    styleSearchable: !card.tab.isDesktop
     onStyleSelected: id => card.tab.setBatStyle(id)
 
     widgetComponent: Component {
@@ -33,9 +35,9 @@ BarModuleCard {
         icon: "󰚥"
         title: I18n.t("guide.bar.bat.show_percent.title", "Show percentage")
         description: I18n.t("guide.bar.bat.show_percent.desc", "Display the numeric battery charge percentage")
-        visible: !card.tab.isSideBar
-        searchable: !card.tab.isSideBar
-        hiddenByConfig: card.tab.isSideBar
+        visible: !card.tab.isSideBar && !card.tab.isDesktop
+        searchable: !card.tab.isSideBar && !card.tab.isDesktop
+        hiddenByConfig: card.tab.isSideBar && !card.tab.isDesktop
 
         Toggle {
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
@@ -59,6 +61,8 @@ BarModuleCard {
         icon: "󰁹"
         title: I18n.t("guide.bar.bat.show_icon.title", "Show icon")
         description: I18n.t("guide.bar.bat.show_icon.desc", "Display the battery icon or graphic indicator")
+        visible: !card.tab.isDesktop
+        searchable: !card.tab.isDesktop
 
         Toggle {
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter

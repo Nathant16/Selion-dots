@@ -106,10 +106,17 @@ GuideTab {
     property bool manualInhibit: idleSettings && idleSettings.manualInhibit !== undefined ? idleSettings.manualInhibit : false
     property bool lockOnSleep: idleSettings && idleSettings.lockOnSleep !== undefined ? idleSettings.lockOnSleep : true
 
-    property var actionIdsList: ["dim", "lock", "dpms", "suspend"]
+    property var actionIdsList: OsdController.brightnessSupported ? ["dim", "lock", "dpms", "suspend"] : ["lock", "dpms", "suspend"]
+
+    Connections {
+        target: OsdController
+        function onBrightnessSupportedChanged() {
+            idleTabRoot.refreshActionIds();
+        }
+    }
 
     function refreshActionIds() {
-        let list = ["dim", "lock", "dpms", "suspend"];
+        let list = OsdController.brightnessSupported ? ["dim", "lock", "dpms", "suspend"] : ["lock", "dpms", "suspend"];
         let customs = (idleSettings && idleSettings.customActions && Array.isArray(idleSettings.customActions)) ? idleSettings.customActions : [];
         for (let i = 0; i < customs.length; i++) {
             if (customs[i] && customs[i].id) {

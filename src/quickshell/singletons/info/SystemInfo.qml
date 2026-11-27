@@ -30,6 +30,8 @@ Item {
 
     property bool isDesktop: true
     property bool hasBatSupply: true
+    property bool hasBacklight: false
+    property bool hasFingerprint: false
 
     Connections {
         target: Config
@@ -68,12 +70,21 @@ Item {
             "diskTotalGb": root.diskTotalGb,
             "diskUsedGb": root.diskUsedGb,
             "diskPercent": root.diskPercent,
-            "isDesktop": root.isDesktop
+            "isDesktop": root.isDesktop,
+            "hasBacklight": root.hasBacklight,
+            "hasFingerprint": root.hasFingerprint
         };
+    }
+
+    function probeFingerprint() {
+        if (!fingerprintProc.running) {
+            fingerprintProc.running = true;
+        }
     }
 
     Component.onCompleted: {
         root.fetch();
+        root.probeFingerprint();
     }
 
     FileView {
@@ -284,7 +295,9 @@ Item {
                 "fi; " +
             "done; " +
             "bat_named=0; compgen -G '/sys/class/power_supply/BAT*' >/dev/null && bat_named=1; " +
-            "echo \"$gpu|$disk_mod|$df_out|$avatar|$has_battery|$bat_named\""
+            "has_backlight=0; compgen -G '/sys/class/backlight/*' >/dev/null && has_backlight=1; " +
+            "[ -n \"$df_out\" ] || df_out=\"0|0|0%\"; " +
+            "echo \"$gpu|$disk_mod|$df_out|$avatar|$has_battery|$bat_named|$has_backlight\""
         ]
         stdout: StdioCollector {
             onStreamFinished: {
@@ -304,8 +317,20 @@ Item {
                     if (p.length >= 8) {
                         root.hasBatSupply = p[7] === "1";
                     }
+                    if (p.length >= 9) {
+                        root.hasBacklight = p[8] === "1";
+                    }
                 }
             }
+        }
+    }
+
+    Process {
+        id: fingerprintProc
+        running: false
+        command: ["bash", "-c", "if command -v serpantinum-core >/dev/null 2>&1; then serpantinum-core system fingerprint; elif command -v fprintd-list >/dev/null 2>&1; then out=$(fprintd-list \"$USER\" 2>&1) || exit 1; ! printf '%s\\n' \"$out\" | grep -qiE 'No devices available|found 0 devices' && printf '%s\\n' \"$out\" | grep -qiE 'Device at /net/reactivated/Fprint/Device/|found [1-9][0-9]* devices|Fingerprints for user|has no fingers enrolled'; else exit 1; fi"]
+        onExited: (exitCode) => {
+            root.hasFingerprint = (exitCode === 0);
         }
     }
 }

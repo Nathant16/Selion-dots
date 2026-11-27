@@ -79,9 +79,25 @@ Item {
     property var searchIndexMap: ({})
     property var searchIndex: []
     property int searchLoadCursor: 0
+    property int lastCrawledSlot: -1
     property bool searchIndexReady: false
     property string searchCacheSaved: ""
-    readonly property string searchCacheStamp: Updater.packageVersion + "|" + I18n.currentLang + "|v2"
+    readonly property string searchCacheStamp: Updater.packageVersion + "|" + I18n.currentLang + "|v3"
+    readonly property bool fingerprintAvailable: SystemInfo.hasFingerprint
+
+    onFingerprintAvailableChanged: {
+        if (!fingerprintAvailable && currentTabModel && !isTabVisible(currentTabModel)) {
+            expandedTab = -1;
+            currentTab = 0;
+            currentSubTab = 0;
+        }
+        if (fingerprintAvailable) {
+            let hasFpEntries = searchIndex.some(it => it && it.tab === "fingerprint");
+            if (!hasFpEntries) resetSearchIndex();
+        } else {
+            scheduleSearchRebuild();
+        }
+    }
 
     onSearchCacheStampChanged: {
         if (!searchIndexReady && searchCacheFile.loaded) loadSearchCache(searchCacheFile.text());
@@ -185,6 +201,28 @@ Item {
             if (sIdx >= 0) return tabTitle(t.subtabs[sIdx]);
         }
         return resolveI18nText(subtabKey);
+    }
+
+    function isTabVisible(tabModel) {
+        if (!tabModel) return false;
+        if (tabModel.key === "fingerprint" && !root.fingerprintAvailable) return false;
+        return true;
+    }
+
+    function tabIndexForSlot(order) {
+        let n = 0;
+        for (let i = 0; i < tabsModel.length; i++) {
+            let st = tabsModel[i].subtabs;
+            let count = st && st.length > 0 ? st.length : 1;
+            if (order < n + count) return i;
+            n += count;
+        }
+        return -1;
+    }
+
+    function isSlotVisible(order) {
+        let tIdx = tabIndexForSlot(order);
+        return tIdx >= 0 && isTabVisible(tabsModel[tIdx]);
     }
 
     function resolveIndices(tabKey, subKey) {
@@ -361,18 +399,26 @@ Item {
             if (!searchIndexMap[k].target) delete searchIndexMap[k];
         }
         searchLoadCursor = 0;
+        lastCrawledSlot = -1;
         searchIndexReady = false;
         rebuildSearchIndex();
         if (visible) searchIndexStartTimer.restart();
     }
 
     function crawlSearchStep() {
-        if (searchLoadCursor > 0) releaseTab(searchLoadCursor - 1);
+        if (lastCrawledSlot >= 0) {
+            releaseTab(lastCrawledSlot);
+            lastCrawledSlot = -1;
+        }
+        while (searchLoadCursor < totalTabSlots && !isSlotVisible(searchLoadCursor)) {
+            searchLoadCursor++;
+        }
         if (searchLoadCursor >= totalTabSlots) {
             searchIndexReady = true;
             rebuildSearchIndex();
             return;
         }
+        lastCrawledSlot = searchLoadCursor;
         requestLoad(searchLoadCursor++);
         searchLoadTimer.restart();
     }
@@ -385,6 +431,8 @@ Item {
         let hits = [];
         for (let i = 0; i < searchIndex.length; i++) {
             let item = searchIndex[i];
+            let tModel = item.tabIndex >= 0 ? tabsModel[item.tabIndex] : null;
+            if (tModel && !isTabVisible(tModel)) continue;
             let score = GuideSearch.scoreEntry(preparedSearchEntry(item), q, tokens);
             if (score < 0) continue;
             hits.push({ item: item, score: score });
@@ -723,12 +771,12 @@ Item {
         }
         let r = resolveIndices(tabName, subTabName);
         let num = parseInt(tabName);
-        if (r.tabIndex < 0 && !isNaN(num) && num >= 0 && num < tabsModel.length) {
+        if (r.tabIndex < 0 && !isNaN(num) && num >= 0 && num < tabsModel.length && isTabVisible(tabsModel[num])) {
             let t = tabsModel[num];
             let sNum = parseInt(subTabName);
             r = { tabIndex: num, subIndex: (!isNaN(sNum) && t.subtabs && sNum >= 0 && sNum < t.subtabs.length) ? sNum : 0 };
         }
-        if (r.tabIndex < 0) return;
+        if (r.tabIndex < 0 || !isTabVisible(tabsModel[r.tabIndex])) return;
         currentTab = r.tabIndex;
         let t = tabsModel[r.tabIndex];
         expandedTab = (t.subtabs && t.subtabs.length > 0) ? r.tabIndex : -1;
@@ -771,7 +819,12 @@ Item {
                 return;
             }
         }
-        currentTab = (currentTab + 1) % tabsModel.length;
+        let nextIdx = currentTab;
+        for (let tries = 0; tries < tabsModel.length; tries++) {
+            nextIdx = (nextIdx + 1) % tabsModel.length;
+            if (isTabVisible(tabsModel[nextIdx])) break;
+        }
+        currentTab = nextIdx;
         let nextParent = tabsModel[currentTab];
         if (nextParent && nextParent.subtabs && nextParent.subtabs.length > 0) {
             expandedTab = currentTab;
@@ -790,7 +843,12 @@ Item {
                 return;
             }
         }
-        currentTab = (currentTab - 1 + tabsModel.length) % tabsModel.length;
+        let prevIdx = currentTab;
+        for (let tries = 0; tries < tabsModel.length; tries++) {
+            prevIdx = (prevIdx - 1 + tabsModel.length) % tabsModel.length;
+            if (isTabVisible(tabsModel[prevIdx])) break;
+        }
+        currentTab = prevIdx;
         let prevParent = tabsModel[currentTab];
         if (prevParent && prevParent.subtabs && prevParent.subtabs.length > 0) {
             expandedTab = currentTab;
@@ -962,10 +1020,14 @@ Item {
 
     onVisibleChanged: {
         if (visible) {
+            SystemInfo.probeFingerprint();
             searchIndexStartTimer.restart();
         } else {
             searchIndexStartTimer.stop();
-            if (searchLoadCursor > 0) releaseTab(searchLoadCursor - 1);
+            if (lastCrawledSlot >= 0) {
+                releaseTab(lastCrawledSlot);
+                lastCrawledSlot = -1;
+            }
         }
         if (visible) {
             settleTab();

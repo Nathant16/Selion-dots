@@ -109,6 +109,10 @@ Item {
     property bool isDraggingVol: false
     property bool isDraggingBri: false
     readonly property bool usesDdcBrightness: OsdController.brightnessBackend === "ddc"
+    readonly property bool hasWifiDevice: OsdController.hasWifiDevice
+    readonly property bool hasBtAdapter: OsdController.hasBtAdapter
+    readonly property bool hasRadios: OsdController.hasRadios
+    readonly property bool brightnessSupported: OsdController.brightnessSupported
 
     property bool btStateBeforeAirplane: false
     property bool wifiStateBeforeAirplane: true

@@ -18,10 +18,12 @@ get_gpu_vulkan_pkgs() {
 
     if echo "$gpu" | grep -qiE 'amd|radeon|ati'; then
         pkgs+=("vulkan-radeon" "lib32-vulkan-radeon")
-    elif echo "$gpu" | grep -qiE 'intel'; then
+    fi
+    if echo "$gpu" | grep -qiE 'intel'; then
         pkgs+=("vulkan-intel" "lib32-vulkan-intel")
-    elif echo "$gpu" | grep -qiE 'nvidia'; then
-        pkgs+=("nvidia-utils" "lib32-nvidia-utils")
+    fi
+    if echo "$gpu" | grep -qiE 'nvidia'; then
+        pkgs+=("nvidia-utils" "lib32-nvidia-utils" "libva-nvidia-driver")
     fi
     printf '%s\n' "${pkgs[@]}"
 }

@@ -141,6 +141,7 @@ Rectangle {
 
         RowLayout {
             Layout.fillWidth: true
+            visible: panel.brightnessSupported
             spacing: panel.s(10)
 
             IconButton {

@@ -7,7 +7,7 @@ Item {
     property string variant: "button"
     property var ctx: null
 
-    visible: !el.ctx || !el.ctx.root.isDesktop
+    visible: el.ctx ? !el.ctx.root.isDesktop : !SystemInfo.isDesktop
     implicitWidth: faceLoader.item ? faceLoader.item.implicitWidth : 0
     implicitHeight: faceLoader.item ? faceLoader.item.implicitHeight : 0
 

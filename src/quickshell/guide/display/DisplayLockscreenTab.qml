@@ -40,6 +40,7 @@ DisplayLockscreenState {
 
             SettingsRow {
                 visible: displayLockscreenRoot.fingerprintSupported
+                searchable: displayLockscreenRoot.fingerprintSupported
                 rootObj: displayLockscreenRoot.rootObj
                 settingId: "lockscreen_fingerprint"
                 icon: "󰈷"
@@ -174,6 +175,7 @@ DisplayLockscreenState {
 
                     SettingsRow {
                         visible: displayLockscreenRoot.fingerprintSupported
+                        searchable: displayLockscreenRoot.fingerprintSupported
                         rootObj: displayLockscreenRoot.rootObj
                         settingId: "lockscreen_fingerprint_attempts"
                         searchKeywords: "lockscreen lock screen fingerprint biometric max attempts retries"

@@ -32,7 +32,7 @@ hl.config({
         force_zero_scaling = true,
     },
     cursor = {
-        no_hardware_cursors = false,
+        no_hardware_cursors = (_G.SELION_GPU_NO_HW_CURSOR == true),
         enable_hyprcursor = false,
         warp_on_change_workspace = true,
     },
