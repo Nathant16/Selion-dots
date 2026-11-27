@@ -7,6 +7,7 @@ import importlib.util
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -191,6 +192,71 @@ class TestKittyThemeSync(unittest.TestCase):
             sync_mod.sync_apps(0.83, 83, True, True, state)
             sync_mod.sync_apps(0.83, 83, True, True, state)
             self.assertFalse(log_file.exists())
+
+    def _run_configure_kitty(self, home: Path, cfg: Path, state: Path, bin_dir: Path, chassis: str, has_battery: bool):
+        sysfs = home.parent / "sysfs"
+        ps_dir = sysfs / "power_supply"
+        lid_dir = sysfs / "lid"
+        if sysfs.exists():
+            shutil.rmtree(sysfs)
+        ps_dir.mkdir(parents=True)
+        lid_dir.mkdir(parents=True)
+        chassis_file = sysfs / "chassis_type"
+        chassis_file.write_text(f"{chassis}\n", encoding="utf-8")
+        if has_battery:
+            bat = ps_dir / "BAT0"
+            bat.mkdir()
+            (bat / "type").write_text("Battery\n", encoding="utf-8")
+            (lid_dir / "LID0").mkdir()
+
+        fake_fish = bin_dir / "fish"
+        fake_fish.write_text("#!/usr/bin/env bash\nexit 0\n", encoding="utf-8")
+        fake_fish.chmod(0o755)
+        fake_target = home.parent / "target_base"
+        fake_target.mkdir(exist_ok=True)
+
+        env = os.environ.copy()
+        env.update(
+            {
+                "HOME": str(home),
+                "XDG_CONFIG_HOME": str(cfg),
+                "XDG_STATE_HOME": str(home / ".local" / "state"),
+                "SERP_SYS_POWER_SUPPLY": str(ps_dir),
+                "SERP_PROC_LID": str(lid_dir),
+                "SERP_SYS_CHASSIS": str(chassis_file),
+                "PATH": f"{bin_dir}:{os.environ['PATH']}",
+            }
+        )
+        cmd = f'source "{REPO_ROOT}/install/modules/deploy.sh"; configure_kitty_config "{REPO_ROOT}" "{fake_target}"'
+        subprocess.run(["bash", "-c", cmd], env=env, check=True)
+
+    def test_deploy_kitty_scale_desktop_vs_laptop(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            home, cfg, state, bin_dir = self._setup_sandbox(Path(tmp))
+            kitty_cfg = cfg / "kitty/kitty.conf"
+
+            # 1. Desktop PC fresh/upgraded from 15.0 -> sets font_size 12.0 & signals kitty once
+            self._run_configure_kitty(home, cfg, state, bin_dir, chassis="3", has_battery=False)
+            self.assertIn("font_size        12.0", kitty_cfg.read_text(encoding="utf-8"))
+            self.assertTrue((state / "kitty_desktop_scale_migrated").is_file())
+            self.assertTrue((home / "pkill.log").exists())
+
+            # 2. Custom user font_size on desktop PC is preserved on subsequent updates
+            kitty_cfg.write_text(kitty_cfg.read_text(encoding="utf-8").replace("12.0", "14.0"), encoding="utf-8")
+            self._run_configure_kitty(home, cfg, state, bin_dir, chassis="3", has_battery=False)
+            self.assertIn("font_size        14.0", kitty_cfg.read_text(encoding="utf-8"))
+
+            # 3. Missing kitty.conf on desktop PC gets 12.0 directly
+            kitty_cfg.unlink()
+            self._run_configure_kitty(home, cfg, state, bin_dir, chassis="3", has_battery=False)
+            self.assertIn("font_size        12.0", kitty_cfg.read_text(encoding="utf-8"))
+
+            # 4. Laptop hardware keeps default 15.0 untouched
+            kitty_cfg.unlink()
+            (state / "kitty_desktop_scale_migrated").unlink(missing_ok=True)
+            self._run_configure_kitty(home, cfg, state, bin_dir, chassis="10", has_battery=True)
+            self.assertIn("font_size        15.0", kitty_cfg.read_text(encoding="utf-8"))
+            self.assertFalse((state / "kitty_desktop_scale_migrated").exists())
 
 
 if __name__ == "__main__":

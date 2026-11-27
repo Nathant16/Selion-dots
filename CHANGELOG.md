@@ -1,3 +1,9 @@
+### 2.9.1.6
+
+- fix(installer,ipc): clear `SERPANTINUM_INSTALLER`, `SERPANTINUM_DIR`, `MAIN_QML`, `QS_DIR`, `I18N_DIR`, and `QS_*_DIR` overrides in `restart_serpantinumd_if_running()` (`install/modules/daemons.sh`), `bin/serpantinumd`, and `bin/serpantinum` (and preserve explicit `MAIN_QML`/`QS_DIR` in `src/scripts/caching.sh`), so updating live never leaves `quickshell` running from `~/.cache/serpantinum-installer/src/quickshell/Shell.qml` and breaking `serpantinum` IPC keybindings
+- feat(kitty,deploy): extract shared `has_laptop_battery()`, `has_lid_or_laptop_chassis()`, and `is_laptop_hardware()` helpers in `install/modules/deploy.sh`, automatically scaling default Kitty `font_size` to `12.0` on desktop PCs (one-time migration from `15.0` guarded by `kitty_desktop_scale_migrated` so custom edits are preserved) while keeping `15.0` on laptops
+- test: verify desktop vs laptop Kitty scale rules in `install/tests/kitty_theme_sync_test.py` and verify installer-env sanitization plus full sandbox teardown across `WAYLAND_DISPLAY` switches in `install/tests/daemon_singleton_test.sh`
+
 ### 2.9.1.5
 
 - fix(fingerprint): probe real `fprintd` hardware via D-Bus (`net.reactivated.Fprint.Manager.GetDevices`) / `LC_ALL=C fprintd-list` in `SystemInfo.qml` instead of `serpantinum-core system fingerprint` (which only checks `/etc/pam.d` setup written unconditionally by `deploy.sh`), and deduplicate `DisplayLockscreenState.qml` and `LockLayoutStore.qml` probes onto `SystemInfo.probeFingerprint()` so desktop PCs reliably hide fingerprint UI even when `serpantinum-core` is installed

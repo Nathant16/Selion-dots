@@ -7,6 +7,115 @@ EXTRA_CONFIGS=(
     "starship.toml"
 )
 
+has_laptop_battery() {
+    local ps_dir="${SERP_SYS_POWER_SUPPLY:-/sys/class/power_supply}"
+    if compgen -G "$ps_dir/BAT*" >/dev/null 2>&1 || \
+       [ -e "$ps_dir/macsmc-battery/charge_control_limit_max" ]; then
+        return 0
+    fi
+    local _ps
+    for _ps in "$ps_dir"/*; do
+        [ -f "$_ps/type" ] || continue
+        if grep -qi 'Battery' "$_ps/type" 2>/dev/null && ! grep -qi 'Device' "$_ps/scope" 2>/dev/null; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+has_lid_or_laptop_chassis() {
+    local lid_dir="${SERP_PROC_LID:-/proc/acpi/button/lid}"
+    local chassis_file="${SERP_SYS_CHASSIS:-/sys/class/dmi/id/chassis_type}"
+    if compgen -G "$lid_dir/*" >/dev/null 2>&1; then
+        return 0
+    fi
+    if [ -r "$chassis_file" ]; then
+        case "$(cat "$chassis_file" 2>/dev/null | tr -d '[:space:]')" in
+            8|9|10|11|14|30|31|32) return 0 ;;
+        esac
+    fi
+    return 1
+}
+
+is_laptop_hardware() {
+    has_laptop_battery || has_lid_or_laptop_chassis
+}
+
+# Configure kitty base config, using a compact desktop font size (12.0) on PCs while keeping 15.0 on laptops.
+configure_kitty_config() {
+    local repo_root="$1"
+    local target_base="$2"
+    local cfg_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+    local state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/serpantinum"
+    local kitty_dest="$cfg_home/kitty/kitty.conf"
+    local kitty_src="$repo_root/config/kitty/kitty.conf"
+    local target_font_size="12.0"
+    local is_laptop=0
+    local restored_default=0
+
+    if is_laptop_hardware; then
+        target_font_size="15.0"
+        is_laptop=1
+    fi
+
+    if [ -f "$kitty_src" ]; then
+        if [ ! -f "$kitty_dest" ] || ! grep -q "font_size" "$kitty_dest"; then
+            mkdir -p "$cfg_home/kitty"
+            local existing_theme=""
+            if [ -f "$kitty_dest" ]; then
+                existing_theme="$(grep -E "include themes/serpantinum.conf" "$kitty_dest" 2>/dev/null || true)"
+            fi
+            cp "$kitty_src" "$kitty_dest"
+            restored_default=1
+            if [ -n "$existing_theme" ] && ! grep -q "include themes/serpantinum.conf" "$kitty_dest"; then
+                echo -e "\n# >>> serpantinum theme >>>\ninclude themes/serpantinum.conf\n# <<< serpantinum theme <<<" >> "$kitty_dest"
+            fi
+        fi
+    fi
+
+    if [ -f "$kitty_dest" ]; then
+        local desktop_marker="$state_dir/kitty_desktop_scale_migrated"
+        local before_cksum="" after_cksum=""
+        before_cksum="$(cksum "$kitty_dest" 2>/dev/null || true)"
+
+        if ! grep -q "JetBrainsMono Nerd Font" "$kitty_dest"; then
+            sed -i 's/font_family[[:space:]]\+JetBrains Mono/font_family      JetBrainsMono Nerd Font/' "$kitty_dest" 2>/dev/null || true
+        fi
+        if grep -qE "font_size[[:space:]]+(13|16)(\.0)?([[:space:]]|$)" "$kitty_dest"; then
+            sed -i -E "s/font_size[[:space:]]+(13|16)(\\.0)?([[:space:]]|$)/font_size        ${target_font_size}\\3/" "$kitty_dest" 2>/dev/null || true
+        fi
+        if [ "$is_laptop" -eq 0 ]; then
+            if { [ "$restored_default" -eq 1 ] || [ ! -e "$desktop_marker" ]; } && \
+               grep -qE "font_size[[:space:]]+15(\.0)?([[:space:]]|$)" "$kitty_dest"; then
+                sed -i -E "s/font_size[[:space:]]+15(\\.0)?([[:space:]]|$)/font_size        ${target_font_size}\\2/" "$kitty_dest" 2>/dev/null || true
+            fi
+            mkdir -p "$state_dir" 2>/dev/null || true
+            : > "$desktop_marker"
+        fi
+        if grep -q "background_opacity" "$kitty_dest"; then
+            sed -i -E 's/background_opacity[[:space:]]+[0-9.]+/background_opacity 1.0/' "$kitty_dest" 2>/dev/null || true
+        fi
+        if ! grep -q "shell.*fish" "$kitty_dest" && command -v fish >/dev/null 2>&1; then
+            echo -e "\nshell $(command -v fish)" >> "$kitty_dest"
+        fi
+
+        after_cksum="$(cksum "$kitty_dest" 2>/dev/null || true)"
+        if [ "$before_cksum" != "$after_cksum" ]; then
+            pkill -USR1 -x kitty 2>/dev/null || true
+        fi
+    fi
+
+    if [ -s "$state_dir/matugen/palette.json" ] && [ -f "$target_base/src/scripts/theming/apptheme.py" ]; then
+        QS_STATE_DIR="$state_dir" \
+        QS_SETTINGS="$cfg_home/serpantinum/settings.json" \
+        python3 "$target_base/src/scripts/theming/apptheme.py" apply --only kitty >/dev/null 2>&1 || true
+    fi
+    if [ -f "$target_base/src/scripts/theming/sync_compositor_theme.py" ] && [ -f "$kitty_dest" ]; then
+        QS_STATE_DIR="$state_dir" \
+        python3 "$target_base/src/scripts/theming/sync_compositor_theme.py" >/dev/null 2>&1 || true
+    fi
+}
+
 render_wallpaper_progress() {
     local current="$1"
     local total="$2"
@@ -949,46 +1058,7 @@ deploy_package() {
         python3 "$TARGET_BASE/bin/serpantinum_theme_sync.py" 2>/dev/null || true
     fi
 
-    # Ensure kitty.conf base settings (font_size 15.0, JetBrainsMono, fish) are present
-    local kitty_dest="$HOME/.config/kitty/kitty.conf"
-    local kitty_src="$REPO_ROOT/config/kitty/kitty.conf"
-    if [ -f "$kitty_src" ]; then
-        if [ ! -f "$kitty_dest" ] || ! grep -q "font_size" "$kitty_dest"; then
-            mkdir -p "$HOME/.config/kitty"
-            local existing_theme=""
-            if [ -f "$kitty_dest" ]; then
-                existing_theme="$(grep -E "include themes/serpantinum.conf" "$kitty_dest" 2>/dev/null || true)"
-            fi
-            cp "$kitty_src" "$kitty_dest"
-            if [ -n "$existing_theme" ] && ! grep -q "include themes/serpantinum.conf" "$kitty_dest"; then
-                echo -e "\n# >>> serpantinum theme >>>\ninclude themes/serpantinum.conf\n# <<< serpantinum theme <<<" >> "$kitty_dest"
-            fi
-        fi
-    fi
-    if [ -f "$kitty_dest" ]; then
-        if ! grep -q "JetBrainsMono Nerd Font" "$kitty_dest"; then
-            sed -i 's/font_family[[:space:]]\+JetBrains Mono/font_family      JetBrainsMono Nerd Font/' "$kitty_dest" 2>/dev/null || true
-        fi
-        if grep -qE "font_size[[:space:]]+(13|16)(\.0)?([[:space:]]|$)" "$kitty_dest"; then
-            sed -i -E 's/font_size[[:space:]]+(13|16)(\.0)?([[:space:]]|$)/font_size        15.0\3/' "$kitty_dest" 2>/dev/null || true
-        fi
-        if grep -q "background_opacity" "$kitty_dest"; then
-            sed -i -E 's/background_opacity[[:space:]]+[0-9.]+/background_opacity 1.0/' "$kitty_dest" 2>/dev/null || true
-        fi
-        if ! grep -q "shell.*fish" "$kitty_dest" && command -v fish >/dev/null 2>&1; then
-            echo -e "\nshell $(command -v fish)" >> "$kitty_dest"
-        fi
-    fi
-
-    if [ -s "${XDG_STATE_HOME:-$HOME/.local/state}/serpantinum/matugen/palette.json" ] && [ -f "$TARGET_BASE/src/scripts/theming/apptheme.py" ]; then
-        QS_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/serpantinum" \
-        QS_SETTINGS="${XDG_CONFIG_HOME:-$HOME/.config}/serpantinum/settings.json" \
-        python3 "$TARGET_BASE/src/scripts/theming/apptheme.py" apply --only kitty >/dev/null 2>&1 || true
-    fi
-    if [ -f "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" ] && [ -f "$kitty_dest" ]; then
-        QS_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/serpantinum" \
-        python3 "$TARGET_BASE/src/scripts/theming/sync_compositor_theme.py" >/dev/null 2>&1 || true
-    fi
+    configure_kitty_config "$REPO_ROOT" "$TARGET_BASE"
 
     # Set default user shell to fish if installed
     if command -v fish >/dev/null 2>&1; then
@@ -1031,20 +1101,7 @@ deploy_package() {
     fi
 
     # Deploy battery threshold rules only on machines with a battery
-    local has_laptop_battery=0
-    if compgen -G '/sys/class/power_supply/BAT*' >/dev/null 2>&1 || \
-       [ -e /sys/class/power_supply/macsmc-battery/charge_control_limit_max ]; then
-        has_laptop_battery=1
-    else
-        for _ps in /sys/class/power_supply/*; do
-            [ -f "$_ps/type" ] || continue
-            if grep -qi 'Battery' "$_ps/type" 2>/dev/null && ! grep -qi 'Device' "$_ps/scope" 2>/dev/null; then
-                has_laptop_battery=1
-                break
-            fi
-        done
-    fi
-    if [ "$has_laptop_battery" -eq 1 ] && [ -f "$TARGET_BASE/src/assets/udev/51-battery-threshold.rules" ]; then
+    if has_laptop_battery && [ -f "$TARGET_BASE/src/assets/udev/51-battery-threshold.rules" ]; then
         sudo mkdir -p /etc/udev/rules.d 2>/dev/null || true
         sudo cp "$TARGET_BASE/src/assets/udev/51-battery-threshold.rules" /etc/udev/rules.d/51-battery-threshold.rules 2>/dev/null || true
         sudo udevadm control --reload-rules 2>/dev/null || true
@@ -1078,15 +1135,7 @@ deploy_package() {
     fi
 
     # Deploy logind clamshell configuration only on laptops with a lid switch / laptop chassis
-    local has_lid_switch=0
-    if compgen -G '/proc/acpi/button/lid/*' >/dev/null 2>&1; then
-        has_lid_switch=1
-    elif [ -r /sys/class/dmi/id/chassis_type ]; then
-        case "$(cat /sys/class/dmi/id/chassis_type 2>/dev/null | tr -d '[:space:]')" in
-            8|9|10|11|14|30|31|32) has_lid_switch=1 ;;
-        esac
-    fi
-    if [ "$has_lid_switch" -eq 1 ] && [ -d "/etc/systemd" ]; then
+    if has_lid_or_laptop_chassis && [ -d "/etc/systemd" ]; then
         sudo mkdir -p /etc/systemd/logind.conf.d 2>/dev/null || true
         printf '[Login]\nHandleLidSwitch=suspend\nHandleLidSwitchDocked=ignore\n' | sudo tee /etc/systemd/logind.conf.d/99-serpantinum-clamshell.conf >/dev/null 2>&1 || true
     else

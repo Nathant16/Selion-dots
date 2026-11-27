@@ -19,20 +19,33 @@ TMP_ROOT="$(mktemp -d)"
 SANDBOX_PIDS=()
 
 cleanup_all() {
-    local sb
+    local sb wd
     for sb in "$TMP_ROOT"/*; do
         [ -d "$sb/runtime/serpantinum" ] || continue
-        SERPANTINUM_RUNTIME_DIR="$sb/runtime/serpantinum" \
-        XDG_RUNTIME_DIR="$sb/runtime" \
-        HOME="$sb/home" \
-        MAIN_QML="$sb/Shell.qml" \
-        SERPANTINUM_DIR="$REPO_ROOT/src" \
-        PATH="$sb/bin:/usr/bin:/bin" \
-        bash "$REPO_ROOT/bin/serpantinumd" stop >/dev/null 2>&1 || true
+        for wd in wayland-1 wayland-2; do
+            SERPANTINUM_RUNTIME_DIR="$sb/runtime/serpantinum" \
+            XDG_RUNTIME_DIR="$sb/runtime" \
+            WAYLAND_DISPLAY="$wd" \
+            HOME="$sb/home" \
+            MAIN_QML="$sb/Shell.qml" \
+            SERPANTINUM_DIR="$REPO_ROOT/src" \
+            PATH="$sb/bin:/usr/bin:/bin" \
+            bash "$REPO_ROOT/bin/serpantinumd" stop >/dev/null 2>&1 || true
+        done
     done
     local p
     for p in "${SANDBOX_PIDS[@]:-}"; do
         [ -n "$p" ] && kill -KILL "$p" 2>/dev/null || true
+    done
+    local env_file pid
+    for env_file in /proc/[0-9]*/environ; do
+        pid="${env_file#/proc/}"
+        pid="${pid%/environ}"
+        [[ "$pid" == "$$" || "$pid" == "$PPID" ]] && continue
+        [ -r "$env_file" ] && [ -O "$env_file" ] || continue
+        if { tr '\0' '\n' < "$env_file" | grep -q "^SERPANTINUM_RUNTIME_DIR=$TMP_ROOT/"; } 2>/dev/null; then
+            kill -KILL "$pid" 2>/dev/null || true
+        fi
     done
     rm -rf "$TMP_ROOT"
 }
@@ -54,9 +67,12 @@ if [[ "$*" == *" ipc "* ]]; then
     echo "$*" >> "$QS_IPC_LOG"
     exit 0
 fi
-echo "$$" >> "$QS_STARTED_LOG"
+echo "$$|$*" >> "$QS_STARTED_LOG"
 trap 'exit 0' TERM INT HUP
-while true; do sleep 0.2; done
+while true; do
+    sleep 0.2 &
+    wait $! 2>/dev/null || true
+done
 EOF
 
     cat > "$sb/bin/serpantinum-core" <<'EOF'
@@ -233,6 +249,62 @@ SB_WAYLAND_DISPLAY="wayland-2" wait_for_qs_count "$SB2" 1 || true
 sleep 0.3
 assert_eq "new display has 1 quickshell" "1" "$(SB_WAYLAND_DISPLAY="wayland-2" count_sb_pids "$SB2" quickshell)"
 assert_eq "old display wayland-1 daemon stopped cleanly" "0" "$(SB_WAYLAND_DISPLAY="wayland-1" count_sb_pids "$SB2" quickshell)"
+
+# Test 7: SERPANTINUM_INSTALLER=1 / installer cache paths never leak into restarted quickshell or CLI IPC
+SB3="$(setup_sandbox installer_env_isolation)"
+mkdir -p "$SB3/installer_cache/src/quickshell" "$SB3/installed/bin"
+: > "$SB3/installer_cache/src/quickshell/Shell.qml"
+cp "$REPO_ROOT/bin/serpantinumd" "$REPO_ROOT/bin/serpantinum" "$SB3/installed/bin/"
+chmod +x "$SB3/installed/bin/"*
+ln -s "$REPO_ROOT/src" "$SB3/installed/src"
+
+env -u MAIN_QML -u QS_DIR -u SERPANTINUM_DIR -u I18N_DIR \
+    HOME="$SB3/home" \
+    XDG_CONFIG_HOME="$SB3/home/.config" \
+    XDG_STATE_HOME="$SB3/home/.local/state" \
+    XDG_CACHE_HOME="$SB3/home/.cache" \
+    XDG_RUNTIME_DIR="$SB3/runtime" \
+    SERPANTINUM_RUNTIME_DIR="$SB3/runtime/serpantinum" \
+    SERPANTINUM_INSTALLER="1" \
+    SERPANTINUM_DIR="$SB3/installer_cache/src" \
+    MAIN_QML="$SB3/installer_cache/src/quickshell/Shell.qml" \
+    QS_DIR="$SB3/installer_cache/src/quickshell" \
+    I18N_DIR="$SB3/installer_cache/src/assets/languages" \
+    QS_STARTED_LOG="$SB3/qs_started.log" \
+    QS_IPC_LOG="$SB3/qs_ipc.log" \
+    WAYLAND_DISPLAY="wayland-1" \
+    DESKTOP_SESSION="hyprland" \
+    XDG_CURRENT_DESKTOP="Hyprland" \
+    HYPRLAND_INSTANCE_SIGNATURE="sig1" \
+    PATH="$SB3/bin:/usr/bin:/bin" \
+    bash "$SB3/installed/bin/serpantinumd" start >/dev/null 2>&1 &
+SANDBOX_PIDS+=($!)
+
+for _ in $(seq 1 40); do
+    if [ -s "$SB3/qs_started.log" ] && [ -s "$SB3/runtime/serpantinum/serpantinumd.pid" ]; then
+        break
+    fi
+    sleep 0.1
+done
+
+env -u MAIN_QML -u QS_DIR -u SERPANTINUM_DIR \
+    HOME="$SB3/home" \
+    XDG_CONFIG_HOME="$SB3/home/.config" \
+    XDG_STATE_HOME="$SB3/home/.local/state" \
+    XDG_CACHE_HOME="$SB3/home/.cache" \
+    XDG_RUNTIME_DIR="$SB3/runtime" \
+    SERPANTINUM_RUNTIME_DIR="$SB3/runtime/serpantinum" \
+    SERPANTINUM_INSTALLER="1" \
+    SERPANTINUM_DIR="$SB3/installer_cache/src" \
+    MAIN_QML="$SB3/installer_cache/src/quickshell/Shell.qml" \
+    QS_STARTED_LOG="$SB3/qs_started.log" \
+    QS_IPC_LOG="$SB3/qs_ipc.log" \
+    WAYLAND_DISPLAY="wayland-1" \
+    PATH="$SB3/bin:/usr/bin:/bin" \
+    bash "$SB3/installed/bin/serpantinum" msg toggle launcher >/dev/null 2>&1
+
+assert_eq "daemon ignores SERPANTINUM_INSTALLER cache path" "$SB3/installed/src/quickshell/Shell.qml" "$(sed -n 's/.*-p \([^ ]*\).*/\1/p' "$SB3/qs_started.log" | head -n1)"
+assert_eq "cli msg uses installed Shell.qml matching daemon" "$SB3/installed/src/quickshell/Shell.qml" "$(sed -n 's/.*-p \([^ ]*\).*/\1/p' "$SB3/qs_ipc.log" | head -n1)"
 
 echo "Passed: $PASS, Failed: $FAIL"
 [ "$FAIL" -eq 0 ]

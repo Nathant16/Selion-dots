@@ -24,6 +24,7 @@ restart_serpantinumd_if_running() {
     local uid
     uid="$(id -u)"
     if pgrep -u "$uid" -f "$target_base/(bin/serpantinumd|src/quickshell/Shell\\.qml)" >/dev/null 2>&1; then
-        "$daemon_bin" restart </dev/null >/dev/null 2>&1 || true
+        env -u SERPANTINUM_DIR -u SERPANTINUM_INSTALLER -u MAIN_QML -u QS_DIR -u I18N_DIR -u QS_CACHE_DIR -u QS_STATE_DIR -u QS_RUN_DIR -u QS_LOG_DIR \
+            "$daemon_bin" restart </dev/null >/dev/null 2>&1 || true
     fi
 }
