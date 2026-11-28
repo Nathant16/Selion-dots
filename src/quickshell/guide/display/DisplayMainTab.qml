@@ -82,12 +82,17 @@ DisplayMainState {
 
                     readonly property bool canDrag: displayTabRoot.monitorsList.length > 1
                     property bool isDraggingLayout: false
+                    property bool snapAnimating: true
+                    property int _commitToken: 0
                     property string draggedName: ""
                     property string hoveredName: ""
                     property int dragIdx: -1
                     property var draftBoxes: []
                     property var frozenViewport: ({ scale: 0.08, centerX: 960, centerY: 540 })
-                    property var snapGuides: ({ hasX: false, gx: 0, hasY: false, gy: 0 })
+                    property var snapGuides: ({
+                        hasX: false, gx: 0, xY1: 0, xY2: 0,
+                        hasY: false, gy: 0, yX1: 0, yX2: 0
+                    })
 
                     signal tileDropped(string name)
 
@@ -139,7 +144,7 @@ DisplayMainState {
                     function snapPosition(dragIdx, candX, candY, vpScale) {
                         let boxes = stageCanvas.draftBoxes;
                         let me = boxes[dragIdx];
-                        if (!me) return { x: candX, y: candY, hasX: false, gx: 0, hasY: false, gy: 0 };
+                        if (!me) return { x: candX, y: candY, hasX: false, gx: 0, xY1: 0, xY2: 0, hasY: false, gy: 0, yX1: 0, yX2: 0 };
 
                         let snapTol = Math.max(10, Math.min(48, Math.round(rootObj.s(4.5) / Math.max(0.02, vpScale))));
                         let bestX = Math.round(candX);
@@ -148,6 +153,8 @@ DisplayMainState {
                         let bestDistY = snapTol + 1;
                         let guideX = 0;
                         let guideY = 0;
+                        let snappedOtX = null;
+                        let snappedOtY = null;
                         let hasX = false;
                         let hasY = false;
 
@@ -180,6 +187,7 @@ DisplayMainState {
                                     bestDistX = d;
                                     bestX = Math.round(xCands[k].x);
                                     guideX = xCands[k].g;
+                                    snappedOtX = ot;
                                     hasX = true;
                                 }
                             }
@@ -204,11 +212,24 @@ DisplayMainState {
                                     bestDistY = d;
                                     bestY = Math.round(yCands[k].y);
                                     guideY = yCands[k].g;
+                                    snappedOtY = ot;
                                     hasY = true;
                                 }
                             }
                         }
-                        return { x: bestX, y: bestY, hasX: hasX, gx: guideX, hasY: hasY, gy: guideY };
+
+                        return {
+                            x: bestX,
+                            y: bestY,
+                            hasX: hasX,
+                            gx: guideX,
+                            xY1: hasX && snappedOtX ? Math.min(bestY, snappedOtX.y) : 0,
+                            xY2: hasX && snappedOtX ? Math.max(bestY + me.logH, snappedOtX.y + snappedOtX.logH) : 0,
+                            hasY: hasY,
+                            gy: guideY,
+                            yX1: hasY && snappedOtY ? Math.min(bestX, snappedOtY.x) : 0,
+                            yX2: hasY && snappedOtY ? Math.max(bestX + me.logW, snappedOtY.x + snappedOtY.logW) : 0
+                        };
                     }
 
                     function tileIndexAt(sx, sy) {
@@ -239,31 +260,136 @@ DisplayMainState {
                             && a.y < (b.y + b.logH) && (a.y + a.logH) > b.y;
                     }
 
+                    function boxesTouch(a, b) {
+                        let hTouch = (Math.abs((a.x + a.logW) - b.x) <= 1 || Math.abs((b.x + b.logW) - a.x) <= 1)
+                            && (Math.min(a.y + a.logH, b.y + b.logH) - Math.max(a.y, b.y)) >= 1;
+                        let vTouch = (Math.abs((a.y + a.logH) - b.y) <= 1 || Math.abs((b.y + b.logH) - a.y) <= 1)
+                            && (Math.min(a.x + a.logW, b.x + b.logW) - Math.max(a.x, b.x)) >= 1;
+                        return hTouch || vTouch;
+                    }
+
+                    function overlapsAnyBox(boxes, skipIdx, cx, cy, cw, ch) {
+                        let cand = { x: cx, y: cy, logW: cw, logH: ch };
+                        for (let i = 0; i < boxes.length; i++) {
+                            if (i === skipIdx) continue;
+                            if (rectsOverlap(cand, boxes[i])) return true;
+                        }
+                        return false;
+                    }
+
+                    function attachBoxToAnchors(boxes, targetIdx, anchorIndices) {
+                        if (!anchorIndices || anchorIndices.length === 0) return;
+                        let me = boxes[targetIdx];
+                        if (!me) return;
+
+                        let hasOverlap = overlapsAnyBox(boxes, targetIdx, me.x, me.y, me.logW, me.logH);
+                        if (!hasOverlap) {
+                            for (let t = 0; t < anchorIndices.length; t++) {
+                                if (boxesTouch(me, boxes[anchorIndices[t]])) return;
+                            }
+                        }
+
+                        function clampVal(v, lo, hi) {
+                            return Math.max(lo, Math.min(hi, v));
+                        }
+
+                        let best = null;
+                        let bestDist2 = Infinity;
+                        for (let a = 0; a < anchorIndices.length; a++) {
+                            let ot = boxes[anchorIndices[a]];
+                            let bx = Math.max(1, Math.min(48, Math.floor(Math.min(me.logW, ot.logW) / 4)));
+                            let by = Math.max(1, Math.min(48, Math.floor(Math.min(me.logH, ot.logH) / 4)));
+                            let minCx = Math.round(ot.x - me.logW + bx);
+                            let maxCx = Math.round(ot.x + ot.logW - bx);
+                            let minCy = Math.round(ot.y - me.logH + by);
+                            let maxCy = Math.round(ot.y + ot.logH - by);
+
+                            let ys = [clampVal(Math.round(me.y), minCy, maxCy), minCy, maxCy];
+                            let xs = [clampVal(Math.round(me.x), minCx, maxCx), minCx, maxCx];
+                            let candidates = [];
+                            for (let yi = 0; yi < ys.length; yi++) {
+                                candidates.push({ x: Math.round(ot.x + ot.logW), y: ys[yi] });
+                                candidates.push({ x: Math.round(ot.x - me.logW), y: ys[yi] });
+                            }
+                            for (let xi = 0; xi < xs.length; xi++) {
+                                candidates.push({ x: xs[xi], y: Math.round(ot.y + ot.logH) });
+                                candidates.push({ x: xs[xi], y: Math.round(ot.y - me.logH) });
+                            }
+
+                            for (let c = 0; c < candidates.length; c++) {
+                                let cand = candidates[c];
+                                if (overlapsAnyBox(boxes, targetIdx, cand.x, cand.y, me.logW, me.logH)) continue;
+                                let dx = cand.x - me.x;
+                                let dy = cand.y - me.y;
+                                let d2 = dx * dx + dy * dy;
+                                if (d2 < bestDist2) {
+                                    bestDist2 = d2;
+                                    best = cand;
+                                }
+                            }
+                        }
+
+                        if (best) {
+                            me.x = Math.round(best.x);
+                            me.y = Math.round(best.y);
+                        }
+                    }
+
+                    function connectedIndices(boxes, startIdx) {
+                        let visited = {};
+                        let queue = [startIdx];
+                        visited[startIdx] = true;
+                        let out = [];
+                        while (queue.length > 0) {
+                            let cur = queue.shift();
+                            out.push(cur);
+                            for (let j = 0; j < boxes.length; j++) {
+                                if (visited[j] || j === cur) continue;
+                                if (boxesTouch(boxes[cur], boxes[j])) {
+                                    visited[j] = true;
+                                    queue.push(j);
+                                }
+                            }
+                        }
+                        return out;
+                    }
+
                     function finalizeAndCommit(dragIdx) {
                         let boxes = stageCanvas.draftBoxes.map(b => Object.assign({}, b));
                         let me = boxes[dragIdx];
                         if (!me) return;
 
-                        // Resolve any overlapping placement onto the nearest non-overlapping side
-                        for (let pass = 0; pass < boxes.length * 2; pass++) {
-                            let hit = null;
+                        if (boxes.length > 1) {
+                            let others = [];
                             for (let i = 0; i < boxes.length; i++) {
-                                if (i === dragIdx) continue;
-                                if (rectsOverlap(me, boxes[i])) {
-                                    hit = boxes[i];
-                                    break;
-                                }
+                                if (i !== dragIdx) others.push(i);
                             }
-                            if (!hit) break;
-                            let pushes = [
-                                { dx: (hit.x + hit.logW) - me.x, dy: 0 },
-                                { dx: (hit.x - me.logW) - me.x, dy: 0 },
-                                { dx: 0, dy: (hit.y + hit.logH) - me.y },
-                                { dx: 0, dy: (hit.y - me.logH) - me.y }
-                            ];
-                            pushes.sort((p, q) => (Math.abs(p.dx) + Math.abs(p.dy)) - (Math.abs(q.dx) + Math.abs(q.dy)));
-                            me.x = Math.round(me.x + pushes[0].dx);
-                            me.y = Math.round(me.y + pushes[0].dy);
+                            attachBoxToAnchors(boxes, dragIdx, others);
+
+                            // Keep all 3+ monitors contiguous as one touching cluster
+                            for (let step = 0; step < boxes.length; step++) {
+                                let comp = connectedIndices(boxes, dragIdx);
+                                if (comp.length >= boxes.length) break;
+                                let inComp = {};
+                                for (let c = 0; c < comp.length; c++) inComp[comp[c]] = true;
+                                let bestNode = -1;
+                                let bestDist2 = Infinity;
+                                for (let u = 0; u < boxes.length; u++) {
+                                    if (inComp[u]) continue;
+                                    for (let c = 0; c < comp.length; c++) {
+                                        let v = boxes[comp[c]];
+                                        let dx = boxes[u].x - v.x;
+                                        let dy = boxes[u].y - v.y;
+                                        let d2 = dx * dx + dy * dy;
+                                        if (d2 < bestDist2) {
+                                            bestDist2 = d2;
+                                            bestNode = u;
+                                        }
+                                    }
+                                }
+                                if (bestNode < 0) break;
+                                attachBoxToAnchors(boxes, bestNode, comp);
+                            }
                         }
 
                         // Normalize top-left origin of bounding box to (0, 0)
@@ -283,39 +409,58 @@ DisplayMainState {
                         }
 
                         let droppedName = me.name;
-                        displayTabRoot.applyMonitorLayout(layoutItems);
-                        stageCanvas.isDraggingLayout = false;
-                        stageCanvas.draggedName = "";
-                        stageCanvas.dragIdx = -1;
-                        stageCanvas.snapGuides = { hasX: false, gx: 0, hasY: false, gy: 0 };
-                        stageCanvas.tileDropped(droppedName);
+                        stageCanvas._commitToken++;
+                        let token = stageCanvas._commitToken;
+                        stageCanvas.snapAnimating = true;
+                        let prevG = stageCanvas.snapGuides;
+                        stageCanvas.snapGuides = {
+                            hasX: false, gx: prevG.gx, xY1: prevG.xY1, xY2: prevG.xY2,
+                            hasY: false, gy: prevG.gy, yX1: prevG.yX1, yX2: prevG.yX2
+                        };
+
+                        Qt.callLater(function() {
+                            if (stageCanvas._commitToken !== token) return;
+                            displayTabRoot.applyMonitorLayout(layoutItems);
+                            stageCanvas.isDraggingLayout = false;
+                            stageCanvas.draggedName = "";
+                            stageCanvas.dragIdx = -1;
+                            stageCanvas.tileDropped(droppedName);
+                        });
                     }
 
-                    // Snap alignment guide lines
+                    // Stationary fading snap guide lines spanning the aligned displays
                     Rectangle {
+                        readonly property var vp: stageCanvas.activeViewport
+                        readonly property real rawY1: stageCanvas.height / 2 + (stageCanvas.snapGuides.xY1 - vp.centerY) * vp.scale - rootObj.s(6)
+                        readonly property real rawY2: stageCanvas.height / 2 + (stageCanvas.snapGuides.xY2 - vp.centerY) * vp.scale + rootObj.s(6)
+                        readonly property real clampedY1: Math.max(rootObj.s(4), Math.min(stageCanvas.height - rootObj.s(4), rawY1))
+                        readonly property real clampedY2: Math.max(clampedY1, Math.min(stageCanvas.height - rootObj.s(4), rawY2))
                         opacity: (stageCanvas.isDraggingLayout && stageCanvas.snapGuides.hasX) ? 0.85 : 0.0
                         visible: opacity > 0.01
-                        x: stageCanvas.width / 2 + (stageCanvas.snapGuides.gx - stageCanvas.activeViewport.centerX) * stageCanvas.activeViewport.scale
-                        y: 0
+                        x: stageCanvas.width / 2 + (stageCanvas.snapGuides.gx - vp.centerX) * vp.scale
+                        y: clampedY1
                         width: 1
-                        height: stageCanvas.height
+                        height: Math.max(0, clampedY2 - clampedY1)
                         color: ThemeBackend.mauve
                         z: 5
-                        Behavior on opacity { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
-                        Behavior on x { enabled: stageCanvas.isDraggingLayout; NumberAnimation { duration: 100; easing.type: Easing.OutQuint } }
+                        Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
                     }
 
                     Rectangle {
+                        readonly property var vp: stageCanvas.activeViewport
+                        readonly property real rawX1: stageCanvas.width / 2 + (stageCanvas.snapGuides.yX1 - vp.centerX) * vp.scale - rootObj.s(6)
+                        readonly property real rawX2: stageCanvas.width / 2 + (stageCanvas.snapGuides.yX2 - vp.centerX) * vp.scale + rootObj.s(6)
+                        readonly property real clampedX1: Math.max(rootObj.s(4), Math.min(stageCanvas.width - rootObj.s(4), rawX1))
+                        readonly property real clampedX2: Math.max(clampedX1, Math.min(stageCanvas.width - rootObj.s(4), rawX2))
                         opacity: (stageCanvas.isDraggingLayout && stageCanvas.snapGuides.hasY) ? 0.85 : 0.0
                         visible: opacity > 0.01
-                        x: 0
-                        y: stageCanvas.height / 2 + (stageCanvas.snapGuides.gy - stageCanvas.activeViewport.centerY) * stageCanvas.activeViewport.scale
-                        width: stageCanvas.width
+                        x: clampedX1
+                        y: stageCanvas.height / 2 + (stageCanvas.snapGuides.gy - vp.centerY) * vp.scale
+                        width: Math.max(0, clampedX2 - clampedX1)
                         height: 1
                         color: ThemeBackend.mauve
                         z: 5
-                        Behavior on opacity { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
-                        Behavior on y { enabled: stageCanvas.isDraggingLayout; NumberAnimation { duration: 100; easing.type: Easing.OutQuint } }
+                        Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
                     }
 
                     Repeater {
@@ -366,10 +511,10 @@ DisplayMainState {
                                 ? (isDragged ? Qt.lighter(grayFrameBase, 1.2) : grayFrameBase)
                                 : (isDragged || isHovered ? ThemeBackend.mauve : Qt.alpha(ThemeBackend.mauve, 0.82))
 
-                            Behavior on x { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
-                            Behavior on y { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
-                            Behavior on width { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
-                            Behavior on height { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+                            Behavior on x { enabled: stageCanvas.snapAnimating; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+                            Behavior on y { enabled: stageCanvas.snapAnimating; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+                            Behavior on width { enabled: stageCanvas.snapAnimating; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+                            Behavior on height { enabled: stageCanvas.snapAnimating; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
                             Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutQuint } }
                             Behavior on opacity { NumberAnimation { duration: 220; easing.type: Easing.InOutCubic } }
                             Behavior on color { ColorAnimation { duration: 150 } }
@@ -476,6 +621,8 @@ DisplayMainState {
                             let boxesCopy = stageCanvas.liveBoxes.map(b => Object.assign({}, b));
                             let targetBox = boxesCopy[idx];
                             if (!targetBox) return;
+                            stageCanvas._commitToken++;
+                            stageCanvas.snapAnimating = false;
                             pressStagePos = Qt.point(mouse.x, mouse.y);
                             origX = targetBox.x;
                             origY = targetBox.y;
@@ -484,7 +631,11 @@ DisplayMainState {
                             stageCanvas.dragIdx = idx;
                             stageCanvas.draggedName = targetBox.name;
                             stageCanvas.hoveredName = targetBox.name;
-                            stageCanvas.snapGuides = { hasX: false, gx: 0, hasY: false, gy: 0 };
+                            let curG = stageCanvas.snapGuides;
+                            stageCanvas.snapGuides = {
+                                hasX: false, gx: curG.gx, xY1: curG.xY1, xY2: curG.xY2,
+                                hasY: false, gy: curG.gy, yX1: curG.yX1, yX2: curG.yX2
+                            };
                             stageCanvas.isDraggingLayout = true;
                         }
 
@@ -508,9 +659,17 @@ DisplayMainState {
                             updated.y = snapped.y;
                             nextBoxes[dIdx] = updated;
                             stageCanvas.draftBoxes = nextBoxes;
+
+                            let prevG = stageCanvas.snapGuides;
                             stageCanvas.snapGuides = {
-                                hasX: snapped.hasX, gx: snapped.gx,
-                                hasY: snapped.hasY, gy: snapped.gy
+                                hasX: snapped.hasX,
+                                gx: snapped.hasX ? snapped.gx : prevG.gx,
+                                xY1: snapped.hasX ? snapped.xY1 : prevG.xY1,
+                                xY2: snapped.hasX ? snapped.xY2 : prevG.xY2,
+                                hasY: snapped.hasY,
+                                gy: snapped.hasY ? snapped.gy : prevG.gy,
+                                yX1: snapped.hasY ? snapped.yX1 : prevG.yX1,
+                                yX2: snapped.hasY ? snapped.yX2 : prevG.yX2
                             };
                         }
 
@@ -526,10 +685,16 @@ DisplayMainState {
                         }
 
                         onCanceled: function() {
+                            stageCanvas._commitToken++;
+                            stageCanvas.snapAnimating = true;
                             stageCanvas.isDraggingLayout = false;
                             stageCanvas.draggedName = "";
                             stageCanvas.dragIdx = -1;
-                            stageCanvas.snapGuides = { hasX: false, gx: 0, hasY: false, gy: 0 };
+                            let prevG = stageCanvas.snapGuides;
+                            stageCanvas.snapGuides = {
+                                hasX: false, gx: prevG.gx, xY1: prevG.xY1, xY2: prevG.xY2,
+                                hasY: false, gy: prevG.gy, yX1: prevG.yX1, yX2: prevG.yX2
+                            };
                         }
                     }
                 }

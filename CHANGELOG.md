@@ -1,3 +1,9 @@
+### 2.9.1.25
+
+- **Display / Contiguous Snapping & Stationary Guides** (`DisplayMainTab.qml`):
+  - Enforced contiguous monitor touching on release: if a monitor is dropped detached in empty space or overlapping, it smoothly glides (`320ms OutQuint`) to flush-touch the nearest edge of its closest neighbor (maintaining at least a usable cursor bridge across shared edges, including multi-monitor 3+ cluster connectivity).
+  - Fixed snap guide lines jumping/flying across the canvas (`0` reset + `Behavior on x/y` slide): guide lines now preserve their aligned edge coordinate and extent during fade-out and appear/disappear strictly in place between the aligned displays.
+
 ### 2.9.1.24
 
 - **Display / Smooth Dragging**: Fixed display tiles jumping during 2D drag (`DisplayMainTab.qml`, `monitors_detector.py`):
