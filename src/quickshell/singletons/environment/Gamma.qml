@@ -150,7 +150,22 @@ Item {
         }
     }
 
-    function startFade(key, monName, fromK, toK, durationMs, fadeToken) {
+    function currentScreenKelvin(key, fallbackK) {
+        if (activeFades[key]) return activeFades[key].lastSentK;
+        if (pendingTargets[key]) {
+            if (pendingTargets[key].mode === "reset") return 6500;
+            if (pendingTargets[key].mode === "start_fade") return pendingTargets[key].startK;
+            if (pendingTargets[key].targetK !== undefined) return pendingTargets[key].targetK;
+        }
+        if (currentJob && (currentJob.monName || "global") === key) {
+            if (currentJob.mode === "reset") return 6500;
+            if (currentJob.mode === "start_fade") return currentJob.startK;
+            if (currentJob.targetK !== undefined) return currentJob.targetK;
+        }
+        return fallbackK !== undefined ? fallbackK : 6500;
+    }
+
+    function startFade(key, monName, fromK, toK, durationMs, fadeToken, resetAtEnd) {
         let startClamp = Math.min(10000, Math.max(1000, Math.round(fromK)));
         let endClamp = Math.min(10000, Math.max(1000, Math.round(toK)));
         activeFades[key] = {
@@ -161,7 +176,8 @@ Item {
             "lastSentK": startClamp,
             "startMs": Date.now(),
             "durationMs": Math.max(1, durationMs),
-            "fadeToken": fadeToken
+            "fadeToken": fadeToken,
+            "resetAtEnd": !!resetAtEnd
         };
         if (!fadeTimer.running) {
             fadeTimer.restart();
@@ -227,8 +243,12 @@ Item {
             }
         } else if (finishedJob.mode === "start_fade") {
             let st = appliedStates[key];
-            if (!pendingTargets[key] && expectedFadeToken[key] === finishedJob.fadeToken && st && st.activeEffect && st.autoMode) {
-                startFade(key, finishedJob.monName, finishedJob.startK, finishedJob.targetK, scheduleFadeDurationMs, finishedJob.fadeToken);
+            if (!pendingTargets[key] && expectedFadeToken[key] === finishedJob.fadeToken && st && st.autoMode && st.enabled) {
+                if (finishedJob.resetAtEnd && !st.activeEffect) {
+                    startFade(key, finishedJob.monName, finishedJob.startK, 6500, scheduleFadeDurationMs, finishedJob.fadeToken, true);
+                } else if (!finishedJob.resetAtEnd && st.activeEffect) {
+                    startFade(key, finishedJob.monName, finishedJob.startK, finishedJob.targetK, scheduleFadeDurationMs, finishedJob.fadeToken, false);
+                }
             }
         }
 
@@ -279,6 +299,7 @@ Item {
             let nowMs = Date.now();
             let cmds = [];
             let completed = [];
+            let completedResets = [];
             for (let i = 0; i < keys.length; i++) {
                 let key = keys[i];
                 let f = root.activeFades[key];
@@ -287,17 +308,31 @@ Item {
                 let eased = t < 0.5 ? 2.0 * t * t : 1.0 - Math.pow(-2.0 * t + 2.0, 2) / 2.0;
                 let nextMired = f.fromMired + (f.toMired - f.fromMired) * eased;
                 let nextK = t >= 1.0 ? f.targetK : Math.round(1000000.0 / Math.max(1.0, nextMired));
-                if (nextK !== f.lastSentK || t >= 1.0) {
-                    f.lastSentK = nextK;
-                    cmds.push(root.buildGammaSetCmd(f.monName, nextK));
-                }
-                if (t >= 1.0) {
-                    completed.push(key);
+                if (t >= 1.0 && f.resetAtEnd) {
+                    completedResets.push({ "key": key, "monName": f.monName });
+                } else {
+                    if (nextK !== f.lastSentK || t >= 1.0) {
+                        f.lastSentK = nextK;
+                        cmds.push(root.buildGammaSetCmd(f.monName, nextK));
+                    }
+                    if (t >= 1.0) {
+                        completed.push(key);
+                    }
                 }
             }
             for (let j = 0; j < completed.length; j++) {
                 delete root.activeFades[completed[j]];
                 delete root.expectedFadeToken[completed[j]];
+            }
+            for (let r = 0; r < completedResets.length; r++) {
+                let item = completedResets[r];
+                delete root.activeFades[item.key];
+                delete root.expectedFadeToken[item.key];
+                root.pendingTargets[item.key] = {
+                    "mode": "reset",
+                    "monName": item.monName,
+                    "retries": 3
+                };
             }
             if (Object.keys(root.activeFades).length === 0) {
                 fadeTimer.stop();
@@ -311,6 +346,8 @@ Item {
                 }).join("; ");
                 fadeProcess.command = ["bash", "-c", joined];
                 fadeProcess.running = true;
+            } else if (completedResets.length > 0) {
+                root.scheduleNext();
             }
         }
     }
@@ -350,6 +387,7 @@ Item {
 
         let wasActive = prev ? !!prev.activeEffect : false;
         let prevTargetK = prev ? prev.targetK : 6500;
+        let curScreenK = currentScreenKelvin(key, prevTargetK);
 
         appliedStates[key] = {
             "enabled": normEn,
@@ -362,6 +400,30 @@ Item {
         };
 
         if (!shouldBeActive) {
+            let fadingOut = !!(activeFades[key] && activeFades[key].resetAtEnd)
+                || !!(pendingTargets[key] && pendingTargets[key].mode === "start_fade" && pendingTargets[key].resetAtEnd)
+                || !!(currentJob && (currentJob.monName || "global") === key && currentJob.mode === "start_fade" && currentJob.resetAtEnd);
+            if (normEn && normAu) {
+                if (wasActive && curScreenK !== 6500) {
+                    cancelFade(key);
+                    let outToken = (_fadeGen += 1);
+                    expectedFadeToken[key] = outToken;
+                    pendingTargets[key] = {
+                        "mode": "start_fade",
+                        "monName": monName || "",
+                        "startK": curScreenK,
+                        "targetK": 6500,
+                        "fadeToken": outToken,
+                        "resetAtEnd": true,
+                        "retries": 3
+                    };
+                    scheduleNext();
+                    return;
+                }
+                if (fadingOut) {
+                    return;
+                }
+            }
             cancelFade(key);
             if (!prev || wasActive) {
                 pendingTargets[key] = {
@@ -376,15 +438,20 @@ Item {
 
         let needsFade = normAu && !wasActive && targetK !== 6500;
         if (needsFade) {
+            let startK = curScreenK;
             cancelFade(key);
+            if (startK === targetK) {
+                return;
+            }
             let token = (_fadeGen += 1);
             expectedFadeToken[key] = token;
             pendingTargets[key] = {
                 "mode": "start_fade",
                 "monName": monName || "",
-                "startK": 6500,
+                "startK": startK,
                 "targetK": targetK,
                 "fadeToken": token,
+                "resetAtEnd": false,
                 "retries": 3
             };
             scheduleNext();
