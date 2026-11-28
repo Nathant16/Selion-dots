@@ -290,80 +290,76 @@ Rectangle {
             }
 
             subSettings: [
-                SettingsRow {
-                    rootObj: monDelegate.rootObj
-                    settingId: "display_gamma_schedule_" + monDelegate.monName
-                    section: monDelegate.monName
-                    searchKeywords: "display night light blue light gamma schedule hours automatic " + monDelegate.monName
+                SettingsBlob {
                     baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
-                    icon: "󰥔"
-                    title: I18n.t("guide.display.schedule.title")
-                    description: I18n.t("guide.display.schedule.desc")
-
-                    Toggle {
-                        id: autoToggle
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        checked: monDelegate.filterAuto
-                        accentColor: ThemeBackend.mauve
-                        baseColor: ThemeBackend.surface1
-                        handleColor: ThemeBackend.crust
-                        handleOffColor: ThemeBackend.text
-                        onToggled: function(c) {
-                            monDelegate.filterAuto = c;
-                            Gamma.setAuto(monDelegate.monName, c);
-                            monDelegate.tab.refreshDisplaySettings();
-                        }
-
-                        Binding {
-                            target: autoToggle
-                            property: "checked"
-                            value: monDelegate.filterAuto
-                        }
-                    }
-                },
-
-                Item {
-                    id: scheduleRangeWrapper
-                    Layout.fillWidth: true
-                    property bool isOpen: monDelegate.filterAuto
-                    clip: true
-                    visible: implicitHeight > 0
-                    opacity: isOpen ? 1.0 : 0.0
-                    property real openProgress: isOpen ? 1 : 0
-                    implicitHeight: scheduleRangeRow.implicitHeight * openProgress
-
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                    Behavior on openProgress { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
                     SettingsRow {
-                        id: scheduleRangeRow
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: parent.top
                         rootObj: monDelegate.rootObj
-                        settingId: "display_gamma_schedule_range_" + monDelegate.monName
+                        settingId: "display_gamma_schedule_" + monDelegate.monName
                         section: monDelegate.monName
-                        searchKeywords: "display night light blue light gamma schedule hours time start end range " + monDelegate.monName
-                        baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
-                        icon: "󰔛"
-                        title: I18n.t("guide.display.schedule.range.title", "Active hours")
-                        description: I18n.t("guide.display.schedule.range.desc", "Drag the handles to choose when the filter turns on and off")
+                        searchKeywords: "display night light blue light gamma schedule hours automatic " + monDelegate.monName
+                        icon: "󰥔"
+                        title: I18n.t("guide.display.schedule.title")
+                        description: I18n.t("guide.display.schedule.desc")
 
-                        TimeRangeSlider {
-                            id: scheduleRangeSlider
+                        Toggle {
+                            id: autoToggle
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            Layout.rightMargin: rootObj.s(8)
-                            start: monDelegate.scheduleStart
-                            end: monDelegate.scheduleEnd
+                            checked: monDelegate.filterAuto
                             accentColor: ThemeBackend.mauve
-                            trackColor: ThemeBackend.surface2
-                            textColor: ThemeBackend.text
-                            subTextColor: ThemeBackend.subtext0
-                            onCommitted: function(st, en) {
-                                monDelegate.scheduleStart = st;
-                                monDelegate.scheduleEnd = en;
-                                Gamma.setSchedule(monDelegate.monName, st, en);
+                            baseColor: ThemeBackend.surface1
+                            handleColor: ThemeBackend.crust
+                            handleOffColor: ThemeBackend.text
+                            onToggled: function(c) {
+                                monDelegate.filterAuto = c;
+                                Gamma.setAuto(monDelegate.monName, c);
                                 monDelegate.tab.refreshDisplaySettings();
+                            }
+
+                            Binding {
+                                target: autoToggle
+                                property: "checked"
+                                value: monDelegate.filterAuto
+                            }
+                        }
+                    }
+
+                    Item {
+                        id: scheduleRangeWrapper
+                        Layout.fillWidth: true
+                        readonly property bool isOpen: monDelegate.filterAuto || scheduleRangeRow.revealedBySearch
+                        Layout.preferredHeight: isOpen ? scheduleRangeRow.implicitHeight : 0
+                        visible: Layout.preferredHeight > 0.5
+                        clip: true
+                        Behavior on Layout.preferredHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
+                        SettingsRow {
+                            id: scheduleRangeRow
+                            width: parent.width
+                            rootObj: monDelegate.rootObj
+                            settingId: "display_gamma_schedule_range_" + monDelegate.monName
+                            section: monDelegate.monName
+                            searchKeywords: "display night light blue light gamma schedule hours time start end range " + monDelegate.monName
+                            icon: "󰔛"
+                            title: I18n.t("guide.display.schedule.range.title", "Active hours")
+                            description: I18n.t("guide.display.schedule.range.desc", "Drag the handles to choose when the filter turns on and off")
+
+                            TimeRangeSlider {
+                                id: scheduleRangeSlider
+                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                Layout.rightMargin: rootObj.s(8)
+                                start: monDelegate.scheduleStart
+                                end: monDelegate.scheduleEnd
+                                accentColor: ThemeBackend.mauve
+                                trackColor: ThemeBackend.surface2
+                                textColor: ThemeBackend.text
+                                subTextColor: ThemeBackend.subtext0
+                                onCommitted: function(st, en) {
+                                    monDelegate.scheduleStart = st;
+                                    monDelegate.scheduleEnd = en;
+                                    Gamma.setSchedule(monDelegate.monName, st, en);
+                                    monDelegate.tab.refreshDisplaySettings();
+                                }
                             }
                         }
                     }
