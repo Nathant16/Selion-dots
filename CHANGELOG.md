@@ -1,3 +1,10 @@
+### 2.9.1.18
+
+- **Display / Blue Light Schedule**: Replaced solar sunset/sunrise calculation with an interactive 1-hour `TimeRangeSlider` (`22:00 – 05:00` default) under **Automated schedule** and kept the **Color temperature** slider visible to configure the target nighttime strength:
+  - Effects remain disabled (`reset` / `6500 K`) outside the chosen active hours, and moving the temperature slider during daytime updates the stored schedule target without lighting up the screen.
+  - Entering the scheduled window (or enabling schedule inside active hours) smoothly animates color temperature in mireds over 10 seconds to the slider's target Kelvin via `Gamma.qml`, while dragging the slider inside active hours updates live immediately.
+  - Updated Settings Display labels across all 25 language files (`src/assets/languages/*.json`).
+
 ### 2.9.1.17
 
 - **UI / Rounded Masks**: Fixed square corner regression introduced in `2.9.1.16` by updating `maskThresholdMin` from `0.0` to `0.5` (`maskSpreadAtMin: 1.0`) across all 14 `MultiEffect` rounded mask sites (`MediaFace`, `MusicCover`, `MusicPopup`, `ImageBox`, `MusicFace`, `MusicFaceRound`, `MusicFaceLyrics`, `Screenshot`, `LockBackgroundPreview`, `AvatarPreview`, `SettingsPresetCard`, `WidgetPresetCard`, `FingerprintEnrollPopup`, `WallpaperPicker`), preserving full anti-aliased corner curvature without stair-stepping while keeping mipmapped thumbnails sharp.
