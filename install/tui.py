@@ -935,7 +935,7 @@ class InstallerState:
 
 def build_preview_state(project_root, state_mode, auth_demo):
     version_file = os.path.join(project_root, "version.txt")
-    target_version = "2.9.1.23"
+    target_version = "2.9.1.24"
     if os.path.isfile(version_file):
         try:
             with open(version_file, "r", encoding="utf-8") as fh:

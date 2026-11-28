@@ -260,7 +260,7 @@ def _build_from_hyprland(hypr_monitors):
                     scale = float(saved_m["scale"] or scale)
                 except (TypeError, ValueError):
                     pass
-            if saved_m.get("x") is not None and x == 0 and y == 0:
+            if saved_m.get("x") is not None and saved_m.get("y") is not None:
                 x = int(saved_m.get("x", 0) or 0)
                 y = int(saved_m.get("y", 0) or 0)
 

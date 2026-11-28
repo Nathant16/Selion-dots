@@ -1,3 +1,10 @@
+### 2.9.1.24
+
+- **Display / Smooth Dragging**: Fixed display tiles jumping during 2D drag (`DisplayMainTab.qml`, `monitors_detector.py`):
+  - Moved drag tracking to a fixed `stageCanvas`-space `MouseArea` (`stageDragArea`) so hover/drag scale animations and tile movement never feed back into `mapToItem` pointer deltas.
+  - Tightened magnetic snapping threshold (`~6px` visual tolerance with proximity filtering for flush edges) and committed `applyMonitorLayout` before ending drag mode to prevent single-frame snapback flicker.
+  - Preserved saved coordinates for disabled Hyprland monitors across reloads.
+
 ### 2.9.1.23
 
 - **Display / 2D Diagram**: Removed the redundant `ON` / `OFF` pill badge from 2D monitor tiles (`DisplayMainTab.qml`), keeping clean centered coordinates while disabled monitors remain clearly indicated by their muted fill and neutral gray frame.

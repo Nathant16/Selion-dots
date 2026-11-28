@@ -7,8 +7,10 @@ DisplayMainState {
     id: displayTabRoot
 
     GuideScrollView {
+        id: displayScrollView
         rootObj: displayTabRoot.rootObj
         spacing: rootObj.s(12)
+        interactive: !stageCanvas.isDraggingLayout
 
         // 2D Monitor Stage & Layout Overview
         Rectangle {
@@ -81,9 +83,13 @@ DisplayMainState {
                     readonly property bool canDrag: displayTabRoot.monitorsList.length > 1
                     property bool isDraggingLayout: false
                     property string draggedName: ""
+                    property string hoveredName: ""
+                    property int dragIdx: -1
                     property var draftBoxes: []
                     property var frozenViewport: ({ scale: 0.08, centerX: 960, centerY: 540 })
                     property var snapGuides: ({ hasX: false, gx: 0, hasY: false, gy: 0 })
+
+                    signal tileDropped(string name)
 
                     readonly property var liveBoxes: {
                         let out = [];
@@ -135,7 +141,7 @@ DisplayMainState {
                         let me = boxes[dragIdx];
                         if (!me) return { x: candX, y: candY, hasX: false, gx: 0, hasY: false, gy: 0 };
 
-                        let snapTol = Math.max(30, Math.round(rootObj.s(16) / Math.max(0.01, vpScale)));
+                        let snapTol = Math.max(10, Math.min(48, Math.round(rootObj.s(4.5) / Math.max(0.02, vpScale))));
                         let bestX = Math.round(candX);
                         let bestY = Math.round(candY);
                         let bestDistX = snapTol + 1;
@@ -149,13 +155,25 @@ DisplayMainState {
                             if (i === dragIdx) continue;
                             let ot = boxes[i];
 
-                            let xCands = [
-                                { x: ot.x + ot.logW, g: ot.x + ot.logW },
-                                { x: ot.x - me.logW, g: ot.x },
-                                { x: ot.x, g: ot.x },
-                                { x: ot.x + ot.logW - me.logW, g: ot.x + ot.logW },
-                                { x: Math.round(ot.x + (ot.logW - me.logW) / 2), g: ot.x + ot.logW / 2 }
-                            ];
+                            let nearYBand = candY < (ot.y + ot.logH + snapTol) && (candY + me.logH) > (ot.y - snapTol);
+                            let nearXBand = candX < (ot.x + ot.logW + snapTol) && (candX + me.logW) > (ot.x - snapTol);
+                            let clearAboveOrBelow = (candY + me.logH) <= (ot.y + snapTol) || candY >= (ot.y + ot.logH - snapTol);
+                            let clearLeftOrRight = (candX + me.logW) <= (ot.x + snapTol) || candX >= (ot.x + ot.logW - snapTol);
+
+                            let xCands = [];
+                            if (nearYBand) {
+                                xCands.push(
+                                    { x: ot.x + ot.logW, g: ot.x + ot.logW },
+                                    { x: ot.x - me.logW, g: ot.x }
+                                );
+                            }
+                            if (clearAboveOrBelow) {
+                                xCands.push(
+                                    { x: ot.x, g: ot.x },
+                                    { x: ot.x + ot.logW - me.logW, g: ot.x + ot.logW },
+                                    { x: Math.round(ot.x + (ot.logW - me.logW) / 2), g: ot.x + ot.logW / 2 }
+                                );
+                            }
                             for (let k = 0; k < xCands.length; k++) {
                                 let d = Math.abs(candX - xCands[k].x);
                                 if (d < bestDistX) {
@@ -166,13 +184,20 @@ DisplayMainState {
                                 }
                             }
 
-                            let yCands = [
-                                { y: ot.y + ot.logH, g: ot.y + ot.logH },
-                                { y: ot.y - me.logH, g: ot.y },
-                                { y: ot.y, g: ot.y },
-                                { y: ot.y + ot.logH - me.logH, g: ot.y + ot.logH },
-                                { y: Math.round(ot.y + (ot.logH - me.logH) / 2), g: ot.y + ot.logH / 2 }
-                            ];
+                            let yCands = [];
+                            if (nearXBand) {
+                                yCands.push(
+                                    { y: ot.y + ot.logH, g: ot.y + ot.logH },
+                                    { y: ot.y - me.logH, g: ot.y }
+                                );
+                            }
+                            if (clearLeftOrRight) {
+                                yCands.push(
+                                    { y: ot.y, g: ot.y },
+                                    { y: ot.y + ot.logH - me.logH, g: ot.y + ot.logH },
+                                    { y: Math.round(ot.y + (ot.logH - me.logH) / 2), g: ot.y + ot.logH / 2 }
+                                );
+                            }
                             for (let k = 0; k < yCands.length; k++) {
                                 let d = Math.abs(candY - yCands[k].y);
                                 if (d < bestDistY) {
@@ -184,6 +209,29 @@ DisplayMainState {
                             }
                         }
                         return { x: bestX, y: bestY, hasX: hasX, gx: guideX, hasY: hasY, gy: guideY };
+                    }
+
+                    function tileIndexAt(sx, sy) {
+                        let boxes = stageCanvas.displayBoxes;
+                        if (!boxes || boxes.length === 0) return -1;
+                        let vp = stageCanvas.activeViewport;
+                        let bestIdx = -1;
+                        let bestScore = -1;
+                        for (let i = 0; i < boxes.length; i++) {
+                            let b = boxes[i];
+                            let rx = stageCanvas.width / 2 + (b.x - vp.centerX) * vp.scale;
+                            let ry = stageCanvas.height / 2 + (b.y - vp.centerY) * vp.scale;
+                            let rw = Math.max(rootObj.s(28), b.logW * vp.scale);
+                            let rh = Math.max(rootObj.s(24), b.logH * vp.scale);
+                            if (sx >= rx && sx <= (rx + rw) && sy >= ry && sy <= (ry + rh)) {
+                                let score = (b.active ? 100 : 0) + i;
+                                if (score >= bestScore) {
+                                    bestScore = score;
+                                    bestIdx = i;
+                                }
+                            }
+                        }
+                        return bestIdx;
                     }
 
                     function rectsOverlap(a, b) {
@@ -234,10 +282,13 @@ DisplayMainState {
                             });
                         }
 
+                        let droppedName = me.name;
+                        displayTabRoot.applyMonitorLayout(layoutItems);
                         stageCanvas.isDraggingLayout = false;
                         stageCanvas.draggedName = "";
+                        stageCanvas.dragIdx = -1;
                         stageCanvas.snapGuides = { hasX: false, gx: 0, hasY: false, gy: 0 };
-                        displayTabRoot.applyMonitorLayout(layoutItems);
+                        stageCanvas.tileDropped(droppedName);
                     }
 
                     // Snap alignment guide lines
@@ -275,12 +326,24 @@ DisplayMainState {
                             required property int index
                             readonly property var box: stageCanvas.displayBoxes[index] || ({ name: "", x: 0, y: 0, logW: 1920, logH: 1080, scale: 1.0, active: true, dimensions: "1920x1080" })
                             readonly property bool isDragged: stageCanvas.isDraggingLayout && stageCanvas.draggedName === box.name
-                            readonly property bool isHovered: tileMouse.containsMouse && stageCanvas.canDrag
+                            readonly property bool isHovered: !stageCanvas.isDraggingLayout && stageDragArea.containsMouse && stageCanvas.hoveredName === box.name && stageCanvas.canDrag
+                            readonly property bool isPressed: isDragged || (!stageCanvas.isDraggingLayout && stageDragArea.pressed && stageCanvas.hoveredName === box.name && stageCanvas.canDrag)
                             readonly property real vpScale: stageCanvas.activeViewport.scale
                             readonly property color grayFrameBase: Qt.tint(ThemeBackend.overlay0, Qt.rgba(0.52, 0.53, 0.56, 0.45))
 
                             property real popScale: 1.0
                             property real flashOpacity: 0.0
+
+                            Connections {
+                                target: stageCanvas
+                                function onTileDropped(name) {
+                                    if (name === monitorTile.box.name) {
+                                        monitorTile.flashOpacity = 0.16;
+                                        tileFlashAnim.restart();
+                                        tileDropPopAnim.restart();
+                                    }
+                                }
+                            }
 
                             x: stageCanvas.width / 2 + (box.x - stageCanvas.activeViewport.centerX) * vpScale
                             y: stageCanvas.height / 2 + (box.y - stageCanvas.activeViewport.centerY) * vpScale
@@ -290,7 +353,7 @@ DisplayMainState {
 
                             scale: (isDragged
                                 ? 1.025
-                                : (tileMouse.pressed && stageCanvas.canDrag ? 0.975 : (isHovered ? 1.015 : 1.0))) * monitorTile.popScale
+                                : (isPressed ? 0.975 : (isHovered ? 1.015 : 1.0))) * monitorTile.popScale
 
                             radius: rootObj.s(6)
                             opacity: box.active ? 1.0 : 0.72
@@ -319,7 +382,7 @@ DisplayMainState {
                                 radius: parent.radius
                                 tintColor: monitorTile.tileTint
                                 tintAmount: monitorTile.box.active ? (monitorTile.isDragged ? 0.42 : (monitorTile.isHovered ? 0.34 : 0.26)) : 0.16
-                                press: (monitorTile.isDragged || tileMouse.pressed) && stageCanvas.canDrag ? 0.9 : (monitorTile.isHovered ? 0.25 : 0.0)
+                                press: monitorTile.isPressed ? 0.9 : (monitorTile.isHovered ? 0.25 : 0.0)
                                 pulse: Math.min(1, monitorTile.flashOpacity * 2.5)
                                 Behavior on press { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                                 Behavior on tintAmount { NumberAnimation { duration: 150 } }
@@ -390,64 +453,83 @@ DisplayMainState {
                                 }
                             }
 
-                            MouseArea {
-                                id: tileMouse
-                                anchors.fill: parent
-                                enabled: stageCanvas.canDrag
-                                hoverEnabled: stageCanvas.canDrag
-                                cursorShape: stageCanvas.canDrag ? (monitorTile.isDragged ? Qt.ClosedHandCursor : Qt.OpenHandCursor) : Qt.ArrowCursor
-                                preventStealing: true
+                        }
+                    }
 
-                                property point pressStagePos: Qt.point(0, 0)
-                                property real origX: 0
-                                property real origY: 0
+                    // Fixed canvas-space MouseArea prevents scale/position animation feedback loops during drag
+                    MouseArea {
+                        id: stageDragArea
+                        anchors.fill: parent
+                        z: 20
+                        enabled: stageCanvas.canDrag
+                        hoverEnabled: stageCanvas.canDrag
+                        preventStealing: true
+                        cursorShape: !stageCanvas.canDrag ? Qt.ArrowCursor : (stageCanvas.isDraggingLayout ? Qt.ClosedHandCursor : (stageCanvas.hoveredName !== "" ? Qt.OpenHandCursor : Qt.ArrowCursor))
 
-                                onPressed: function(mouse) {
-                                    let pt = mapToItem(stageCanvas, mouse.x, mouse.y);
-                                    pressStagePos = pt;
-                                    stageCanvas.frozenViewport = stageCanvas.computeViewport(stageCanvas.liveBoxes);
-                                    stageCanvas.draftBoxes = stageCanvas.liveBoxes.map(b => Object.assign({}, b));
-                                    stageCanvas.draggedName = monitorTile.box.name;
-                                    origX = monitorTile.box.x;
-                                    origY = monitorTile.box.y;
-                                    stageCanvas.snapGuides = { hasX: false, gx: 0, hasY: false, gy: 0 };
-                                    stageCanvas.isDraggingLayout = true;
-                                }
+                        property point pressStagePos: Qt.point(0, 0)
+                        property real origX: 0
+                        property real origY: 0
 
-                                onPositionChanged: function(mouse) {
-                                    if (!stageCanvas.isDraggingLayout || stageCanvas.draggedName !== monitorTile.box.name) return;
-                                    let pt = mapToItem(stageCanvas, mouse.x, mouse.y);
-                                    let vp = stageCanvas.frozenViewport;
-                                    let rawX = origX + (pt.x - pressStagePos.x) / vp.scale;
-                                    let rawY = origY + (pt.y - pressStagePos.y) / vp.scale;
-                                    let snapped = stageCanvas.snapPosition(monitorTile.index, rawX, rawY, vp.scale);
+                        onPressed: function(mouse) {
+                            let idx = stageCanvas.tileIndexAt(mouse.x, mouse.y);
+                            if (idx < 0 || idx >= stageCanvas.liveBoxes.length) return;
+                            let boxesCopy = stageCanvas.liveBoxes.map(b => Object.assign({}, b));
+                            let targetBox = boxesCopy[idx];
+                            if (!targetBox) return;
+                            pressStagePos = Qt.point(mouse.x, mouse.y);
+                            origX = targetBox.x;
+                            origY = targetBox.y;
+                            stageCanvas.frozenViewport = stageCanvas.computeViewport(boxesCopy);
+                            stageCanvas.draftBoxes = boxesCopy;
+                            stageCanvas.dragIdx = idx;
+                            stageCanvas.draggedName = targetBox.name;
+                            stageCanvas.hoveredName = targetBox.name;
+                            stageCanvas.snapGuides = { hasX: false, gx: 0, hasY: false, gy: 0 };
+                            stageCanvas.isDraggingLayout = true;
+                        }
 
-                                    let nextBoxes = stageCanvas.draftBoxes.slice();
-                                    let updated = Object.assign({}, nextBoxes[monitorTile.index]);
-                                    updated.x = snapped.x;
-                                    updated.y = snapped.y;
-                                    nextBoxes[monitorTile.index] = updated;
-                                    stageCanvas.draftBoxes = nextBoxes;
-                                    stageCanvas.snapGuides = {
-                                        hasX: snapped.hasX, gx: snapped.gx,
-                                        hasY: snapped.hasY, gy: snapped.gy
-                                    };
-                                }
-
-                                onReleased: function() {
-                                    if (!stageCanvas.isDraggingLayout) return;
-                                    monitorTile.flashOpacity = 0.16;
-                                    tileFlashAnim.restart();
-                                    tileDropPopAnim.restart();
-                                    stageCanvas.finalizeAndCommit(monitorTile.index);
-                                }
-
-                                onCanceled: function() {
-                                    stageCanvas.isDraggingLayout = false;
-                                    stageCanvas.draggedName = "";
-                                    stageCanvas.snapGuides = { hasX: false, gx: 0, hasY: false, gy: 0 };
-                                }
+                        onPositionChanged: function(mouse) {
+                            if (!stageCanvas.isDraggingLayout) {
+                                let idx = stageCanvas.tileIndexAt(mouse.x, mouse.y);
+                                let boxes = stageCanvas.displayBoxes;
+                                stageCanvas.hoveredName = (idx >= 0 && idx < boxes.length) ? boxes[idx].name : "";
+                                return;
                             }
+                            let dIdx = stageCanvas.dragIdx;
+                            if (dIdx < 0 || dIdx >= stageCanvas.draftBoxes.length) return;
+                            let vp = stageCanvas.frozenViewport;
+                            let rawX = origX + (mouse.x - pressStagePos.x) / vp.scale;
+                            let rawY = origY + (mouse.y - pressStagePos.y) / vp.scale;
+                            let snapped = stageCanvas.snapPosition(dIdx, rawX, rawY, vp.scale);
+
+                            let nextBoxes = stageCanvas.draftBoxes.slice();
+                            let updated = Object.assign({}, nextBoxes[dIdx]);
+                            updated.x = snapped.x;
+                            updated.y = snapped.y;
+                            nextBoxes[dIdx] = updated;
+                            stageCanvas.draftBoxes = nextBoxes;
+                            stageCanvas.snapGuides = {
+                                hasX: snapped.hasX, gx: snapped.gx,
+                                hasY: snapped.hasY, gy: snapped.gy
+                            };
+                        }
+
+                        onReleased: function() {
+                            if (!stageCanvas.isDraggingLayout || stageCanvas.dragIdx < 0) return;
+                            stageCanvas.finalizeAndCommit(stageCanvas.dragIdx);
+                        }
+
+                        onExited: {
+                            if (!stageCanvas.isDraggingLayout) {
+                                stageCanvas.hoveredName = "";
+                            }
+                        }
+
+                        onCanceled: function() {
+                            stageCanvas.isDraggingLayout = false;
+                            stageCanvas.draggedName = "";
+                            stageCanvas.dragIdx = -1;
+                            stageCanvas.snapGuides = { hasX: false, gx: 0, hasY: false, gy: 0 };
                         }
                     }
                 }
