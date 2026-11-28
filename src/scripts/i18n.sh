@@ -105,6 +105,10 @@ t() {
     fi
 
     if [[ -z "$translated" ]]; then
+        if [[ ${#args[@]} -eq 1 && "${args[0]}" != *=* ]]; then
+            printf '%s' "${args[0]}"
+            return
+        fi
         printf '%s' "$key"
         return
     fi

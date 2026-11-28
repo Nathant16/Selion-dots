@@ -19,9 +19,9 @@ Item {
     property bool isMenuShuffle: false
 
     function openAt(scr, posX, posY, menuMode, widgetId) {
-        controller.screen = scr;
-        controller.targetX = posX;
-        controller.targetY = posY;
+        controller.screen = scr !== undefined ? scr : null;
+        controller.targetX = (typeof posX === "number" && !isNaN(posX)) ? posX : 0;
+        controller.targetY = (typeof posY === "number" && !isNaN(posY)) ? posY : 0;
         controller.mode = menuMode !== undefined ? menuMode : "desktop";
         controller.targetWidgetId = widgetId !== undefined ? String(widgetId) : "";
         controller.isVisible = true;
@@ -39,13 +39,15 @@ Item {
     function toggle(scr, posX, posY, menuMode, widgetId) {
         let m = menuMode !== undefined ? menuMode : "desktop";
         let wId = widgetId !== undefined ? String(widgetId) : "";
+        let px = (typeof posX === "number" && !isNaN(posX)) ? posX : 0;
+        let py = (typeof posY === "number" && !isNaN(posY)) ? posY : 0;
         let sName = (scr && scr.name) ? scr.name : "";
         let curSName = (controller.screen && controller.screen.name) ? controller.screen.name : "";
 
         if (controller.isVisible) {
             let sameScreen = (!sName || !curSName || sName === curSName);
-            let dx = Math.abs(controller.targetX - posX);
-            let dy = Math.abs(controller.targetY - posY);
+            let dx = Math.abs(controller.targetX - px);
+            let dy = Math.abs(controller.targetY - py);
             let isSamePos = sameScreen && (dx < 10 && dy < 10);
 
             if (m === "widget") {
@@ -63,6 +65,6 @@ Item {
             }
         }
 
-        openAt(scr, posX, posY, m, wId);
+        openAt(scr, px, py, m, wId);
     }
 }
