@@ -377,37 +377,16 @@ DisplayMainState {
                                     elide: Text.ElideRight
                                 }
 
-                                RowLayout {
-                                    visible: monitorTile.height >= rootObj.s(50) && monitorTile.width >= rootObj.s(60)
+                                Text {
+                                    visible: displayTabRoot.monitorsList.length > 1 && monitorTile.height >= rootObj.s(50) && monitorTile.width >= rootObj.s(60)
                                     Layout.alignment: Qt.AlignHCenter
-                                    spacing: rootObj.s(5)
-
-                                    Text {
-                                        visible: displayTabRoot.monitorsList.length > 1
-                                        text: Math.round(monitorTile.box.x) + ", " + Math.round(monitorTile.box.y)
-                                        font.family: ThemeBackend.fontFamily
-                                        font.pixelSize: monitorTile.height < rootObj.s(60) ? rootObj.s(7.5) : rootObj.s(8.5)
-                                        color: (monitorTile.isDragged && monitorTile.box.active) ? ThemeBackend.mauve : (monitorTile.box.active ? ThemeBackend.subtext0 : ThemeBackend.overlay1)
-                                        Behavior on color { ColorAnimation { duration: 150 } }
-                                    }
-
-                                    Rectangle {
-                                        implicitHeight: monitorTile.height < rootObj.s(60) ? rootObj.s(11) : rootObj.s(14)
-                                        implicitWidth: stageBadgeText.implicitWidth + rootObj.s(8)
-                                        radius: height / 2
-                                        color: monitorTile.box.active ? Qt.alpha(ThemeBackend.green, 0.2) : Qt.alpha(monitorTile.grayFrameBase, 0.22)
-                                        Behavior on color { ColorAnimation { duration: 180 } }
-
-                                        Text {
-                                            id: stageBadgeText
-                                            anchors.centerIn: parent
-                                            text: monitorTile.box.active ? "ON" : "OFF"
-                                            font.pixelSize: monitorTile.height < rootObj.s(60) ? rootObj.s(7) : rootObj.s(8)
-                                            font.bold: true
-                                            color: monitorTile.box.active ? ThemeBackend.green : ThemeBackend.subtext0
-                                            Behavior on color { ColorAnimation { duration: 180 } }
-                                        }
-                                    }
+                                    Layout.maximumWidth: parent.width
+                                    text: Math.round(monitorTile.box.x) + ", " + Math.round(monitorTile.box.y)
+                                    font.family: ThemeBackend.fontFamily
+                                    font.pixelSize: monitorTile.height < rootObj.s(60) ? rootObj.s(7.5) : rootObj.s(8.5)
+                                    color: (monitorTile.isDragged && monitorTile.box.active) ? ThemeBackend.mauve : (monitorTile.box.active ? ThemeBackend.subtext0 : ThemeBackend.overlay1)
+                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                    elide: Text.ElideRight
                                 }
                             }
 

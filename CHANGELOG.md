@@ -1,3 +1,7 @@
+### 2.9.1.23
+
+- **Display / 2D Diagram**: Removed the redundant `ON` / `OFF` pill badge from 2D monitor tiles (`DisplayMainTab.qml`), keeping clean centered coordinates while disabled monitors remain clearly indicated by their muted fill and neutral gray frame.
+
 ### 2.9.1.22
 
 - **Display / Animations, Monitor Power Toggle & Disabled State**:
