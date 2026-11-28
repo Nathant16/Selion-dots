@@ -1,3 +1,13 @@
+### 2.9.1.16
+
+- **UI / Rendering & Anti-Aliasing**: Fixed pixelated small album art thumbnails, jagged rounded mask corners, and blurry HiDPI icons:
+  - Enabled trilinear `mipmap` filtering in `BoundedImage.qml` (up to `2048px`) and ensured aspect-cropped small previews decode with sufficient vertical/horizontal headroom for `16:9` artwork.
+  - Enabled continuous alpha smoothing on `MultiEffect` rounded masks (`maskThresholdMin: 0.0`, `maskSpreadAtMin: 1.0`, `antialiasing: true`, `layer.smooth: true`) across `MediaFace`, `MusicCover`, `ImageBox`, `MusicFace*`, `Screenshot`, `MusicPopup`, `LockBackgroundPreview`, `AvatarPreview`, `SettingsPresetCard`, `WidgetPresetCard`, `WallpaperPicker`, and `FingerprintEnrollPopup` (including HiDPI `layer.textureSize` scaling on bar/cover thumbnails and missing `layer.enabled: true` on `Screenshot.qml`).
+  - Added `Screen.devicePixelRatio`-scaled `sourceSize`, `smooth: true`, and `mipmap: true` on tray, menu, launcher, notification, and wellbeing icons (`TrayFace`, `TrayBase`, `DockAppMenu`, `Launcher`, `Default`, `NotificationBox`, `WellbeingHeader`, `WellbeingMetric`).
+- **Diagnostics & Stability Cleanup**:
+  - Resolved `PowerTab` `hasPowerSaverOptions` binding loop, `Weather` singleton `Item.data` property conflict (`Singleton` default `children`), `SideMusicPopout` inverted center anchor axes, missing `printErrors: false` on optional `FileView` caches (`Launcher`, `ScreenshotOverlay`, `RedactorWorkspace`), `Wallpaper.wallpaperDir` `~/`/`file://` expansion, `Connectivity` guards when Wi-Fi/BT hardware is absent, and Python `ResourceWarning` on detached reload commands in `apptheme.py`.
+  - Resolved all fixable `qmllint` warnings across QML components (330 unused imports, 108 block-scoped `var`s, 58 `id-shadows-member`, real `Quick.layout-positioning` items, `duplicate-property-binding`, `Quick.property-changes-parsed`, `Quick.anchor-combinations`, `signal-handler-parameters`, `incompatible-type`, `confusing-expression-statement`, `multiline-strings`).
+
 ### 2.9.1.15
 
 - **Upstream Merge (`a60765c0..a26b3411`)**: Merged upstream Serpantinum architecture updates, including `ShellRouter`, `ShellOverlayWindow`, `HostedPanel`, `SurfaceRegistry`, `Compositor`, `Connectivity`, `Brightness`, `WallpaperCarousel`, liquid glass morph workspaces, lazy-loaded overlays, async app-icon fallback badges, and localized calendar month/weekday formatting:
