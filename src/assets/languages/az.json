@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Avtomatik cədvəl",
-        "desc": "Rəng temperaturunu bu məkanda günəşin batmasına və doğmasına əsasən avtomatik tənzimlə:"
+        "desc": "Seçilmiş saatlarda mavi işıq filtrini avtomatik aktivləşdir",
+        "range": {
+          "title": "Aktiv saatlar",
+          "desc": "Filtrin nə vaxt açılıb-bağlanacağını seçmək üçün tutacaqları sürüşdürün"
+        }
       },
       "temperature": {
         "title": "Rəng temperaturu",
-        "desc": "Rəng temperaturunun təsir gücünü tənzimlə"
+        "desc": "Rəng temperaturunun təsir gücünü tənzimlə",
+        "desc_auto": "Planlaşdırılmış saatlarda hədəf rəng temperaturu gücü"
       },
       "uiscale": {
         "title": "İnterfeysin miqyası",

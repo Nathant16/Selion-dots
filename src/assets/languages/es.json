@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Horario automático",
-        "desc": "Ajustar temperatura de color automáticamente según el amanecer y atardecer"
+        "desc": "Activar el filtro de luz azul automáticamente durante las horas seleccionadas",
+        "range": {
+          "title": "Horas activas",
+          "desc": "Arrastra los controles para elegir cuándo se enciende y apaga el filtro"
+        }
       },
       "temperature": {
         "title": "Temperatura de color",
-        "desc": "Ajustar la intensidad de la temperatura de color"
+        "desc": "Ajustar la intensidad de la temperatura de color",
+        "desc_auto": "Intensidad objetivo de la temperatura de color durante el horario"
       },
       "uiscale": {
         "title": "Escala de la interfaz",

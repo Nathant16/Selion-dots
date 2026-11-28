@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Automated schedule",
-        "desc": "Adjust color temperature automatically based on sunset and sunrise in"
+        "desc": "Turn blue light filter on automatically during the selected hours",
+        "range": {
+          "title": "Active hours",
+          "desc": "Drag the handles to choose when the filter turns on and off"
+        }
       },
       "temperature": {
         "title": "Color temperature",
-        "desc": "Adjust the color temperature strength"
+        "desc": "Adjust the color temperature strength",
+        "desc_auto": "Target color temperature strength during scheduled hours"
       },
       "uiscale": {
         "title": "Display Scale (WM)",

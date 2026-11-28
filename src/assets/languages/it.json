@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Programmazione automatizzata",
-        "desc": "Regola automaticamente la temperatura del colore in base al tramonto e all'alba"
+        "desc": "Attiva automaticamente il filtro luce blu nelle ore selezionate",
+        "range": {
+          "title": "Ore attive",
+          "desc": "Trascina i cursori per scegliere quando attivare e disattivare il filtro"
+        }
       },
       "temperature": {
         "title": "Temperatura colore",
-        "desc": "Modifica la temperatura del colore"
+        "desc": "Modifica la temperatura del colore",
+        "desc_auto": "Intensità desiderata della temperatura colore nelle ore programmate"
       },
       "uiscale": {
         "title": "Scala UI",

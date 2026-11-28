@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Automatischer Zeitplan",
-        "desc": "Farbtemperatur automatisch an Sonnenauf- und -untergang anpassen"
+        "desc": "Blaulichtfilter während der ausgewählten Stunden automatisch aktivieren",
+        "range": {
+          "title": "Aktive Zeiten",
+          "desc": "Regler ziehen, um Ein- und Ausschaltzeit des Filters festzulegen"
+        }
       },
       "temperature": {
         "title": "Farbtemperatur",
-        "desc": "Stärke der Farbtemperatur anpassen"
+        "desc": "Stärke der Farbtemperatur anpassen",
+        "desc_auto": "Zielstärke der Farbtemperatur während der geplanten Zeit"
       },
       "uiscale": {
         "title": "UI-Skalierung",

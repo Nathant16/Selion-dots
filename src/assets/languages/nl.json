@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Automatisch schema",
-        "desc": "Kleurtemperatuur automatisch aanpassen op basis van zonsopgang en zonsondergang"
+        "desc": "Blauwlichtfilter automatisch inschakelen tijdens de geselecteerde uren",
+        "range": {
+          "title": "Actieve uren",
+          "desc": "Sleep de handgrepen om te kiezen wanneer het filter in- en uitschakelt"
+        }
       },
       "temperature": {
         "title": "Kleurtemperatuur",
-        "desc": "Pas de sterkte van de kleurtemperatuur aan"
+        "desc": "Pas de sterkte van de kleurtemperatuur aan",
+        "desc_auto": "Gewenste kleurtemperatuursterkte tijdens geplande uren"
       },
       "uiscale": {
         "title": "UI-schaal",

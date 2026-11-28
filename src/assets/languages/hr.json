@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Automatski raspored",
-        "desc": "Automatski prilagodi temperaturu boje prema zalasku i izlasku sunca na lokaciji"
+        "desc": "Automatski uključi filtar plavog svjetla tijekom odabranih sati",
+        "range": {
+          "title": "Aktivno vrijeme",
+          "desc": "Povucite ručice za odabir vremena uključivanja i isključivanja filtra"
+        }
       },
       "temperature": {
         "title": "Temperatura boje",
-        "desc": "Prilagodite intenzitet temperature boje"
+        "desc": "Prilagodite intenzitet temperature boje",
+        "desc_auto": "Ciljani intenzitet temperature boje tijekom zakazanog razdoblja"
       },
       "uiscale": {
         "title": "Skaliranje sučelja",

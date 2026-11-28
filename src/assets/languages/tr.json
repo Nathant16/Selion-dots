@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Otomatik zamanlama",
-        "desc": "Renk sıcaklığını gün batımı ve gün doğumuna göre otomatik olarak ayarlayın:"
+        "desc": "Mavi ışık filtresini seçilen saatlerde otomatik olarak aç",
+        "range": {
+          "title": "Etkin saatler",
+          "desc": "Filtrenin ne zaman açılıp kapanacağını seçmek için tutamaçları sürükleyin"
+        }
       },
       "temperature": {
         "title": "Renk sıcaklığı",
-        "desc": "Renk sıcaklığı yoğunluğunu ayarlayın"
+        "desc": "Renk sıcaklığı yoğunluğunu ayarlayın",
+        "desc_auto": "Planlanan saatlerde hedef renk sıcaklığı yoğunluğu"
       },
       "uiscale": {
         "title": "Arayüz ölçeği",

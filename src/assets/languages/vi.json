@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Lịch trình tự động",
-        "desc": "Tự động điều chỉnh nhiệt độ màu dựa trên hoàng hôn và bình minh"
+        "desc": "Tự động bật bộ lọc ánh sáng xanh trong khung giờ đã chọn",
+        "range": {
+          "title": "Khung giờ hoạt động",
+          "desc": "Kéo các điểm điều khiển để chọn thời điểm bật và tắt bộ lọc"
+        }
       },
       "temperature": {
         "title": "Nhiệt độ màu",
-        "desc": "Điều chỉnh độ mạnh của nhiệt độ màu"
+        "desc": "Điều chỉnh độ mạnh của nhiệt độ màu",
+        "desc_auto": "Độ mạnh nhiệt độ màu mục tiêu trong khung giờ đã lên lịch"
       },
       "uiscale": {
         "title": "Tỷ lệ giao diện",

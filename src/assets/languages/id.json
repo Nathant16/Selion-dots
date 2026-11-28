@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Jadwal otomatis",
-        "desc": "Sesuaikan suhu warna secara otomatis berdasarkan matahari terbenam dan terbit di"
+        "desc": "Aktifkan filter cahaya biru secara otomatis selama jam yang dipilih",
+        "range": {
+          "title": "Jam aktif",
+          "desc": "Seret pegangan untuk memilih kapan filter menyala dan mati"
+        }
       },
       "temperature": {
         "title": "Suhu warna",
-        "desc": "Sesuaikan kekuatan suhu warna"
+        "desc": "Sesuaikan kekuatan suhu warna",
+        "desc_auto": "Kekuatan suhu warna target selama jam terjadwal"
       },
       "uiscale": {
         "title": "Skala antarmuka",

@@ -34,6 +34,8 @@ Rectangle {
     property bool monitorPowered: monSettings && monSettings.powerEnabled !== undefined ? monSettings.powerEnabled : (monitorInfo && monitorInfo.active !== undefined ? monitorInfo.active : true)
     property bool filterEnabled: monSettings && monSettings.enabled !== undefined ? monSettings.enabled : false
     property bool filterAuto: monSettings && monSettings.auto !== undefined ? monSettings.auto : false
+    property int scheduleStart: monSettings && monSettings.scheduleStart !== undefined ? Gamma.normalizeHour(monSettings.scheduleStart, 22) : 22
+    property int scheduleEnd: monSettings && monSettings.scheduleEnd !== undefined ? Gamma.normalizeHour(monSettings.scheduleEnd, 5) : 5
     property real currentTemp: monSettings && monSettings.temperature !== undefined ? monSettings.temperature : 50
     property real currentScale: resolveEffectiveScale()
     property string currentFramerate: (monSettings && monSettings.framerate) ? String(monSettings.framerate) : (monitorInfo && monitorInfo.framerate ? String(monitorInfo.framerate) : "60")
@@ -155,6 +157,8 @@ Rectangle {
         }
         filterEnabled = monSettings.enabled !== undefined ? monSettings.enabled : false;
         filterAuto = monSettings.auto !== undefined ? monSettings.auto : false;
+        scheduleStart = monSettings.scheduleStart !== undefined ? Gamma.normalizeHour(monSettings.scheduleStart, 22) : 22;
+        scheduleEnd = monSettings.scheduleEnd !== undefined ? Gamma.normalizeHour(monSettings.scheduleEnd, 5) : 5;
         if (monDelegate.tab.pendingMonName !== monName && !temperatureSlider.pressed) {
             currentTemp = monSettings.temperature !== undefined ? monSettings.temperature : 50;
         }
@@ -290,11 +294,11 @@ Rectangle {
                     rootObj: monDelegate.rootObj
                     settingId: "display_gamma_schedule_" + monDelegate.monName
                     section: monDelegate.monName
-                    searchKeywords: "display night light blue light gamma schedule sunset sunrise automatic " + monDelegate.monName
+                    searchKeywords: "display night light blue light gamma schedule hours automatic " + monDelegate.monName
                     baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
                     icon: "󰥔"
                     title: I18n.t("guide.display.schedule.title")
-                    description: I18n.t("guide.display.schedule.desc") + " " + monDelegate.tab.scheduleDescription
+                    description: I18n.t("guide.display.schedule.desc")
 
                     Toggle {
                         id: autoToggle
@@ -319,59 +323,92 @@ Rectangle {
                 },
 
                 Item {
-                    id: tempSectionWrapper
+                    id: scheduleRangeWrapper
                     Layout.fillWidth: true
-                    property bool isOpen: !monDelegate.filterAuto
+                    property bool isOpen: monDelegate.filterAuto
                     clip: true
                     visible: implicitHeight > 0
                     opacity: isOpen ? 1.0 : 0.0
                     property real openProgress: isOpen ? 1 : 0
-                    implicitHeight: tempInnerBox.implicitHeight * openProgress
+                    implicitHeight: scheduleRangeRow.implicitHeight * openProgress
 
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on openProgress { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
                     SettingsRow {
-                        id: tempInnerBox
+                        id: scheduleRangeRow
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
                         rootObj: monDelegate.rootObj
-                        settingId: "display_gamma_temp_" + monDelegate.monName
+                        settingId: "display_gamma_schedule_range_" + monDelegate.monName
                         section: monDelegate.monName
-                        searchKeywords: "display color temperature kelvin warm night light blue light gamma " + monDelegate.monName
+                        searchKeywords: "display night light blue light gamma schedule hours time start end range " + monDelegate.monName
                         baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
-                        icon: "󰔏"
-                        title: I18n.t("guide.display.temperature.title")
-                        description: I18n.t("guide.display.temperature.desc")
+                        icon: "󰔛"
+                        title: I18n.t("guide.display.schedule.range.title", "Active hours")
+                        description: I18n.t("guide.display.schedule.range.desc", "Drag the handles to choose when the filter turns on and off")
 
-                        Draggable {
-                            id: temperatureSlider
+                        TimeRangeSlider {
+                            id: scheduleRangeSlider
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             Layout.rightMargin: rootObj.s(8)
-                            implicitWidth: rootObj.s(220)
-                            implicitHeight: rootObj.s(18)
-                            from: 0
-                            to: 100
-                            stepSize: 1
-                            defaultValue: 50
-                            showValueBubble: true
-                            valueFormatter: function(v) { return Math.round(v).toString() }
-                            value: monDelegate.currentTemp
-                            backgroundColor: ThemeBackend.surface0
+                            start: monDelegate.scheduleStart
+                            end: monDelegate.scheduleEnd
                             accentColor: ThemeBackend.mauve
-                            handleColor: ThemeBackend.text
-                            handleBorderColor: ThemeBackend.mantle
-                            onMoved: function(val) {
-                                let rounded = Math.round(val);
-                                if (monDelegate.currentTemp !== rounded) {
-                                    monDelegate.currentTemp = rounded;
-                                    monDelegate.tab.updateMonitorSettingDebounced(monDelegate.monName, rounded);
-                                }
+                            trackColor: ThemeBackend.surface2
+                            textColor: ThemeBackend.text
+                            subTextColor: ThemeBackend.subtext0
+                            onCommitted: function(st, en) {
+                                monDelegate.scheduleStart = st;
+                                monDelegate.scheduleEnd = en;
+                                Gamma.setSchedule(monDelegate.monName, st, en);
+                                monDelegate.tab.refreshDisplaySettings();
                             }
-                            onDragFinished: {
-                                monDelegate.tab.flushMonitorSetting(monDelegate.monName);
+                        }
+                    }
+                },
+
+                SettingsRow {
+                    id: tempInnerBox
+                    Layout.fillWidth: true
+                    rootObj: monDelegate.rootObj
+                    settingId: "display_gamma_temp_" + monDelegate.monName
+                    section: monDelegate.monName
+                    searchKeywords: "display color temperature kelvin warm night light blue light gamma " + monDelegate.monName
+                    baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
+                    icon: "󰔏"
+                    title: I18n.t("guide.display.temperature.title")
+                    description: monDelegate.filterAuto
+                        ? I18n.t("guide.display.temperature.desc_auto", "Target color temperature strength during scheduled hours")
+                        : I18n.t("guide.display.temperature.desc")
+
+                    Draggable {
+                        id: temperatureSlider
+                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                        Layout.rightMargin: rootObj.s(8)
+                        implicitWidth: rootObj.s(220)
+                        implicitHeight: rootObj.s(18)
+                        from: 0
+                        to: 100
+                        stepSize: 1
+                        defaultValue: 50
+                        showValueBubble: true
+                        valueFormatter: function(v) { return Math.round(v).toString() }
+                        value: monDelegate.currentTemp
+                        backgroundColor: ThemeBackend.surface0
+                        accentColor: ThemeBackend.mauve
+                        handleColor: ThemeBackend.text
+                        handleBorderColor: ThemeBackend.mantle
+                        onMoved: function(val) {
+                            let rounded = Math.round(val);
+                            if (monDelegate.currentTemp !== rounded) {
+                                monDelegate.currentTemp = rounded;
+                                monDelegate.tab.updateMonitorSettingDebounced(monDelegate.monName, rounded);
                             }
+                        }
+                        onDragFinished: {
+                            monDelegate.tab.flushMonitorSetting(monDelegate.monName);
                         }
                     }
                 }

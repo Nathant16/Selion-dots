@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Agendamento automático",
-        "desc": "Ajusta a temperatura de cor automaticamente com base no pôr e nascer do sol em"
+        "desc": "Ativar o filtro de luz azul automaticamente durante as horas selecionadas",
+        "range": {
+          "title": "Horário ativo",
+          "desc": "Arraste as alças para escolher quando o filtro liga e desliga"
+        }
       },
       "temperature": {
         "title": "Temperatura de cor",
-        "desc": "Ajusta a intensidade da temperatura de cor"
+        "desc": "Ajusta a intensidade da temperatura de cor",
+        "desc_auto": "Intensidade alvo da temperatura de cor durante o horário agendado"
       },
       "uiscale": {
         "title": "Escala da UI",

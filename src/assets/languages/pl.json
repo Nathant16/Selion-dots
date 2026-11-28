@@ -1390,11 +1390,16 @@
       },
       "schedule": {
         "title": "Harmonogram automatyczny",
-        "desc": "Dostosuj temperaturę barwową automatycznie na podstawie wschodu i zachodu słońca w"
+        "desc": "Automatycznie włączaj filtr światła niebieskiego w wybranych godzinach",
+        "range": {
+          "title": "Godziny działania",
+          "desc": "Przeciągnij uchwyty, aby wybrać godziny włączania i wyłączania filtra"
+        }
       },
       "temperature": {
         "title": "Temperatura barwowa",
-        "desc": "Dostosuj intensywność temperatury barwowej"
+        "desc": "Dostosuj intensywność temperatury barwowej",
+        "desc_auto": "Docelowa intensywność temperatury barwowej w zaplanowanym czasie"
       },
       "uiscale": {
         "title": "Skalowanie interfejsu",

@@ -316,11 +316,16 @@
       },
       "schedule": {
         "title": "Planification automatique",
-        "desc": "Ajuster automatiquement la température de couleur selon le coucher et le lever du soleil à"
+        "desc": "Activer automatiquement le filtre de lumière bleue pendant les heures sélectionnées",
+        "range": {
+          "title": "Heures actives",
+          "desc": "Faites glisser les poignées pour choisir quand le filtre s'active et se désactive"
+        }
       },
       "temperature": {
         "title": "Température de couleur",
-        "desc": "Ajuster l'intensité de la température de couleur"
+        "desc": "Ajuster l'intensité de la température de couleur",
+        "desc_auto": "Intensité cible de la température de couleur pendant la plage horaire"
       },
       "uiscale": {
         "title": "Échelle de l'interface",
