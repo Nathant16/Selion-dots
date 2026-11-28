@@ -400,7 +400,8 @@
       "framerate": {
         "title": "刷新率",
         "desc": "设置显示器刷新率 (Hz)"
-      }
+      },
+      "layout_drag_hint": "拖动显示器以调整排列"
     },
     "bar": {
       "modules": {

@@ -400,7 +400,8 @@
       "framerate": {
         "title": "Refresh Rate",
         "desc": "Atur refresh rate layar (Hz)"
-      }
+      },
+      "layout_drag_hint": "Seret layar untuk mengatur posisi"
     },
     "bar": {
       "modules": {

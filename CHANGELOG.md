@@ -1,3 +1,14 @@
+### 2.9.1.21
+
+- **Display / 2D Arrangement & Multi-WM Positioning**:
+  - Replaced equal-size side-by-side display tiles in **Settings → Display** with an interactive proportional 2D stage (`DisplayMainTab.qml`, `DisplayMainState.qml`):
+    - Each display tile renders proportionally to its true logical dimensions (`width / scale × height / scale`, swapping axes automatically on `90°`/`270°` rotation) under a shared viewport scale.
+    - Enabled drag-and-drop 2D repositioning with magnetic edge/center snapping guides, non-overlapping collision push-out, origin `(0, 0)` normalization, and serialized IPC queueing across live applies.
+    - Changing scale or resolution/orientation preserves flush sibling monitor placement and coordinates cleanly.
+  - Added full 2D position (`x`, `y`, `transform`) detection in `monitors_detector.py` and atomic `set-layout` + coordinate-preserving `set` persistence across all 6 Wayland compositors in `monitor_manager.py`: **Hyprland** (`monitors.lua`), **Sway** (`monitors`), **Niri** (`monitors.kdl`), **Mango** (`monitors.conf`), **DriftWM** (`config.toml`), and **Umbriel** (`monitors.toml`).
+  - Hardened live compositor disambiguation against stale sockets left behind after session switches and prioritized full compositor output lists (including virtual outputs) on Umbriel.
+  - Added localized drag hint string across all 25 language files (`guide.display.layout_drag_hint`) and unit tests in `install/tests/monitor_layout_test.py`.
+
 ### 2.9.1.20
 
 - **Display / Blue Light Schedule**: Added symmetric 10-second smooth mired fade-out back to `6500 K` (followed by clean `reset`) when leaving scheduled night hours or switching into schedule mode during daytime, preserving live on-screen Kelvin continuity if a transition is interrupted mid-fade (`Gamma.qml`).

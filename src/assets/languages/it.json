@@ -400,7 +400,8 @@
       "framerate": {
         "title": "Frequenza di aggiornamento",
         "desc": "Imposta la frequenza di aggiornamento dello schermo (Hz)"
-      }
+      },
+      "layout_drag_hint": "Trascina gli schermi per disporli"
     },
     "bar": {
       "modules": {

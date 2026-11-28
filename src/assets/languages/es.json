@@ -400,7 +400,8 @@
       "framerate": {
         "title": "Frecuencia de actualización",
         "desc": "Establecer la frecuencia de actualización de pantalla (Hz)"
-      }
+      },
+      "layout_drag_hint": "Arrastra las pantallas para organizarlas"
     },
     "bar": {
       "modules": {

@@ -400,7 +400,8 @@
       "framerate": {
         "title": "Taux de rafraîchissement",
         "desc": "Définir le taux de rafraîchissement de l'écran (Hz)"
-      }
+      },
+      "layout_drag_hint": "Faites glisser les écrans pour les disposer"
     },
     "bar": {
       "modules": {

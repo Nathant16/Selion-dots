@@ -36,18 +36,51 @@ GuideTab {
 
     property string pendingMonScaleName: ""
     property real pendingMonScaleVal: 1.0
-    property var queuedApplyCmd: null
+    property var queuedApplyCmds: []
     property string scaleLockMonitor: ""
     property double scaleLockUntilMs: 0
+    property double layoutLockUntilMs: 0
 
     function isScaleLockedFor(monName) {
         if (!monName) return false;
         if (displayTabRoot.pendingMonScaleName === monName) return true;
         if (displayTabRoot.scaleLockMonitor === monName) {
-            if (monitorApplyProc.running || displayTabRoot.queuedApplyCmd !== null) return true;
+            if (monitorApplyProc.running || displayTabRoot.queuedApplyCmds.length > 0) return true;
             if (Date.now() < displayTabRoot.scaleLockUntilMs) return true;
         }
         return false;
+    }
+
+    function logicalBoxFor(m) {
+        let name = (m && m.name) ? String(m.name) : "";
+        let dims = (m && m.dimensions) ? String(m.dimensions).split("x") : ["1920", "1080"];
+        let rawW = parseFloat(dims[0]) || 1920;
+        let rawH = parseFloat(dims[1]) || 1080;
+        let tr = (m && m.transform) ? String(m.transform).toLowerCase() : "normal";
+        if (tr.indexOf("90") !== -1 || tr.indexOf("270") !== -1) {
+            let tmp = rawW;
+            rawW = rawH;
+            rawH = tmp;
+        }
+        let sc = (m && m.scale !== undefined && Number(m.scale) > 0) ? Number(m.scale) : 1.0;
+        let logW = Math.max(1, Math.round(rawW / sc));
+        let logH = Math.max(1, Math.round(rawH / sc));
+        let x = (m && m.x !== undefined && m.x !== null && !isNaN(Number(m.x))) ? Math.round(Number(m.x)) : 0;
+        let y = (m && m.y !== undefined && m.y !== null && !isNaN(Number(m.y))) ? Math.round(Number(m.y)) : 0;
+        return {
+            name: name,
+            x: x,
+            y: y,
+            logW: logW,
+            logH: logH,
+            rawW: rawW,
+            rawH: rawH,
+            scale: sc,
+            active: m ? (m.active !== false) : true,
+            dimensions: (m && m.dimensions) ? String(m.dimensions) : "1920x1080",
+            framerate: (m && m.framerate) ? String(m.framerate) : "60",
+            transform: tr
+        };
     }
 
     function normalizeScaleFactor(rawScale) {
@@ -189,9 +222,10 @@ GuideTab {
         id: monitorApplyProc
         running: false
         onExited: function() {
-            if (displayTabRoot.queuedApplyCmd !== null) {
-                let nextCmd = displayTabRoot.queuedApplyCmd;
-                displayTabRoot.queuedApplyCmd = null;
+            if (displayTabRoot.queuedApplyCmds.length > 0) {
+                let nextQueue = displayTabRoot.queuedApplyCmds.slice();
+                let nextCmd = nextQueue.shift();
+                displayTabRoot.queuedApplyCmds = nextQueue;
                 monitorApplyProc.command = nextCmd;
                 monitorApplyProc.running = true;
                 return;
@@ -200,14 +234,19 @@ GuideTab {
                 displayTabRoot.scaleLockUntilMs = Date.now() + 900;
                 scaleLockClearTimer.restart();
             }
-            reloadMonitorsDebounceTimer.interval = 280;
+            if (Date.now() < displayTabRoot.layoutLockUntilMs) {
+                displayTabRoot.layoutLockUntilMs = Date.now() + 500;
+            }
+            reloadMonitorsDebounceTimer.interval = 350;
             reloadMonitorsDebounceTimer.restart();
         }
     }
 
     function enqueueMonitorApply(cmd) {
         if (monitorApplyProc.running) {
-            displayTabRoot.queuedApplyCmd = cmd;
+            let nextQueue = displayTabRoot.queuedApplyCmds.slice();
+            nextQueue.push(cmd);
+            displayTabRoot.queuedApplyCmds = nextQueue;
             return;
         }
         monitorApplyProc.command = cmd;
@@ -218,17 +257,32 @@ GuideTab {
     function loadFallbackScreens() {
         if (typeof Quickshell !== "undefined" && Quickshell.screens && Quickshell.screens.length > 0) {
             let mList = [];
+            let allZero = true;
+            for (let k = 0; k < Quickshell.screens.length; k++) {
+                let s0 = Quickshell.screens[k];
+                if (s0 && ((s0.x || 0) !== 0 || (s0.y || 0) !== 0)) {
+                    allZero = false;
+                    break;
+                }
+            }
+            let curX = 0;
             for (let i = 0; i < Quickshell.screens.length; i++) {
                 let scr = Quickshell.screens[i];
                 if (scr && scr.name) {
                     let w = scr.width || 1920;
                     let h = scr.height || 1080;
                     let sc = (scr.scale !== undefined && scr.scale > 0) ? scr.scale : 1.0;
+                    let sx = (allZero && Quickshell.screens.length > 1) ? curX : (scr.x || 0);
+                    let sy = scr.y || 0;
+                    curX += Math.max(1, Math.round(w / sc));
                     mList.push({
                         name: scr.name,
                         dimensions: w + "x" + h,
                         framerate: "60",
                         scale: sc,
+                        x: sx,
+                        y: sy,
+                        transform: "normal",
                         active: true
                     });
                 }
@@ -287,9 +341,100 @@ GuideTab {
         }
     }
 
+    function applyMonitorLayout(layoutItems) {
+        if (!Array.isArray(layoutItems) || layoutItems.length === 0) return;
+        displayTabRoot.layoutLockUntilMs = Date.now() + 2500;
+
+        let posMap = {};
+        for (let i = 0; i < layoutItems.length; i++) {
+            let item = layoutItems[i];
+            if (item && item.name) {
+                posMap[item.name] = {
+                    x: Math.round(Number(item.x || 0)),
+                    y: Math.round(Number(item.y || 0))
+                };
+            }
+        }
+
+        let updatedList = displayTabRoot.monitorsList.map(function(m) {
+            if (!m || !m.name || !posMap[m.name]) return m;
+            let copy = Object.assign({}, m);
+            copy.x = posMap[m.name].x;
+            copy.y = posMap[m.name].y;
+            return copy;
+        });
+        displayTabRoot.syncMonitorModels(updatedList);
+
+        let current = Config.getSetting("display", defaultDisplaySettings);
+        if (!current.monitors) current.monitors = {};
+        let payload = [];
+        for (let j = 0; j < updatedList.length; j++) {
+            let m = updatedList[j];
+            if (!m || !m.name) continue;
+            if (!current.monitors[m.name]) current.monitors[m.name] = {};
+            let px = (m.x !== undefined && m.x !== null) ? Math.round(Number(m.x)) : 0;
+            let py = (m.y !== undefined && m.y !== null) ? Math.round(Number(m.y)) : 0;
+            current.monitors[m.name].x = px;
+            current.monitors[m.name].y = py;
+            payload.push({
+                name: m.name,
+                x: px,
+                y: py,
+                resolution: m.dimensions || "1920x1080",
+                framerate: m.framerate || "60",
+                scale: m.scale !== undefined ? Number(m.scale) : 1.0
+            });
+        }
+        Config.setSetting("display", current);
+        displayTabRoot.displaySettings = JSON.parse(JSON.stringify(current));
+
+        displayTabRoot.enqueueMonitorApply([
+            "python3",
+            Caching.serpantinumDir + "/scripts/system/monitor_manager.py",
+            "set-layout",
+            "--layout", JSON.stringify(payload),
+            "--compositor", displayTabRoot.compositor
+        ]);
+    }
+
+    function _shiftFlushSiblingsForResize(changedMonName, oldBox, updatedList) {
+        if (!oldBox || updatedList.length < 2) return;
+        let changedItem = updatedList.find(m => m && m.name === changedMonName);
+        if (!changedItem) return;
+        let newBox = displayTabRoot.logicalBoxFor(changedItem);
+        let dx = newBox.logW - oldBox.logW;
+        let dy = newBox.logH - oldBox.logH;
+        if (dx === 0 && dy === 0) return;
+
+        let shifted = [];
+        let changedAny = false;
+        for (let i = 0; i < updatedList.length; i++) {
+            let m = updatedList[i];
+            if (!m || !m.name) continue;
+            let b = displayTabRoot.logicalBoxFor(m);
+            let nx = b.x;
+            let ny = b.y;
+            if (m.name !== changedMonName) {
+                if (Math.abs(b.x - (oldBox.x + oldBox.logW)) <= 4) {
+                    nx += dx;
+                    changedAny = true;
+                }
+                if (Math.abs(b.y - (oldBox.y + oldBox.logH)) <= 4) {
+                    ny += dy;
+                    changedAny = true;
+                }
+            }
+            shifted.push({ name: m.name, x: nx, y: ny });
+        }
+        if (changedAny) {
+            displayTabRoot.applyMonitorLayout(shifted);
+        }
+    }
+
     function applyMonitorResolution(monName, resStr, rateStr) {
         if (!monName || !resStr) return;
         let mon = displayTabRoot.monitorsByName[monName] || displayTabRoot.monitorsList.find(m => m.name === monName);
+        let oldBox = mon ? displayTabRoot.logicalBoxFor(mon) : null;
         let scaleVal = displayTabRoot.normalizeScaleFactor(mon ? (mon.scale !== undefined ? mon.scale : 1.0) : 1.0);
         let rStr = rateStr || (mon ? mon.framerate : "60") || "60";
 
@@ -316,6 +461,7 @@ GuideTab {
 
         displayTabRoot.updateMonitorSetting(monName, "resolution", resStr);
         if (rStr) displayTabRoot.updateMonitorSetting(monName, "framerate", rStr);
+        displayTabRoot._shiftFlushSiblingsForResize(monName, oldBox, updatedList);
     }
 
     function applyMonitorFramerate(monName, rateStr) {
@@ -331,6 +477,7 @@ GuideTab {
         if (isNaN(cleanScale)) cleanScale = 1.0;
 
         let mon = displayTabRoot.monitorsByName[monName] || displayTabRoot.monitorsList.find(m => m.name === monName);
+        let oldBox = mon ? displayTabRoot.logicalBoxFor(mon) : null;
         if (displayTabRoot.compositor === "hyprland" && mon && mon.dimensions && mon.dimensions.indexOf("x") !== -1) {
             let dims = mon.dimensions.split("x");
             let w = parseInt(dims[0], 10);
@@ -364,6 +511,7 @@ GuideTab {
         displayTabRoot.enqueueMonitorApply(cmd);
 
         displayTabRoot.updateMonitorSetting(monName, "scale", cleanScale);
+        displayTabRoot._shiftFlushSiblingsForResize(monName, oldBox, updatedList);
     }
 
     function updateMonitorSettingDebounced(monName, tempVal) {
@@ -454,7 +602,7 @@ GuideTab {
 
     function scheduleExternalMonitorReload() {
         displayTabRoot.refreshDisplaySettings();
-        if (displayTabRoot.visible && !monitorApplyProc.running && displayTabRoot.queuedApplyCmd === null && displayTabRoot.pendingMonScaleName === "" && Date.now() >= displayTabRoot.scaleLockUntilMs) {
+        if (displayTabRoot.visible && !monitorApplyProc.running && displayTabRoot.queuedApplyCmds.length === 0 && displayTabRoot.pendingMonScaleName === "" && Date.now() >= displayTabRoot.scaleLockUntilMs && Date.now() >= displayTabRoot.layoutLockUntilMs) {
             reloadMonitorsDebounceTimer.interval = 260;
             reloadMonitorsDebounceTimer.restart();
         }

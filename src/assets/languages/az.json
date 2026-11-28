@@ -400,7 +400,8 @@
       "framerate": {
         "title": "Yenilənmə tezliyi",
         "desc": "Ekranın yenilənmə tezliyini təyin edin (Hz)"
-      }
+      },
+      "layout_drag_hint": "Yerləşdirmək üçün ekranları sürüşdürün"
     },
     "bar": {
       "modules": {

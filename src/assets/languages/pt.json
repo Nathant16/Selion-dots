@@ -400,7 +400,8 @@
       "framerate": {
         "title": "Taxa de atualização",
         "desc": "Definir taxa de atualização da tela (Hz)"
-      }
+      },
+      "layout_drag_hint": "Arraste os monitores para organizá-los"
     },
     "bar": {
       "modules": {

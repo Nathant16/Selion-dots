@@ -400,7 +400,8 @@
         "desc": "Set display refresh rate (Hz)"
       },
       "layout_stage": "2D Displays Arrangement",
-      "monitors_detected": "monitor(s)"
+      "monitors_detected": "monitor(s)",
+      "layout_drag_hint": "Повуците екране да бисте их распоредили"
     },
     "bar": {
       "modules": {

@@ -400,7 +400,8 @@
       "framerate": {
         "title": "새로고침 빈도",
         "desc": "디스플레이 새로고침 빈도 설정 (Hz)"
-      }
+      },
+      "layout_drag_hint": "디스플레이를 드래그하여 배치하세요"
     },
     "bar": {
       "modules": {

@@ -400,7 +400,8 @@
       "framerate": {
         "title": "Tần số quét",
         "desc": "Đặt tần số quét màn hình (Hz)"
-      }
+      },
+      "layout_drag_hint": "Kéo các màn hình để sắp xếp"
     },
     "bar": {
       "modules": {

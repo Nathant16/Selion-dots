@@ -400,7 +400,8 @@
       "framerate": {
         "title": "Yenileme Hızı",
         "desc": "Ekran yenileme hızını ayarlayın (Hz)"
-      }
+      },
+      "layout_drag_hint": "Düzenlemek için ekranları sürükleyin"
     },
     "bar": {
       "modules": {

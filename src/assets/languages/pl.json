@@ -1474,7 +1474,8 @@
       "framerate": {
         "title": "Częstotliwość odświeżania",
         "desc": "Ustaw częstotliwość odświeżania ekranu (Hz)"
-      }
+      },
+      "layout_drag_hint": "Przeciągnij ekrany, aby je ustawić"
     },
     "bar": {
       "modules": {

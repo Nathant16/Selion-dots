@@ -400,7 +400,8 @@
       "framerate": {
         "title": "Vernieuwingsfrequentie",
         "desc": "Stel de vernieuwingsfrequentie van het scherm in (Hz)"
-      }
+      },
+      "layout_drag_hint": "Sleep beeldschermen om ze te ordenen"
     },
     "bar": {
       "modules": {

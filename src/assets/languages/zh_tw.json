@@ -400,7 +400,8 @@
       "framerate": {
         "title": "更新率",
         "desc": "設定螢幕更新率 (Hz)"
-      }
+      },
+      "layout_drag_hint": "拖曳顯示器以調整排列"
     },
     "bar": {
       "modules": {

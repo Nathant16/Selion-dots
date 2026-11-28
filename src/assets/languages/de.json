@@ -400,7 +400,8 @@
       "framerate": {
         "title": "Bildwiederholfrequenz",
         "desc": "Bildwiederholfrequenz des Bildschirms einstellen (Hz)"
-      }
+      },
+      "layout_drag_hint": "Bildschirme zum Anordnen ziehen"
     },
     "bar": {
       "modules": {
