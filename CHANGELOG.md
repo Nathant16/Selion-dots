@@ -1,3 +1,7 @@
+### 2.9.1.19
+
+- **Display / Settings UI**: Grouped **Automated schedule** and its expandable **Active hours** range slider inside a unified `SettingsBlob` card (matching Weather's Quiet hours layout with a seamless divider and unified glass background).
+
 ### 2.9.1.18
 
 - **Display / Blue Light Schedule**: Replaced solar sunset/sunrise calculation with an interactive 1-hour `TimeRangeSlider` (`22:00 – 05:00` default) under **Automated schedule** and kept the **Color temperature** slider visible to configure the target nighttime strength:
