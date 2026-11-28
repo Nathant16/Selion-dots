@@ -66,8 +66,10 @@ Item {
                 anchors.fill: parent
                 radius: root.imageRadius >= 0 ? root.imageRadius : Math.max(0, root.cornerRadius - root.borderWidth)
                 color: "black"
+                antialiasing: true
                 visible: false
                 layer.enabled: true
+                layer.smooth: true
             }
 
             BoundedImage {
@@ -88,6 +90,8 @@ Item {
                 source: mediaImage
                 maskEnabled: true
                 maskSource: maskRect
+                maskThresholdMin: 0.0
+                maskSpreadAtMin: 1.0
             }
         }
 

@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
@@ -522,7 +523,12 @@ PanelWindow {
                                 width: source !== "" ? trayMenuWindow.s(16) : 0
                                 height: trayMenuWindow.s(16)
                                 source: modelData ? trayMenuWindow.resolveMenuIcon(modelData.icon) : ""
-                                sourceSize: Qt.size(trayMenuWindow.s(16), trayMenuWindow.s(16))
+                                smooth: true
+                                mipmap: true
+                                sourceSize: {
+                                    let sz = Math.max(1, Math.ceil(trayMenuWindow.s(16) * (Screen.devicePixelRatio || 1)));
+                                    return Qt.size(sz, sz);
+                                }
                                 fillMode: Image.PreserveAspectFit
                                 visible: width > 0 && status === Image.Ready
                             }
@@ -811,7 +817,12 @@ PanelWindow {
                                     width: source !== "" ? trayMenuWindow.s(16) : 0
                                     height: trayMenuWindow.s(16)
                                     source: modelData ? trayMenuWindow.resolveMenuIcon(modelData.icon) : ""
-                                    sourceSize: Qt.size(trayMenuWindow.s(16), trayMenuWindow.s(16))
+                                    smooth: true
+                                    mipmap: true
+                                    sourceSize: {
+                                        let sz = Math.max(1, Math.ceil(trayMenuWindow.s(16) * (Screen.devicePixelRatio || 1)));
+                                        return Qt.size(sz, sz);
+                                    }
                                     fillMode: Image.PreserveAspectFit
                                     visible: width > 0 && status === Image.Ready
                                 }

@@ -1692,7 +1692,10 @@ ShellOverlayWindow {
                                                     return AppMatcher.iconSource(model.icon);
                                                 }
 
-                                                sourceSize: Qt.size(64, 64)
+                                                sourceSize: {
+                                                    let sz = Math.max(64, Math.ceil(width * (Screen.devicePixelRatio || 1)));
+                                                    return Qt.size(sz, sz);
+                                                }
                                                 fillMode: Image.PreserveAspectFit
                                                 asynchronous: true
                                                 smooth: true

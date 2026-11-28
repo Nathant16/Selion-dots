@@ -38,8 +38,10 @@ Item {
         anchors.fill: parent
         radius: ThemeBackend.borderRadius
         color: "black"
+        antialiasing: true
         visible: false
         layer.enabled: true
+        layer.smooth: true
     }
 
     Item {
@@ -49,6 +51,8 @@ Item {
         layer.effect: MultiEffect {
             maskEnabled: true
             maskSource: cardMask
+            maskThresholdMin: 0.0
+            maskSpreadAtMin: 1.0
         }
 
         Rectangle {

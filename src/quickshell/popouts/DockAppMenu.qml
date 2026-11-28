@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
@@ -177,8 +178,10 @@ PopoutMenuWindow {
                     width: dockAppMenuWindow.s(20)
                     height: dockAppMenuWindow.s(20)
                     source: AppMatcher.iconSource(DockAppMenuController.appIcon)
-                    sourceSize.width: width
-                    sourceSize.height: height
+                    smooth: true
+                    mipmap: true
+                    sourceSize.width: Math.max(1, Math.ceil(width * (Screen.devicePixelRatio || 1)))
+                    sourceSize.height: Math.max(1, Math.ceil(height * (Screen.devicePixelRatio || 1)))
                     fillMode: Image.PreserveAspectFit
                     visible: status === Image.Ready && !AppMatcher.iconMissing(source)
                 }

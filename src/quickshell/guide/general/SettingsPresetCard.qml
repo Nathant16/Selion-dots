@@ -128,6 +128,8 @@ Rectangle {
         layer.effect: MultiEffect {
             maskEnabled: true
             maskSource: previewMask
+            maskThresholdMin: 0.0
+            maskSpreadAtMin: 1.0
         }
 
         Item {
@@ -135,11 +137,13 @@ Rectangle {
             anchors.fill: parent
             visible: false
             layer.enabled: true
+            layer.smooth: true
 
             Rectangle {
                 width: parent.width
                 height: parent.height + ThemeBackend.borderRadius * 2
                 radius: ThemeBackend.borderRadius
+                antialiasing: true
                 color: "white"
             }
         }

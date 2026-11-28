@@ -246,20 +246,21 @@ BarFaceBase {
                                     source: mediaArtImg
                                     maskEnabled: true
                                     maskSource: mediaArtMask
+                                    maskThresholdMin: 0.0
+                                    maskSpreadAtMin: 1.0
                                     visible: root.hasArt && mediaArtImg.status === Image.Ready
                                 }
 
-                                Item {
+                                Rectangle {
                                     id: mediaArtMask
                                     anchors.fill: parent
-                                    layer.enabled: true
+                                    radius: mediaThumbBox.radius
+                                    color: "black"
+                                    antialiasing: true
                                     visible: false
-
-                                    Rectangle {
-                                        anchors.fill: parent
-                                        radius: mediaThumbBox.radius
-                                        color: "black"
-                                    }
+                                    layer.enabled: true
+                                    layer.smooth: true
+                                    layer.textureSize: Qt.size(Math.max(1, Math.ceil(width * (Screen.devicePixelRatio || 1))), Math.max(1, Math.ceil(height * (Screen.devicePixelRatio || 1))))
                                 }
 
                                 Rectangle {
@@ -425,20 +426,21 @@ BarFaceBase {
                         source: sideArtImg
                         maskEnabled: true
                         maskSource: sideArtMask
+                        maskThresholdMin: 0.0
+                        maskSpreadAtMin: 1.0
                         visible: isMediaActive && root.activeArtUrl !== "" && sideArtImg.status === Image.Ready
                     }
 
-                    Item {
+                    Rectangle {
                         id: sideArtMask
                         anchors.fill: parent
-                        layer.enabled: true
+                        radius: thumbBox.radius
+                        color: "black"
+                        antialiasing: true
                         visible: false
-
-                        Rectangle {
-                            anchors.fill: parent
-                            radius: thumbBox.radius
-                            color: "black"
-                        }
+                        layer.enabled: true
+                        layer.smooth: true
+                        layer.textureSize: Qt.size(Math.max(1, Math.ceil(width * (Screen.devicePixelRatio || 1))), Math.max(1, Math.ceil(height * (Screen.devicePixelRatio || 1))))
                     }
 
                     Rectangle {

@@ -163,8 +163,10 @@ Item {
                     id: artMask
                     anchors.fill: parent
                     radius: artRect.radius
+                    antialiasing: true
                     visible: false
                     layer.enabled: true
+                    layer.smooth: true
                 }
 
                 Item {
@@ -174,6 +176,8 @@ Item {
                     layer.effect: MultiEffect {
                         maskEnabled: true
                         maskSource: artMask
+                        maskThresholdMin: 0.0
+                        maskSpreadAtMin: 1.0
                     }
 
                     BoundedImage {

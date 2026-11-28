@@ -177,8 +177,11 @@ Item {
                         id: maskRect
                         anchors.fill: parent
                         radius: width / 2
+                        antialiasing: true
                         visible: false
-                        layer.enabled: true 
+                        layer.enabled: true
+                        layer.smooth: true
+                        layer.textureSize: Qt.size(Math.max(1, Math.ceil(width * (Screen.devicePixelRatio || 1))), Math.max(1, Math.ceil(height * (Screen.devicePixelRatio || 1))))
                     }
 
                     Item {
@@ -188,6 +191,8 @@ Item {
                         layer.effect: MultiEffect {
                             maskEnabled: true
                             maskSource: maskRect
+                            maskThresholdMin: 0.0
+                            maskSpreadAtMin: 1.0
                         }
 
                         Item {
@@ -201,6 +206,8 @@ Item {
                                 anchors.fill: parent
                                 fillMode: Image.PreserveAspectCrop
                                 asynchronous: true
+                                smooth: true
+                                mipmap: true
                                 sourceSize: Qt.size(Math.max(1, Math.ceil(Math.max(coverHost.width, coverHost.Layout.preferredWidth) * 2 * (Screen.devicePixelRatio || 1))), Math.max(1, Math.ceil(Math.max(coverHost.height, coverHost.Layout.preferredHeight) * 2 * (Screen.devicePixelRatio || 1))))
                                 opacity: artCrossfader.showingA && status === Image.Ready ? 1.0 : 0.0
                                 Behavior on opacity { NumberAnimation { duration: 650; easing.type: Easing.InOutQuad } }
@@ -211,6 +218,8 @@ Item {
                                 anchors.fill: parent
                                 fillMode: Image.PreserveAspectCrop
                                 asynchronous: true
+                                smooth: true
+                                mipmap: true
                                 sourceSize: Qt.size(Math.max(1, Math.ceil(Math.max(coverHost.width, coverHost.Layout.preferredWidth) * 2 * (Screen.devicePixelRatio || 1))), Math.max(1, Math.ceil(Math.max(coverHost.height, coverHost.Layout.preferredHeight) * 2 * (Screen.devicePixelRatio || 1))))
                                 opacity: !artCrossfader.showingA && status === Image.Ready ? 1.0 : 0.0
                                 Behavior on opacity { NumberAnimation { duration: 650; easing.type: Easing.InOutQuad } }

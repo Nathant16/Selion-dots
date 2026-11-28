@@ -12,6 +12,7 @@ Item {
     property bool cache: true
     smooth: true
     antialiasing: false
+    property bool mipmap: true
     property int horizontalAlignment: Image.AlignHCenter
     property int verticalAlignment: Image.AlignVCenter
     property real devicePixelRatio: (Screen.devicePixelRatio && Screen.devicePixelRatio > 0) ? Screen.devicePixelRatio : 1
@@ -29,7 +30,10 @@ Item {
     function neededEdge() {
         let edge = Math.max(width, height) * devicePixelRatio;
         if (!(edge > 0)) return 0;
-        return Math.ceil(edge / decodeStep) * decodeStep;
+        let target = (fillMode === Image.PreserveAspectCrop && edge <= 512)
+            ? Math.min(1024, edge * 1.8)
+            : edge;
+        return Math.ceil(target / decodeStep) * decodeStep;
     }
 
     function growDecodeEdge() {
@@ -74,7 +78,7 @@ Item {
             cache: root.cache
             smooth: root.smooth
             antialiasing: root.antialiasing
-            mipmap: false
+            mipmap: root.mipmap && root.decodeEdge > 0 && root.decodeEdge <= 2048
             horizontalAlignment: root.horizontalAlignment
             verticalAlignment: root.verticalAlignment
         }
@@ -89,7 +93,7 @@ Item {
             cache: root.cache
             smooth: root.smooth
             antialiasing: root.antialiasing
-            mipmap: false
+            mipmap: root.mipmap
             playing: root.playing
             horizontalAlignment: root.horizontalAlignment
             verticalAlignment: root.verticalAlignment

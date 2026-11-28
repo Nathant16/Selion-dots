@@ -391,8 +391,10 @@ MusicEqualizerState {
                 id: innerBgMask
                 anchors.fill: parent
                 radius: ThemeBackend.borderRadius
+                antialiasing: true
                 visible: false
-                layer.enabled: true 
+                layer.enabled: true
+                layer.smooth: true
             }
 
             Item {
@@ -403,6 +405,8 @@ MusicEqualizerState {
                 layer.effect: MultiEffect {
                     maskEnabled: true
                     maskSource: innerBgMask
+                    maskThresholdMin: 0.0
+                    maskSpreadAtMin: 1.0
                 }
 
                 MusicBlurCrossfader {

@@ -58,7 +58,10 @@ Notification {
                 anchors.fill: parent
                 radius: ThemeBackend.borderRadius
                 color: "black"
+                antialiasing: true
                 visible: false
+                layer.enabled: true
+                layer.smooth: true
             }
 
             BoundedImage {
@@ -81,6 +84,8 @@ Notification {
                 source: rawBgImg
                 maskSource: bgMask
                 maskEnabled: true
+                maskThresholdMin: 0.0
+                maskSpreadAtMin: 1.0
                 opacity: ThemeBackend.liquidGlass ? 0.3 : 0.22 * ThemeBackend.elementOpacity
             }
 

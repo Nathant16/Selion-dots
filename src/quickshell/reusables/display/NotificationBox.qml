@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Controls
 import "../../"
@@ -750,7 +751,12 @@ Item {
                                                         }
                                                         return AppMatcher.iconSource(ic);
                                                     }
-                                                    sourceSize: Qt.size(48, 48)
+                                                    smooth: true
+                                                    mipmap: true
+                                                    sourceSize: {
+                                                        let sz = Math.max(48, Math.ceil(Math.max(width, height) * (Screen.devicePixelRatio || 1)));
+                                                        return Qt.size(sz, sz);
+                                                    }
                                                     fillMode: Image.PreserveAspectFit
                                                     visible: groupWrapper.customType === "default" && status === Image.Ready && source !== "" && !AppMatcher.iconMissing(source)
                                                 }

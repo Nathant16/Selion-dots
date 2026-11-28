@@ -234,8 +234,10 @@ Item {
             anchors.fill: parent
             radius: root.widgetRadius
             color: "#ffffff"
+            antialiasing: true
             visible: false
             layer.enabled: true
+            layer.smooth: true
         }
 
         Item {
@@ -246,6 +248,8 @@ Item {
             layer.effect: MultiEffect {
                 maskEnabled: true
                 maskSource: bgMask
+                maskThresholdMin: 0.0
+                maskSpreadAtMin: 1.0
             }
 
             BoundedImage {

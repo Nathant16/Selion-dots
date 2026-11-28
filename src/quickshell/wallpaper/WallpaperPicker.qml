@@ -1972,8 +1972,10 @@ HostedPanel {
                         id: paperMask
                         anchors.fill: parent
                         radius: delegateRoot.dynamicRadius
+                        antialiasing: true
                         visible: false
                         layer.enabled: true
+                        layer.smooth: true
                     }
 
                     Item {
@@ -1982,6 +1984,8 @@ HostedPanel {
                         layer.effect: MultiEffect {
                             maskEnabled: true
                             maskSource: paperMask
+                            maskThresholdMin: 0.0
+                            maskSpreadAtMin: 1.0
                         }
 
                         Image {
@@ -1994,6 +1998,8 @@ HostedPanel {
                             source: delegateRoot.isVideo ? (delegateRoot.itemPosterUrl !== "" ? delegateRoot.itemPosterUrl : "") : delegateRoot.itemFileUrl
                             asynchronous: true
                             cache: true
+                            smooth: true
+                            mipmap: true
                             opacity: (status === Image.Ready && source.toString() !== "") ? 1.0 : 0.0
                             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                             sourceSize.width: Math.round((window.itemWidth * 1.5) + ((window.itemHeight + window.s(30)) * 0.35) + window.s(50))

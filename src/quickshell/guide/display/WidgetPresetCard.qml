@@ -95,6 +95,8 @@ Rectangle {
         layer.effect: MultiEffect {
             maskEnabled: true
             maskSource: previewMask
+            maskThresholdMin: 0.0
+            maskSpreadAtMin: 1.0
         }
 
         Item {
@@ -102,11 +104,13 @@ Rectangle {
             anchors.fill: parent
             visible: false
             layer.enabled: true
+            layer.smooth: true
 
             Rectangle {
                 width: parent.width
                 height: parent.height + ThemeBackend.borderRadius * 2
                 radius: ThemeBackend.borderRadius
+                antialiasing: true
                 color: "white"
             }
         }
@@ -130,6 +134,7 @@ Rectangle {
                     source: presetCard.tab.getWallpaperSource(presetCard.monName)
                     fillMode: Image.PreserveAspectCrop
                     smooth: true
+                    mipmap: true
                     cache: true
                     asynchronous: true
                     sourceSize.width: Math.max(64, Math.round(presetPreviewBox.width * 2))

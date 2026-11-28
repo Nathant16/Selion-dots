@@ -225,6 +225,7 @@ Popup {
                     anchors.fill: parent
                     visible: false
                     layer.enabled: true
+                    layer.smooth: true
 
                     Rectangle {
                         id: maskCircle
@@ -239,6 +240,7 @@ Popup {
                         width: Math.max(0, targetRadius * 2)
                         height: width
                         radius: targetRadius
+                        antialiasing: true
                         color: "black"
 
                         Behavior on targetRadius {
@@ -253,6 +255,8 @@ Popup {
                     source: filledSource
                     maskEnabled: true
                     maskSource: maskSourceItem
+                    maskThresholdMin: 0.0
+                    maskSpreadAtMin: 1.0
                     visible: (tab && (tab.currentPercent > 0 || tab.enrollStatus === "completed"))
                 }
 

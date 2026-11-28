@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import QtQuick.Layouts
 import "../../"
 import "../"
@@ -20,7 +21,12 @@ Notification {
                     let ic = model ? (model.icon || model.iconPath || "") : "";
                     return AppMatcher.iconSource(ic);
                 }
-                sourceSize: Qt.size(48, 48)
+                smooth: true
+                mipmap: true
+                sourceSize: {
+                    let s = Math.max(48, Math.ceil(Math.max(width, height) * (Screen.devicePixelRatio || 1)));
+                    return Qt.size(s, s);
+                }
                 fillMode: Image.PreserveAspectFit
                 visible: status === Image.Ready && source !== "" && !AppMatcher.iconMissing(source)
             }

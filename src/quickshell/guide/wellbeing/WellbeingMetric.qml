@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import QtQuick.Layouts
 import "../../"
 
@@ -34,7 +35,12 @@ ColumnLayout {
             Layout.preferredHeight: rootObj.s(26)
             Layout.alignment: Qt.AlignVCenter
             source: metric.iconSource
-            sourceSize: Qt.size(rootObj.s(26), rootObj.s(26))
+            smooth: true
+            mipmap: true
+            sourceSize: {
+                let sz = Math.max(1, Math.ceil(rootObj.s(26) * (Screen.devicePixelRatio || 1)));
+                return Qt.size(sz, sz);
+            }
             fillMode: Image.PreserveAspectFit
             asynchronous: true
         }

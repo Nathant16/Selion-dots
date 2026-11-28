@@ -210,8 +210,10 @@ Item {
                         id: maskRect
                         anchors.fill: parent
                         radius: width / 2
+                        antialiasing: true
                         visible: false
                         layer.enabled: true
+                        layer.smooth: true
                     }
 
                     MultiEffect {
@@ -219,6 +221,8 @@ Item {
                         source: artImg
                         maskEnabled: true
                         maskSource: maskRect
+                        maskThresholdMin: 0.0
+                        maskSpreadAtMin: 1.0
                         opacity: (root.isMediaActive && artImg.status === Image.Ready && MprisController.artUrl !== "") ? 1.0 : 0.0
 
                         Behavior on opacity {

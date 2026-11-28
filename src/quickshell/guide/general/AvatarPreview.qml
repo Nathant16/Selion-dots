@@ -61,8 +61,10 @@ Rectangle {
                 anchors.fill: parent
                 radius: ThemeBackend.borderRadius
                 color: "black"
+                antialiasing: true
                 visible: false
                 layer.enabled: true
+                layer.smooth: true
             }
 
             Image {
@@ -73,6 +75,8 @@ Rectangle {
                 fillMode: Image.PreserveAspectCrop
                 cache: false
                 asynchronous: true
+                smooth: true
+                mipmap: true
                 sourceSize: Qt.size(Math.max(1, Math.ceil(Math.max(width, avatarPreviewRect.Layout.preferredWidth) * 2 * (Screen.devicePixelRatio || 1))), Math.max(1, Math.ceil(Math.max(height, avatarPreviewRect.Layout.preferredHeight) * 2 * (Screen.devicePixelRatio || 1))))
             }
 
@@ -81,6 +85,8 @@ Rectangle {
                 source: avatarImage
                 maskEnabled: true
                 maskSource: maskRect
+                maskThresholdMin: 0.0
+                maskSpreadAtMin: 1.0
             }
         }
     }

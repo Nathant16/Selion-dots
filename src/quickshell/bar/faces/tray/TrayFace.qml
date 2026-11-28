@@ -142,13 +142,19 @@ BarFaceBase {
                 id: trayIcon
                 source: modelData.icon || ""
                 fillMode: Image.PreserveAspectFit
+                smooth: true
+                mipmap: true
 
-                sourceSize: Qt.size(root.iconSize, root.iconSize)
+                sourceSize: {
+                    let s = Math.max(1, Math.ceil(root.iconSize * 1.15 * (Screen.devicePixelRatio || 1)));
+                    return Qt.size(s, s);
+                }
                 width: root.iconSize
                 height: root.iconSize
 
                 layer.enabled: true
                 layer.smooth: true
+                layer.textureSize: Qt.size(Math.max(1, Math.ceil(width * 1.15 * (Screen.devicePixelRatio || 1))), Math.max(1, Math.ceil(height * 1.15 * (Screen.devicePixelRatio || 1))))
                 layer.effect: ShaderEffect {
                     property color accentColor: ThemeBackend.mauve
                     fragmentShader: "file://" + Caching.serpantinumDir + "/assets/shaders/ui/icon_recolor.frag.qsb"

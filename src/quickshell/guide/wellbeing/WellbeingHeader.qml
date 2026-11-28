@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import QtQuick.Layouts
 import "../../"
 import "../../reusables"
@@ -60,7 +61,12 @@ RowLayout {
     Image {
         visible: header.inApp && header.tab.selectedAppIcon !== "" && status === Image.Ready && !AppMatcher.iconMissing(source)
         source: AppMatcher.iconSource(header.tab.selectedAppIcon)
-        sourceSize: Qt.size(rootObj.s(22), rootObj.s(22))
+        smooth: true
+        mipmap: true
+        sourceSize: {
+            let sz = Math.max(1, Math.ceil(rootObj.s(22) * (Screen.devicePixelRatio || 1)));
+            return Qt.size(sz, sz);
+        }
         Layout.preferredWidth: rootObj.s(22)
         Layout.preferredHeight: rootObj.s(22)
         Layout.alignment: Qt.AlignVCenter
