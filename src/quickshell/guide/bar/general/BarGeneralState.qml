@@ -256,10 +256,10 @@ GuideTab {
         function migrate(arr) {
             if (!arr) return [];
             var res = [];
-            for (var i = 0; i < arr.length; i++) {
+            for (let i = 0; i < arr.length; i++) {
                 if (Array.isArray(arr[i])) {
-                    var group = [];
-                    for (var j = 0; j < arr[i].length; j++) {
+                    let group = [];
+                    for (let j = 0; j < arr[i].length; j++) {
                         if (arr[i][j] === "system") group.push("sysmon", "kb", "wifi", "bt", "vol", "bat");
                         else if (arr[i][j] === "centerbox" || arr[i][j] === "center") group.push("timedate", "info", "weather");
                         else group.push(arr[i][j]);
@@ -318,22 +318,22 @@ GuideTab {
 
         let used = {};
         function add(arr, model) {
-            for (var i = 0; i < arr.length; i++) {
+            for (let i = 0; i < arr.length; i++) {
                 if (Array.isArray(arr[i])) {
-                    var gId = "g_" + arr[i][0];
+                    let gId = "g_" + arr[i][0];
                     barTabRoot.assignGroupColor(gId);
-                    for (var j = 0; j < arr[i].length; j++) {
-                        var gModuleId = arr[i][j];
+                    for (let j = 0; j < arr[i].length; j++) {
+                        let gModuleId = arr[i][j];
                         if (used[gModuleId]) continue;
-                        var info = getModuleInfo(gModuleId);
+                        let info = getModuleInfo(gModuleId);
                         info.groupId = gId;
                         model.append(info);
                         used[gModuleId] = true;
                     }
                 } else {
-                    var sModuleId = arr[i];
+                    let sModuleId = arr[i];
                     if (used[sModuleId]) continue;
-                    var info = getModuleInfo(sModuleId);
+                    let info = getModuleInfo(sModuleId);
                     info.groupId = "";
                     model.append(info);
                     used[sModuleId] = true;
@@ -490,9 +490,9 @@ GuideTab {
         var j = 0;
 
         for (i = 0; i < mList.length; i++) {
-            var m = mList[i];
+            let m = mList[i];
             for (j = 0; j < m.count; j++) {
-                var it = m.get(j);
+                let it = m.get(j);
                 if (it && it.groupId && it.groupId !== "") {
                     counts[it.groupId] = (counts[it.groupId] || 0) + 1;
                 }
@@ -501,15 +501,15 @@ GuideTab {
 
         var dissolved = {};
         for (i = 0; i < mList.length; i++) {
-            var m = mList[i];
+            let m = mList[i];
             for (j = 0; j < m.count; j++) {
-                var it = m.get(j);
+                let it = m.get(j);
                 if (it && it.groupId && it.groupId !== "" && counts[it.groupId] < 2 && it.groupId !== pendingGId) {
-                    var gId = it.groupId;
+                    let gId = it.groupId;
                     if (!dissolved[gId]) {
                         dissolved[gId] = true;
                         if (barTabRoot.assignedGroupColors[gId]) {
-                            var newAssigned = Object.assign({}, barTabRoot.assignedGroupColors);
+                            let newAssigned = Object.assign({}, barTabRoot.assignedGroupColors);
                             delete newAssigned[gId];
                             barTabRoot.assignedGroupColors = newAssigned;
                         }

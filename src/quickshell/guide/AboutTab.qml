@@ -1,9 +1,7 @@
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
-import QtQuick.Controls
 import Quickshell
-import Quickshell.Io
 import "../"
 import "../reusables"
 
@@ -73,8 +71,8 @@ GuideTab {
 
                         Item {
                             Layout.alignment: Qt.AlignHCenter
-                            width: rootObj.s(160)
-                            height: width
+                            Layout.preferredWidth: rootObj.s(160)
+                            Layout.preferredHeight: rootObj.s(160)
 
                             Image {
                                 id: aboutLogo

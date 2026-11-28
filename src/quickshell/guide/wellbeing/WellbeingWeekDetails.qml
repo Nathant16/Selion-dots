@@ -140,7 +140,7 @@ Item {
                         Item {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
-                            height: rootObj.s(10)
+                            Layout.preferredHeight: rootObj.s(10)
                             Rectangle {
                                 anchors.fill: parent
                                 radius: rootObj.s(5)

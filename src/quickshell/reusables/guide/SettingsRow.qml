@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 import "../../"
 import "../"
 
@@ -481,7 +480,7 @@ Rectangle {
         Rectangle {
             id: dividerLine
             Layout.fillWidth: true
-            height: 1
+            Layout.preferredHeight: 1
             color: root.dividerColor
             visible: root.showDivider && bottomCol.children.length > 0
         }

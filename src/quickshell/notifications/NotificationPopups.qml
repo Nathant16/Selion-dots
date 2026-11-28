@@ -1,11 +1,9 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Controls
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import "../"
-import "../reusables"
 
 PanelWindow {
     id: popupWindow

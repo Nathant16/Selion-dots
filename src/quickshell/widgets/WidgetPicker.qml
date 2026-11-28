@@ -233,10 +233,7 @@ Item {
         id: pickerSurface
         kind: "widgetpicker"
         offset: {
-            root.x;
-            root.y;
-            root.width;
-            root.height;
+            let _deps = [root.x, root.y, root.width, root.height];
             return root.mapToItem(null, 0, 0);
         }
         rects: [

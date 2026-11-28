@@ -1,10 +1,5 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Window
-import QtQuick.Controls
-import Quickshell
-import Quickshell.Io
-import Quickshell.Wayland
 import Quickshell.Services.SystemTray
 import "../../../reusables"
 import "../../../"
@@ -92,17 +87,46 @@ BarFaceBase {
         vertical: root.isVertical
         horizontalItemAlignment: Grid.AlignHCenter
         verticalItemAlignment: Grid.AlignVCenter
-        anchors.verticalCenter: root.isVertical ? undefined : parent.verticalCenter
-        anchors.left: (root.isVertical || root.isEndAligned) ? undefined : parent.left
         anchors.leftMargin: (root.isVertical || root.isEndAligned) ? 0 : root.iconPadding
-        anchors.right: (root.isVertical || !root.isEndAligned) ? undefined : parent.right
         anchors.rightMargin: (root.isVertical || !root.isEndAligned) ? 0 : root.iconPadding
-        anchors.horizontalCenter: root.isVertical ? parent.horizontalCenter : undefined
-        anchors.top: (!root.isVertical || root.isEndAligned) ? undefined : parent.top
         anchors.topMargin: (!root.isVertical || root.isEndAligned) ? 0 : root.iconPadding
-        anchors.bottom: (!root.isVertical || !root.isEndAligned) ? undefined : parent.bottom
         anchors.bottomMargin: (!root.isVertical || !root.isEndAligned) ? 0 : root.iconPadding
         spacing: root.itemSpacing
+        state: (root.isVertical ? "v_" : "h_") + (root.isEndAligned ? "end" : "start")
+        states: [
+            State {
+                name: "h_start"
+                AnchorChanges {
+                    target: trayLayout
+                    anchors.verticalCenter: trayLayout.parent.verticalCenter
+                    anchors.left: trayLayout.parent.left
+                }
+            },
+            State {
+                name: "h_end"
+                AnchorChanges {
+                    target: trayLayout
+                    anchors.verticalCenter: trayLayout.parent.verticalCenter
+                    anchors.right: trayLayout.parent.right
+                }
+            },
+            State {
+                name: "v_start"
+                AnchorChanges {
+                    target: trayLayout
+                    anchors.horizontalCenter: trayLayout.parent.horizontalCenter
+                    anchors.top: trayLayout.parent.top
+                }
+            },
+            State {
+                name: "v_end"
+                AnchorChanges {
+                    target: trayLayout
+                    anchors.horizontalCenter: trayLayout.parent.horizontalCenter
+                    anchors.bottom: trayLayout.parent.bottom
+                }
+            }
+        ]
 
         Repeater {
             id: trayRepeater

@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import QtQuick.Shapes
 import Quickshell
 import Quickshell.Wayland
 import "../reusables"
@@ -492,7 +491,6 @@ PanelWindow {
                         Layout.alignment: Qt.AlignVCenter
                         Layout.preferredHeight: osdWindow.s(24)
                         Layout.preferredWidth: implicitWidth
-                        height: osdWindow.s(24)
                         cornerRadius: osdWindow.s(6)
                         horizontalPadding: osdWindow.s(10)
                         buttonText: osdWindow.toggleStatus

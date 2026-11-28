@@ -105,7 +105,7 @@ Item {
                                     function onEqDataChanged() {
                                         if (!eqSlider.pressed) {
                                             if (root.eqData && root.eqData["b" + modelData.idx] !== undefined) {
-                                                var p = Number(root.eqData["b" + modelData.idx]);
+                                                let p = Number(root.eqData["b" + modelData.idx]);
                                                 if (!isNaN(p)) eqSlider.value = p;
                                             }
                                         }
@@ -122,7 +122,7 @@ Item {
 
                                 onPressedChanged: {
                                     if (!pressed) {
-                                        var temp = Object.assign({}, root.eqData);
+                                        let temp = Object.assign({}, root.eqData);
                                         temp["b" + modelData.idx] = Math.round(value);
                                         temp.preset = "Custom";
                                         temp.pending = true;

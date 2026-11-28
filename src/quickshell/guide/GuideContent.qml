@@ -1,9 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
 import "../"
 import "../reusables"
-import "../reusables/buttons"
 
 Item {
     id: contentArea

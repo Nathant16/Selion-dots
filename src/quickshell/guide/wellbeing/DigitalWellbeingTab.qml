@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import "../../reusables"
 
 WellbeingState {
     id: tabRoot

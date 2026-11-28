@@ -59,7 +59,7 @@ FocusScope {
     property string trailingIcon: ""
     property bool showClearButton: false
 
-    property bool enabled: true
+    enabled: true
     property bool hasError: false
     property bool isBusy: false
     readonly property bool hasFocus: root.multiLine ? innerTextEdit.activeFocus : charField.hasFocus

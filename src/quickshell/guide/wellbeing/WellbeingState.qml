@@ -3,7 +3,6 @@ import Quickshell
 import Quickshell.Io
 import "../"
 import "../../"
-import "../../reusables"
 
 GuideTab {
     id: tabRoot

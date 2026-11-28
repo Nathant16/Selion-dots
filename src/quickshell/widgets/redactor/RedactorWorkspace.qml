@@ -1,10 +1,8 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import "../../"
 import ".."
-import "../../reusables"
 import "../../reusables/canvas"
 import "../../reusables/canvas/CanvasGeometry.js" as CanvasGeometry
 
@@ -585,6 +583,7 @@ Item {
         id: layoutFile
         path: (Caching.getStateDir && redactorWindow.safeMonitorName) ? (Caching.getStateDir("widgets/" + redactorWindow.safeMonitorName) + "/layout.json") : ""
         watchChanges: false
+        printErrors: false
         onLoaded: redactorMode.loadLayoutFromText(text())
     }
 

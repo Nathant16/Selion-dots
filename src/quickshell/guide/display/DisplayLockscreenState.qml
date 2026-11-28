@@ -1,5 +1,4 @@
 import QtQuick
-import Quickshell
 import "../"
 import "../../"
 import "../../reusables"
@@ -28,7 +27,7 @@ GuideTab {
     readonly property string currentCustomBackground: lockscreenSettings.customBackground ? String(lockscreenSettings.customBackground) : ""
     readonly property string currentPromptBackdropMode: lockscreenSettings.promptBackdropMode === "wallpaper" ? "wallpaper" : "desktop"
     readonly property string currentWallpaperPath: {
-        Wallpaper.screenWallpaperPaths;
+        let _wp = Wallpaper.screenWallpaperPaths;
         return Wallpaper.getWallpaperPath("");
     }
     readonly property bool customBackgroundActive: displayLockscreenRoot.currentBackgroundMode === "custom" && displayLockscreenRoot.currentCustomBackground !== ""

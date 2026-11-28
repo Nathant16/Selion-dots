@@ -2,7 +2,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import "../../"
-import ".."
 
 PanelWindow {
     id: win
@@ -10,8 +9,8 @@ PanelWindow {
 
     required property var host
 
-    property alias redactorMode: redactorMode
-    property alias activeWidgetsModel: redactorMode.activeWidgetsModel
+    property alias redactorMode: redactorWorkspace
+    property alias activeWidgetsModel: redactorWorkspace.activeWidgetsModel
 
     property string monitorName: {
         if (host.targetMonitorName && host.targetMonitorName !== "") {
@@ -51,14 +50,14 @@ PanelWindow {
     }
 
     function exitRedactor() {
-        redactorMode.selectedId = "";
+        redactorWorkspace.selectedId = "";
         host.targetSelectedWidgetId = "";
         WidgetSync.setRedactMode(win.safeMonitorName, false);
         exitTimer.start();
     }
 
     Component.onDestruction: {
-        redactorMode.selectedId = "";
+        redactorWorkspace.selectedId = "";
         host.targetSelectedWidgetId = "";
         WidgetSync.setRedactMode(win.safeMonitorName, false);
     }
@@ -66,72 +65,72 @@ PanelWindow {
     Shortcut {
         sequence: "Escape"
         onActivated: {
-            if (redactorMode.toolbar.dismiss()) return;
-            redactorMode.selectedId = "";
+            if (redactorWorkspace.toolbar.dismiss()) return;
+            redactorWorkspace.selectedId = "";
             win.exitRedactor();
         }
     }
 
     Shortcut {
         sequence: "Ctrl+Z"
-        onActivated: redactorMode.undo()
+        onActivated: redactorWorkspace.undo()
     }
 
     Shortcut {
         sequences: ["Ctrl+Shift+Z", "Ctrl+Y"]
-        onActivated: redactorMode.redo()
+        onActivated: redactorWorkspace.redo()
     }
 
     Shortcut {
         sequence: "Left"
-        enabled: redactorMode.canNudge
-        onActivated: redactorMode.nudgeSelected(-1, 0, false)
+        enabled: redactorWorkspace.canNudge
+        onActivated: redactorWorkspace.nudgeSelected(-1, 0, false)
     }
 
     Shortcut {
         sequence: "Right"
-        enabled: redactorMode.canNudge
-        onActivated: redactorMode.nudgeSelected(1, 0, false)
+        enabled: redactorWorkspace.canNudge
+        onActivated: redactorWorkspace.nudgeSelected(1, 0, false)
     }
 
     Shortcut {
         sequence: "Up"
-        enabled: redactorMode.canNudge
-        onActivated: redactorMode.nudgeSelected(0, -1, false)
+        enabled: redactorWorkspace.canNudge
+        onActivated: redactorWorkspace.nudgeSelected(0, -1, false)
     }
 
     Shortcut {
         sequence: "Down"
-        enabled: redactorMode.canNudge
-        onActivated: redactorMode.nudgeSelected(0, 1, false)
+        enabled: redactorWorkspace.canNudge
+        onActivated: redactorWorkspace.nudgeSelected(0, 1, false)
     }
 
     Shortcut {
         sequence: "Shift+Left"
-        enabled: redactorMode.canNudge
-        onActivated: redactorMode.nudgeSelected(-1, 0, true)
+        enabled: redactorWorkspace.canNudge
+        onActivated: redactorWorkspace.nudgeSelected(-1, 0, true)
     }
 
     Shortcut {
         sequence: "Shift+Right"
-        enabled: redactorMode.canNudge
-        onActivated: redactorMode.nudgeSelected(1, 0, true)
+        enabled: redactorWorkspace.canNudge
+        onActivated: redactorWorkspace.nudgeSelected(1, 0, true)
     }
 
     Shortcut {
         sequence: "Shift+Up"
-        enabled: redactorMode.canNudge
-        onActivated: redactorMode.nudgeSelected(0, -1, true)
+        enabled: redactorWorkspace.canNudge
+        onActivated: redactorWorkspace.nudgeSelected(0, -1, true)
     }
 
     Shortcut {
         sequence: "Shift+Down"
-        enabled: redactorMode.canNudge
-        onActivated: redactorMode.nudgeSelected(0, 1, true)
+        enabled: redactorWorkspace.canNudge
+        onActivated: redactorWorkspace.nudgeSelected(0, 1, true)
     }
 
     RedactorWorkspace {
-        id: redactorMode
+        id: redactorWorkspace
         host: win.host
         redactorWindow: win
     }

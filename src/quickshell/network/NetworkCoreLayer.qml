@@ -2,11 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
 import QtQuick.Window
-import QtCore
-import Quickshell
-import Quickshell.Io
-import Quickshell.Bluetooth
-import Quickshell.Networking
 import "../"
 import "../reusables"
 
@@ -315,7 +310,7 @@ Item {
 
                         Rectangle {
                             Layout.alignment: Qt.AlignHCenter
-                            Layout.preferredWidth: pwdLayer.width - window.s(30); height: window.s(32)
+                            Layout.preferredWidth: pwdLayer.width - window.s(30); Layout.preferredHeight: window.s(32)
                             radius: ThemeBackend.borderRadius
                             color: ThemeBackend.surface0
                             border.color: wifiPasswordField.activeFocus ? (coreGlass.active ? ThemeBackend.text : ThemeBackend.crust) : "transparent"

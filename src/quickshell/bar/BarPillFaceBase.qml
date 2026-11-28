@@ -1,6 +1,5 @@
 import QtQuick
 import "../reusables"
-import "../"
 
 BarFaceBase {
     id: pillRoot
@@ -18,20 +17,20 @@ BarFaceBase {
     property int acceptedTextButtons: Qt.LeftButton
     property Component pillSourceComponent: null
 
-    readonly property alias pillLoader: pillLoader
-    readonly property alias textLayout: textLayout
+    readonly property alias pillLoader: pillLoaderItem
+    readonly property alias textLayout: textLayoutGrid
     readonly property alias textMouseArea: textMouseArea
-    default property alias textContent: textLayout.data
+    default property alias textContent: textLayoutGrid.data
 
     signal textClicked(var mouse)
     signal textWheel(var wheel)
 
     readonly property real pillLength: {
-        if (!pillLoader.item) return 0;
-        if (useImplicitPillLength) return isVertical ? pillLoader.item.implicitHeight : pillLoader.item.implicitWidth;
-        return isVertical ? pillLoader.item.height : pillLoader.item.width;
+        if (!pillLoaderItem.item) return 0;
+        if (useImplicitPillLength) return isVertical ? pillLoaderItem.item.implicitHeight : pillLoaderItem.item.implicitWidth;
+        return isVertical ? pillLoaderItem.item.height : pillLoaderItem.item.width;
     }
-    readonly property real textLength: isVertical ? textLayout.implicitHeight : textLayout.implicitWidth
+    readonly property real textLength: isVertical ? textLayoutGrid.implicitHeight : textLayoutGrid.implicitWidth
 
     property real targetLength: {
         if (module && !module.moduleActive) return 0;
@@ -81,7 +80,7 @@ BarFaceBase {
     }
 
     AxisFlow {
-        id: textLayout
+        id: textLayoutGrid
         vertical: pillRoot.isVertical
         horizontalItemAlignment: Grid.AlignHCenter
         verticalItemAlignment: Grid.AlignVCenter
@@ -93,7 +92,7 @@ BarFaceBase {
     }
 
     Loader {
-        id: pillLoader
+        id: pillLoaderItem
         visible: !pillRoot.isTextStyle
         anchors.centerIn: parent
         sourceComponent: pillRoot.pillSourceComponent

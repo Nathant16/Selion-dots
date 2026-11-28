@@ -33,7 +33,7 @@ Item {
         ctx.fill();
     }
 
-    property bool enabled: true
+    enabled: true
     property bool inputFocus: false
     property bool showCaret: true
     property bool caretVisible: root.showCaret && (root.hasFocus || root.actionHighlight)

@@ -1,9 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 import Quickshell
 import "../../"
-import "../../reusables"
 import "../"
 
 Notification {
@@ -17,7 +15,7 @@ Notification {
     onCardClicked: {
         var n = delegateWrapper ? delegateWrapper.realNotif : null;
         if (n && n.actions) {
-            for (var i = 0; i < n.actions.length; i++) {
+            for (let i = 0; i < n.actions.length; i++) {
                 if (n.actions[i].identifier === "default") {
                     n.actions[i].invoke();
                     break;

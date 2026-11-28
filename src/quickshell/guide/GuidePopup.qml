@@ -1,13 +1,9 @@
 import QtQuick
 import QtQuick.Window
-import QtQuick.Effects
-import QtQuick.Layouts
 import QtQuick.Controls
-import Quickshell
 import Quickshell.Io
 import "../"
 import "../reusables"
-import "../reusables/buttons"
 import "GuideSearch.js" as GuideSearch
 
 Item {

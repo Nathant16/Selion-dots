@@ -34,8 +34,8 @@ Item {
     }
 
     Component.onDestruction: {
-        preview.active = false;
-        preview.source = "";
+        previewLoader.active = false;
+        previewLoader.source = "";
     }
 
     function bringToFront() {
@@ -46,7 +46,7 @@ Item {
 
     property real selectionGap: s(8)
 
-    property alias preview: preview
+    property alias preview: previewLoader
     property string wType: model.wType || ""
     property string wVariant: model.wVariant || ""
     property string wImagePath: model.wImagePath || ""
@@ -65,10 +65,10 @@ Item {
 
     property var savedAspects: ({})
 
-    readonly property bool isAspectLocked: preview.item && preview.item.minAspect !== undefined && preview.item.maxAspect !== undefined && preview.item.minAspect === preview.item.maxAspect && preview.item.minAspect > 0
+    readonly property bool isAspectLocked: previewLoader.item && previewLoader.item.minAspect !== undefined && previewLoader.item.maxAspect !== undefined && previewLoader.item.minAspect === previewLoader.item.maxAspect && previewLoader.item.minAspect > 0
 
     function applyVariantAndCustomProps() {
-        let item = preview.item;
+        let item = previewLoader.item;
         if (!item) return;
         let vProps = WidgetRegistry.variantProps(widgetProxy.wType, widgetProxy.wVariant);
         if (vProps) CanvasGeometry.applyCustomProps(item, vProps);
@@ -83,7 +83,7 @@ Item {
         let isCorner = ex !== 0 && ey !== 0;
         let free = !redactorMode.gridEnabled && (modifiers & Qt.ControlModifier) === 0;
         let result = CanvasGeometry.calculateRotatedResize({
-            constraints: preview.item,
+            constraints: previewLoader.item,
             startX: widgetProxy.resizeStartX,
             startY: widgetProxy.resizeStartY,
             startW: widgetProxy.resizeStartW,
@@ -100,7 +100,7 @@ Item {
             freeSnap: free,
             otherBoxes: redactorMode.otherBoxes(widgetProxy),
             snapThreshold: redactorMode.snapThreshold,
-            lockedAspect: widgetProxy.isAspectLocked ? preview.item.minAspect : 0
+            lockedAspect: widgetProxy.isAspectLocked ? previewLoader.item.minAspect : 0
         });
 
         model.wWidth = result.w;
@@ -122,7 +122,7 @@ Item {
         }
         let res = CanvasGeometry.rotateBounds(
             model.wX, model.wY, model.wWidth, model.wHeight, widgetProxy.wRotation,
-            preview.item, redactorMode.safeWidth, redactorMode.safeHeight,
+            previewLoader.item, redactorMode.safeWidth, redactorMode.safeHeight,
             { limitY: limitY, gridEnabled: redactorMode.gridEnabled, gridStep: redactorMode.gridStep }
         );
         model.wWidth = res.w;
@@ -163,10 +163,10 @@ Item {
     }
 
     function resetWidgetSize() {
-        let def = getDefaultSize(preview.item);
+        let def = getDefaultSize(previewLoader.item);
         let res = CanvasGeometry.resetBounds(
             model.wX, model.wY, model.wWidth, model.wHeight, widgetProxy.wRotation,
-            def.w, def.h, preview.item, redactorMode.safeWidth, redactorMode.safeHeight,
+            def.w, def.h, previewLoader.item, redactorMode.safeWidth, redactorMode.safeHeight,
             { gridEnabled: redactorMode.gridEnabled, gridStep: redactorMode.gridStep }
         );
         model.wOpacity = res.opacity;
@@ -274,7 +274,7 @@ Item {
         rotation: widgetProxy.wRotation
 
         Loader {
-            id: preview
+            id: previewLoader
             anchors.fill: parent
             opacity: widgetProxy.isSelected ? Math.max(0.35, widgetProxy.wOpacity) : widgetProxy.wOpacity
             source: WidgetRegistry.faceFile(widgetProxy.wType, widgetProxy.wVariant)
@@ -320,7 +320,7 @@ Item {
             anchors.fill: parent
             anchors.margins: -widgetProxy.selectionGap
             active: widgetProxy.isSelected
-            handlesEnabled: preview.status === Loader.Ready
+            handlesEnabled: previewLoader.status === Loader.Ready
             aspectLocked: widgetProxy.isAspectLocked
             rot90: widgetProxy.isRotated90
             unit: Scaler.s(1)
@@ -374,7 +374,7 @@ Item {
 
         itemWidth: model.wWidth
         itemHeight: model.wHeight
-        defaultWidth: widgetProxy.getDefaultSize(preview.item).w
+        defaultWidth: widgetProxy.getDefaultSize(previewLoader.item).w
         itemOpacity: widgetProxy.wOpacity
         showScale: true
         showRotate: true
@@ -386,7 +386,7 @@ Item {
         bottomSettings: WidgetRegistry.additionalSettings(widgetProxy.wType, "bottom", widgetProxy.wVariant)
         variants: WidgetRegistry.variantList(widgetProxy.wType)
         currentVariant: widgetProxy.wVariant
-        targetItem: preview.item
+        targetItem: previewLoader.item
         targetData: widgetProxy.wProps
         typeData: WidgetRegistry.types[widgetProxy.wType]
         hostOwner: redactorMode

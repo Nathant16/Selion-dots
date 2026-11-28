@@ -1068,15 +1068,17 @@ def summarize_error(message):
 
 
 def reload_app(commands):
+    env = dict(os.environ, PATH=search_path())
     for command in commands:
         try:
-            subprocess.Popen(
-                ["bash", "-c", command],
+            subprocess.run(
+                ["bash", "-c", 'nohup bash -c "$1" </dev/null >/dev/null 2>&1 &', "_", command],
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 start_new_session=True,
-                env=dict(os.environ, PATH=search_path()),
+                env=env,
+                check=False,
             )
         except OSError:
             pass

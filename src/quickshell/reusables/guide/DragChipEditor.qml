@@ -348,11 +348,10 @@ Item {
                                     when: dragArea.drag.active
                                     ParentChange { target: floatWrapper; parent: editor }
                                     PropertyChanges {
-                                        target: floatWrapper
-                                        width: chip.btnWidth
-                                        height: editor.s(32)
-                                        opacity: 0.9
-                                        scale: 1.05
+                                        floatWrapper.width: chip.btnWidth
+                                        floatWrapper.height: editor.s(32)
+                                        floatWrapper.opacity: 0.9
+                                        floatWrapper.scale: 1.05
                                     }
                                 }
 

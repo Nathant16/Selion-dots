@@ -1,7 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
-import Quickshell
 import "../"
 import "../reusables"
 import "../launcher/SearchProviders.js" as SearchProviders
@@ -116,9 +114,8 @@ GuideTab {
                     cornerRadius: ThemeBackend.borderRadius
                     fontFamily: ThemeBackend.fontFamily
                     fontPixelSize: rootObj.s(11)
-                    onValueChanged: function(val) {
-                        let num = (typeof val === "number" && !isNaN(val)) ? val : value;
-                        let rounded = Math.round(num);
+                    onValueChanged: {
+                        let rounded = Math.round(value);
                         if (!isNaN(rounded) && rounded >= 320 && rounded <= 1400 && launcherTabRoot.currentWidth !== rounded) {
                             launcherCfg.setDebounced("width", rounded, 150);
                         }
@@ -157,9 +154,8 @@ GuideTab {
                     cornerRadius: ThemeBackend.borderRadius
                     fontFamily: ThemeBackend.fontFamily
                     fontPixelSize: rootObj.s(11)
-                    onValueChanged: function(val) {
-                        let num = (typeof val === "number" && !isNaN(val)) ? val : value;
-                        let rounded = Math.round(num);
+                    onValueChanged: {
+                        let rounded = Math.round(value);
                         if (!isNaN(rounded) && rounded >= 3 && rounded <= 15 && launcherTabRoot.currentItemCount !== rounded) {
                             launcherCfg.setDebounced("itemCount", rounded, 150);
                         }

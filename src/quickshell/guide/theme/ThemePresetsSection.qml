@@ -5,7 +5,7 @@ import "../../reusables"
 import "../../reusables/guide"
 
 Rectangle {
-    id: section
+    id: sectionRoot
     required property var tab
     readonly property var rootObj: tab.rootObj
 
@@ -32,7 +32,7 @@ Rectangle {
 
         SettingsRow {
             id: colorSchemesRow
-            rootObj: section.tab.rootObj
+            rootObj: sectionRoot.tab.rootObj
             settingId: "colors"
             icon: "󰏘"
             title: I18n.t("guide.theme.colors.title")
@@ -55,7 +55,7 @@ Rectangle {
                 textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.overlay2
                 onClicked: {
                     if (typeof Sounds !== "undefined") Sounds.playSfx("reusables/clickbutton/click.wav");
-                    section.tab.openThemeEditorForNew();
+                    sectionRoot.tab.openThemeEditorForNew();
                 }
             }
 
@@ -72,13 +72,13 @@ Rectangle {
                 cornerRadius: ThemeBackend.borderRadius
                 fontPixelSize: rootObj.s(11)
                 charSpacing: 1
-                onTextEdited: newText => section.tab.themeSearchText = newText
+                onTextEdited: newText => sectionRoot.tab.themeSearchText = newText
             }
         }
 
         Rectangle {
             Layout.fillWidth: true
-            height: 1
+            Layout.preferredHeight: 1
             color: Qt.alpha(ThemeBackend.surface1, 0.3)
         }
 
@@ -94,13 +94,13 @@ Rectangle {
             columnSpacing: rootObj.s(10)
 
             Repeater {
-                model: section.tab.filteredUserPresets
-                delegate: ThemePresetDelegate { tab: section.tab }
+                model: sectionRoot.tab.filteredUserPresets
+                delegate: ThemePresetDelegate { tab: sectionRoot.tab }
             }
 
             Repeater {
-                model: section.tab.filteredSystemPresets
-                delegate: ThemePresetDelegate { tab: section.tab }
+                model: sectionRoot.tab.filteredSystemPresets
+                delegate: ThemePresetDelegate { tab: sectionRoot.tab }
             }
         }
     }

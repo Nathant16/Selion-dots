@@ -175,12 +175,11 @@ Item {
                 when: dockButton.isBeingDragged
                 ParentChange { target: floatWrapper; parent: dockWindow.dragOverlay }
                 PropertyChanges {
-                    target: floatWrapper
-                    width: dockButton.btnSize
-                    height: dockButton.btnSize
-                    scale: 1.15
-                    opacity: 0.92
-                    z: 999999
+                    floatWrapper.width: dockButton.btnSize
+                    floatWrapper.height: dockButton.btnSize
+                    floatWrapper.scale: 1.15
+                    floatWrapper.opacity: 0.92
+                    floatWrapper.z: 999999
                 }
             }
         ]
@@ -281,18 +280,46 @@ Item {
                 NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
             }
 
-            anchors.horizontalCenter: !dockWindow.isVertical ? parent.horizontalCenter : undefined
-            anchors.verticalCenter: dockWindow.isVertical ? parent.verticalCenter : undefined
-
-            anchors.bottom: dockWindow.dockPosition === "bottom" ? parent.bottom : undefined
-            anchors.top: dockWindow.dockPosition === "top" ? parent.top : undefined
-            anchors.left: dockWindow.dockPosition === "left" ? parent.left : undefined
-            anchors.right: dockWindow.dockPosition === "right" ? parent.right : undefined
-
             anchors.bottomMargin: dockWindow.dockPosition === "bottom" ? dockWindow.s(2) : 0
             anchors.topMargin: dockWindow.dockPosition === "top" ? dockWindow.s(2) : 0
             anchors.leftMargin: dockWindow.dockPosition === "left" ? dockWindow.s(2) : 0
             anchors.rightMargin: dockWindow.dockPosition === "right" ? dockWindow.s(2) : 0
+
+            state: dockWindow.dockPosition
+            states: [
+                State {
+                    name: "bottom"
+                    AnchorChanges {
+                        target: indicatorContainer
+                        anchors.horizontalCenter: indicatorContainer.parent.horizontalCenter
+                        anchors.bottom: indicatorContainer.parent.bottom
+                    }
+                },
+                State {
+                    name: "top"
+                    AnchorChanges {
+                        target: indicatorContainer
+                        anchors.horizontalCenter: indicatorContainer.parent.horizontalCenter
+                        anchors.top: indicatorContainer.parent.top
+                    }
+                },
+                State {
+                    name: "left"
+                    AnchorChanges {
+                        target: indicatorContainer
+                        anchors.verticalCenter: indicatorContainer.parent.verticalCenter
+                        anchors.left: indicatorContainer.parent.left
+                    }
+                },
+                State {
+                    name: "right"
+                    AnchorChanges {
+                        target: indicatorContainer
+                        anchors.verticalCenter: indicatorContainer.parent.verticalCenter
+                        anchors.right: indicatorContainer.parent.right
+                    }
+                }
+            ]
 
             width: dockWindow.isVertical ? dockWindow.s(4) : contentRow.implicitWidth
             height: dockWindow.isVertical ? contentCol.implicitHeight : dockWindow.s(4)

@@ -1,9 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
-import Quickshell
 import "../../"
-import "../../reusables"
 import "../"
 import "../weather"
 
@@ -19,11 +16,11 @@ Notification {
         if (n) {
             parts.push(n.image, n.imagePath, n.appIcon);
         }
-        for (var i = 0; i < parts.length; i++) {
-            var p = parts[i];
+        for (let i = 0; i < parts.length; i++) {
+            let p = parts[i];
             if (p === undefined || p === null) continue;
-            var str = p.toString();
-            var m = /weather-kind-([a-z_]+)/.exec(str);
+            let str = p.toString();
+            let m = /weather-kind-([a-z_]+)/.exec(str);
             if (m) return m[1];
         }
         return "";

@@ -1,7 +1,5 @@
 pragma Singleton
 import QtQuick
-import Quickshell
-import "../../"
 
 Item {
     id: controller

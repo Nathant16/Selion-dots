@@ -1,6 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
-import "../../../reusables"
 import "../../../"
 
 Item {

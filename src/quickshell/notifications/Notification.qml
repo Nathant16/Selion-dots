@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 import Quickshell
 import "../"
 import "../reusables"
@@ -327,10 +326,10 @@ Rectangle {
                 if (overrideClick) {
                     typeRoot.cardClicked();
                 } else {
-                    var n = delegateWrapper ? delegateWrapper.realNotif : null;
+                    let n = delegateWrapper ? delegateWrapper.realNotif : null;
                     if (n && n.actions && n.actions.length > 0) {
-                        var mainAction = null;
-                        for (var i = 0; i < n.actions.length; i++) {
+                        let mainAction = null;
+                        for (let i = 0; i < n.actions.length; i++) {
                             if (n.actions[i].identifier === "default") {
                                 mainAction = n.actions[i];
                                 break;
@@ -881,7 +880,7 @@ Rectangle {
                                     onTriggered: {
                                         var n = delegateWrapper ? delegateWrapper.realNotif : null;
                                         if (n && n.actions) {
-                                            for (var i = 0; i < n.actions.length; i++) {
+                                            for (let i = 0; i < n.actions.length; i++) {
                                                 if (n.actions[i].identifier === modelData.id) {
                                                     n.actions[i].invoke();
                                                     break;

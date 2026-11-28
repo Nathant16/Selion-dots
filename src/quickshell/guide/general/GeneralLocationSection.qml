@@ -5,22 +5,22 @@ import "../../reusables"
 import "../../reusables/guide"
 
 SettingsBlob {
-    id: section
+    id: sectionRoot
     required property var tab
     readonly property var rootObj: tab.rootObj
     property alias latInput: latInput
     property alias lonInput: lonInput
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "general_location"
         icon: "󰍎"
         title: I18n.t("guide.general.location.title")
         description: I18n.t("guide.general.location.desc")
         searchKeywords: "location coordinates city latitude longitude gps weather sunset"
-        showDivider: section.tab.isLocEditOpen
+        showDivider: sectionRoot.tab.isLocEditOpen
         dividerColor: Qt.alpha(ThemeBackend.surface1, 0.2)
-        innerSpacing: section.tab.isLocEditOpen ? rootObj.s(12) : 0
+        innerSpacing: sectionRoot.tab.isLocEditOpen ? rootObj.s(12) : 0
         Behavior on innerSpacing { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
         LoaderIcon {
@@ -44,7 +44,7 @@ SettingsBlob {
             iconFontSize: rootObj.s(15)
             textFontSize: rootObj.s(12)
             onTriggered: {
-                section.tab.isLocEditOpen = false;
+                sectionRoot.tab.isLocEditOpen = false;
                 Location.detectAuto();
             }
         }
@@ -55,9 +55,9 @@ SettingsBlob {
             cornerRadius: ThemeBackend.borderRadius
             buttonIcon: "󰏫"
             iconFontSize: rootObj.s(16)
-            accentColor: section.tab.isLocEditOpen ? ThemeBackend.surface1 : ThemeBackend.surface0
-            textColor: section.tab.isLocEditOpen ? ThemeBackend.mauve : ThemeBackend.text
-            onClicked: section.tab.isLocEditOpen = !section.tab.isLocEditOpen
+            accentColor: sectionRoot.tab.isLocEditOpen ? ThemeBackend.surface1 : ThemeBackend.surface0
+            textColor: sectionRoot.tab.isLocEditOpen ? ThemeBackend.mauve : ThemeBackend.text
+            onClicked: sectionRoot.tab.isLocEditOpen = !sectionRoot.tab.isLocEditOpen
         }
 
         ClickButton {
@@ -70,7 +70,7 @@ SettingsBlob {
             horizontalPadding: rootObj.s(12)
             iconFontSize: rootObj.s(15)
             textFontSize: rootObj.s(12)
-            onTriggered: section.tab.openLocationPopup()
+            onTriggered: sectionRoot.tab.openLocationPopup()
         }
 
         bottomContent: [
@@ -78,9 +78,9 @@ SettingsBlob {
                 Layout.fillWidth: true
                 spacing: rootObj.s(12)
                 clip: true
-                visible: section.tab.isLocEditOpen || opacity > 0.01
-                opacity: section.tab.isLocEditOpen ? 1.0 : 0.0
-                property real openProgress: section.tab.isLocEditOpen ? 1 : 0
+                visible: sectionRoot.tab.isLocEditOpen || opacity > 0.01
+                opacity: sectionRoot.tab.isLocEditOpen ? 1.0 : 0.0
+                property real openProgress: sectionRoot.tab.isLocEditOpen ? 1 : 0
                 Layout.preferredHeight: implicitHeight * openProgress
                 Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 Behavior on openProgress { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }

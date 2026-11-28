@@ -1,7 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
-import Quickshell
 import "../../"
 import "../"
 
@@ -68,7 +65,7 @@ FocusScope {
     readonly property real scrollOffset: charField.scrollOffset
     property int activeShapeIdx: 0
 
-    property bool enabled: true
+    enabled: true
     property bool hasError: false
     property bool hasSuccess: false
     property bool _markedError: false
@@ -170,7 +167,7 @@ FocusScope {
 
     function verify(validatorFn) {
         if (typeof validatorFn === "function") {
-            var isValid = validatorFn(charField.inputText);
+            let isValid = validatorFn(charField.inputText);
             if (isValid) {
                 root.markSuccess();
             } else {
@@ -477,10 +474,10 @@ FocusScope {
                 }
 
                 if (root.isBusy && lockButton.spinBlur > 0.02) {
-                    var blurPasses = 3;
-                    for (var i = blurPasses; i >= 1; i--) {
-                        var trailAngle = lockButton.busyRotation - (i * lockButton.spinBlur * 16);
-                        var trailAlpha = (0.24 / i) * lockButton.spinBlur;
+                    let blurPasses = 3;
+                    for (let i = blurPasses; i >= 1; i--) {
+                        let trailAngle = lockButton.busyRotation - (i * lockButton.spinBlur * 16);
+                        let trailAlpha = (0.24 / i) * lockButton.spinBlur;
                         renderLockGraphic(trailAngle, trailAlpha);
                     }
                 }

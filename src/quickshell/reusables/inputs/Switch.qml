@@ -1,6 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
 import "../"
 import "../../"
 
@@ -23,7 +21,7 @@ Item {
     property int fontPixelSize: 11
     property int minFontPixelSize: 7
     property real horizontalPadding: 10
-    property bool enabled: true
+    enabled: true
     property string switchSound: "reusables/switch/sfx.wav"
 
     signal valueChanged(int index, string value)
@@ -50,9 +48,9 @@ Item {
         var totalNeeded = 0;
         var maxNeeded = 0;
 
-        for (var i = 0; i < count; i++) {
-            var it = tabsRepeater.itemAt(i);
-            var req = it ? it.fitWidth : 28;
+        for (let i = 0; i < count; i++) {
+            let it = tabsRepeater.itemAt(i);
+            let req = it ? it.fitWidth : 28;
             needs.push(req);
             totalNeeded += req;
             if (req > maxNeeded) {
@@ -72,14 +70,14 @@ Item {
         var widths = [];
 
         if (maxNeeded <= equalW) {
-            for (var i = 0; i < count; i++) {
+            for (let i = 0; i < count; i++) {
                 widths.push(equalW);
             }
         } else if (availableW >= totalNeeded) {
-            var totalDeficit = 0;
-            var totalSurplus = 0;
+            let totalDeficit = 0;
+            let totalSurplus = 0;
 
-            for (var i = 0; i < count; i++) {
+            for (let i = 0; i < count; i++) {
                 if (needs[i] > equalW) {
                     totalDeficit += (needs[i] - equalW);
                 } else {
@@ -87,10 +85,10 @@ Item {
                 }
             }
 
-            var f = totalSurplus > 0 ? (totalDeficit / totalSurplus) : 0;
+            let f = totalSurplus > 0 ? (totalDeficit / totalSurplus) : 0;
             if (f > 1.0) f = 1.0;
 
-            for (var i = 0; i < count; i++) {
+            for (let i = 0; i < count; i++) {
                 if (needs[i] > equalW) {
                     widths.push(needs[i]);
                 } else {
@@ -98,7 +96,7 @@ Item {
                 }
             }
         } else {
-            for (var i = 0; i < count; i++) {
+            for (let i = 0; i < count; i++) {
                 widths.push(totalNeeded > 0 ? (availableW * (needs[i] / totalNeeded)) : equalW);
             }
         }

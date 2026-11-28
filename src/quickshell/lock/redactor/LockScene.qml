@@ -1,7 +1,6 @@
 import QtQuick
 import Quickshell
 import "../../"
-import "../../widgets"
 import "../../reusables/canvas"
 import "../../reusables/canvas/CanvasGeometry.js" as CanvasGeometry
 

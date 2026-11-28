@@ -5,14 +5,14 @@ import "../../reusables"
 import "../../reusables/guide"
 
 SettingsBlob {
-    id: section
+    id: sectionRoot
     required property var tab
     readonly property var rootObj: tab.rootObj
     property alias avatarDropdown: avatarDropdown
     property alias langDropdown: langDropdown
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "general_avatar"
         icon: "󰀄"
         title: I18n.t("guide.general.avatar.title") || "Profile picture"
@@ -37,7 +37,7 @@ SettingsBlob {
                     horizontalPadding: rootObj.s(14)
                     iconFontSize: rootObj.s(15)
                     textFontSize: rootObj.s(11)
-                    onTriggered: section.tab.openImagePicker(section.tab.currentAvatarSourcePath)
+                    onTriggered: sectionRoot.tab.openImagePicker(sectionRoot.tab.currentAvatarSourcePath)
                 }
 
                 PathDropdown {
@@ -45,10 +45,10 @@ SettingsBlob {
                     Layout.alignment: Qt.AlignRight
                     implicitWidth: rootObj.s(280)
                     implicitHeight: rootObj.s(32)
-                    options: section.tab.currentAvatarSourcePath !== "" ? [section.tab.currentAvatarSourcePath] : []
+                    options: sectionRoot.tab.currentAvatarSourcePath !== "" ? [sectionRoot.tab.currentAvatarSourcePath] : []
                     currentIndex: 0
                     fuzzySearch: true
-                    placeholderText: section.tab.currentAvatarSourcePath !== "" ? section.tab.currentAvatarSourcePath : I18n.t("guide.general.avatar.placeholder", "Select image path...")
+                    placeholderText: sectionRoot.tab.currentAvatarSourcePath !== "" ? sectionRoot.tab.currentAvatarSourcePath : I18n.t("guide.general.avatar.placeholder", "Select image path...")
                     fontFamily: ThemeBackend.fontFamily
                     accentColor: ThemeBackend.mauve
                     baseColor: ThemeBackend.surface0
@@ -60,22 +60,22 @@ SettingsBlob {
                     cornerRadius: ThemeBackend.borderRadius
                     fontPixelSize: rootObj.s(11)
                     onValueChanged: function(index, value) {
-                        section.tab.setGeneralSetting("avatarPath", value);
+                        sectionRoot.tab.setGeneralSetting("avatarPath", value);
                     }
                     onSelected: function(index, value) {
-                        section.tab.setGeneralSetting("avatarPath", value);
+                        sectionRoot.tab.setGeneralSetting("avatarPath", value);
                     }
                 }
             }
 
             AvatarPreview {
-                tab: section.tab
+                tab: sectionRoot.tab
             }
         }
     }
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "general_language"
         searchKeywords: "language locale translation i18n english interface region"
         icon: "󰗊"
@@ -86,9 +86,9 @@ SettingsBlob {
             id: langDropdown
             implicitWidth: rootObj.s(180)
             implicitHeight: rootObj.s(32)
-            options: section.tab.languageNames
+            options: sectionRoot.tab.languageNames
             currentIndex: {
-                let idx = section.tab.languageCodes.indexOf(section.tab.currentLanguage);
+                let idx = sectionRoot.tab.languageCodes.indexOf(sectionRoot.tab.currentLanguage);
                 return idx !== -1 ? idx : 0;
             }
             accentColor: ThemeBackend.mauve
@@ -101,7 +101,7 @@ SettingsBlob {
             cornerRadius: ThemeBackend.borderRadius
             fontPixelSize: rootObj.s(11)
             onValueChanged: function(index, value) {
-                section.tab.setGeneralSetting("language", section.tab.languageCodes[index]);
+                sectionRoot.tab.setGeneralSetting("language", sectionRoot.tab.languageCodes[index]);
             }
         }
     }

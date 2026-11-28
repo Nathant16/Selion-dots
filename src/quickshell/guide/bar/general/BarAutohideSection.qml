@@ -5,32 +5,32 @@ import "../../../reusables"
 import "../../../reusables/guide"
 
 SettingsGroup {
-    id: section
+    id: sectionRoot
     required property var tab
-    rootObj: section.tab.rootObj
+    rootObj: sectionRoot.tab.rootObj
     settingId: "bar_autohide"
     searchKeywords: "bar autohide auto hide hover edge conceal"
     icon: "󰈉"
     title: I18n.t("guide.bar.autohide.title")
     description: I18n.t("guide.bar.autohide.desc")
-    expanded: section.tab.autohide
+    expanded: sectionRoot.tab.autohide
 
     Toggle {
         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-        checked: section.tab.autohide
+        checked: sectionRoot.tab.autohide
         accentColor: ThemeBackend.mauve
         baseColor: ThemeBackend.surface1
         handleColor: ThemeBackend.crust
         handleOffColor: ThemeBackend.text
         onToggled: function(c) {
-            section.tab.clearPendingGroup();
-            section.tab.setBarSetting("autohide", c);
+            sectionRoot.tab.clearPendingGroup();
+            sectionRoot.tab.setBarSetting("autohide", c);
         }
     }
 
     subSettings: [
         SettingsRow {
-            rootObj: section.tab.rootObj
+            rootObj: sectionRoot.tab.rootObj
             settingId: "bar_autohide_timeout"
             searchKeywords: "bar autohide timeout delay ms duration hide"
             icon: "󰔛"
@@ -49,20 +49,20 @@ SettingsGroup {
                 defaultValue: 1000
                 showValueBubble: true
                 valueFormatter: function(v) { return Math.round(v) + " ms" }
-                value: section.tab.autohideTimeout
+                value: sectionRoot.tab.autohideTimeout
                 backgroundColor: ThemeBackend.surface0
                 accentColor: ThemeBackend.mauve
                 handleColor: ThemeBackend.text
                 handleBorderColor: ThemeBackend.mantle
                 onMoved: function(val) {
-                    section.tab.clearPendingGroup();
+                    sectionRoot.tab.clearPendingGroup();
                     let rounded = Math.round(val);
-                    if (section.tab.autohideTimeout !== rounded) {
-                        section.tab.setBarSettingDebounced("autohideTimeout", rounded);
+                    if (sectionRoot.tab.autohideTimeout !== rounded) {
+                        sectionRoot.tab.setBarSettingDebounced("autohideTimeout", rounded);
                     }
                 }
                 onDragFinished: {
-                    section.tab.flushBarSettings();
+                    sectionRoot.tab.flushBarSettings();
                 }
             }
         }

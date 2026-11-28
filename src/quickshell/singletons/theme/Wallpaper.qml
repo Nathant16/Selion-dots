@@ -18,7 +18,12 @@ Item {
     readonly property string wallpaperDir: {
         let _raw = (typeof Config !== "undefined") ? Config.rawSettings : null;
         let fromCfg = (typeof Config !== "undefined") ? (Config.peekSetting("wallpaperDir", "") || Config.peekSetting("wallpaper_dir", "")) : "";
-        return fromCfg || Quickshell.env("WALLPAPER_DIR") || (Caching.xdgPicturesDir + "/Wallpapers");
+        let p = String(fromCfg || Quickshell.env("WALLPAPER_DIR") || (Caching.xdgPicturesDir + "/Wallpapers")).trim();
+        if (p.startsWith("file://")) p = p.substring(7);
+        let home = Quickshell.env("HOME") || "";
+        if (home !== "" && (p.startsWith("~/") || p === "~")) p = home + p.substring(1);
+        while (p.length > 1 && p.endsWith("/")) p = p.substring(0, p.length - 1);
+        return p;
     }
 
     readonly property string listScript:

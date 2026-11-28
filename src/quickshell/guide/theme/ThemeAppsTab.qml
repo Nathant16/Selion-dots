@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import "../"
 import "../../"
 import "../../reusables"
@@ -114,7 +113,7 @@ GuideTab {
 
                     Rectangle {
                         Layout.fillWidth: true
-                        height: 1
+                        Layout.preferredHeight: 1
                         color: Qt.alpha(ThemeBackend.surface1, 0.3)
                     }
 

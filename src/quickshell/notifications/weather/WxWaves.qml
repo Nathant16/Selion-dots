@@ -16,10 +16,10 @@ WxHero {
 
     function crest(b, amp, cycles, drift, p) {
         var d = "";
-        for (var i = 0; i <= 40; i++) {
-            var x = i * 2.5;
-            var t = x / 100;
-            var y = b + amp * Math.sin((t * cycles + p * drift) * Math.PI * 2)
+        for (let i = 0; i <= 40; i++) {
+            let x = i * 2.5;
+            let t = x / 100;
+            let y = b + amp * Math.sin((t * cycles + p * drift) * Math.PI * 2)
                 + amp * 0.3 * Math.sin((t * cycles * 2 - p * drift) * Math.PI * 2);
             d += (i === 0 ? "M " : " L ") + x + " " + y;
         }

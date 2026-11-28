@@ -1,8 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
-import Quickshell
-import Quickshell.Io
 import "../"
 import "../reusables"
 import "../reusables/guide"
@@ -484,9 +481,8 @@ GuideTab {
                 cornerRadius: ThemeBackend.borderRadius
                 fontFamily: ThemeBackend.fontFamily
                 fontPixelSize: rootObj.s(11)
-                onValueChanged: function(val) {
-                    let num = (typeof val === "number" && !isNaN(val)) ? val : value;
-                    let rounded = Math.round(num);
+                onValueChanged: {
+                    let rounded = Math.round(value);
                     if (!isNaN(rounded) && rounded >= 10 && rounded <= 7200 && actionCard.actTimeout !== rounded) {
                         actionCard.queuePropUpdate("timeout", rounded);
                     }
@@ -658,9 +654,8 @@ GuideTab {
                                 cornerRadius: ThemeBackend.borderRadius
                                 fontFamily: ThemeBackend.fontFamily
                                 fontPixelSize: rootObj.s(11)
-                                onValueChanged: function(val) {
-                                    let num = (typeof val === "number" && !isNaN(val)) ? val : value;
-                                    let rounded = Math.max(0, Math.round(num));
+                                onValueChanged: {
+                                    let rounded = Math.max(0, Math.round(value));
                                     if (!isNaN(rounded) && actionCard.actWarningTimeout !== rounded) {
                                         actionCard.queuePropUpdate("warningTimeout", rounded);
                                     }

@@ -1,9 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Effects
 import QtQuick.Window
-import QtCore
-import Quickshell
 import Quickshell.Io
 import Quickshell.Bluetooth
 import Quickshell.Networking
@@ -1557,22 +1554,22 @@ HostedPanel {
                     if (!popupWindowRoot.currentConn || !popupWindowRoot.showInfoView || !popupWindowRoot.currentPower || popupWindowRoot.lightningStrikeProg <= 0.001) {
                         return beams;
                     }
-                    for (var i = 0; i < cardLayer.repeater.count; i++) {
-                        var item = cardLayer.repeater.itemAt(i);
+                    for (let i = 0; i < cardLayer.repeater.count; i++) {
+                        let item = cardLayer.repeater.itemAt(i);
                         if (!item || !item.isLoaded) continue;
 
-                        var targetX = item.x + item.width / 2;
-                        var targetY = item.y + item.height / 2;
+                        let targetX = item.x + item.width / 2;
+                        let targetY = item.y + item.height / 2;
 
                         if (typeof item.myParentIdx === "number" && item.myParentIdx === -1) {
-                            for (var c = 0; c < coreLayer.repeater.count; c++) {
-                                var cItem = coreLayer.repeater.itemAt(c);
+                            for (let c = 0; c < coreLayer.repeater.count; c++) {
+                                let cItem = coreLayer.repeater.itemAt(c);
                                 if (cItem && cItem.activeTransition > 0.01) {
                                     beams.push(Qt.vector4d(cItem.x + cItem.width / 2, cItem.y + cItem.height / 2, targetX, targetY));
                                 }
                             }
                         } else if (typeof item.myParentIdx === "number" && item.myParentIdx >= 0 && item.myParentIdx < coreLayer.repeater.count) {
-                            var pItem = coreLayer.repeater.itemAt(item.myParentIdx);
+                            let pItem = coreLayer.repeater.itemAt(item.myParentIdx);
                             if (pItem && pItem.activeTransition > 0.01) {
                                 beams.push(Qt.vector4d(pItem.x + pItem.width / 2, pItem.y + pItem.height / 2, targetX, targetY));
                             }
@@ -1603,12 +1600,12 @@ HostedPanel {
                 function updateBeams() {
                     var beams = calcActiveBeams();
                     var none = Qt.vector4d(-1, -1, -1, -1);
-                    for (var i = 0; i < 16; i++) nodeLinesCanvas["beam" + i] = i < beams.length ? beams[i] : none;
+                    for (let i = 0; i < 16; i++) nodeLinesCanvas["beam" + i] = i < beams.length ? beams[i] : none;
                     beamCount = Math.min(16.0, beams.length);
 
                     var r = 0;
-                    for (var c = 0; c < coreLayer.repeater.count; c++) {
-                        var cItem = coreLayer.repeater.itemAt(c);
+                    for (let c = 0; c < coreLayer.repeater.count; c++) {
+                        let cItem = coreLayer.repeater.itemAt(c);
                         if (cItem && cItem.activeTransition > 0.01) r = Math.max(r, cItem.width * cItem.scale / 2);
                     }
                     coreRadius = r;

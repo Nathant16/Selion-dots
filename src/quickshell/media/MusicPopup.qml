@@ -17,7 +17,7 @@ MusicEqualizerState {
     property alias toAudioAnim: toAudioAnim
     property alias toEqAnim: toEqAnim
     property alias toLyricsAnim: toLyricsAnim
-    property alias lyricsPickerPopup: lyricsPickerPopup
+    property alias lyricsPickerPopup: lyricsPickerModal
 
     function startExit(onFinished) {
         introAnim.stop();
@@ -79,8 +79,8 @@ MusicEqualizerState {
             triggerLocalArtFetch();
         } else {
             exitAnim.stop();
-            if (lyricsPickerPopup.visible || lyricsPickerPopup.opened) {
-                lyricsPickerPopup.closePicker();
+            if (lyricsPickerModal.visible || lyricsPickerModal.opened) {
+                lyricsPickerModal.closePicker();
             }
             if (popupRoot.eqData && popupRoot.eqData.pending) {
                 popupRoot.restoreLastSavedEqualizer();
@@ -354,7 +354,7 @@ MusicEqualizerState {
     }
 
     LyricsPicker {
-        id: lyricsPickerPopup
+        id: lyricsPickerModal
         targetScreen: (popupRoot.Window && popupRoot.Window.window) ? popupRoot.Window.window.screen : null
         onLyricsSelected: function(filePath, fileName) {
             Lyrics.loadLocalLyricsFile(filePath);

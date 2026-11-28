@@ -6,13 +6,13 @@ import "../../reusables"
 import "../../reusables/guide"
 
 SettingsBlob {
-    id: section
+    id: sectionRoot
     required property var tab
     readonly property var rootObj: tab.rootObj
     property alias soundDropdown: soundDropdown
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "notifications_sound"
         searchKeywords: "notifications sound audio chime ping alert tone"
         icon: "󰂚"
@@ -21,22 +21,22 @@ SettingsBlob {
 
         Toggle {
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            checked: section.tab.soundEnabled
+            checked: sectionRoot.tab.soundEnabled
             accentColor: ThemeBackend.mauve
             baseColor: ThemeBackend.surface1
             handleColor: ThemeBackend.crust
             handleOffColor: ThemeBackend.text
             onToggled: function(c) {
-                section.tab.updateNotifSetting("sound", c);
+                sectionRoot.tab.updateNotifSetting("sound", c);
             }
         }
     }
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "notifications_sound_file"
         searchKeywords: "notifications sound file ringtone chime wav ogg mp3 custom audio"
-        visible: section.tab.soundEnabled
+        visible: sectionRoot.tab.soundEnabled
         icon: "󰎆"
         title: I18n.t("guide.notifications.sound_file.title")
         description: I18n.t("guide.notifications.sound_file.desc")
@@ -66,7 +66,7 @@ SettingsBlob {
             iconFontSize: rootObj.s(14)
             accentColor: ThemeBackend.surface0
             textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.overlay2
-            onClicked: section.tab.soundPickerPopup.openPicker()
+            onClicked: sectionRoot.tab.soundPickerPopup.openPicker()
         }
 
         Dropdown {
@@ -74,10 +74,10 @@ SettingsBlob {
             Layout.alignment: Qt.AlignVCenter
             Layout.preferredWidth: rootObj.s(180)
             Layout.preferredHeight: rootObj.s(32)
-            options: section.tab.availableSounds
+            options: sectionRoot.tab.availableSounds
             currentIndex: {
-                for (let i = 0; i < section.tab.soundList.length; i++) {
-                    if (section.tab.soundList[i].path === section.tab.selectedSound) {
+                for (let i = 0; i < sectionRoot.tab.soundList.length; i++) {
+                    if (sectionRoot.tab.soundList[i].path === sectionRoot.tab.selectedSound) {
                         return i;
                     }
                 }
@@ -93,9 +93,9 @@ SettingsBlob {
             cornerRadius: ThemeBackend.borderRadius
             fontPixelSize: rootObj.s(11)
             onSelected: function(index, value) {
-                if (index >= 0 && index < section.tab.soundList.length) {
-                    let targetPath = section.tab.soundList[index].path;
-                    section.tab.updateNotifSetting("soundFile", targetPath);
+                if (index >= 0 && index < sectionRoot.tab.soundList.length) {
+                    let targetPath = sectionRoot.tab.soundList[index].path;
+                    sectionRoot.tab.updateNotifSetting("soundFile", targetPath);
                     if (typeof Sounds !== "undefined" && typeof Sounds.play === "function") {
                         Sounds.play(targetPath);
                     }

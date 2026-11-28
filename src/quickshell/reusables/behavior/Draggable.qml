@@ -1,6 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
 import "../../"
 import "../"
 
@@ -43,7 +41,7 @@ Item {
     property real handleSize: root.vertical ? root.width : root.height
     property real handleRadius: handleSize / 2
 
-    property bool enabled: true
+    enabled: true
     property bool isDragging: false
     property bool action_highlight: false
     property bool alwaysShowHandle: false

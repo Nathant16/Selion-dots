@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Controls
-import QtQuick.Shapes
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland

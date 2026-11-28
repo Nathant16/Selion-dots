@@ -5,23 +5,23 @@ import "../../reusables"
 import "../../reusables/guide"
 
 SettingsGroup {
-    id: section
+    id: sectionRoot
     required property var tab
 
     readonly property bool carouselEnabled: Config.getSetting("wallpaperCarousel.enabled", false) === true
     readonly property int carouselInterval: Wallpaper.clampCarouselInterval(Config.getSetting("wallpaperCarousel.interval", Wallpaper.carouselDefaultInterval))
 
-    rootObj: section.tab.rootObj
+    rootObj: sectionRoot.tab.rootObj
     settingId: "wallpaper_carousel"
     searchKeywords: "wallpaper carousel slideshow rotate cycle random automatic change shuffle timer"
     icon: "󰸉"
     title: I18n.t("guide.theme.wallpaper.carousel.title", "Wallpaper carousel")
     description: I18n.t("guide.theme.wallpaper.carousel.desc", "Show a random wallpaper from the directory on a schedule, going through every wallpaper before any repeats")
-    expanded: section.carouselEnabled
+    expanded: sectionRoot.carouselEnabled
 
     Toggle {
         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-        checked: section.carouselEnabled
+        checked: sectionRoot.carouselEnabled
         accentColor: ThemeBackend.mauve
         baseColor: ThemeBackend.surface1
         handleColor: ThemeBackend.crust
@@ -33,7 +33,7 @@ SettingsGroup {
 
     subSettings: [
         SettingsRow {
-            rootObj: section.tab.rootObj
+            rootObj: sectionRoot.tab.rootObj
             settingId: "wallpaper_carousel_interval"
             searchKeywords: "wallpaper carousel interval frequency how often seconds period delay timer"
             baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
@@ -51,7 +51,7 @@ SettingsGroup {
                 stepSize: 10
                 decimals: 0
                 suffix: "s"
-                value: section.carouselInterval
+                value: sectionRoot.carouselInterval
                 baseColor: ThemeBackend.surface0
                 accentColor: ThemeBackend.mauve
                 buttonColor: ThemeBackend.surface1
@@ -64,7 +64,7 @@ SettingsGroup {
                 fontPixelSize: rootObj.s(11)
                 onValueChanged: {
                     let v = Wallpaper.clampCarouselInterval(intervalSelector.value);
-                    if (section.carouselInterval !== v) {
+                    if (sectionRoot.carouselInterval !== v) {
                         Config.setSetting("wallpaperCarousel.interval", v);
                     }
                 }

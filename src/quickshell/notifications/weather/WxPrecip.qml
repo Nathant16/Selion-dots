@@ -18,7 +18,7 @@ Item {
     readonly property int stride: {
         var n = Math.max(1, count);
         var s = Math.max(1, Math.round(n * 0.618));
-        var gcd = function (a, b) { while (b) { var t = a % b; a = b; b = t; } return a; };
+        var gcd = function (a, b) { while (b) { let t = a % b; a = b; b = t; } return a; };
         while (gcd(s, n) !== 1) s++;
         return s;
     }

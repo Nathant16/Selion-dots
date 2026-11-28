@@ -68,7 +68,7 @@ Item {
 
     function resolveColor(token, fallback) {
         if (typeof ThemeBackend !== "undefined" && ThemeBackend.matugenColors) {
-            var val = ThemeBackend.matugenColors[token];
+            let val = ThemeBackend.matugenColors[token];
             if (val) {
                 if (typeof val === "string") return Qt.color(val);
                 if (typeof val === "object") {

@@ -547,7 +547,7 @@ GuideTab {
             reloadPresets();
             reloadMonitors();
         } else {
-            savePresetPopup.close();
+            savePresetModal.close();
         }
     }
 
@@ -647,10 +647,10 @@ GuideTab {
         }
     }
 
-    property alias savePresetPopup: savePresetPopup
+    property alias savePresetPopup: savePresetModal
 
     SavePresetPopup {
-        id: savePresetPopup
+        id: savePresetModal
         rootObj: displayWidgetsRoot.rootObj
         onSaveRequested: function(presetName, monName, widgetsList) {
             displayWidgetsRoot.saveCustomPreset(presetName, monName, widgetsList);

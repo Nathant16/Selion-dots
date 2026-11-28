@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import Quickshell
 import Quickshell.Io
 import "../"
 import "../reusables"
@@ -335,7 +334,10 @@ GuideTab {
                 }
             }
 
-            readonly property bool hasPowerSaverOptions: cpuFreqGroup.visible || autoBrightnessGroup.visible || displayRefreshGroup.visible || powerTabRoot.optimizationsModel.length > 0
+            readonly property bool showCpuFreqOption: powerTabRoot.cpuFreqSupported && powerTabRoot.cpuFreqLabels.length > 0
+            readonly property bool showAutoBrightnessOption: powerTabRoot.hasBattery && powerTabRoot.hasBacklight
+            readonly property bool showDisplayRefreshOption: powerTabRoot.displayRefreshSupported && powerTabRoot.displayRefreshLabels.length > 0
+            readonly property bool hasPowerSaverOptions: showCpuFreqOption || showAutoBrightnessOption || showDisplayRefreshOption || powerTabRoot.optimizationsModel.length > 0
 
             // 2. Power Saver Settings Section (smoothly expands ONLY when Power Saver profile is active)
             CollapsibleSection {
@@ -353,8 +355,8 @@ GuideTab {
                     // CPU Frequency Cap (SettingsGroup with Switch and Dropdown subSetting)
                     SettingsGroup {
                         id: cpuFreqGroup
-                        visible: powerTabRoot.cpuFreqSupported && powerTabRoot.cpuFreqLabels.length > 0
-                        searchable: visible
+                        visible: settingsCol.showCpuFreqOption
+                        searchable: settingsCol.showCpuFreqOption
                         settingId: "power_cpu_freq"
                         searchKeywords: "cpu frequency limit clock speed underclock downclock eco max freq"
                         rootObj: powerTabRoot.rootObj
@@ -419,8 +421,8 @@ GuideTab {
                     // Auto-reduce brightness (SettingsGroup with Toggle and NumberSelector subSetting)
                     SettingsGroup {
                         id: autoBrightnessGroup
-                        visible: powerTabRoot.hasBattery && powerTabRoot.hasBacklight
-                        searchable: visible
+                        visible: settingsCol.showAutoBrightnessOption
+                        searchable: settingsCol.showAutoBrightnessOption
                         settingId: "power_auto_brightness"
                         searchKeywords: "auto brightness reduce drop dim battery saver"
                         rootObj: powerTabRoot.rootObj
@@ -472,9 +474,8 @@ GuideTab {
                                     cornerRadius: ThemeBackend.borderRadius
                                     fontFamily: ThemeBackend.fontFamily
                                     fontPixelSize: rootObj.s(11)
-                                    onValueChanged: function(val) {
-                                        let num = (typeof val === "number" && !isNaN(val)) ? val : value;
-                                        let rounded = Math.round(num / 5) * 5;
+                                    onValueChanged: {
+                                        let rounded = Math.round(value / 5) * 5;
                                         if (!isNaN(rounded) && rounded >= 50 && rounded <= 95 && powerTabRoot.powerSaverBrightness !== rounded) {
                                             powerTabRoot.setSaverBrightness(rounded);
                                         }
@@ -491,8 +492,8 @@ GuideTab {
                     // Display Refresh Rate Reduction (SettingsGroup with Toggle and Dropdown subSetting)
                     SettingsGroup {
                         id: displayRefreshGroup
-                        visible: powerTabRoot.displayRefreshSupported && powerTabRoot.displayRefreshLabels.length > 0
-                        searchable: visible
+                        visible: settingsCol.showDisplayRefreshOption
+                        searchable: settingsCol.showDisplayRefreshOption
                         settingId: "power_display_refresh"
                         searchKeywords: "display screen refresh rate hz 48 60 120 144 hertz monitor eco saver"
                         rootObj: powerTabRoot.rootObj

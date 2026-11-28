@@ -311,7 +311,7 @@ SettingsRow {
                                     Rectangle {
                                         Layout.fillWidth: true
                                         Layout.maximumWidth: rootObj.s(80)
-                                        height: rootObj.s(6)
+                                        Layout.preferredHeight: rootObj.s(6)
                                         radius: rootObj.s(3)
                                         color: ThemeBackend.text
                                     }
@@ -319,7 +319,7 @@ SettingsRow {
                                     Rectangle {
                                         Layout.fillWidth: true
                                         Layout.maximumWidth: rootObj.s(110)
-                                        height: rootObj.s(5)
+                                        Layout.preferredHeight: rootObj.s(5)
                                         radius: rootObj.s(2.5)
                                         color: ThemeBackend.subtext0
                                     }

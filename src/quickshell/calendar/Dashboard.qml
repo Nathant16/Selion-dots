@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Window
-import Quickshell
 import Quickshell.Wayland
 import "../"
 import "../reusables"

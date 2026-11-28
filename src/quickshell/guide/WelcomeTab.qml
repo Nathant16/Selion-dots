@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
-import Quickshell
 import "../"
 import "../reusables"
 
@@ -127,8 +126,8 @@ GuideTab {
         Item {
             id: logoContainer
             Layout.alignment: Qt.AlignHCenter
-            width: rootObj.s(240)
-            height: rootObj.s(240)
+            Layout.preferredWidth: rootObj.s(240)
+            Layout.preferredHeight: rootObj.s(240)
 
             Item {
                 id: paddedMaskSource

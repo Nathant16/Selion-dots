@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Window
 import Qt.labs.folderlistmodel
 import QtMultimedia

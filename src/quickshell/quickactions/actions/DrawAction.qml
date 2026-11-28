@@ -178,7 +178,7 @@ Item {
 
     function exportDrawing(targetPath, callback) {
         if (typeof drawCanvas.grabToImage === "function") {
-            var initiated = drawCanvas.grabToImage(function(result) {
+            let initiated = drawCanvas.grabToImage(function(result) {
                 var success = false;
                 try {
                     success = result.saveToFile(targetPath);
@@ -198,7 +198,7 @@ Item {
                 if (callback) callback(success);
             });
             if (!initiated) {
-                var fallbackSuccess = false;
+                let fallbackSuccess = false;
                 if (typeof drawCanvas.save === "function") {
                     try {
                         fallbackSuccess = drawCanvas.save(targetPath, Qt.size(drawCanvas.width, drawCanvas.height));
@@ -212,7 +212,7 @@ Item {
                 if (callback) callback(fallbackSuccess);
             }
         } else if (typeof drawCanvas.save === "function") {
-            var res = false;
+            let res = false;
             try {
                 res = drawCanvas.save(targetPath, Qt.size(drawCanvas.width, drawCanvas.height));
             } catch (e) {}
@@ -316,14 +316,14 @@ Item {
                         
                         var col = s.color;
                         
-                        for (var b = 0; b < bristleCount; b++) {
-                            var t = b / bristleCount;
-                            var angle = t * Math.PI * 2;
-                            var radius = (0.3 + (((b * 7 + 3) % 11) / 11) * 0.7) * (bSize / 2);
-                            var offX = Math.cos(angle) * radius * 0.5;
-                            var offY = Math.sin(angle) * radius * 0.5;
-                            var alpha = 0.25 + (((b * 13 + 5) % 17) / 17) * 0.45;
-                            var width = root.s(0.8) + (((b * 3 + 1) % 5) / 5) * root.s(1.6);
+                        for (let b = 0; b < bristleCount; b++) {
+                            let t = b / bristleCount;
+                            let angle = t * Math.PI * 2;
+                            let radius = (0.3 + (((b * 7 + 3) % 11) / 11) * 0.7) * (bSize / 2);
+                            let offX = Math.cos(angle) * radius * 0.5;
+                            let offY = Math.sin(angle) * radius * 0.5;
+                            let alpha = 0.25 + (((b * 13 + 5) % 17) / 17) * 0.45;
+                            let width = root.s(0.8) + (((b * 3 + 1) % 5) / 5) * root.s(1.6);
                             
                             ctx.globalAlpha = alpha;
                             ctx.lineWidth = width;
@@ -331,7 +331,7 @@ Item {
                             
                             ctx.beginPath();
                             ctx.moveTo(segments[0].x1 + offX, segments[0].y1 + offY);
-                            for (var j = 0; j < segments.length; j++) {
+                            for (let j = 0; j < segments.length; j++) {
                                 ctx.lineTo(segments[j].x2 + offX, segments[j].y2 + offY);
                             }
                             ctx.stroke();
@@ -366,15 +366,15 @@ Item {
                         
                         if (_replayPending) {
                             ctx.clearRect(0, 0, width, height);
-                            var replayStart = 0;
-                            for (var c = root.historyStep; c >= 0; c--) {
+                            let replayStart = 0;
+                            for (let c = root.historyStep; c >= 0; c--) {
                                 if (root.actionHistory[c] && root.actionHistory[c].type === "clear") {
                                     replayStart = c;
                                     break;
                                 }
                             }
-                            for (var h = replayStart; h <= root.historyStep; h++) {
-                                var action = root.actionHistory[h];
+                            for (let h = replayStart; h <= root.historyStep; h++) {
+                                let action = root.actionHistory[h];
                                 if (!action) continue;
 
                                 if (action.type === "clear") {
@@ -393,7 +393,7 @@ Item {
                                         
                                         if (action.segments && action.segments.length > 0) {
                                             ctx.moveTo(action.segments[0].x1, action.segments[0].y1);
-                                            for (var k = 0; k < action.segments.length; k++) {
+                                            for (let k = 0; k < action.segments.length; k++) {
                                                 ctx.lineTo(action.segments[k].x2, action.segments[k].y2);
                                             }
                                             ctx.stroke();
@@ -411,8 +411,8 @@ Item {
                             _clearPending = false;
                         }
                         
-                        for (var i = 0; i < _queue.length; i++) {
-                            var q = _queue[i];
+                        for (let i = 0; i < _queue.length; i++) {
+                            let q = _queue[i];
                             
                             if (q.type === "fill_bg") {
                                 ctx.globalCompositeOperation = "destination-over";
@@ -510,7 +510,7 @@ Item {
 
                         function extendStroke(mouse) {
                             if (root.currentAction && root.currentTool !== "fill") {
-                                var segment = {
+                                let segment = {
                                     x1: drawCanvas.lastX, y1: drawCanvas.lastY,
                                     x2: mouse.x, y2: mouse.y
                                 };
@@ -528,11 +528,11 @@ Item {
                                     x2: segment.x2, y2: segment.y2
                                 });
                                 
-                                var rad = s(20);
-                                var minX = Math.min(drawCanvas.lastX, mouse.x) - rad;
-                                var minY = Math.min(drawCanvas.lastY, mouse.y) - rad;
-                                var w = Math.abs(mouse.x - drawCanvas.lastX) + rad*2;
-                                var h = Math.abs(mouse.y - drawCanvas.lastY) + rad*2;
+                                let rad = s(20);
+                                let minX = Math.min(drawCanvas.lastX, mouse.x) - rad;
+                                let minY = Math.min(drawCanvas.lastY, mouse.y) - rad;
+                                let w = Math.abs(mouse.x - drawCanvas.lastX) + rad*2;
+                                let h = Math.abs(mouse.y - drawCanvas.lastY) + rad*2;
                                 
                                 drawCanvas.lastX = mouse.x;
                                 drawCanvas.lastY = mouse.y;
@@ -559,7 +559,7 @@ Item {
 
                         onActiveChanged: {
                             if (active) {
-                                var p = centroid.position;
+                                let p = centroid.position;
                                 drawArea.beginStroke({ x: p.x, y: p.y, button: Qt.LeftButton });
                             } else {
                                 root.finishStroke();
@@ -568,7 +568,7 @@ Item {
 
                         onCentroidChanged: {
                             if (active) {
-                                var p = centroid.position;
+                                let p = centroid.position;
                                 drawArea.extendStroke({ x: p.x, y: p.y });
                             }
                         }
@@ -727,7 +727,7 @@ Item {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    height: s(6)
+                    Layout.preferredHeight: s(6)
                     radius: s(3)
                     color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.1)
                     
@@ -764,8 +764,8 @@ Item {
                 }
 
                 Rectangle {
-                    width: s(40)
-                    height: s(28)
+                    Layout.preferredWidth: s(40)
+                    Layout.preferredHeight: s(28)
                     color: ThemeBackend.surface0
                     radius: ThemeBackend.borderRadius
                     
@@ -794,8 +794,8 @@ Item {
                 }
 
                 Item {
-                    width: s(32)
-                    height: s(32)
+                    Layout.preferredWidth: s(32)
+                    Layout.preferredHeight: s(32)
                     Rectangle {
                         anchors.centerIn: parent
                         
@@ -963,8 +963,9 @@ Item {
                     }
                     
                     IconButton {
-                        width: root.s(24)
-                        height: root.s(24)
+                        size: root.s(24)
+                        Layout.preferredWidth: root.s(24)
+                        Layout.preferredHeight: root.s(24)
                         buttonIcon: "\uF067"
                         iconFontSize: root.s(12)
                         accentColor: isHoveredOrHighlighted ? ThemeBackend.surface0 : "transparent"

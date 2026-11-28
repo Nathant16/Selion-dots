@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
-import Quickshell
 import "../reusables"
 import "../"
 
@@ -529,8 +528,8 @@ Item {
                 spacing: s(10)
 
                 Rectangle {
-                    width: s(26)
-                    height: s(26)
+                    Layout.preferredWidth: s(26)
+                    Layout.preferredHeight: s(26)
                     radius: s(7)
                     color: picker.copiedFlash ? ThemeBackend.green : picker.sampledColor
                     border.width: s(1)
@@ -574,7 +573,7 @@ Item {
                 Layout.fillWidth: true
                 implicitWidth: s(168)
                 implicitHeight: s(26)
-                height: s(26)
+                Layout.preferredHeight: s(26)
                 options: picker.formats
                 currentIndex: picker.formatIndex
                 accentColor: ThemeBackend.mauve

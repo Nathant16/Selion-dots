@@ -5,12 +5,12 @@ import "../../reusables"
 import "../../reusables/guide"
 
 SettingsBlob {
-    id: section
+    id: sectionRoot
     required property var tab
     readonly property var rootObj: tab.rootObj
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "general_uiscale"
         searchKeywords: "quickshell ui scale interface zoom panel bar widgets launcher settings hidpi fractional mango"
         icon: "󰍍"
@@ -29,25 +29,25 @@ SettingsBlob {
             defaultValue: 100
             showValueBubble: true
             valueFormatter: function(v) { return Math.round(v) + "%" }
-            value: Math.round(section.tab.uiScale * 100)
+            value: Math.round(sectionRoot.tab.uiScale * 100)
             backgroundColor: ThemeBackend.surface0
             accentColor: ThemeBackend.mauve
             handleColor: ThemeBackend.text
             handleBorderColor: ThemeBackend.mantle
             onMoved: function(val) {
                 let scaleVal = Math.round(val) / 100.0;
-                if (Math.abs(section.tab.uiScale - scaleVal) > 0.001) {
-                    section.tab.setGeneralSettingDebounced("uiScale", scaleVal);
+                if (Math.abs(sectionRoot.tab.uiScale - scaleVal) > 0.001) {
+                    sectionRoot.tab.setGeneralSettingDebounced("uiScale", scaleVal);
                 }
             }
             onDragFinished: {
-                section.tab.flushGeneralSettings();
+                sectionRoot.tab.flushGeneralSettings();
             }
         }
     }
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "general_quickactions"
         searchKeywords: "quick actions quickactions floating overlay calculator notes timer draw converter edge"
         icon: "󱓞"
@@ -55,13 +55,13 @@ SettingsBlob {
         description: I18n.t("guide.general.quickactions.desc") || "Enable floating quickactions overlay"
 
         Toggle {
-            checked: section.tab.quickactions
+            checked: sectionRoot.tab.quickactions
             accentColor: ThemeBackend.mauve
             baseColor: ThemeBackend.surface1
             handleColor: ThemeBackend.crust
             handleOffColor: ThemeBackend.text
             onToggled: function(c) {
-                section.tab.setGeneralSetting("quickactions", c);
+                sectionRoot.tab.setGeneralSetting("quickactions", c);
             }
         }
     }

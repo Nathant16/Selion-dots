@@ -182,7 +182,7 @@ RowLayout {
             } else if (bottomSectionSwitch.currentIndex === 1) {
                 root.resetAudio();
             } else if (root.eqData && root.eqData.pending) {
-                var temp = Object.assign({}, root.eqData);
+                let temp = Object.assign({}, root.eqData);
                 temp.pending = false;
                 root.eqData = temp;
                 root.savedEqData = Object.assign({}, temp);

@@ -10,14 +10,14 @@ Item {
     property bool playing: true
     property bool asynchronous: true
     property bool cache: true
-    property bool smooth: true
-    property bool antialiasing: false
+    smooth: true
+    antialiasing: false
     property int horizontalAlignment: Image.AlignHCenter
     property int verticalAlignment: Image.AlignVCenter
     property real devicePixelRatio: (Screen.devicePixelRatio && Screen.devicePixelRatio > 0) ? Screen.devicePixelRatio : 1
     property int decodeStep: 128
 
-    readonly property Item image: loader.item
+    readonly property Item image: loader.item as Item
     readonly property int status: image ? image.status : Image.Null
     readonly property real paintedWidth: image ? image.paintedWidth : 0
     readonly property real paintedHeight: image ? image.paintedHeight : 0

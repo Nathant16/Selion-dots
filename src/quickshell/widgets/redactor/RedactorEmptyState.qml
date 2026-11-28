@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../"
-import ".."
 
 Item {
     function s(val) { return Scaler.s(val); }

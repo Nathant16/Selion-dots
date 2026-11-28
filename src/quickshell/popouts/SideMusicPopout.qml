@@ -1,10 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Io
 import Quickshell.Services.Mpris
 import "../reusables"
 import "../"
@@ -350,19 +348,51 @@ PanelWindow {
             }
 
             ColumnLayout {
+                id: popoutContentLayout
                 width: sideMusicPopout.menuWidth - sideMusicPopout.s(24)
                 height: sideMusicPopout.menuHeight - sideMusicPopout.s(16)
-                anchors.top: (!sideMusicPopout.isSideBar && !sideMusicPopout.alignBottom) ? parent.top : undefined
-                anchors.bottom: (!sideMusicPopout.isSideBar && sideMusicPopout.alignBottom) ? parent.bottom : undefined
-                anchors.left: (sideMusicPopout.isSideBar && !sideMusicPopout.alignRight) ? parent.left : undefined
-                anchors.right: (sideMusicPopout.isSideBar && sideMusicPopout.alignRight) ? parent.right : undefined
-                anchors.horizontalCenter: sideMusicPopout.isSideBar ? parent.horizontalCenter : undefined
-                anchors.verticalCenter: !sideMusicPopout.isSideBar ? parent.verticalCenter : undefined
                 anchors.topMargin: sideMusicPopout.s(8)
                 anchors.bottomMargin: sideMusicPopout.s(8)
                 anchors.leftMargin: sideMusicPopout.s(12)
                 anchors.rightMargin: sideMusicPopout.s(12)
                 spacing: sideMusicPopout.s(4)
+                state: sideMusicPopout.isSideBar
+                    ? (sideMusicPopout.alignRight ? "sb_right" : "sb_left")
+                    : (sideMusicPopout.alignBottom ? "tb_bottom" : "tb_top")
+                states: [
+                    State {
+                        name: "tb_top"
+                        AnchorChanges {
+                            target: popoutContentLayout
+                            anchors.top: menuBox.top
+                            anchors.horizontalCenter: menuBox.horizontalCenter
+                        }
+                    },
+                    State {
+                        name: "tb_bottom"
+                        AnchorChanges {
+                            target: popoutContentLayout
+                            anchors.bottom: menuBox.bottom
+                            anchors.horizontalCenter: menuBox.horizontalCenter
+                        }
+                    },
+                    State {
+                        name: "sb_left"
+                        AnchorChanges {
+                            target: popoutContentLayout
+                            anchors.left: menuBox.left
+                            anchors.verticalCenter: menuBox.verticalCenter
+                        }
+                    },
+                    State {
+                        name: "sb_right"
+                        AnchorChanges {
+                            target: popoutContentLayout
+                            anchors.right: menuBox.right
+                            anchors.verticalCenter: menuBox.verticalCenter
+                        }
+                    }
+                ]
 
                 MouseArea {
                     Layout.fillWidth: true

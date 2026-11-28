@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Effects
-import "../../../reusables"
 import "../../../"
 
 Item {

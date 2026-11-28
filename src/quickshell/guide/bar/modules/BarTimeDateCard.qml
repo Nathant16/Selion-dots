@@ -76,8 +76,8 @@ BarModuleCard {
 
                 Rectangle {
                     Layout.alignment: Qt.AlignHCenter
-                    width: rootObj.s(14)
-                    height: 2
+                    Layout.preferredWidth: rootObj.s(14)
+                    Layout.preferredHeight: 2
                     radius: 1
                     color: ThemeBackend.surface1
                 }

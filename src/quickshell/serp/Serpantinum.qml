@@ -104,15 +104,17 @@ PanelWindow {
             property real driftX: 0
             property real driftY: 0
 
-            SequentialAnimation on driftX {
+            SequentialAnimation {
+                running: true
                 loops: Animation.Infinite
-                NumberAnimation { to: 2.5; duration: 15000; easing.type: Easing.InOutSine }
-                NumberAnimation { to: -2.0; duration: 14000; easing.type: Easing.InOutSine }
+                NumberAnimation { target: worldCenter; property: "driftX"; to: 2.5; duration: 15000; easing.type: Easing.InOutSine }
+                NumberAnimation { target: worldCenter; property: "driftX"; to: -2.0; duration: 14000; easing.type: Easing.InOutSine }
             }
-            SequentialAnimation on driftY {
+            SequentialAnimation {
+                running: true
                 loops: Animation.Infinite
-                NumberAnimation { to: 2.0; duration: 16000; easing.type: Easing.InOutSine }
-                NumberAnimation { to: -2.5; duration: 15500; easing.type: Easing.InOutSine }
+                NumberAnimation { target: worldCenter; property: "driftY"; to: 2.0; duration: 16000; easing.type: Easing.InOutSine }
+                NumberAnimation { target: worldCenter; property: "driftY"; to: -2.5; duration: 15500; easing.type: Easing.InOutSine }
             }
 
             anchors.centerIn: parent
@@ -147,10 +149,11 @@ PanelWindow {
                         opacity: 0.85
 
                         property real oscRotation: 0
-                        SequentialAnimation on oscRotation {
+                        SequentialAnimation {
+                            running: true
                             loops: Animation.Infinite
-                            NumberAnimation { to: 15; duration: 12000; easing.type: Easing.InOutSine }
-                            NumberAnimation { to: -15; duration: 12000; easing.type: Easing.InOutSine }
+                            NumberAnimation { target: fluidGradientLayer; property: "oscRotation"; to: 15; duration: 12000; easing.type: Easing.InOutSine }
+                            NumberAnimation { target: fluidGradientLayer; property: "oscRotation"; to: -15; duration: 12000; easing.type: Easing.InOutSine }
                         }
                         rotation: oscRotation
 
@@ -180,16 +183,18 @@ PanelWindow {
                     }
 
                     Rectangle {
+                        id: maskGradientLayer
                         anchors.fill: parent
                         radius: width / 2
                         antialiasing: true
                         opacity: 0.6
 
                         property real maskRotation: 0
-                        SequentialAnimation on maskRotation {
+                        SequentialAnimation {
+                            running: true
                             loops: Animation.Infinite
-                            NumberAnimation { to: -20; duration: 14000; easing.type: Easing.InOutSine }
-                            NumberAnimation { to: 20; duration: 14000; easing.type: Easing.InOutSine }
+                            NumberAnimation { target: maskGradientLayer; property: "maskRotation"; to: -20; duration: 14000; easing.type: Easing.InOutSine }
+                            NumberAnimation { target: maskGradientLayer; property: "maskRotation"; to: 20; duration: 14000; easing.type: Easing.InOutSine }
                         }
                         rotation: maskRotation
 

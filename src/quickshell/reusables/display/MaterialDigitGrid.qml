@@ -19,17 +19,17 @@ Item {
     readonly property var inkRects: {
         var f = ref.font;
         var rects = [];
-        for (var i = 0; i < 10; i++) rects.push(ref.tightBoundingRect(String(i)));
+        for (let i = 0; i < 10; i++) rects.push(ref.tightBoundingRect(String(i)));
         return rects;
     }
     readonly property real refCellW: {
         var m = 1;
-        for (var i = 0; i < inkRects.length; i++) m = Math.max(m, inkRects[i].width);
+        for (let i = 0; i < inkRects.length; i++) m = Math.max(m, inkRects[i].width);
         return m;
     }
     readonly property real refCellH: {
         var m = 1;
-        for (var i = 0; i < inkRects.length; i++) m = Math.max(m, inkRects[i].height);
+        for (let i = 0; i < inkRects.length; i++) m = Math.max(m, inkRects[i].height);
         return m;
     }
     readonly property real effectivePixelSize: (fitWidth > 0 && fitHeight > 0)

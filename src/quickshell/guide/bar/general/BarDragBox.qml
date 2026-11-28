@@ -170,11 +170,10 @@ Rectangle {
                             when: dragArea.drag.active
                             ParentChange { target: floatWrapper; parent: dragBoxRoot.tab }
                             PropertyChanges {
-                                target: floatWrapper
-                                width: delegateRoot.btnWidth
-                                height: rootObj.s(32)
-                                opacity: 0.9
-                                scale: 1.05
+                                floatWrapper.width: delegateRoot.btnWidth
+                                floatWrapper.height: rootObj.s(32)
+                                floatWrapper.opacity: 0.9
+                                floatWrapper.scale: 1.05
                             }
                         }
                     ]

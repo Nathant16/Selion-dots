@@ -402,6 +402,7 @@ ShellOverlayWindow {
     FileView {
         id: audioPrefsFile
         path: Caching.getStateDir("screenshot") + "/audio_prefs"
+        printErrors: false
 
         onLoaded: {
             let content = (typeof text === "function" ? text() : "").trim();
@@ -437,26 +438,31 @@ ShellOverlayWindow {
     FileView {
         id: audioPrefsWriter
         path: Caching.getStateDir("screenshot") + "/audio_prefs"
+        printErrors: false
     }
 
     FileView {
         id: videoModeFile
         path: Caching.getCacheDir("screenshot") + "/video_mode"
+        printErrors: false
     }
 
     FileView {
         id: videoBackendFile
         path: Caching.getCacheDir("screenshot") + "/video_backend"
+        printErrors: false
     }
 
     FileView {
         id: geometryFile
         path: Caching.getCacheDir("screenshot") + "/geometry"
+        printErrors: false
     }
 
     FileView {
         id: geometryVideoFile
         path: Caching.getCacheDir("screenshot") + "/geometry_video"
+        printErrors: false
     }
 
     FileView {
@@ -1597,7 +1603,7 @@ ShellOverlayWindow {
                         wrapMode: Text.NoWrap
                     }
 
-                    Rectangle { visible: model.qSuccess; width: s(2); Layout.fillHeight: true; Layout.topMargin: s(10); Layout.bottomMargin: s(10); color: ThemeBackend.surface0; radius: s(1) }
+                    Rectangle { visible: model.qSuccess; Layout.preferredWidth: s(2); Layout.fillHeight: true; Layout.topMargin: s(10); Layout.bottomMargin: s(10); color: ThemeBackend.surface0; radius: s(1) }
 
                     IconButton {
                         visible: model.qSuccess
@@ -1627,7 +1633,7 @@ ShellOverlayWindow {
                         }
                     }
 
-                    Rectangle { width: s(2); Layout.fillHeight: true; Layout.topMargin: s(10); Layout.bottomMargin: s(10); color: ThemeBackend.surface0; radius: s(1) }
+                    Rectangle { Layout.preferredWidth: s(2); Layout.fillHeight: true; Layout.topMargin: s(10); Layout.bottomMargin: s(10); color: ThemeBackend.surface0; radius: s(1) }
                     CloseButton { size: s(36); cornerRadius: ThemeBackend.borderRadius; iconFontSize: s(18); accentColor: ThemeBackend.red; textColor: ThemeBackend.crust; onClicked: root.showQrPopup = false }
                 }
             }

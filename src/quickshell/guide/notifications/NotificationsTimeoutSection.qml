@@ -5,15 +5,15 @@ import "../../reusables"
 import "../../reusables/guide"
 
 SettingsBlob {
-    id: section
+    id: sectionRoot
     required property var tab
     readonly property var rootObj: tab.rootObj
 
     component TimeoutStepper: NumberSelector {
         required property string settingKey
         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-        implicitWidth: section.rootObj.s(130)
-        implicitHeight: section.rootObj.s(32)
+        implicitWidth: sectionRoot.rootObj.s(130)
+        implicitHeight: sectionRoot.rootObj.s(32)
         from: 0
         to: 300
         stepSize: 1
@@ -27,50 +27,50 @@ SettingsBlob {
         textColor: ThemeBackend.text
         borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
         cornerRadius: ThemeBackend.borderRadius
-        fontPixelSize: section.rootObj.s(11)
+        fontPixelSize: sectionRoot.rootObj.s(11)
         onValueChanged: {
             let secs = Math.round(value);
-            if (secs !== section.tab[settingKey]) {
-                section.tab.updateNotifSetting(settingKey, secs);
+            if (secs !== sectionRoot.tab[settingKey]) {
+                sectionRoot.tab.updateNotifSetting(settingKey, secs);
             }
         }
     }
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "notifications_timeout_low"
         searchKeywords: "notifications low urgency timeout duration seconds expire dismiss"
         icon: "󰂜"
         title: I18n.t("guide.notifications.timeout_low.title", "Low urgency timeout")
         description: I18n.t("guide.notifications.timeout_low.desc", "How long low urgency notifications stay on screen")
 
-        TimeoutStepper { settingKey: "timeoutLow"; value: section.tab.timeoutLow }
+        TimeoutStepper { settingKey: "timeoutLow"; value: sectionRoot.tab.timeoutLow }
     }
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "notifications_timeout_normal"
         searchKeywords: "notifications normal default timeout duration seconds expire dismiss"
         icon: "󰂚"
         title: I18n.t("guide.notifications.timeout_normal.title", "Normal timeout")
         description: I18n.t("guide.notifications.timeout_normal.desc", "How long regular notifications stay on screen")
 
-        TimeoutStepper { settingKey: "timeoutNormal"; value: section.tab.timeoutNormal }
+        TimeoutStepper { settingKey: "timeoutNormal"; value: sectionRoot.tab.timeoutNormal }
     }
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "notifications_timeout_critical"
         searchKeywords: "notifications critical urgent high timeout duration seconds expire dismiss"
         icon: "󰂞"
         title: I18n.t("guide.notifications.timeout_critical.title", "Urgent timeout")
         description: I18n.t("guide.notifications.timeout_critical.desc", "How long urgent notifications stay on screen")
 
-        TimeoutStepper { settingKey: "timeoutCritical"; value: section.tab.timeoutCritical }
+        TimeoutStepper { settingKey: "timeoutCritical"; value: sectionRoot.tab.timeoutCritical }
     }
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "notifications_override_timeouts"
         searchKeywords: "notifications override force app timeouts duration ignore"
         icon: "󰔛"
@@ -79,13 +79,13 @@ SettingsBlob {
 
         Toggle {
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            checked: section.tab.overrideAppTimeouts
+            checked: sectionRoot.tab.overrideAppTimeouts
             accentColor: ThemeBackend.mauve
             baseColor: ThemeBackend.surface1
             handleColor: ThemeBackend.crust
             handleOffColor: ThemeBackend.text
             onToggled: function(c) {
-                section.tab.updateNotifSetting("overrideAppTimeouts", c);
+                sectionRoot.tab.updateNotifSetting("overrideAppTimeouts", c);
             }
         }
     }

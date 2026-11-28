@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 import Quickshell.Io
 import "../../"
 import "../"
@@ -57,7 +56,7 @@ Item {
     readonly property real charSlotStep: (root.charSlotWidth > 0 ? root.charSlotWidth : globalCharMetrics.width) + root.charSpacing
     property real scrollOffset: 0
 
-    property bool enabled: true
+    enabled: true
     property bool action_highlight: false
     property bool isEditing: false
     property bool isHoveredOrHighlighted: (mainHover.hovered || root.action_highlight) && root.enabled

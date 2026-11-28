@@ -1,6 +1,5 @@
 pragma Singleton
 import QtQuick
-import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import "../../"
@@ -166,10 +165,12 @@ RefCountedService {
         }
     }
 
+    readonly property var cLocaleEnv: ({ "LC_ALL": "C" })
+
     Process {
         id: devicesPoller
         command: ["hyprctl", "devices", "-j"]
-        environment: ({ "LC_ALL": "C" })
+        environment: root.cLocaleEnv
         stdout: StdioCollector {
             onStreamFinished: {
                 let keyboards = [];

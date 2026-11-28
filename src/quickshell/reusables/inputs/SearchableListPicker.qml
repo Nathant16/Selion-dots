@@ -26,7 +26,7 @@ GuideModal {
     property var filterFn: null
     property var isSelectedFn: null
 
-    readonly property alias searchInput: searchInput
+    readonly property alias searchInput: searchInputField
 
     readonly property var filteredItems: {
         let q = picker.query.trim().toLowerCase();
@@ -73,9 +73,9 @@ GuideModal {
     function openPicker() {
         picker.query = "";
         picker.selectedId = "";
-        searchInput.text = "";
+        searchInputField.text = "";
         picker.open();
-        searchInput.forceInputFocus();
+        searchInputField.forceInputFocus();
     }
 
     RowLayout {
@@ -83,7 +83,7 @@ GuideModal {
         spacing: picker.s(8)
 
         Input {
-            id: searchInput
+            id: searchInputField
             Layout.fillWidth: true
             Layout.preferredHeight: picker.s(34)
             placeholderText: picker.placeholderText

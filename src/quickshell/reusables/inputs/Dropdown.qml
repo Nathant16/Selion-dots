@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import Quickshell
 import "../../"
 import "../"
 
@@ -45,7 +44,7 @@ Item {
     property int charSpacing: 1
     property real horizontalPadding: 12
 
-    property bool enabled: true
+    enabled: true
     property bool action_highlight: false
     property string clickSound: "reusables/dropdown/click.wav"
     property string listSound: "reusables/dropdown/list.wav"
@@ -383,8 +382,6 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
                 implicitWidth: root.iconSize
                 implicitHeight: root.iconSize
-                width: root.iconSize
-                height: root.iconSize
                 color: root.iconColor
                 rotation: root.isOpen ? 90 : -90
                 Behavior on rotation { NumberAnimation { duration: 250; easing.type: Easing.OutBack } }

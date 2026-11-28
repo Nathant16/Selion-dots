@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
@@ -72,7 +71,7 @@ Scope {
                 readonly property string customBackgroundPath: lockSettings.customBackground ? String(lockSettings.customBackground) : ""
                 readonly property bool customBackgroundActive: lockSettings.backgroundMode === "custom" && customBackgroundPath !== ""
                 readonly property string desktopWallpaperPath: {
-                    Wallpaper.screenWallpaperPaths;
+                    let _wp = Wallpaper.screenWallpaperPaths;
                     return Wallpaper.getWallpaperPath(win.monitorName);
                 }
                 readonly property string backgroundPath: customBackgroundActive ? customBackgroundPath : desktopWallpaperPath
@@ -225,27 +224,16 @@ Scope {
                     readonly property var chromeBounds: {
                         let target = win.chromeTarget;
                         if (!target) return { x: 0, y: 0, w: 0, h: 0 };
-                        win.page;
-                        win.pageProgress;
-                        ui.width;
-                        ui.height;
-                        ui.k;
-                        pager.width;
-                        pager.height;
-                        clockFrame.x;
-                        clockFrame.y;
-                        clockFrame.scale;
-                        panelFrame.x;
-                        panelFrame.y;
-                        panelFrame.scale;
-                        LockLayoutStore.panelX;
-                        LockLayoutStore.panelY;
-                        LockLayoutStore.panelW;
-                        LockLayoutStore.panelH;
-                        target.x;
-                        target.y;
-                        target.width;
-                        target.height;
+                        let _deps = [
+                            win.page, win.pageProgress,
+                            ui.width, ui.height, ui.k,
+                            pager.width, pager.height,
+                            clockFrame.x, clockFrame.y, clockFrame.scale,
+                            panelFrame.x, panelFrame.y, panelFrame.scale,
+                            LockLayoutStore.panelX, LockLayoutStore.panelY,
+                            LockLayoutStore.panelW, LockLayoutStore.panelH,
+                            target.x, target.y, target.width, target.height
+                        ];
                         let tl = ui.mapFromItem(target, 0, 0);
                         let br = ui.mapFromItem(target, target.width, target.height);
                         return { x: tl.x, y: tl.y, w: br.x - tl.x, h: br.y - tl.y };

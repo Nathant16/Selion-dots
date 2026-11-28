@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import QtQuick.Shapes
 import Quickshell
 import Quickshell.Wayland
 import "../singletons/system"
@@ -336,7 +335,7 @@ PanelWindow {
                     // Zoom & Workspace Pill (matching ClickButton / KbFace language switch design)
                     Rectangle {
                         id: badgePill
-                        height: mapWindow.s(26)
+                        Layout.preferredHeight: mapWindow.s(26)
                         radius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
                         implicitWidth: badgeRow.implicitWidth + mapWindow.s(20)
                         clip: true
@@ -409,8 +408,8 @@ PanelWindow {
 
                             // Divider
                             Rectangle {
-                                width: 1
-                                height: mapWindow.s(12)
+                                Layout.preferredWidth: 1
+                                Layout.preferredHeight: mapWindow.s(12)
                                 color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.16)
                             }
 
@@ -439,11 +438,9 @@ PanelWindow {
                     // Pin / Lock Button (using official Serpantinum IconButton with GlassFill and bounce feedback)
                     IconButton {
                         id: pinBtn
-                        width: mapWindow.s(26)
-                        height: mapWindow.s(26)
-                        size: height
-                        Layout.preferredWidth: width
-                        Layout.preferredHeight: height
+                        size: mapWindow.s(26)
+                        Layout.preferredWidth: mapWindow.s(26)
+                        Layout.preferredHeight: mapWindow.s(26)
                         cornerRadius: Math.max(0, ThemeBackend.borderRadius - mapWindow.s(2))
                         buttonIcon: mapCard.isPinned ? "󰐃" : "󰤰"
                         iconFontSize: mapWindow.s(13)

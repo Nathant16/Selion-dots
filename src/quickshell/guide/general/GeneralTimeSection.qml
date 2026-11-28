@@ -5,7 +5,7 @@ import "../../reusables"
 import "../../reusables/guide"
 
 SettingsBlob {
-    id: section
+    id: sectionRoot
     required property var tab
     readonly property var rootObj: tab.rootObj
 
@@ -13,11 +13,11 @@ SettingsBlob {
 
     function load() {
         let bs = Config.getSetting("bar", {});
-        section.timeFormat = bs && bs.time && bs.time.format !== undefined ? bs.time.format : "HH:mm:ss";
+        sectionRoot.timeFormat = bs && bs.time && bs.time.format !== undefined ? bs.time.format : "HH:mm:ss";
     }
 
     function save(fmt) {
-        section.timeFormat = fmt;
+        sectionRoot.timeFormat = fmt;
         let current = Config.getSetting("bar", {});
         if (!current.time) current.time = {};
         current.time.format = fmt;
@@ -28,11 +28,11 @@ SettingsBlob {
 
     Connections {
         target: Config
-        function onSettingsLoaded() { section.load(); }
+        function onSettingsLoaded() { sectionRoot.load(); }
     }
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "general_time_format"
         searchKeywords: "time format clock 12h 24h am pm seconds hour minutes pattern"
         icon: "󰅐"
@@ -43,7 +43,7 @@ SettingsBlob {
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
             implicitWidth: rootObj.s(140)
             implicitHeight: rootObj.s(32)
-            text: section.timeFormat
+            text: sectionRoot.timeFormat
             placeholderText: "HH:mm:ss"
             baseColor: ThemeBackend.surface0
             accentColor: ThemeBackend.mauve
@@ -52,8 +52,8 @@ SettingsBlob {
             borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
             cornerRadius: ThemeBackend.borderRadius
             fontPixelSize: rootObj.s(11)
-            onTextEdited: function(newText) { section.save(newText); }
-            onAccepted: function(finalText) { section.save(finalText); }
+            onTextEdited: function(newText) { sectionRoot.save(newText); }
+            onAccepted: function(finalText) { sectionRoot.save(finalText); }
         }
     }
 }

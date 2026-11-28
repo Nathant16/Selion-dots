@@ -1,12 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
-import QtQuick.Effects
 import QtQuick.Window
-import QtCore
 import Quickshell
-import Quickshell.Io
-import Quickshell.Bluetooth
-import Quickshell.Networking
 import "../"
 import "../reusables"
 

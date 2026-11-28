@@ -89,7 +89,7 @@ Item {
                     target: root
                     function onEqDataChanged() {
                         if (!balanceSlider.pressed) {
-                            var nextBalance = Number(root.eqData.balance || 0);
+                            let nextBalance = Number(root.eqData.balance || 0);
                             if (!isNaN(nextBalance)) balanceSlider.value = nextBalance;
                         }
                     }

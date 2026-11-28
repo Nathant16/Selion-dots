@@ -1,7 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
-import Quickshell
 import "../"
 import "../reusables"
 import "../reusables/guide"

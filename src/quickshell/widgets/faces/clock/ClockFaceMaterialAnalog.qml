@@ -113,7 +113,7 @@ Item {
 
     function resolveColor(token, fallback) {
         if (ThemeBackend.matugenColors) {
-            var val = ThemeBackend.matugenColors[token];
+            let val = ThemeBackend.matugenColors[token];
             if (val) {
                 if (typeof val === "string") return Qt.color(val);
                 if (typeof val === "object") {
@@ -158,11 +158,11 @@ Item {
                 var steps = 240;
 
                 ctx.beginPath();
-                for (var i = 0; i <= steps; i++) {
-                    var a = (i / steps) * Math.PI * 2;
-                    var r = rMid + rAmp * Math.cos(lobes * a);
-                    var x = cx + r * Math.sin(a);
-                    var y = cy - r * Math.cos(a);
+                for (let i = 0; i <= steps; i++) {
+                    let a = (i / steps) * Math.PI * 2;
+                    let r = rMid + rAmp * Math.cos(lobes * a);
+                    let x = cx + r * Math.sin(a);
+                    let y = cy - r * Math.cos(a);
 
                     if (i === 0) {
                         ctx.moveTo(x, y);

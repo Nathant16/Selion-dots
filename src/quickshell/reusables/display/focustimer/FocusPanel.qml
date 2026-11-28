@@ -1,5 +1,4 @@
 import QtQuick
-import "../../../"
 
 Item {
     property bool isActiveTab: false

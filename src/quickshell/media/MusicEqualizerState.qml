@@ -34,7 +34,7 @@ MusicPlayerState {
         var wasPending = root.eqData && root.eqData.pending;
         var needsRestore = wasPending;
         if (!needsRestore && root.eqData) {
-            for (var i = 1; i <= 10; i++) {
+            for (let i = 1; i <= 10; i++) {
                 if (root.eqData["b" + i] !== root.savedEqData["b" + i]) {
                     needsRestore = true;
                     break;
@@ -49,7 +49,7 @@ MusicPlayerState {
             if (root.savedEqData.preset && root.savedEqData.preset !== "Custom") {
                 root.execCmd(Caching.qsDir + `/media/equalizer.sh preset ${root.savedEqData.preset}`);
             } else {
-                for (var b = 1; b <= 10; b++) {
+                for (let b = 1; b <= 10; b++) {
                     if (root.savedEqData["b" + b] !== undefined) {
                         root.execCmd(Caching.qsDir + `/media/equalizer.sh set_band ${b} ${root.savedEqData["b" + b]}`);
                     }
@@ -114,8 +114,8 @@ MusicPlayerState {
             "Classic": [0, 1, 2, 2, 2, 2, 1, 2, 3, 4]
         };
         if (presets[presetName]) {
-            var temp = Object.assign({}, root.eqData);
-            for (var i = 0; i < 10; i++) {
+            let temp = Object.assign({}, root.eqData);
+            for (let i = 0; i < 10; i++) {
                 temp["b" + (i + 1)] = presets[presetName][i];
             }
             temp.preset = presetName;
@@ -203,7 +203,7 @@ MusicPlayerState {
         }
 
         try {
-            var parsed = JSON.parse(outStr);
+            let parsed = JSON.parse(outStr);
             root.eqData = parsed;
             if (!parsed.pending) {
                 root.savedEqData = Object.assign({}, parsed);

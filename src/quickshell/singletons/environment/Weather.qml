@@ -4,7 +4,7 @@ import Quickshell
 import Quickshell.Io
 import "../../"
 
-Item {
+Singleton {
     id: root
 
     property int refreshInterval: {

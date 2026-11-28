@@ -1,10 +1,7 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
-import QtQuick.Shapes
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Io
 import Quickshell.Services.SystemTray
 import "../reusables"
 import "../"

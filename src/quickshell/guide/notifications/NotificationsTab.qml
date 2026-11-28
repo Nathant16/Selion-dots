@@ -12,7 +12,7 @@ GuideTab {
     property alias screenSelector: positionRow.screenSelector
     property alias posDropdown: positionRow.posDropdown
     property alias soundDropdown: soundSection.soundDropdown
-    property alias soundPickerPopup: soundPickerPopup
+    property alias soundPickerPopup: soundPickerModal
 
     property bool selectorOpen: false
     property bool gridEnabled: false
@@ -263,13 +263,13 @@ GuideTab {
                         }
                     }
                 }
-                soundPickerPopup.close();
+                soundPickerModal.close();
             }
         }
     }
 
     SoundPicker {
-        id: soundPickerPopup
+        id: soundPickerModal
         rootObj: notificationsTabRoot.rootObj
         onSoundSelected: function(filePath, fileName) {
             if (filePath && filePath.trim() !== "" && fileName && fileName.trim() !== "") {
@@ -298,7 +298,7 @@ GuideTab {
             notifCfg.flush();
             reloadSoundsDebounceTimer.stop();
             selectorOpen = false;
-            soundPickerPopup.close();
+            soundPickerModal.close();
             if (posDropdown.isOpen) posDropdown.closePopup();
             if (soundDropdown.isOpen) soundDropdown.closePopup();
         }

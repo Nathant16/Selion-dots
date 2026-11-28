@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 import QtQuick.Effects
 import Quickshell
 import "../../"
@@ -37,9 +36,9 @@ Notification {
             let folderPath = filePath.substring(0, filePath.lastIndexOf('/'));
             Quickshell.execDetached(["xdg-open", folderPath]);
         } else {
-            var n = delegateWrapper ? delegateWrapper.realNotif : null;
+            let n = delegateWrapper ? delegateWrapper.realNotif : null;
             if (n && n.actions) {
-                for (var i = 0; i < n.actions.length; i++) {
+                for (let i = 0; i < n.actions.length; i++) {
                     if (n.actions[i].identifier === "default") {
                         n.actions[i].invoke();
                         break;

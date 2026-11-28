@@ -5,12 +5,12 @@ import "../../reusables"
 import "../../reusables/guide"
 
 SettingsBlob {
-    id: section
+    id: sectionRoot
     required property var tab
     readonly property var rootObj: tab.rootObj
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "notifications_dnd"
         searchKeywords: "notifications do not disturb dnd silent mute pause hide"
         icon: "󰂛"
@@ -19,19 +19,19 @@ SettingsBlob {
 
         Toggle {
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            checked: section.tab.dnd
+            checked: sectionRoot.tab.dnd
             accentColor: ThemeBackend.mauve
             baseColor: ThemeBackend.surface1
             handleColor: ThemeBackend.crust
             handleOffColor: ThemeBackend.text
             onToggled: function(c) {
-                section.tab.updateNotifSetting("dnd", c);
+                sectionRoot.tab.updateNotifSetting("dnd", c);
             }
         }
     }
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "notifications_empty_graphic"
         searchKeywords: "notifications center empty illustration graphic image placeholder"
         icon: "󰋑"
@@ -40,19 +40,19 @@ SettingsBlob {
 
         Toggle {
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            checked: section.tab.showEmptyGraphic
+            checked: sectionRoot.tab.showEmptyGraphic
             accentColor: ThemeBackend.mauve
             baseColor: ThemeBackend.surface1
             handleColor: ThemeBackend.crust
             handleOffColor: ThemeBackend.text
             onToggled: function(c) {
-                section.tab.updateNotifSetting("showEmptyGraphic", c);
+                sectionRoot.tab.updateNotifSetting("showEmptyGraphic", c);
             }
         }
     }
 
     SettingsRow {
-        rootObj: section.tab.rootObj
+        rootObj: sectionRoot.tab.rootObj
         settingId: "notifications_right_click_close"
         searchKeywords: "notifications right click dismiss close mouse button"
         icon: "󰍽"
@@ -61,13 +61,13 @@ SettingsBlob {
 
         Toggle {
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            checked: section.tab.rightClickClose
+            checked: sectionRoot.tab.rightClickClose
             accentColor: ThemeBackend.mauve
             baseColor: ThemeBackend.surface1
             handleColor: ThemeBackend.crust
             handleOffColor: ThemeBackend.text
             onToggled: function(c) {
-                section.tab.updateNotifSetting("rightClickClose", c);
+                sectionRoot.tab.updateNotifSetting("rightClickClose", c);
             }
         }
     }

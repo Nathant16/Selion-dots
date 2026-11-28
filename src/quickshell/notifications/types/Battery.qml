@@ -1,9 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
-import Quickshell
 import "../../"
-import "../../reusables"
 import "../"
 import "../battery"
 
@@ -19,10 +16,10 @@ Notification {
         if (n) {
             parts.push(n.image, n.imagePath, n.appIcon);
         }
-        for (var i = 0; i < parts.length; i++) {
-            var p = parts[i];
+        for (let i = 0; i < parts.length; i++) {
+            let p = parts[i];
             if (p === undefined || p === null) continue;
-            var m = /battery-kind-([a-z_]+)/.exec(p.toString());
+            let m = /battery-kind-([a-z_]+)/.exec(p.toString());
             if (m) return m[1];
         }
         return "";

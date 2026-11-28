@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Window
-import Quickshell.Io
 import Quickshell.Services.Mpris
 import "../"
 import "../reusables"
@@ -19,8 +18,8 @@ FocusScope {
     property alias passwordInput: dashboard.passwordInput
     property alias freezeWallpaperView: backdrop.freezeWallpaperView
     property alias idleTimer: idleTimer
-    property alias introStartDelayTimer: introStartDelayTimer
-    property alias introSequence: introSequence
+    property alias introStartDelayTimer: introStartDelayTimerItem
+    property alias introSequence: introSequenceAnim
 
     anchors.fill: parent
     focus: true
@@ -41,7 +40,7 @@ FocusScope {
     readonly property string customBackgroundPath: lockSettings.customBackground ? String(lockSettings.customBackground) : ""
     readonly property bool customBackgroundActive: lockSettings.backgroundMode === "custom" && customBackgroundPath !== ""
     readonly property string desktopWallpaperPath: {
-        Wallpaper.screenWallpaperPaths;
+        let _wp = Wallpaper.screenWallpaperPaths;
         return Wallpaper.getWallpaperPath(safeScreenName);
     }
     readonly property string backgroundPath: customBackgroundActive ? customBackgroundPath : desktopWallpaperPath
@@ -479,12 +478,12 @@ FocusScope {
     property string diskTotalText: SysData.diskTotalGb > 0 ? (SysData.diskTotalGb.toFixed(1) + "G") : ""
 
     Timer {
-        id: introStartDelayTimer
+        id: introStartDelayTimerItem
         interval: 100
         repeat: false
         onTriggered: {
-            if (lockScreenRoot.isPlayingIntro && !introSequence.running) {
-                introSequence.start();
+            if (lockScreenRoot.isPlayingIntro && !introSequenceAnim.running) {
+                introSequenceAnim.start();
             }
         }
     }
@@ -493,9 +492,9 @@ FocusScope {
         lockScreenRoot.updateForecastData();
         lockScreenRoot.restoreFocus();
         if (freezeWallpaperView.status === Image.Ready) {
-            introSequence.start();
+            introSequenceAnim.start();
         } else {
-            introStartDelayTimer.start();
+            introStartDelayTimerItem.start();
         }
     }
 
@@ -548,7 +547,7 @@ FocusScope {
     }
 
     SequentialAnimation {
-        id: introSequence
+        id: introSequenceAnim
 
         ParallelAnimation {
             NumberAnimation {

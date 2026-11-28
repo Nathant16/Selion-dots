@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Window
 import Quickshell.Io
-import Quickshell.Services.Mpris
 import "../"
 import "../reusables"
 
@@ -186,8 +185,8 @@ HostedPanel {
     property color dynamicTextColor: {
         var rawCol = root.activeTextColor || (typeof MprisController !== "undefined" ? MprisController.textColor : "");
         if (rawCol) {
-            var c = String(rawCol).trim();
-            var match = c.match(/^(#[0-9a-fA-F]{6})/);
+            let c = String(rawCol).trim();
+            let match = c.match(/^(#[0-9a-fA-F]{6})/);
             if (match) return match[1];
         }
         return ThemeBackend.text || "#cdd6f4";

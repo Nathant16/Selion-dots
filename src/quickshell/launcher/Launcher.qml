@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Controls
-import QtQuick.Shapes
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
@@ -86,6 +85,7 @@ ShellOverlayWindow {
         id: lastTabWatcher
         path: (typeof Caching !== "undefined" && typeof Caching.getCacheDir === "function") ? (Caching.getCacheDir("launcher") + "/last_tab.txt") : ""
         watchChanges: true
+        printErrors: false
         onFileChanged: reload()
         onLoaded: {
             try {
