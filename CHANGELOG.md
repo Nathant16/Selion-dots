@@ -1,3 +1,7 @@
+### 2.9.1.20
+
+- **Display / Blue Light Schedule**: Added symmetric 10-second smooth mired fade-out back to `6500 K` (followed by clean `reset`) when leaving scheduled night hours or switching into schedule mode during daytime, preserving live on-screen Kelvin continuity if a transition is interrupted mid-fade (`Gamma.qml`).
+
 ### 2.9.1.19
 
 - **Display / Settings UI**: Grouped **Automated schedule** and its expandable **Active hours** range slider inside a unified `SettingsBlob` card (matching Weather's Quiet hours layout with a seamless divider and unified glass background).
