@@ -143,6 +143,8 @@ def update_serpantinum_settings_batch(entries):
                 mon_entry["x"] = int(round(item["x"]))
             if item.get("y") is not None:
                 mon_entry["y"] = int(round(item["y"]))
+            if item.get("powerEnabled") is not None:
+                mon_entry["powerEnabled"] = bool(item["powerEnabled"])
             data["display"]["monitors"][name] = mon_entry
 
         settings_path.parent.mkdir(parents=True, exist_ok=True)
@@ -328,15 +330,17 @@ def _find_hypr_spans(text):
     return spans
 
 
-def _upsert_hypr_block(text, name, mode_str, pos_str, scale_val):
+def _upsert_hypr_block(text, name, mode_str, pos_str, scale_val, disabled=False):
     spans = _find_hypr_spans(text)
     esc_name = re.escape(name)
+    disabled_line = "    disabled = true,\n" if disabled else ""
     new_blk = (
         f'hl.monitor({{\n'
         f'    output = "{name}",\n'
         f'    mode = "{mode_str}",\n'
         f'    position = "{pos_str}",\n'
         f'    scale = {scale_val},\n'
+        f'{disabled_line}'
         f'}})\n'
     )
     if not spans:
@@ -445,6 +449,21 @@ def apply_layout_driftwm(items, env, live_map):
         pass
 
 
+def apply_power_driftwm(name, enabled, res, rate, scale_val, pos, env):
+    flag = "--on" if enabled else "--off"
+    try:
+        if enabled:
+            cmd = ["wlr-randr", "--output", name, "--on", "--scale", str(scale_val)]
+            if pos is not None:
+                cmd.append(f"--pos={int(pos[0])},{int(pos[1])}")
+            subprocess.run(cmd, env=env, capture_output=True, timeout=2)
+            subprocess.run(["driftwm", "msg", "action", "reload-config"], env=env, capture_output=True, timeout=2)
+        else:
+            subprocess.run(["wlr-randr", "--output", name, flag], env=env, capture_output=True, timeout=2)
+    except Exception:
+        pass
+
+
 # ---- Hyprland ----
 
 def _hypr_existing_fields(text, name):
@@ -452,6 +471,7 @@ def _hypr_existing_fields(text, name):
     pos_str = None
     mode_str = None
     scale_val = None
+    disabled = False
     for _, _, blk in _find_hypr_spans(text):
         if re.search(rf'output\s*=\s*["\']{esc_name}["\']', blk):
             pm = re.search(r'position\s*=\s*["\']([^"\']+)["\']', blk)
@@ -463,8 +483,38 @@ def _hypr_existing_fields(text, name):
             sm = re.search(r'scale\s*=\s*([0-9.]+)', blk)
             if sm:
                 scale_val = float(sm.group(1))
+            dm = re.search(r'disabled\s*=\s*(true|false)', blk)
+            if dm:
+                disabled = (dm.group(1) == "true")
             break
-    return mode_str, pos_str, scale_val
+    return mode_str, pos_str, scale_val, disabled
+
+
+def _run_hyprctl_monitor(name, mode_str, pos_str, scale_val, env, disabled=None):
+    safe_name = str(name).replace('"', '\\"')
+    safe_mode = str(mode_str or "preferred").replace('"', '\\"')
+    safe_pos = str(pos_str or "auto").replace('"', '\\"')
+    fields = [
+        f'output = "{safe_name}"',
+        f'mode = "{safe_mode}"',
+        f'position = "{safe_pos}"',
+        f'scale = {scale_val}',
+    ]
+    if disabled is not None:
+        fields.append(f'disabled = {"true" if disabled else "false"}')
+    lua_cmd = "hl.monitor({ " + ", ".join(fields) + " })"
+    try:
+        r = subprocess.run(["hyprctl", "eval", lua_cmd], env=env, capture_output=True, text=True, timeout=2)
+        if r.returncode == 0 and r.stdout.strip().lower() == "ok":
+            return True
+    except Exception:
+        pass
+    try:
+        spec = f"{name},disable" if disabled else f"{name},{mode_str or 'preferred'},{pos_str or 'auto'},{scale_val}"
+        r = subprocess.run(["hyprctl", "keyword", "monitor", spec], env=env, capture_output=True, text=True, timeout=2)
+        return r.returncode == 0 and "unknown" not in (r.stdout + r.stderr).lower()
+    except Exception:
+        return False
 
 
 def apply_hyprland(name, resolution, framerate, scale, env, x=None, y=None):
@@ -472,7 +522,8 @@ def apply_hyprland(name, resolution, framerate, scale, env, x=None, y=None):
     live = _live_monitors_map(env).get(name, {})
     cfg_path = Path.home() / ".config" / "hypr" / "default" / "monitors.lua"
     existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
-    old_mode, old_pos, _ = _hypr_existing_fields(existing, name)
+    old_mode, old_pos, _, old_disabled = _hypr_existing_fields(existing, name)
+    is_disabled = (not live.get("active", True)) if live else old_disabled
 
     res = resolution or live.get("dimensions")
     rate = framerate or live.get("framerate")
@@ -481,22 +532,13 @@ def apply_hyprland(name, resolution, framerate, scale, env, x=None, y=None):
     scale_val = _normalize_scale(scale)
     pos_str = f"{int(round(x))}x{int(round(y))}" if (x is not None and y is not None) else (old_pos or "auto")
 
-    hypr_ok = False
-    try:
-        res_p = subprocess.run(
-            ["hyprctl", "keyword", "monitor", f"{name},{mode_str},{pos_str},{scale_val}"],
-            env=env, capture_output=True, timeout=2,
-        )
-        hypr_ok = (res_p.returncode == 0)
-    except Exception:
-        pass
-    if not hypr_ok:
+    if not _run_hyprctl_monitor(name, mode_str, pos_str, scale_val, env, disabled=True if is_disabled else None):
         pos = (int(round(x)), int(round(y))) if (x is not None and y is not None) else None
         _apply_wlr_randr(name, resolution if explicit_mode else None, framerate if explicit_mode else None, scale_val, env, pos=pos)
 
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
-        updated = _upsert_hypr_block(existing, name, mode_str, pos_str, scale_val)
+        updated = _upsert_hypr_block(existing, name, mode_str, pos_str, scale_val, disabled=is_disabled)
         cfg_path.write_text(updated, encoding="utf-8")
     except Exception as e:
         sys.stderr.write(f"Warning: failed to write hyprland monitors.lua: {e}\n")
@@ -505,34 +547,20 @@ def apply_hyprland(name, resolution, framerate, scale, env, x=None, y=None):
 def apply_layout_hyprland(items, env, live_map):
     cfg_path = Path.home() / ".config" / "hypr" / "default" / "monitors.lua"
     existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
-    batch_cmds = []
     updated = existing
 
     for item in items:
         name = item["name"]
         live = live_map.get(name, {})
-        old_mode, _, old_scale = _hypr_existing_fields(updated, name)
+        old_mode, _, old_scale, old_disabled = _hypr_existing_fields(updated, name)
+        is_disabled = (not live.get("active", True)) if live else old_disabled
         res = item.get("resolution") or live.get("dimensions")
         rate = item.get("framerate") or live.get("framerate")
         mode_str = f"{res}@{rate}" if (res and rate) else (res or old_mode or "preferred")
         sc = _normalize_scale(item["scale"] if item.get("scale") is not None else (live.get("scale") if live.get("scale") is not None else (old_scale or 1.0)))
         pos_str = f"{int(round(item['x']))}x{int(round(item['y']))}"
-        batch_cmds.append(f"keyword monitor {name},{mode_str},{pos_str},{sc}")
-        updated = _upsert_hypr_block(updated, name, mode_str, pos_str, sc)
-
-    if batch_cmds:
-        ok = False
-        try:
-            r = subprocess.run(["hyprctl", "--batch", " ; ".join(batch_cmds)], env=env, capture_output=True, timeout=3)
-            ok = (r.returncode == 0)
-        except Exception:
-            pass
-        if not ok:
-            for c in batch_cmds:
-                try:
-                    subprocess.run(["hyprctl"] + c.split(" ", 2), env=env, capture_output=True, timeout=2)
-                except Exception:
-                    pass
+        _run_hyprctl_monitor(name, mode_str, pos_str, sc, env, disabled=True if is_disabled else None)
+        updated = _upsert_hypr_block(updated, name, mode_str, pos_str, sc, disabled=is_disabled)
 
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
@@ -541,26 +569,54 @@ def apply_layout_hyprland(items, env, live_map):
         sys.stderr.write(f"Warning: failed to write hyprland monitors.lua layout: {e}\n")
 
 
+def apply_power_hyprland(name, enabled, res, rate, scale_val, pos, env):
+    cfg_path = Path.home() / ".config" / "hypr" / "default" / "monitors.lua"
+    existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
+    old_mode, old_pos, old_scale, _ = _hypr_existing_fields(existing, name)
+    live = _live_monitors_map(env).get(name, {})
+    eff_res = res or live.get("dimensions")
+    eff_rate = rate or live.get("framerate")
+    mode_str = f"{eff_res}@{eff_rate}" if (eff_res and eff_rate) else (old_mode or eff_res or "preferred")
+    pos_str = f"{int(pos[0])}x{int(pos[1])}" if pos is not None else (old_pos or "auto")
+    sc = _normalize_scale(scale_val if scale_val is not None else (old_scale or 1.0))
+
+    _run_hyprctl_monitor(name, mode_str, pos_str, sc, env, disabled=(not enabled))
+    try:
+        cfg_path.parent.mkdir(parents=True, exist_ok=True)
+        updated = _upsert_hypr_block(existing, name, mode_str, pos_str, sc, disabled=(not enabled))
+        cfg_path.write_text(updated, encoding="utf-8")
+    except Exception as e:
+        sys.stderr.write(f"Warning: failed to write hyprland monitors.lua power: {e}\n")
+
+
 # ---- Sway ----
 
-def _sway_existing_pos(text, name):
+def _sway_existing_fields(text, name):
     esc_name = re.escape(name)
     header_re = re.compile(r'^[ \t]*output\s+(?:"[^"]+"|\S+)\s*\{', re.MULTILINE)
     for _, _, blk in _find_brace_blocks(text, header_re):
         if re.match(rf'^[ \t]*output\s+"?{esc_name}"?\s*\{{', blk):
             pm = re.search(r'^\s*(?:position|pos)\s+(-?\d+)\s+(-?\d+)', blk, re.MULTILINE)
-            if pm:
-                return int(pm.group(1)), int(pm.group(2))
-    return None
+            pos = (int(pm.group(1)), int(pm.group(2))) if pm else None
+            dis = bool(re.search(r'^\s*disable\b', blk, re.MULTILINE))
+            return pos, dis
+    return None, False
 
 
-def _persist_sway_text(existing, name, mode_str, scale_val, pos):
+def _sway_existing_pos(text, name):
+    pos, _ = _sway_existing_fields(text, name)
+    return pos
+
+
+def _persist_sway_text(existing, name, mode_str, scale_val, pos, disabled=False):
     esc_name = re.escape(name)
     header_re = re.compile(r'^[ \t]*output\s+(?:"[^"]+"|\S+)\s*\{', re.MULTILINE)
     mode_part = f"    mode {mode_str}\n" if mode_str else ""
     pos_part = f"    position {int(pos[0])} {int(pos[1])}\n" if pos is not None else ""
+    dis_part = "    disable\n" if disabled else ""
     new_block = (
         f'output "{name}" {{\n'
+        f'{dis_part}'
         f'{mode_part}'
         f'{pos_part}'
         f'    scale {scale_val}\n'
@@ -590,7 +646,9 @@ def apply_sway(name, resolution, framerate, scale, env, x=None, y=None):
 
     cfg_path = Path.home() / ".config" / "sway" / "default" / "monitors"
     existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
-    pos = (int(round(x)), int(round(y))) if (x is not None and y is not None) else _sway_existing_pos(existing, name)
+    old_pos, old_disabled = _sway_existing_fields(existing, name)
+    is_disabled = (not live.get("active", True)) if live else old_disabled
+    pos = (int(round(x)), int(round(y))) if (x is not None and y is not None) else old_pos
 
     if explicit_mode and mode_str:
         try:
@@ -610,7 +668,7 @@ def apply_sway(name, resolution, framerate, scale, env, x=None, y=None):
 
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
-        cfg_path.write_text(_persist_sway_text(existing, name, mode_str, scale_val, pos), encoding="utf-8")
+        cfg_path.write_text(_persist_sway_text(existing, name, mode_str, scale_val, pos, disabled=is_disabled), encoding="utf-8")
     except Exception as e:
         sys.stderr.write(f"Warning: failed to write sway monitors config: {e}\n")
 
@@ -623,13 +681,15 @@ def apply_layout_sway(items, env, live_map):
     for item in items:
         name = item["name"]
         live = live_map.get(name, {})
+        _, old_disabled = _sway_existing_fields(updated, name)
+        is_disabled = (not live.get("active", True)) if live else old_disabled
         res = item.get("resolution") or live.get("dimensions")
         rate = item.get("framerate") or live.get("framerate")
         mode_str = f"{res}@{rate}Hz" if (res and rate) else (res or "")
         sc = _normalize_scale(item["scale"] if item.get("scale") is not None else live.get("scale", 1.0))
         pos = (int(round(item["x"])), int(round(item["y"])))
         sway_cmds.append(f'output "{name}" position {pos[0]} {pos[1]}')
-        updated = _persist_sway_text(updated, name, mode_str, sc, pos)
+        updated = _persist_sway_text(updated, name, mode_str, sc, pos, disabled=is_disabled)
 
     if sway_cmds:
         try:
@@ -644,26 +704,61 @@ def apply_layout_sway(items, env, live_map):
         sys.stderr.write(f"Warning: failed to write sway monitors config layout: {e}\n")
 
 
+def apply_power_sway(name, enabled, res, rate, scale_val, pos, env):
+    cfg_path = Path.home() / ".config" / "sway" / "default" / "monitors"
+    existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
+    old_pos, _ = _sway_existing_fields(existing, name)
+    eff_pos = pos if pos is not None else old_pos
+    mode_str = f"{res}@{rate}Hz" if (res and rate) else (res or "")
+    sc = _normalize_scale(scale_val)
+
+    try:
+        cmds = [f'output "{name}" {"enable" if enabled else "disable"}']
+        if enabled:
+            if mode_str:
+                cmds.append(f'output "{name}" mode {mode_str}')
+            cmds.append(f'output "{name}" scale {sc}')
+            if eff_pos is not None:
+                cmds.append(f'output "{name}" position {int(eff_pos[0])} {int(eff_pos[1])}')
+        subprocess.run(["swaymsg", " ; ".join(cmds)], env=env, capture_output=True, timeout=3)
+    except Exception:
+        pass
+
+    try:
+        cfg_path.parent.mkdir(parents=True, exist_ok=True)
+        cfg_path.write_text(_persist_sway_text(existing, name, mode_str, sc, eff_pos, disabled=(not enabled)), encoding="utf-8")
+    except Exception as e:
+        sys.stderr.write(f"Warning: failed to write sway monitors config power: {e}\n")
+
+
 # ---- Niri ----
 
-def _niri_existing_pos(text, name):
+def _niri_existing_fields(text, name):
     esc_name = re.escape(name)
     header_re = re.compile(r'^[ \t]*output\s+"[^"]+"\s*\{', re.MULTILINE)
     for _, _, blk in _find_brace_blocks(text, header_re):
         if re.match(rf'^[ \t]*output\s+"{esc_name}"\s*\{{', blk):
             pm = re.search(r'^\s*position\s+x=(-?\d+)\s+y=(-?\d+)', blk, re.MULTILINE)
-            if pm:
-                return int(pm.group(1)), int(pm.group(2))
-    return None
+            pos = (int(pm.group(1)), int(pm.group(2))) if pm else None
+            off = bool(re.search(r'^\s*off\b', blk, re.MULTILINE))
+            return pos, off
+    return None, False
 
 
-def _persist_niri_text(existing, name, mode_str, scale_val, pos):
+def _niri_existing_pos(text, name):
+    pos, _ = _niri_existing_fields(text, name)
+    return pos
+
+
+def _persist_niri_text(existing, name, mode_str, scale_val, pos, disabled=False):
     esc_name = re.escape(name)
     header_re = re.compile(r'^[ \t]*output\s+"[^"]+"\s*\{', re.MULTILINE)
+    off_line = "    off\n" if disabled else ""
     mode_line = f'    mode "{mode_str}"\n' if mode_str else ""
     pos_line = f'    position x={int(pos[0])} y={int(pos[1])}\n' if pos is not None else ""
     new_block = (
         f'output "{name}" {{\n'
+        f'{off_line}'
         f'{mode_line}'
         f'    scale {scale_val}\n'
         f'{pos_line}'
@@ -690,7 +785,9 @@ def apply_niri(name, resolution, framerate, scale, env, x=None, y=None):
 
     cfg_path = Path.home() / ".config" / "niri" / "default" / "monitors.kdl"
     existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
-    pos = (int(round(x)), int(round(y))) if (x is not None and y is not None) else _niri_existing_pos(existing, name)
+    old_pos, old_disabled = _niri_existing_fields(existing, name)
+    is_disabled = (not live.get("active", True)) if live else old_disabled
+    pos = (int(round(x)), int(round(y))) if (x is not None and y is not None) else old_pos
 
     if explicit_mode and res:
         live_mode = f"{res}@{float(rate):.3f}" if rate else str(res)
@@ -718,7 +815,7 @@ def apply_niri(name, resolution, framerate, scale, env, x=None, y=None):
 
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
-        cfg_path.write_text(_persist_niri_text(existing, name, mode_str, scale_val, pos), encoding="utf-8")
+        cfg_path.write_text(_persist_niri_text(existing, name, mode_str, scale_val, pos, disabled=is_disabled), encoding="utf-8")
     except Exception as e:
         sys.stderr.write(f"Warning: failed to write niri monitors.kdl: {e}\n")
 
@@ -730,6 +827,8 @@ def apply_layout_niri(items, env, live_map):
     for item in items:
         name = item["name"]
         live = live_map.get(name, {})
+        _, old_disabled = _niri_existing_fields(updated, name)
+        is_disabled = (not live.get("active", True)) if live else old_disabled
         res = item.get("resolution") or live.get("dimensions")
         rate = item.get("framerate") or live.get("framerate")
         mode_str = f"{res}@{rate}" if (res and rate) else (res or "")
@@ -739,7 +838,7 @@ def apply_layout_niri(items, env, live_map):
             subprocess.run(["niri", "msg", "output", name, "position", "set", "--", str(pos[0]), str(pos[1])], env=env, capture_output=True, timeout=2)
         except Exception:
             pass
-        updated = _persist_niri_text(updated, name, mode_str, sc, pos)
+        updated = _persist_niri_text(updated, name, mode_str, sc, pos, disabled=is_disabled)
 
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
@@ -748,9 +847,33 @@ def apply_layout_niri(items, env, live_map):
         sys.stderr.write(f"Warning: failed to write niri monitors.kdl layout: {e}\n")
 
 
+def apply_power_niri(name, enabled, res, rate, scale_val, pos, env):
+    cfg_path = Path.home() / ".config" / "niri" / "default" / "monitors.kdl"
+    existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
+    old_pos, _ = _niri_existing_fields(existing, name)
+    eff_pos = pos if pos is not None else old_pos
+    mode_str = f"{res}@{rate}" if (res and rate) else (res or "")
+    sc = _normalize_scale(scale_val)
+
+    try:
+        subprocess.run(["niri", "msg", "output", name, "on" if enabled else "off"], env=env, capture_output=True, timeout=2)
+        if enabled:
+            subprocess.run(["niri", "msg", "output", name, "scale", str(sc)], env=env, capture_output=True, timeout=2)
+            if eff_pos is not None:
+                subprocess.run(["niri", "msg", "output", name, "position", "set", "--", str(int(eff_pos[0])), str(int(eff_pos[1]))], env=env, capture_output=True, timeout=2)
+    except Exception:
+        pass
+
+    try:
+        cfg_path.parent.mkdir(parents=True, exist_ok=True)
+        cfg_path.write_text(_persist_niri_text(existing, name, mode_str, sc, eff_pos, disabled=(not enabled)), encoding="utf-8")
+    except Exception as e:
+        sys.stderr.write(f"Warning: failed to write niri monitors.kdl power: {e}\n")
+
+
 # ---- Mango ----
 
-def _mango_existing_pos(text, name):
+def _mango_existing_fields(text, name):
     esc_name = re.escape(name)
     line_re = re.compile(rf'^\s*(?:monitor_rule|monitor)\s*=(?:[^,\n]*,)?\s*(?:name:)?{esc_name}(?:,|$)', re.MULTILINE)
     m = line_re.search(text)
@@ -760,12 +883,18 @@ def _mango_existing_pos(text, name):
         line = text[line_start:len(text) if line_end == -1 else line_end]
         xm = re.search(r'(?:^|,)\s*x:(-?\d+)', line)
         ym = re.search(r'(?:^|,)\s*y:(-?\d+)', line)
-        if xm and ym:
-            return int(xm.group(1)), int(ym.group(1))
-    return None
+        pos = (int(xm.group(1)), int(ym.group(1))) if (xm and ym) else None
+        dis = bool(re.search(r'(?:^|,)\s*disable:1(?:,|$)', line))
+        return pos, dis
+    return None, False
 
 
-def _persist_mango_text(existing, name, res, rate, scale_val, pos):
+def _mango_existing_pos(text, name):
+    pos, _ = _mango_existing_fields(text, name)
+    return pos
+
+
+def _persist_mango_text(existing, name, res, rate, scale_val, pos, disabled=False):
     if abs(scale_val - round(scale_val)) < 1e-6:
         scale_fmt = int(round(scale_val))
     else:
@@ -780,6 +909,8 @@ def _persist_mango_text(existing, name, res, rate, scale_val, pos):
     rule_parts.append(f"scale:{scale_fmt}")
     if pos is not None:
         rule_parts.extend([f"x:{int(pos[0])}", f"y:{int(pos[1])}"])
+    if disabled:
+        rule_parts.append("disable:1")
     new_line = "monitor_rule=" + ",".join(rule_parts)
 
     esc_name = re.escape(name)
@@ -809,14 +940,16 @@ def apply_mango(name, resolution, framerate, scale, env, x=None, y=None):
     cfg_path = Path.home() / ".config" / "mango" / "default" / "monitors.conf"
     existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
 
-    pos = (int(round(x)), int(round(y))) if (x is not None and y is not None) else _mango_existing_pos(existing, name)
+    old_pos, old_disabled = _mango_existing_fields(existing, name)
+    is_disabled = (not live.get("active", True)) if live else old_disabled
+    pos = (int(round(x)), int(round(y))) if (x is not None and y is not None) else old_pos
     _apply_wlr_randr(name, resolution if explicit_mode else None, framerate if explicit_mode else None, scale_val, env, pos=(int(round(x)), int(round(y))) if (x is not None and y is not None) else None)
 
     res = resolution or live.get("dimensions")
     rate = framerate or live.get("framerate")
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
-        cfg_path.write_text(_persist_mango_text(existing, name, res, rate, scale_val, pos), encoding="utf-8")
+        cfg_path.write_text(_persist_mango_text(existing, name, res, rate, scale_val, pos, disabled=is_disabled), encoding="utf-8")
     except Exception as e:
         sys.stderr.write(f"Warning: failed to write mango monitors.conf: {e}\n")
 
@@ -828,11 +961,13 @@ def apply_layout_mango(items, env, live_map):
     for item in items:
         name = item["name"]
         live = live_map.get(name, {})
+        _, old_disabled = _mango_existing_fields(updated, name)
+        is_disabled = (not live.get("active", True)) if live else old_disabled
         res = item.get("resolution") or live.get("dimensions")
         rate = item.get("framerate") or live.get("framerate")
         sc = _normalize_scale(item["scale"] if item.get("scale") is not None else live.get("scale", 1.0))
         pos = (int(round(item["x"])), int(round(item["y"])))
-        updated = _persist_mango_text(updated, name, res, rate, sc, pos)
+        updated = _persist_mango_text(updated, name, res, rate, sc, pos, disabled=is_disabled)
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
         cfg_path.write_text(updated, encoding="utf-8")
@@ -840,15 +975,47 @@ def apply_layout_mango(items, env, live_map):
         sys.stderr.write(f"Warning: failed to write mango monitors.conf layout: {e}\n")
 
 
+def apply_power_mango(name, enabled, res, rate, scale_val, pos, env):
+    cfg_path = Path.home() / ".config" / "mango" / "default" / "monitors.conf"
+    existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
+    old_pos, _ = _mango_existing_fields(existing, name)
+    eff_pos = pos if pos is not None else old_pos
+    sc = _normalize_scale(scale_val)
+
+    wlr_ok = False
+    try:
+        cmd = ["wlr-randr", "--output", name, "--on" if enabled else "--off"]
+        if enabled:
+            cmd.extend(["--scale", str(sc)])
+            if eff_pos is not None:
+                cmd.append(f"--pos={int(eff_pos[0])},{int(eff_pos[1])}")
+        r = subprocess.run(cmd, env=env, capture_output=True, timeout=2)
+        wlr_ok = (r.returncode == 0)
+    except Exception:
+        pass
+    if not wlr_ok:
+        try:
+            subprocess.run(["mmsg", "dispatch", f"{'enable_monitor' if enabled else 'disable_monitor'},{name}"], env=env, capture_output=True, timeout=2)
+        except Exception:
+            pass
+
+    try:
+        cfg_path.parent.mkdir(parents=True, exist_ok=True)
+        cfg_path.write_text(_persist_mango_text(existing, name, res, rate, sc, eff_pos, disabled=(not enabled)), encoding="utf-8")
+    except Exception as e:
+        sys.stderr.write(f"Warning: failed to write mango monitors.conf power: {e}\n")
+
+
 # ---- Umbriel ----
 
-def _persist_umbriel_text(existing, name, mode_str, scale_val, pos):
+def _persist_umbriel_text(existing, name, mode_str, scale_val, pos, enabled=None):
     esc_name = re.escape(name)
     header_re = re.compile(rf'^\[output\.(?:"{esc_name}"|{esc_name})\]\s*$')
     lines = existing.splitlines()
 
     existing_mode = ""
     existing_pos = None
+    existing_enabled = True
     i = 0
     while i < len(lines):
         if header_re.match(lines[i].strip()):
@@ -860,13 +1027,20 @@ def _persist_umbriel_text(existing, name, mode_str, scale_val, pos):
                 m_pos = re.match(r'^\s*position\s*=\s*\[\s*(-?\d+)\s*,\s*(-?\d+)\s*\]', lines[j])
                 if m_pos:
                     existing_pos = (int(m_pos.group(1)), int(m_pos.group(2)))
+                if re.match(r'^\s*enabled\s*=\s*false\b', lines[j]):
+                    existing_enabled = False
+                elif re.match(r'^\s*enabled\s*=\s*true\b', lines[j]):
+                    existing_enabled = True
                 j += 1
             break
         i += 1
 
     eff_mode = mode_str or existing_mode
     eff_pos = pos if pos is not None else existing_pos
+    eff_enabled = existing_enabled if enabled is None else bool(enabled)
     block_lines = [f'[output."{name}"]']
+    if not eff_enabled:
+        block_lines.append("enabled = false")
     if eff_mode:
         block_lines.append(f'mode = "{eff_mode}"')
     block_lines.append(f"scale = {scale_val}")
@@ -912,6 +1086,7 @@ def apply_umbriel(name, resolution, framerate, scale, env, x=None, y=None):
     mode_str = f"{res}@{rate}" if rate and res else (res or "")
     scale_val = _normalize_scale(scale)
     pos = (int(round(x)), int(round(y))) if (x is not None and y is not None) else None
+    is_enabled = live.get("active", True) if live else None
 
     live_applied = False
     try:
@@ -934,7 +1109,7 @@ def apply_umbriel(name, resolution, framerate, scale, env, x=None, y=None):
     try:
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
         existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
-        cfg_path.write_text(_persist_umbriel_text(existing, name, mode_str, scale_val, pos), encoding="utf-8")
+        cfg_path.write_text(_persist_umbriel_text(existing, name, mode_str, scale_val, pos, enabled=is_enabled), encoding="utf-8")
     except Exception as e:
         sys.stderr.write(f"Warning: failed to write umbriel monitors.toml: {e}\n")
 
@@ -967,10 +1142,39 @@ def apply_layout_umbriel(items, env, live_map):
             mode_str = f"{res}@{rate}" if (res and rate) else (res or "")
             sc = _normalize_scale(item["scale"] if item.get("scale") is not None else live.get("scale", 1.0))
             pos = (int(round(item["x"])), int(round(item["y"])))
-            updated = _persist_umbriel_text(updated, name, mode_str, sc, pos)
+            is_enabled = live.get("active", True) if live else None
+            updated = _persist_umbriel_text(updated, name, mode_str, sc, pos, enabled=is_enabled)
         cfg_path.write_text(updated, encoding="utf-8")
     except Exception as e:
         sys.stderr.write(f"Warning: failed to write umbriel monitors.toml layout: {e}\n")
+
+
+def apply_power_umbriel(name, enabled, res, rate, scale_val, pos, env):
+    mode_str = f"{res}@{rate}" if (res and rate) else (res or "")
+    sc = _normalize_scale(scale_val)
+    try:
+        subprocess.run(["umbriel", "config", "set", f'output."{name}".enabled', "true" if enabled else "false"], env=env, capture_output=True, timeout=2)
+        if enabled:
+            subprocess.run(["umbriel", "msg", "output-enable", name], env=env, capture_output=True, timeout=2)
+            if mode_str:
+                subprocess.run(["umbriel", "config", "set", f'output."{name}".mode', mode_str], env=env, capture_output=True, timeout=2)
+            subprocess.run(["umbriel", "config", "set", f'output."{name}".scale', str(sc)], env=env, capture_output=True, timeout=2)
+            if pos is not None:
+                subprocess.run(["umbriel", "config", "set", f'output."{name}".position', f"[{int(pos[0])}, {int(pos[1])}]"], env=env, capture_output=True, timeout=2)
+        else:
+            r = subprocess.run(["umbriel", "msg", "output-disable", name], env=env, capture_output=True, timeout=2)
+            if r.returncode != 0:
+                subprocess.run(["wlr-randr", "--output", name, "--off"], env=env, capture_output=True, timeout=2)
+    except Exception:
+        pass
+
+    cfg_path = Path.home() / ".config" / "umbriel" / "config" / "monitors.toml"
+    try:
+        cfg_path.parent.mkdir(parents=True, exist_ok=True)
+        existing = cfg_path.read_text(encoding="utf-8") if cfg_path.exists() else ""
+        cfg_path.write_text(_persist_umbriel_text(existing, name, mode_str, sc, pos, enabled=enabled), encoding="utf-8")
+    except Exception as e:
+        sys.stderr.write(f"Warning: failed to write umbriel monitors.toml power: {e}\n")
 
 
 # ---- Generic ----
@@ -982,6 +1186,18 @@ def apply_generic(name, resolution, framerate, scale, env, x=None, y=None):
 
 def apply_layout_generic(items, env, _live_map):
     _apply_wlr_randr_positions(items, env)
+
+
+def apply_power_generic(name, enabled, res, rate, scale_val, pos, env):
+    try:
+        cmd = ["wlr-randr", "--output", name, "--on" if enabled else "--off"]
+        if enabled:
+            cmd.extend(["--scale", str(_normalize_scale(scale_val))])
+            if pos is not None:
+                cmd.append(f"--pos={int(pos[0])},{int(pos[1])}")
+        subprocess.run(cmd, env=env, capture_output=True, timeout=2)
+    except Exception:
+        pass
 
 
 _SET_HANDLERS = {
@@ -1002,6 +1218,15 @@ _LAYOUT_HANDLERS = {
     "umbriel": apply_layout_umbriel,
 }
 
+_POWER_HANDLERS = {
+    "driftwm": apply_power_driftwm,
+    "hyprland": apply_power_hyprland,
+    "sway": apply_power_sway,
+    "niri": apply_power_niri,
+    "mango": apply_power_mango,
+    "umbriel": apply_power_umbriel,
+}
+
 
 def main():
     parser = argparse.ArgumentParser(description="Serpantinum Monitor Manager")
@@ -1019,6 +1244,16 @@ def main():
     layout_parser = subparsers.add_parser("set-layout", help="Apply and persist 2D positions for multiple monitors")
     layout_parser.add_argument("--layout", required=True, help="JSON array of {name, x, y, ...}")
     layout_parser.add_argument("--compositor", help="Override target compositor")
+
+    power_parser = subparsers.add_parser("set-power", help="Enable or disable a monitor output cleanly")
+    power_parser.add_argument("--name", required=True, help="Output name, e.g. HDMI-A-1")
+    power_parser.add_argument("--enabled", required=True, help="1/true to enable, 0/false to disable")
+    power_parser.add_argument("--resolution", help="Saved resolution WxH")
+    power_parser.add_argument("--framerate", help="Saved refresh rate in Hz")
+    power_parser.add_argument("--scale", type=float, help="Saved scale factor")
+    power_parser.add_argument("--x", type=int, help="Saved logical X position")
+    power_parser.add_argument("--y", type=int, help="Saved logical Y position")
+    power_parser.add_argument("--compositor", help="Override target compositor")
 
     args = parser.parse_args()
     env = _resolve_env()
@@ -1060,6 +1295,36 @@ def main():
         handler = _LAYOUT_HANDLERS.get(comp, apply_layout_generic)
         handler(clean_items, env, live_map)
         print(json.dumps({"success": True, "compositor": comp, "outputs": [i["name"] for i in clean_items]}))
+        return
+
+    if args.action == "set-power":
+        raw_en = str(args.enabled).strip().lower()
+        enabled = raw_en in ("1", "true", "yes", "on", "enable", "enabled")
+        live_map = _live_monitors_map(env)
+        active_names = [n for n, m in live_map.items() if m.get("active", True)]
+        if not enabled and args.name in active_names and len(active_names) <= 1:
+            print(json.dumps({"success": False, "compositor": comp, "output": args.name, "error": "Cannot disable the last active monitor"}))
+            sys.exit(1)
+
+        live_m = live_map.get(args.name, {})
+        res = args.resolution or live_m.get("dimensions")
+        rate = args.framerate or live_m.get("framerate")
+        sc = _normalize_scale(args.scale if args.scale is not None else live_m.get("scale", 1.0))
+        pos = (int(args.x), int(args.y)) if (args.x is not None and args.y is not None) else (
+            (int(live_m.get("x", 0)), int(live_m.get("y", 0))) if live_m else None
+        )
+        update_serpantinum_settings_batch([{
+            "name": args.name,
+            "resolution": res,
+            "framerate": rate,
+            "scale": sc,
+            "x": pos[0] if pos else None,
+            "y": pos[1] if pos else None,
+            "powerEnabled": enabled,
+        }])
+        handler = _POWER_HANDLERS.get(comp, apply_power_generic)
+        handler(args.name, enabled, res, rate, sc, pos, env)
+        print(json.dumps({"success": True, "compositor": comp, "output": args.name, "enabled": enabled}))
 
 
 if __name__ == "__main__":

@@ -31,7 +31,7 @@ Rectangle {
         return 1.0;
     }
 
-    property bool monitorPowered: monSettings && monSettings.powerEnabled !== undefined ? monSettings.powerEnabled : (monitorInfo && monitorInfo.active !== undefined ? monitorInfo.active : true)
+    property bool monitorPowered: (monitorInfo && monitorInfo.active !== undefined) ? (monitorInfo.active !== false) : ((monSettings && monSettings.powerEnabled !== undefined) ? Boolean(monSettings.powerEnabled) : true)
     property bool filterEnabled: monSettings && monSettings.enabled !== undefined ? monSettings.enabled : false
     property bool filterAuto: monSettings && monSettings.auto !== undefined ? monSettings.auto : false
     property int scheduleStart: monSettings && monSettings.scheduleStart !== undefined ? Gamma.normalizeHour(monSettings.scheduleStart, 22) : 22
@@ -124,7 +124,7 @@ Rectangle {
         return labels;
     }
 
-    readonly property color cardTint: monitorPowered ? Qt.alpha(ThemeBackend.surface0, 0.4) : Qt.darker(Qt.alpha(ThemeBackend.surface0, 0.4), 1.1)
+    readonly property color cardTint: Qt.alpha(ThemeBackend.surface0, monitorPowered ? 0.4 : 0.28)
     color: monDelegateGlass.active ? "transparent" : cardTint
 
     GlassFill {
@@ -132,19 +132,22 @@ Rectangle {
         anchors.fill: parent
         radius: parent.radius
         tintColor: monDelegate.cardTint
-        tintAmount: 0.25
+        tintAmount: monDelegate.monitorPowered ? 0.25 : 0.16
+        Behavior on tintAmount { NumberAnimation { duration: 250; easing.type: Easing.InOutCubic } }
     }
 
     property real targetHeight: boxLayout.implicitHeight + rootObj.s(24)
     property bool appeared: !tab.animateCards
 
     property real appearProgress: appeared ? 1 : 0
+    property real settingsExpand: monitorPowered ? 1.0 : 0.0
     implicitHeight: targetHeight * appearProgress
     opacity: appeared ? 1.0 : 0.0
 
-    Behavior on appearProgress { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-    Behavior on color { ColorAnimation { duration: 250 } }
+    Behavior on appearProgress { NumberAnimation { duration: 250; easing.type: Easing.OutQuint } }
+    Behavior on settingsExpand { NumberAnimation { duration: 250; easing.type: Easing.InOutCubic } }
+    Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+    Behavior on color { ColorAnimation { duration: 200 } }
 
     Component.onCompleted: {
         appeared = true;
@@ -152,8 +155,8 @@ Rectangle {
 
     onMonSettingsChanged: {
         if (!monSettings) return;
-        if (monSettings.powerEnabled !== undefined) {
-            monitorPowered = monSettings.powerEnabled;
+        if (monSettings.powerEnabled !== undefined && (monitorInfo.active === undefined || Date.now() < monDelegate.tab.powerLockUntilMs)) {
+            monitorPowered = Boolean(monSettings.powerEnabled);
         }
         filterEnabled = monSettings.enabled !== undefined ? monSettings.enabled : false;
         filterAuto = monSettings.auto !== undefined ? monSettings.auto : false;
@@ -175,8 +178,8 @@ Rectangle {
 
     onMonitorInfoChanged: {
         if (!monitorInfo) return;
-        if (monSettings.powerEnabled === undefined && monitorInfo.active !== undefined) {
-            monitorPowered = monitorInfo.active;
+        if (monitorInfo.active !== undefined && Date.now() >= monDelegate.tab.powerLockUntilMs) {
+            monitorPowered = (monitorInfo.active !== false);
         }
         if (!monDelegate.tab.isScaleLockedFor(monName) && !scaleSelector.isEditing && scaleSelector.holdDirection === 0) {
             let nextScale = resolveEffectiveScale();
@@ -213,16 +216,20 @@ Rectangle {
                 font.family: ThemeBackend.fontFamily
                 font.pixelSize: rootObj.s(16)
                 font.bold: true
-                color: ThemeBackend.text
+                color: monDelegate.monitorPowered ? ThemeBackend.text : ThemeBackend.subtext0
+                Behavior on color { ColorAnimation { duration: 200 } }
             }
 
             Item { Layout.fillWidth: true }
 
             Text {
-                text: (monDelegate.monitorInfo.dimensions || "1920x1080") + " • " + monDelegate.currentFramerate + "Hz • " + Math.round(monDelegate.currentScale * 100) + "%"
+                text: monDelegate.monitorPowered
+                    ? ((monDelegate.monitorInfo.dimensions || "1920x1080") + " • " + monDelegate.currentFramerate + "Hz • " + Math.round(monDelegate.currentScale * 100) + "%")
+                    : "OFF"
                 font.family: ThemeBackend.fontFamily
                 font.pixelSize: rootObj.s(12)
-                color: ThemeBackend.subtext0
+                color: monDelegate.monitorPowered ? ThemeBackend.subtext0 : ThemeBackend.overlay1
+                Behavior on color { ColorAnimation { duration: 200 } }
             }
         }
 
@@ -239,14 +246,19 @@ Rectangle {
 
             Toggle {
                 id: powerToggle
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                 checked: monDelegate.monitorPowered
+                enabled: !monDelegate.monitorPowered || monDelegate.tab.activeMonitorCount > 1
                 accentColor: ThemeBackend.mauve
                 baseColor: ThemeBackend.surface1
                 handleColor: ThemeBackend.crust
                 handleOffColor: ThemeBackend.text
                 onToggled: function(c) {
+                    if (!c && monDelegate.tab.activeMonitorCount <= 1) {
+                        monDelegate.monitorPowered = true;
+                        return;
+                    }
                     monDelegate.monitorPowered = c;
-                    monDelegate.tab.updateMonitorSetting(monDelegate.monName, "powerEnabled", c);
                     monDelegate.tab.applyMonitorPower(monDelegate.monName, c);
                 }
 
@@ -258,254 +270,273 @@ Rectangle {
             }
         }
 
-        SettingsGroup {
-            rootObj: monDelegate.rootObj
-            settingId: "display_gamma_" + monDelegate.monName
-            section: monDelegate.monName
-            searchKeywords: "display night light blue light filter gamma redshift warm eye care " + monDelegate.monName
-            icon: "󰖔"
-            title: I18n.t("guide.display.gamma.title")
-            description: I18n.t("guide.display.gamma.desc")
-            expanded: monDelegate.filterEnabled
+        Item {
+            id: monitorSettingsWrapper
+            Layout.fillWidth: true
+            clip: true
+            visible: monDelegate.settingsExpand > 0.001
+            implicitHeight: monitorSettingsCol.implicitHeight * monDelegate.settingsExpand
+            opacity: Math.max(0.0, (monDelegate.settingsExpand - 0.15) / 0.85)
 
-            Toggle {
-                id: filterToggle
-                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                checked: monDelegate.filterEnabled
-                accentColor: ThemeBackend.mauve
-                baseColor: ThemeBackend.surface1
-                handleColor: ThemeBackend.crust
-                handleOffColor: ThemeBackend.text
-                onToggled: function(c) {
-                    monDelegate.filterEnabled = c;
-                    Gamma.setEnabled(monDelegate.monName, c);
-                    monDelegate.tab.refreshDisplaySettings();
-                }
+            ColumnLayout {
+                id: monitorSettingsCol
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                spacing: rootObj.s(6)
 
-                Binding {
-                    target: filterToggle
-                    property: "checked"
-                    value: monDelegate.filterEnabled
-                }
-            }
+                SettingsGroup {
+                    rootObj: monDelegate.rootObj
+                    settingId: "display_gamma_" + monDelegate.monName
+                    section: monDelegate.monName
+                    searchKeywords: "display night light blue light filter gamma redshift warm eye care " + monDelegate.monName
+                    icon: "󰖔"
+                    title: I18n.t("guide.display.gamma.title")
+                    description: I18n.t("guide.display.gamma.desc")
+                    expanded: monDelegate.filterEnabled
 
-            subSettings: [
-                SettingsBlob {
-                    baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
+                    Toggle {
+                        id: filterToggle
+                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                        checked: monDelegate.filterEnabled
+                        accentColor: ThemeBackend.mauve
+                        baseColor: ThemeBackend.surface1
+                        handleColor: ThemeBackend.crust
+                        handleOffColor: ThemeBackend.text
+                        onToggled: function(c) {
+                            monDelegate.filterEnabled = c;
+                            Gamma.setEnabled(monDelegate.monName, c);
+                            monDelegate.tab.refreshDisplaySettings();
+                        }
 
-                    SettingsRow {
-                        rootObj: monDelegate.rootObj
-                        settingId: "display_gamma_schedule_" + monDelegate.monName
-                        section: monDelegate.monName
-                        searchKeywords: "display night light blue light gamma schedule hours automatic " + monDelegate.monName
-                        icon: "󰥔"
-                        title: I18n.t("guide.display.schedule.title")
-                        description: I18n.t("guide.display.schedule.desc")
-
-                        Toggle {
-                            id: autoToggle
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            checked: monDelegate.filterAuto
-                            accentColor: ThemeBackend.mauve
-                            baseColor: ThemeBackend.surface1
-                            handleColor: ThemeBackend.crust
-                            handleOffColor: ThemeBackend.text
-                            onToggled: function(c) {
-                                monDelegate.filterAuto = c;
-                                Gamma.setAuto(monDelegate.monName, c);
-                                monDelegate.tab.refreshDisplaySettings();
-                            }
-
-                            Binding {
-                                target: autoToggle
-                                property: "checked"
-                                value: monDelegate.filterAuto
-                            }
+                        Binding {
+                            target: filterToggle
+                            property: "checked"
+                            value: monDelegate.filterEnabled
                         }
                     }
 
-                    Item {
-                        id: scheduleRangeWrapper
-                        Layout.fillWidth: true
-                        readonly property bool isOpen: monDelegate.filterAuto || scheduleRangeRow.revealedBySearch
-                        Layout.preferredHeight: isOpen ? scheduleRangeRow.implicitHeight : 0
-                        visible: Layout.preferredHeight > 0.5
-                        clip: true
-                        Behavior on Layout.preferredHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    subSettings: [
+                        SettingsBlob {
+                            baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
+
+                            SettingsRow {
+                                rootObj: monDelegate.rootObj
+                                settingId: "display_gamma_schedule_" + monDelegate.monName
+                                section: monDelegate.monName
+                                searchKeywords: "display night light blue light gamma schedule hours automatic " + monDelegate.monName
+                                icon: "󰥔"
+                                title: I18n.t("guide.display.schedule.title")
+                                description: I18n.t("guide.display.schedule.desc")
+
+                                Toggle {
+                                    id: autoToggle
+                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                    checked: monDelegate.filterAuto
+                                    accentColor: ThemeBackend.mauve
+                                    baseColor: ThemeBackend.surface1
+                                    handleColor: ThemeBackend.crust
+                                    handleOffColor: ThemeBackend.text
+                                    onToggled: function(c) {
+                                        monDelegate.filterAuto = c;
+                                        Gamma.setAuto(monDelegate.monName, c);
+                                        monDelegate.tab.refreshDisplaySettings();
+                                    }
+
+                                    Binding {
+                                        target: autoToggle
+                                        property: "checked"
+                                        value: monDelegate.filterAuto
+                                    }
+                                }
+                            }
+
+                            Item {
+                                id: scheduleRangeWrapper
+                                Layout.fillWidth: true
+                                readonly property bool isOpen: monDelegate.filterAuto || scheduleRangeRow.revealedBySearch
+                                property real openProgress: isOpen ? 1.0 : 0.0
+                                Behavior on openProgress { NumberAnimation { duration: 250; easing.type: Easing.InOutCubic } }
+                                Layout.preferredHeight: scheduleRangeRow.implicitHeight * openProgress
+                                visible: openProgress > 0.001
+                                opacity: Math.max(0.0, (openProgress - 0.15) / 0.85)
+                                clip: true
+
+                                SettingsRow {
+                                    id: scheduleRangeRow
+                                    width: parent.width
+                                    rootObj: monDelegate.rootObj
+                                    settingId: "display_gamma_schedule_range_" + monDelegate.monName
+                                    section: monDelegate.monName
+                                    searchKeywords: "display night light blue light gamma schedule hours time start end range " + monDelegate.monName
+                                    icon: "󰔛"
+                                    title: I18n.t("guide.display.schedule.range.title", "Active hours")
+                                    description: I18n.t("guide.display.schedule.range.desc", "Drag the handles to choose when the filter turns on and off")
+
+                                    TimeRangeSlider {
+                                        id: scheduleRangeSlider
+                                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                        Layout.rightMargin: rootObj.s(8)
+                                        start: monDelegate.scheduleStart
+                                        end: monDelegate.scheduleEnd
+                                        accentColor: ThemeBackend.mauve
+                                        trackColor: ThemeBackend.surface2
+                                        textColor: ThemeBackend.text
+                                        subTextColor: ThemeBackend.subtext0
+                                        onCommitted: function(st, en) {
+                                            monDelegate.scheduleStart = st;
+                                            monDelegate.scheduleEnd = en;
+                                            Gamma.setSchedule(monDelegate.monName, st, en);
+                                            monDelegate.tab.refreshDisplaySettings();
+                                        }
+                                    }
+                                }
+                            }
+                        },
 
                         SettingsRow {
-                            id: scheduleRangeRow
-                            width: parent.width
+                            id: tempInnerBox
+                            Layout.fillWidth: true
                             rootObj: monDelegate.rootObj
-                            settingId: "display_gamma_schedule_range_" + monDelegate.monName
+                            settingId: "display_gamma_temp_" + monDelegate.monName
                             section: monDelegate.monName
-                            searchKeywords: "display night light blue light gamma schedule hours time start end range " + monDelegate.monName
-                            icon: "󰔛"
-                            title: I18n.t("guide.display.schedule.range.title", "Active hours")
-                            description: I18n.t("guide.display.schedule.range.desc", "Drag the handles to choose when the filter turns on and off")
+                            searchKeywords: "display color temperature kelvin warm night light blue light gamma " + monDelegate.monName
+                            baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
+                            icon: "󰔏"
+                            title: I18n.t("guide.display.temperature.title")
+                            description: monDelegate.filterAuto
+                                ? I18n.t("guide.display.temperature.desc_auto", "Target color temperature strength during scheduled hours")
+                                : I18n.t("guide.display.temperature.desc")
 
-                            TimeRangeSlider {
-                                id: scheduleRangeSlider
+                            Draggable {
+                                id: temperatureSlider
                                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                                 Layout.rightMargin: rootObj.s(8)
-                                start: monDelegate.scheduleStart
-                                end: monDelegate.scheduleEnd
+                                implicitWidth: rootObj.s(220)
+                                implicitHeight: rootObj.s(18)
+                                from: 0
+                                to: 100
+                                stepSize: 1
+                                defaultValue: 50
+                                showValueBubble: true
+                                valueFormatter: function(v) { return Math.round(v).toString() }
+                                value: monDelegate.currentTemp
+                                backgroundColor: ThemeBackend.surface0
                                 accentColor: ThemeBackend.mauve
-                                trackColor: ThemeBackend.surface2
-                                textColor: ThemeBackend.text
-                                subTextColor: ThemeBackend.subtext0
-                                onCommitted: function(st, en) {
-                                    monDelegate.scheduleStart = st;
-                                    monDelegate.scheduleEnd = en;
-                                    Gamma.setSchedule(monDelegate.monName, st, en);
-                                    monDelegate.tab.refreshDisplaySettings();
+                                handleColor: ThemeBackend.text
+                                handleBorderColor: ThemeBackend.mantle
+                                onMoved: function(val) {
+                                    let rounded = Math.round(val);
+                                    if (monDelegate.currentTemp !== rounded) {
+                                        monDelegate.currentTemp = rounded;
+                                        monDelegate.tab.updateMonitorSettingDebounced(monDelegate.monName, rounded);
+                                    }
+                                }
+                                onDragFinished: {
+                                    monDelegate.tab.flushMonitorSetting(monDelegate.monName);
                                 }
                             }
                         }
-                    }
-                },
+                    ]
+                }
 
                 SettingsRow {
-                    id: tempInnerBox
-                    Layout.fillWidth: true
                     rootObj: monDelegate.rootObj
-                    settingId: "display_gamma_temp_" + monDelegate.monName
-                    section: monDelegate.monName
-                    searchKeywords: "display color temperature kelvin warm night light blue light gamma " + monDelegate.monName
                     baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
-                    icon: "󰔏"
-                    title: I18n.t("guide.display.temperature.title")
-                    description: monDelegate.filterAuto
-                        ? I18n.t("guide.display.temperature.desc_auto", "Target color temperature strength during scheduled hours")
-                        : I18n.t("guide.display.temperature.desc")
+                    icon: "󰍹"
+                    title: I18n.t("guide.display.resolution.title", "Screen Resolution")
+                    description: I18n.t("guide.display.resolution.desc", "Set monitor resolution")
 
-                    Draggable {
-                        id: temperatureSlider
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        Layout.rightMargin: rootObj.s(8)
-                        implicitWidth: rootObj.s(220)
-                        implicitHeight: rootObj.s(18)
-                        from: 0
-                        to: 100
-                        stepSize: 1
-                        defaultValue: 50
-                        showValueBubble: true
-                        valueFormatter: function(v) { return Math.round(v).toString() }
-                        value: monDelegate.currentTemp
-                        backgroundColor: ThemeBackend.surface0
+                    Dropdown {
+                        id: resDropdown
+                        implicitWidth: rootObj.s(180)
+                        implicitHeight: rootObj.s(32)
+                        cornerRadius: rootObj.s(6)
+                        options: (monDelegate.monitorInfo.modes && monDelegate.monitorInfo.modes.length > 0) ? monDelegate.monitorInfo.modes : [monDelegate.monitorInfo.dimensions || "1920x1080"]
+                        currentIndex: {
+                            let cur = monDelegate.monitorInfo.dimensions || "1920x1080";
+                            let idx = options.indexOf(cur);
+                            return idx >= 0 ? idx : 0;
+                        }
                         accentColor: ThemeBackend.mauve
-                        handleColor: ThemeBackend.text
-                        handleBorderColor: ThemeBackend.mantle
-                        onMoved: function(val) {
-                            let rounded = Math.round(val);
-                            if (monDelegate.currentTemp !== rounded) {
-                                monDelegate.currentTemp = rounded;
-                                monDelegate.tab.updateMonitorSettingDebounced(monDelegate.monName, rounded);
+                        baseColor: ThemeBackend.surface0
+                        textColor: ThemeBackend.text
+                        onSelected: function(idx, val) {
+                            monDelegate.tab.applyMonitorResolution(monDelegate.monName, val, monDelegate.currentFramerate || "60");
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    visible: monDelegate.availableFramerates.length > 0
+                    rootObj: monDelegate.rootObj
+                    baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
+                    icon: "󰓅"
+                    title: I18n.t("guide.display.framerate.title", "Refresh Rate")
+                    description: I18n.t("guide.display.framerate.desc", "Set monitor refresh rate")
+
+                    Dropdown {
+                        id: rateDropdown
+                        implicitWidth: rootObj.s(180)
+                        implicitHeight: rootObj.s(32)
+                        cornerRadius: rootObj.s(6)
+                        options: monDelegate.framerateLabels
+                        currentIndex: {
+                            let cur = monDelegate.currentFramerate;
+                            let idx = monDelegate.availableFramerates.indexOf(cur);
+                            return idx >= 0 ? idx : 0;
+                        }
+                        accentColor: ThemeBackend.mauve
+                        baseColor: ThemeBackend.surface0
+                        textColor: ThemeBackend.text
+                        onSelected: function(idx, val) {
+                            if (monDelegate.availableFramerates && monDelegate.availableFramerates[idx]) {
+                                let selectedRate = monDelegate.availableFramerates[idx];
+                                monDelegate.currentFramerate = selectedRate;
+                                monDelegate.tab.applyMonitorFramerate(monDelegate.monName, selectedRate);
                             }
                         }
-                        onDragFinished: {
-                            monDelegate.tab.flushMonitorSetting(monDelegate.monName);
+                    }
+                }
+
+                SettingsRow {
+                    id: displayScaleRow
+                    rootObj: monDelegate.rootObj
+                    settingId: "display_uiscale_" + monDelegate.monName
+                    section: monDelegate.monName
+                    searchKeywords: "display wm monitor scale scaling hidpi dpi fractional zoom compositor windows " + monDelegate.monName
+                    baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
+                    icon: "󰍍"
+                    title: I18n.t("guide.display.uiscale.title", "Display Scale (WM)")
+                    description: I18n.t("guide.display.uiscale.desc", "Compositor and window scale for this monitor (50%–300%)")
+
+                    NumberSelector {
+                        id: scaleSelector
+                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                        implicitWidth: rootObj.s(180)
+                        implicitHeight: rootObj.s(32)
+                        cornerRadius: rootObj.s(6)
+                        from: 50
+                        to: 300
+                        stepSize: 5
+                        decimals: 0
+                        suffix: "%"
+                        baseColor: ThemeBackend.surface0
+                        accentColor: ThemeBackend.mauve
+                        buttonColor: ThemeBackend.surface1
+                        buttonTextColor: ThemeBackend.text
+                        textColor: ThemeBackend.text
+                        subTextColor: ThemeBackend.subtext0
+                        borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
+                        fontPixelSize: rootObj.s(11)
+                        Component.onCompleted: {
+                            scaleSelector.value = Math.max(50, Math.min(300, Math.round(monDelegate.currentScale * 100)));
+                        }
+                        onTriggered: {
+                            let pct = Math.round(scaleSelector.value);
+                            monDelegate.scheduleScalePercent(pct);
                         }
                     }
-                }
-            ]
-        }
-
-        SettingsRow {
-            rootObj: monDelegate.rootObj
-            baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
-            icon: "󰍹"
-            title: I18n.t("guide.display.resolution.title", "Screen Resolution")
-            description: I18n.t("guide.display.resolution.desc", "Set monitor resolution")
-
-            Dropdown {
-                id: resDropdown
-                implicitWidth: rootObj.s(180)
-                implicitHeight: rootObj.s(32)
-                cornerRadius: rootObj.s(6)
-                options: (monDelegate.monitorInfo.modes && monDelegate.monitorInfo.modes.length > 0) ? monDelegate.monitorInfo.modes : [monDelegate.monitorInfo.dimensions || "1920x1080"]
-                currentIndex: {
-                    let cur = monDelegate.monitorInfo.dimensions || "1920x1080";
-                    let idx = options.indexOf(cur);
-                    return idx >= 0 ? idx : 0;
-                }
-                accentColor: ThemeBackend.mauve
-                baseColor: ThemeBackend.surface0
-                textColor: ThemeBackend.text
-                onSelected: function(idx, val) {
-                    monDelegate.tab.applyMonitorResolution(monDelegate.monName, val, monDelegate.currentFramerate || "60");
-                }
-            }
-        }
-
-        SettingsRow {
-            visible: monDelegate.availableFramerates.length > 0
-            rootObj: monDelegate.rootObj
-            baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
-            icon: "󰓅"
-            title: I18n.t("guide.display.framerate.title", "Refresh Rate")
-            description: I18n.t("guide.display.framerate.desc", "Set monitor refresh rate")
-
-            Dropdown {
-                id: rateDropdown
-                implicitWidth: rootObj.s(180)
-                implicitHeight: rootObj.s(32)
-                cornerRadius: rootObj.s(6)
-                options: monDelegate.framerateLabels
-                currentIndex: {
-                    let cur = monDelegate.currentFramerate;
-                    let idx = monDelegate.availableFramerates.indexOf(cur);
-                    return idx >= 0 ? idx : 0;
-                }
-                accentColor: ThemeBackend.mauve
-                baseColor: ThemeBackend.surface0
-                textColor: ThemeBackend.text
-                onSelected: function(idx, val) {
-                    if (monDelegate.availableFramerates && monDelegate.availableFramerates[idx]) {
-                        let selectedRate = monDelegate.availableFramerates[idx];
-                        monDelegate.currentFramerate = selectedRate;
-                        monDelegate.tab.applyMonitorFramerate(monDelegate.monName, selectedRate);
-                    }
-                }
-            }
-        }
-
-        SettingsRow {
-            id: displayScaleRow
-            rootObj: monDelegate.rootObj
-            settingId: "display_uiscale_" + monDelegate.monName
-            section: monDelegate.monName
-            searchKeywords: "display wm monitor scale scaling hidpi dpi fractional zoom compositor windows " + monDelegate.monName
-            baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
-            icon: "󰍍"
-            title: I18n.t("guide.display.uiscale.title", "Display Scale (WM)")
-            description: I18n.t("guide.display.uiscale.desc", "Compositor and window scale for this monitor (50%–300%)")
-
-            NumberSelector {
-                id: scaleSelector
-                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                implicitWidth: rootObj.s(180)
-                implicitHeight: rootObj.s(32)
-                cornerRadius: rootObj.s(6)
-                from: 50
-                to: 300
-                stepSize: 5
-                decimals: 0
-                suffix: "%"
-                baseColor: ThemeBackend.surface0
-                accentColor: ThemeBackend.mauve
-                buttonColor: ThemeBackend.surface1
-                buttonTextColor: ThemeBackend.text
-                textColor: ThemeBackend.text
-                subTextColor: ThemeBackend.subtext0
-                borderColor: Qt.alpha(ThemeBackend.surface2, 0.6)
-                fontPixelSize: rootObj.s(11)
-                Component.onCompleted: {
-                    scaleSelector.value = Math.max(50, Math.min(300, Math.round(monDelegate.currentScale * 100)));
-                }
-                onTriggered: {
-                    let pct = Math.round(scaleSelector.value);
-                    monDelegate.scheduleScalePercent(pct);
                 }
             }
         }

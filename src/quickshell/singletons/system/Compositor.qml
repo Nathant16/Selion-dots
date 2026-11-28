@@ -487,7 +487,7 @@ Item {
         return "echo '[]'";
     }
 
-    function outputEnableCommand(name, enabled, modeStr, scaleVal) {
+    function outputEnableCommand(name, enabled, modeStr, scaleVal, posX, posY) {
         if (!name) return "";
         if (root.name === "niri") {
             return "niri msg output " + _shellQuote(name) + (enabled ? " on" : " off");
@@ -499,23 +499,27 @@ Item {
             return "swaymsg output " + _shellQuote(name) + (enabled ? " enable" : " disable");
         }
         if (root.name === "mango") {
-            return "mmsg dispatch " + _shellQuote((enabled ? "wakeup_monitor," : "sleep_monitor,") + name);
+            let act = enabled ? "enable_monitor," : "disable_monitor,";
+            return "(command -v wlr-randr >/dev/null 2>&1 && wlr-randr --output " + _shellQuote(name) + (enabled ? " --on" : " --off") + ") || mmsg dispatch " + _shellQuote(act + name);
         }
         if (root.name === "umbriel") {
+            let cfgVal = enabled ? "true" : "false";
             let act = enabled ? "output-enable" : "output-disable";
-            return "umbriel msg " + act + " " + _shellQuote(name) + " 2>/dev/null || umbriel msg " + _shellQuote(act + ":" + name);
+            return "umbriel config set " + _shellQuote('output."' + name + '".enabled') + " " + cfgVal + " 2>/dev/null; umbriel msg " + act + " " + _shellQuote(name) + " 2>/dev/null || true";
         }
         if (root.name === "hyprland") {
             let safeName = String(name).replace(/"/g, '\\"');
             if (enabled) {
                 let mode = modeStr || "preferred";
                 let sc = (scaleVal !== undefined && scaleVal !== null) ? Number(scaleVal) : 1.0;
+                let hasPos = (posX !== undefined && posX !== null && posY !== undefined && posY !== null);
+                let posStr = hasPos ? (Math.round(Number(posX)) + "x" + Math.round(Number(posY))) : "auto";
                 let safeMode = String(mode).replace(/"/g, '\\"');
-                let luaCmd = 'hl.monitor({ output = "' + safeName + '", mode = "' + safeMode + '", position = "auto", scale = ' + sc.toString() + ', disabled = false })';
-                return "hyprctl eval " + _shellQuote(luaCmd) + " 2>/dev/null || hyprctl keyword monitor " + _shellQuote(name + "," + mode + ",auto," + sc.toString());
+                let luaCmd = 'hl.monitor({ output = "' + safeName + '", mode = "' + safeMode + '", position = "' + posStr + '", scale = ' + sc.toString() + ', disabled = false })';
+                return "out=$(hyprctl eval " + _shellQuote(luaCmd) + " 2>/dev/null); [ \"$out\" = \"ok\" ] || hyprctl keyword monitor " + _shellQuote(name + "," + mode + "," + posStr + "," + sc.toString());
             }
             let luaCmd = 'hl.monitor({ output = "' + safeName + '", disabled = true })';
-            return "hyprctl eval " + _shellQuote(luaCmd) + " 2>/dev/null || hyprctl keyword monitor " + _shellQuote(name + ",disable");
+            return "out=$(hyprctl eval " + _shellQuote(luaCmd) + " 2>/dev/null); [ \"$out\" = \"ok\" ] || hyprctl keyword monitor " + _shellQuote(name + ",disable");
         }
         return "";
     }

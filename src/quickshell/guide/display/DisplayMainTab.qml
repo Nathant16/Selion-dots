@@ -14,6 +14,7 @@ DisplayMainState {
         Rectangle {
             Layout.fillWidth: true
             implicitHeight: rootObj.s(displayTabRoot.monitorsList.length > 1 ? 230 : 180)
+            Behavior on implicitHeight { NumberAnimation { duration: 250; easing.type: Easing.InOutCubic } }
             radius: ThemeBackend.borderRadius
             color: stageGlass.active ? "transparent" : Qt.alpha(ThemeBackend.surface0, 0.4)
             clip: true
@@ -241,23 +242,29 @@ DisplayMainState {
 
                     // Snap alignment guide lines
                     Rectangle {
-                        visible: stageCanvas.isDraggingLayout && stageCanvas.snapGuides.hasX
+                        opacity: (stageCanvas.isDraggingLayout && stageCanvas.snapGuides.hasX) ? 0.85 : 0.0
+                        visible: opacity > 0.01
                         x: stageCanvas.width / 2 + (stageCanvas.snapGuides.gx - stageCanvas.activeViewport.centerX) * stageCanvas.activeViewport.scale
                         y: 0
                         width: 1
                         height: stageCanvas.height
-                        color: Qt.alpha(ThemeBackend.mauve, 0.75)
+                        color: ThemeBackend.mauve
                         z: 5
+                        Behavior on opacity { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
+                        Behavior on x { enabled: stageCanvas.isDraggingLayout; NumberAnimation { duration: 100; easing.type: Easing.OutQuint } }
                     }
 
                     Rectangle {
-                        visible: stageCanvas.isDraggingLayout && stageCanvas.snapGuides.hasY
+                        opacity: (stageCanvas.isDraggingLayout && stageCanvas.snapGuides.hasY) ? 0.85 : 0.0
+                        visible: opacity > 0.01
                         x: 0
                         y: stageCanvas.height / 2 + (stageCanvas.snapGuides.gy - stageCanvas.activeViewport.centerY) * stageCanvas.activeViewport.scale
                         width: stageCanvas.width
                         height: 1
-                        color: Qt.alpha(ThemeBackend.mauve, 0.75)
+                        color: ThemeBackend.mauve
                         z: 5
+                        Behavior on opacity { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
+                        Behavior on y { enabled: stageCanvas.isDraggingLayout; NumberAnimation { duration: 100; easing.type: Easing.OutQuint } }
                     }
 
                     Repeater {
@@ -268,7 +275,12 @@ DisplayMainState {
                             required property int index
                             readonly property var box: stageCanvas.displayBoxes[index] || ({ name: "", x: 0, y: 0, logW: 1920, logH: 1080, scale: 1.0, active: true, dimensions: "1920x1080" })
                             readonly property bool isDragged: stageCanvas.isDraggingLayout && stageCanvas.draggedName === box.name
+                            readonly property bool isHovered: tileMouse.containsMouse && stageCanvas.canDrag
                             readonly property real vpScale: stageCanvas.activeViewport.scale
+                            readonly property color grayFrameBase: Qt.tint(ThemeBackend.overlay0, Qt.rgba(0.52, 0.53, 0.56, 0.45))
+
+                            property real popScale: 1.0
+                            property real flashOpacity: 0.0
 
                             x: stageCanvas.width / 2 + (box.x - stageCanvas.activeViewport.centerX) * vpScale
                             y: stageCanvas.height / 2 + (box.y - stageCanvas.activeViewport.centerY) * vpScale
@@ -276,19 +288,65 @@ DisplayMainState {
                             height: Math.max(rootObj.s(24), box.logH * vpScale)
                             z: isDragged ? 10 : (box.active ? 2 : 1)
 
-                            radius: rootObj.s(6)
-                            color: isDragged
-                                ? Qt.alpha(ThemeBackend.surface1, 0.9)
-                                : (box.active ? Qt.alpha(ThemeBackend.surface1, 0.72) : Qt.alpha(ThemeBackend.surface0, 0.35))
-                            border.width: isDragged ? 2.5 : 1.5
-                            border.color: isDragged
-                                ? ThemeBackend.mauve
-                                : (box.active ? Qt.alpha(ThemeBackend.mauve, 0.85) : ThemeBackend.surface2)
+                            scale: (isDragged
+                                ? 1.025
+                                : (tileMouse.pressed && stageCanvas.canDrag ? 0.975 : (isHovered ? 1.015 : 1.0))) * monitorTile.popScale
 
-                            Behavior on x { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-                            Behavior on y { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-                            Behavior on width { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-                            Behavior on height { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                            radius: rootObj.s(6)
+                            opacity: box.active ? 1.0 : 0.72
+                            readonly property color tileTint: isDragged
+                                ? Qt.alpha(ThemeBackend.surface1, box.active ? 0.85 : 0.48)
+                                : (box.active ? Qt.alpha(ThemeBackend.surface1, isHovered ? 0.78 : 0.68) : Qt.alpha(ThemeBackend.surface0, 0.34))
+                            color: tileGlass.active ? "transparent" : tileTint
+                            border.width: isDragged ? 2.5 : (box.active && isHovered ? 2.0 : 1.5)
+                            border.color: !box.active
+                                ? (isDragged ? Qt.lighter(grayFrameBase, 1.2) : grayFrameBase)
+                                : (isDragged || isHovered ? ThemeBackend.mauve : Qt.alpha(ThemeBackend.mauve, 0.82))
+
+                            Behavior on x { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+                            Behavior on y { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+                            Behavior on width { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+                            Behavior on height { enabled: !stageCanvas.isDraggingLayout; NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+                            Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutQuint } }
+                            Behavior on opacity { NumberAnimation { duration: 220; easing.type: Easing.InOutCubic } }
+                            Behavior on color { ColorAnimation { duration: 150 } }
+                            Behavior on border.color { ColorAnimation { duration: 180 } }
+                            Behavior on border.width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+
+                            GlassFill {
+                                id: tileGlass
+                                anchors.fill: parent
+                                radius: parent.radius
+                                tintColor: monitorTile.tileTint
+                                tintAmount: monitorTile.box.active ? (monitorTile.isDragged ? 0.42 : (monitorTile.isHovered ? 0.34 : 0.26)) : 0.16
+                                press: (monitorTile.isDragged || tileMouse.pressed) && stageCanvas.canDrag ? 0.9 : (monitorTile.isHovered ? 0.25 : 0.0)
+                                pulse: Math.min(1, monitorTile.flashOpacity * 2.5)
+                                Behavior on press { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                Behavior on tintAmount { NumberAnimation { duration: 150 } }
+                            }
+
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: parent.radius
+                                color: "#ffffff"
+                                opacity: monitorTile.flashOpacity
+                                visible: !tileGlass.active && opacity > 0.001
+                            }
+
+                            NumberAnimation {
+                                id: tileFlashAnim
+                                target: monitorTile
+                                property: "flashOpacity"
+                                to: 0.0
+                                duration: 400
+                                easing.type: Easing.OutExpo
+                            }
+
+                            SequentialAnimation {
+                                id: tileDropPopAnim
+                                NumberAnimation { target: monitorTile; property: "popScale"; to: 1.02; duration: 100; easing.type: Easing.OutQuad }
+                                NumberAnimation { target: monitorTile; property: "popScale"; to: 1.0; duration: 400; easing.type: Easing.OutQuint }
+                            }
 
                             ColumnLayout {
                                 anchors.centerIn: parent
@@ -302,7 +360,8 @@ DisplayMainState {
                                     font.family: ThemeBackend.fontFamily
                                     font.pixelSize: monitorTile.height < rootObj.s(54) ? rootObj.s(9) : rootObj.s(11)
                                     font.bold: true
-                                    color: ThemeBackend.text
+                                    color: monitorTile.box.active ? ThemeBackend.text : ThemeBackend.subtext0
+                                    Behavior on color { ColorAnimation { duration: 180 } }
                                     elide: Text.ElideRight
                                 }
 
@@ -313,7 +372,8 @@ DisplayMainState {
                                     text: monitorTile.box.dimensions + " • " + Math.round(monitorTile.box.scale * 100) + "%"
                                     font.family: ThemeBackend.fontFamily
                                     font.pixelSize: monitorTile.height < rootObj.s(56) ? rootObj.s(8) : rootObj.s(9)
-                                    color: ThemeBackend.subtext0
+                                    color: monitorTile.box.active ? ThemeBackend.subtext0 : ThemeBackend.overlay1
+                                    Behavior on color { ColorAnimation { duration: 180 } }
                                     elide: Text.ElideRight
                                 }
 
@@ -327,14 +387,16 @@ DisplayMainState {
                                         text: Math.round(monitorTile.box.x) + ", " + Math.round(monitorTile.box.y)
                                         font.family: ThemeBackend.fontFamily
                                         font.pixelSize: monitorTile.height < rootObj.s(60) ? rootObj.s(7.5) : rootObj.s(8.5)
-                                        color: monitorTile.isDragged ? ThemeBackend.mauve : ThemeBackend.subtext0
+                                        color: (monitorTile.isDragged && monitorTile.box.active) ? ThemeBackend.mauve : (monitorTile.box.active ? ThemeBackend.subtext0 : ThemeBackend.overlay1)
+                                        Behavior on color { ColorAnimation { duration: 150 } }
                                     }
 
                                     Rectangle {
                                         implicitHeight: monitorTile.height < rootObj.s(60) ? rootObj.s(11) : rootObj.s(14)
                                         implicitWidth: stageBadgeText.implicitWidth + rootObj.s(8)
                                         radius: height / 2
-                                        color: monitorTile.box.active ? Qt.alpha(ThemeBackend.green, 0.2) : Qt.alpha(ThemeBackend.surface2, 0.4)
+                                        color: monitorTile.box.active ? Qt.alpha(ThemeBackend.green, 0.2) : Qt.alpha(monitorTile.grayFrameBase, 0.22)
+                                        Behavior on color { ColorAnimation { duration: 180 } }
 
                                         Text {
                                             id: stageBadgeText
@@ -343,14 +405,17 @@ DisplayMainState {
                                             font.pixelSize: monitorTile.height < rootObj.s(60) ? rootObj.s(7) : rootObj.s(8)
                                             font.bold: true
                                             color: monitorTile.box.active ? ThemeBackend.green : ThemeBackend.subtext0
+                                            Behavior on color { ColorAnimation { duration: 180 } }
                                         }
                                     }
                                 }
                             }
 
                             MouseArea {
+                                id: tileMouse
                                 anchors.fill: parent
                                 enabled: stageCanvas.canDrag
+                                hoverEnabled: stageCanvas.canDrag
                                 cursorShape: stageCanvas.canDrag ? (monitorTile.isDragged ? Qt.ClosedHandCursor : Qt.OpenHandCursor) : Qt.ArrowCursor
                                 preventStealing: true
 
@@ -392,6 +457,9 @@ DisplayMainState {
 
                                 onReleased: function() {
                                     if (!stageCanvas.isDraggingLayout) return;
+                                    monitorTile.flashOpacity = 0.16;
+                                    tileFlashAnim.restart();
+                                    tileDropPopAnim.restart();
                                     stageCanvas.finalizeAndCommit(monitorTile.index);
                                 }
 

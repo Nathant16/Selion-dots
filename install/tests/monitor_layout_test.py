@@ -61,6 +61,26 @@ class TestMonitorsDetector(unittest.TestCase):
         self.assertEqual(hypr[1]["y"], 180)
         self.assertEqual(hypr[1]["transform"], "90")
 
+        with mock.patch.object(monitors_detector, "_saved_monitor_prefs", return_value={"VDISP-1": {"resolution": "1280x720", "framerate": "60", "scale": 1.0, "x": 320, "y": 1080}}):
+            h_dis = monitors_detector._build_from_hyprland([
+                {
+                    "name": "VDISP-1",
+                    "width": 1920,
+                    "height": 1080,
+                    "refreshRate": 60.0,
+                    "scale": 2.0,
+                    "x": 0,
+                    "y": 0,
+                    "transform": 0,
+                    "disabled": True,
+                    "availableModes": ["1920x1080@60.00Hz"],
+                }
+            ])
+        self.assertFalse(h_dis[0]["active"])
+        self.assertEqual(h_dis[0]["dimensions"], "1280x720")
+        self.assertEqual(h_dis[0]["x"], 320)
+        self.assertEqual(h_dis[0]["y"], 1080)
+
         niri = monitors_detector._build_from_niri({
             "eDP-1": {
                 "modes": [{"width": 1920, "height": 1080, "refresh_rate": 60008, "is_preferred": True}],
@@ -138,6 +158,57 @@ class TestMonitorsDetector(unittest.TestCase):
         self.assertNotIn("UMBRIEL_SOCKET", cleaned)
 
 
+    def test_disabled_output_recovery_across_niri_sway_umbriel(self):
+        saved = {"HDMI-A-1": {"x": 1920, "y": 120, "scale": 1.25, "resolution": "1280x720"}}
+        with mock.patch.object(monitors_detector, "_saved_monitor_prefs", return_value=saved):
+            niri = monitors_detector._build_from_niri({
+                "eDP-1": {
+                    "modes": [{"width": 1920, "height": 1080, "refresh_rate": 60000, "is_preferred": True}],
+                    "current_mode": 0,
+                    "logical": {"x": 0, "y": 0, "scale": 1.0, "transform": "Normal"},
+                },
+                "HDMI-A-1": {
+                    "modes": [{"width": 1280, "height": 720, "refresh_rate": 60000, "is_preferred": True}],
+                    "current_mode": 0,
+                    "logical": None,
+                },
+            })
+        self.assertFalse(niri[1]["active"])
+        self.assertEqual(niri[1]["x"], 1920)
+        self.assertEqual(niri[1]["y"], 120)
+
+        with mock.patch.object(monitors_detector, "_saved_monitor_prefs", return_value=saved):
+            sway = monitors_detector._build_from_sway([
+                {
+                    "name": "HDMI-A-1",
+                    "active": False,
+                    "scale": 1.0,
+                    "rect": {"x": 0, "y": 0},
+                    "current_mode": None,
+                    "modes": [],
+                }
+            ], {})
+        self.assertFalse(sway[0]["active"])
+        self.assertEqual(sway[0]["dimensions"], "1280x720")
+        self.assertEqual(sway[0]["x"], 1920)
+
+        with mock.patch.object(monitors_detector, "_saved_monitor_prefs", return_value=saved), \
+             mock.patch.object(monitors_detector, "_umbriel_disabled_outputs", return_value={"VDISP-1": {"enabled": False, "mode": "1280x720@60", "scale": 1.0, "x": 320, "y": 1080}}):
+            umb = monitors_detector._build_from_umbriel([
+                {
+                    "name": "eDP-1",
+                    "enabled": True,
+                    "scale": 1.0,
+                    "position": {"x": 0, "y": 0},
+                    "modes": [{"width": 1920, "height": 1080, "refresh_mhz": 60000, "current": True}],
+                }
+            ], {})
+        self.assertEqual([m["name"] for m in umb], ["eDP-1", "VDISP-1"])
+        self.assertFalse(umb[1]["active"])
+        self.assertEqual(umb[1]["x"], 320)
+        self.assertEqual(umb[1]["y"], 1080)
+
+
 class TestMonitorManager(unittest.TestCase):
     def test_detect_compositor_prefers_running_compositor_over_stale_sockets(self):
         stale_env = {
@@ -155,25 +226,28 @@ class TestMonitorManager(unittest.TestCase):
 
     def test_config_persistence_all_six_compositors(self):
         # Hyprland Lua
-        hypr_out = monitor_manager._upsert_hypr_block("", "DP-1", "2560x1440@144", "1920x0", 1.25)
+        hypr_out = monitor_manager._upsert_hypr_block("", "DP-1", "2560x1440@144", "1920x0", 1.25, disabled=True)
         self.assertIn('output = "DP-1"', hypr_out)
         self.assertIn('position = "1920x0"', hypr_out)
-        self.assertEqual(monitor_manager._hypr_existing_fields(hypr_out, "DP-1"), ("2560x1440@144", "1920x0", 1.25))
+        self.assertIn('disabled = true', hypr_out)
+        self.assertEqual(monitor_manager._hypr_existing_fields(hypr_out, "DP-1"), ("2560x1440@144", "1920x0", 1.25, True))
 
         # Sway
-        sway_out = monitor_manager._persist_sway_text("", "HEADLESS-1", "1280x720@60Hz", 1.0, (320, 1080))
+        sway_out = monitor_manager._persist_sway_text("", "HEADLESS-1", "1280x720@60Hz", 1.0, (320, 1080), disabled=True)
         self.assertIn("position 320 1080", sway_out)
-        self.assertEqual(monitor_manager._sway_existing_pos(sway_out, "HEADLESS-1"), (320, 1080))
+        self.assertIn("disable\n", sway_out)
+        self.assertEqual(monitor_manager._sway_existing_fields(sway_out, "HEADLESS-1"), ((320, 1080), True))
 
         # Niri KDL
-        niri_out = monitor_manager._persist_niri_text("", "eDP-1", "1920x1080@60", 1.25, (120, 40))
+        niri_out = monitor_manager._persist_niri_text("", "eDP-1", "1920x1080@60", 1.25, (120, 40), disabled=True)
         self.assertIn("position x=120 y=40", niri_out)
-        self.assertEqual(monitor_manager._niri_existing_pos(niri_out, "eDP-1"), (120, 40))
+        self.assertIn("    off\n", niri_out)
+        self.assertEqual(monitor_manager._niri_existing_fields(niri_out, "eDP-1"), ((120, 40), True))
 
         # Mango
-        mango_out = monitor_manager._persist_mango_text("", "eDP-1", "1920x1080", "60", 1.0, (120, 40))
-        self.assertIn("monitor_rule=name:eDP-1,width:1920,height:1080,refresh:60,scale:1,x:120,y:40", mango_out)
-        self.assertEqual(monitor_manager._mango_existing_pos(mango_out, "eDP-1"), (120, 40))
+        mango_out = monitor_manager._persist_mango_text("", "eDP-1", "1920x1080", "60", 1.0, (120, 40), disabled=True)
+        self.assertIn("monitor_rule=name:eDP-1,width:1920,height:1080,refresh:60,scale:1,x:120,y:40,disable:1", mango_out)
+        self.assertEqual(monitor_manager._mango_existing_fields(mango_out, "eDP-1"), ((120, 40), True))
 
         # DriftWM TOML
         drift_src = '[env]\nQT_QPA_PLATFORM = "wayland"\n\n[keybindings]\n"mod+q" = "close"\n'
@@ -183,10 +257,12 @@ class TestMonitorManager(unittest.TestCase):
         self.assertLess(drift_out.index("[[outputs]]"), drift_out.index("[keybindings]"))
 
         # Umbriel TOML
-        umb_out = monitor_manager._persist_umbriel_text("", "VDISP-1", "1280x720@60", 1.0, (320, 1080))
+        umb_out = monitor_manager._persist_umbriel_text("", "VDISP-1", "1280x720@60", 1.0, (320, 1080), enabled=False)
         self.assertIn('[output."VDISP-1"]', umb_out)
+        self.assertIn("enabled = false", umb_out)
         self.assertIn("position = [320, 1080]", umb_out)
         umb_re = monitor_manager._persist_umbriel_text(umb_out, "VDISP-1", "", 1.25, None)
+        self.assertIn("enabled = false", umb_re)
         self.assertIn('mode = "1280x720@60"', umb_re)
         self.assertIn("position = [320, 1080]", umb_re)
 

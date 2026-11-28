@@ -27,6 +27,13 @@ GuideTab {
         }
         return map;
     }
+    readonly property int activeMonitorCount: {
+        let count = 0;
+        for (let i = 0; i < monitorsList.length; i++) {
+            if (monitorsList[i] && monitorsList[i].active !== false) count++;
+        }
+        return count;
+    }
     property bool animateCards: false
 
     readonly property string compositor: Compositor.name
@@ -40,6 +47,7 @@ GuideTab {
     property string scaleLockMonitor: ""
     property double scaleLockUntilMs: 0
     property double layoutLockUntilMs: 0
+    property double powerLockUntilMs: 0
 
     function isScaleLockedFor(monName) {
         if (!monName) return false;
@@ -237,6 +245,9 @@ GuideTab {
             if (Date.now() < displayTabRoot.layoutLockUntilMs) {
                 displayTabRoot.layoutLockUntilMs = Date.now() + 500;
             }
+            if (Date.now() < displayTabRoot.powerLockUntilMs) {
+                displayTabRoot.powerLockUntilMs = Date.now() + 500;
+            }
             reloadMonitorsDebounceTimer.interval = 350;
             reloadMonitorsDebounceTimer.restart();
         }
@@ -330,15 +341,50 @@ GuideTab {
         displayTabRoot.displaySettings = JSON.parse(JSON.stringify(current));
     }
 
+    function _compositorArgs() {
+        return (displayTabRoot.compositor && displayTabRoot.compositor !== "unknown")
+            ? ["--compositor", displayTabRoot.compositor]
+            : [];
+    }
+
     function applyMonitorPower(monName, enabled) {
         if (!monName) return;
-        let mon = displayTabRoot.monitorsList.find(m => m.name === monName);
-        let modeStr = mon ? (mon.dimensions + "@" + mon.framerate) : "preferred";
-        let scaleVal = mon ? mon.scale : 1.0;
-        let cmd = Compositor.outputEnableCommand(monName, enabled, modeStr, scaleVal);
-        if (cmd !== "") {
-            Quickshell.execDetached(["bash", "-c", cmd]);
+        let nextEnabled = Boolean(enabled);
+        let mon = displayTabRoot.monitorsByName[monName] || displayTabRoot.monitorsList.find(m => m && m.name === monName);
+        if (!nextEnabled && mon && mon.active !== false && displayTabRoot.activeMonitorCount <= 1) {
+            return;
         }
+
+        displayTabRoot.powerLockUntilMs = Date.now() + 2500;
+
+        let updatedList = displayTabRoot.monitorsList.map(function(m) {
+            if (!m || m.name !== monName) return m;
+            let copy = Object.assign({}, m);
+            copy.active = nextEnabled;
+            return copy;
+        });
+        displayTabRoot.syncMonitorModels(updatedList);
+        displayTabRoot.updateMonitorSetting(monName, "powerEnabled", nextEnabled);
+
+        let resStr = mon ? (mon.dimensions || "1920x1080") : "1920x1080";
+        let rateStr = mon ? (mon.framerate || "60") : "60";
+        let scaleVal = displayTabRoot.normalizeScaleFactor(mon && mon.scale !== undefined ? mon.scale : 1.0);
+        let px = (mon && mon.x !== undefined && mon.x !== null) ? Math.round(Number(mon.x)) : 0;
+        let py = (mon && mon.y !== undefined && mon.y !== null) ? Math.round(Number(mon.y)) : 0;
+
+        let cmd = [
+            "python3",
+            Caching.serpantinumDir + "/scripts/system/monitor_manager.py",
+            "set-power",
+            "--name", monName,
+            "--enabled", nextEnabled ? "1" : "0",
+            "--resolution", resStr,
+            "--framerate", rateStr,
+            "--scale", scaleVal.toString(),
+            "--x", px.toString(),
+            "--y", py.toString()
+        ].concat(displayTabRoot._compositorArgs());
+        displayTabRoot.enqueueMonitorApply(cmd);
     }
 
     function applyMonitorLayout(layoutItems) {
@@ -392,9 +438,8 @@ GuideTab {
             "python3",
             Caching.serpantinumDir + "/scripts/system/monitor_manager.py",
             "set-layout",
-            "--layout", JSON.stringify(payload),
-            "--compositor", displayTabRoot.compositor
-        ]);
+            "--layout", JSON.stringify(payload)
+        ].concat(displayTabRoot._compositorArgs()));
     }
 
     function _shiftFlushSiblingsForResize(changedMonName, oldBox, updatedList) {
@@ -454,9 +499,8 @@ GuideTab {
             "--name", monName,
             "--resolution", resStr,
             "--framerate", rStr,
-            "--scale", scaleVal.toString(),
-            "--compositor", displayTabRoot.compositor
-        ];
+            "--scale", scaleVal.toString()
+        ].concat(displayTabRoot._compositorArgs());
         displayTabRoot.enqueueMonitorApply(cmd);
 
         displayTabRoot.updateMonitorSetting(monName, "resolution", resStr);
@@ -505,9 +549,8 @@ GuideTab {
             Caching.serpantinumDir + "/scripts/system/monitor_manager.py",
             "set",
             "--name", monName,
-            "--scale", cleanScale.toString(),
-            "--compositor", displayTabRoot.compositor
-        ];
+            "--scale", cleanScale.toString()
+        ].concat(displayTabRoot._compositorArgs());
         displayTabRoot.enqueueMonitorApply(cmd);
 
         displayTabRoot.updateMonitorSetting(monName, "scale", cleanScale);
@@ -602,7 +645,7 @@ GuideTab {
 
     function scheduleExternalMonitorReload() {
         displayTabRoot.refreshDisplaySettings();
-        if (displayTabRoot.visible && !monitorApplyProc.running && displayTabRoot.queuedApplyCmds.length === 0 && displayTabRoot.pendingMonScaleName === "" && Date.now() >= displayTabRoot.scaleLockUntilMs && Date.now() >= displayTabRoot.layoutLockUntilMs) {
+        if (displayTabRoot.visible && !monitorApplyProc.running && displayTabRoot.queuedApplyCmds.length === 0 && displayTabRoot.pendingMonScaleName === "" && Date.now() >= displayTabRoot.scaleLockUntilMs && Date.now() >= displayTabRoot.layoutLockUntilMs && Date.now() >= displayTabRoot.powerLockUntilMs) {
             reloadMonitorsDebounceTimer.interval = 260;
             reloadMonitorsDebounceTimer.restart();
         }

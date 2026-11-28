@@ -1,3 +1,10 @@
+### 2.9.1.22
+
+- **Display / Animations, Monitor Power Toggle & Disabled State**:
+  - Updated **2D Displays Arrangement** (`DisplayMainTab.qml`) and monitor cards (`DisplayMonitorCard.qml`) to match Serpantinum's native animation language (`OutQuint` spatial glides, hover/press/release tactile `GlassFill` + `scale` micro-bounce, `OutExpo` release flash, smooth `InOutCubic` collapsible wrappers, and fading snap guides).
+  - Fixed **Enable this monitor** (`DisplayMainState.qml`, `Compositor.qml`, `monitor_manager.py`, `monitors_detector.py`) across all 6 Wayland compositors with `set-power`: added `hyprctl eval 'hl.monitor(...)'` support for Hyprland `0.57+` (preserving `(x, y)` coordinates across disable/enable transitions), fixed Mango `wlr-randr --off/--on` / `disable_monitor` / `disable:1` rules, fixed Umbriel disabled output recovery and `enabled = false` TOML persistence, preserved disabled monitor dimensions across Hyprland/Sway/Niri/wlr-randr, and prevented disabling the sole remaining active screen.
+  - Added clear neutral gray frame styling (`OFF` badge and muted tile styling) for disabled monitors on the 2D diagram and smoothly collapsed all settings rows below **Enable this monitor** when powered off.
+
 ### 2.9.1.21
 
 - **Display / 2D Arrangement & Multi-WM Positioning**:

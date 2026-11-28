@@ -234,18 +234,35 @@ def get_umbriel_outputs(env):
 
 
 def _build_from_hyprland(hypr_monitors):
+    saved_cfg = _saved_monitor_prefs()
     monitors = []
     for out in hypr_monitors:
         name = out.get("name", "eDP-1")
+        active = not out.get("disabled", False)
+        saved_m = saved_cfg.get(name, {}) if isinstance(saved_cfg.get(name), dict) else {}
         w = int(out.get("width", 1920) or 1920)
         h = int(out.get("height", 1080) or 1080)
         rate = int(round(float(out.get("refreshRate", 60.0) or 60.0)))
         scale = float(out.get("scale", 1.0) or 1.0)
-        active = not out.get("disabled", False)
         x = int(out.get("x", 0) or 0)
         y = int(out.get("y", 0) or 0)
         transform = _norm_transform(out.get("transform", 0))
         cur_res = f"{w}x{h}"
+        if not active and saved_m.get("resolution"):
+            cur_res = str(saved_m["resolution"])
+            if saved_m.get("framerate"):
+                try:
+                    rate = int(round(float(saved_m["framerate"])))
+                except (TypeError, ValueError):
+                    pass
+            if saved_m.get("scale") is not None:
+                try:
+                    scale = float(saved_m["scale"] or scale)
+                except (TypeError, ValueError):
+                    pass
+            if saved_m.get("x") is not None and x == 0 and y == 0:
+                x = int(saved_m.get("x", 0) or 0)
+                y = int(saved_m.get("y", 0) or 0)
 
         res_rates_map = {}
         res_list = []
@@ -270,7 +287,66 @@ def _build_from_hyprland(hypr_monitors):
     return monitors
 
 
+def _saved_monitor_prefs():
+    try:
+        s_file = os.path.expanduser("~/.config/serpantinum/settings.json")
+        if os.path.exists(s_file):
+            with open(s_file, "r", encoding="utf-8") as sf:
+                data = json.load(sf).get("display", {}).get("monitors", {})
+                return data if isinstance(data, dict) else {}
+    except Exception:
+        pass
+    return {}
+
+
+def _umbriel_disabled_outputs():
+    """Return configured disabled outputs from ~/.config/umbriel/config/monitors.toml."""
+    import re
+    disabled = {}
+    toml_path = os.path.expanduser("~/.config/umbriel/config/monitors.toml")
+    if not os.path.exists(toml_path):
+        return disabled
+    try:
+        lines = open(toml_path, "r", encoding="utf-8").read().splitlines()
+        cur_name = None
+        cur_data = {}
+        for line in lines:
+            st = line.strip()
+            m_hdr = re.match(r'^\[output\.(?:"([^"]+)"|([A-Za-z0-9_.-]+))\]\s*$', st)
+            if m_hdr:
+                if cur_name and cur_data.get("enabled") is False:
+                    disabled[cur_name] = cur_data
+                cur_name = m_hdr.group(1) or m_hdr.group(2)
+                cur_data = {}
+                continue
+            if st.startswith("["):
+                if cur_name and cur_data.get("enabled") is False:
+                    disabled[cur_name] = cur_data
+                cur_name = None
+                cur_data = {}
+                continue
+            if cur_name:
+                if re.match(r'^enabled\s*=\s*false\b', st):
+                    cur_data["enabled"] = False
+                m_mode = re.match(r'^mode\s*=\s*"([^"]+)"', st)
+                if m_mode:
+                    cur_data["mode"] = m_mode.group(1)
+                m_pos = re.match(r'^position\s*=\s*\[\s*(-?\d+)\s*,\s*(-?\d+)\s*\]', st)
+                if m_pos:
+                    cur_data["x"] = int(m_pos.group(1))
+                    cur_data["y"] = int(m_pos.group(2))
+                m_sc = re.match(r'^scale\s*=\s*([0-9.]+)', st)
+                if m_sc:
+                    cur_data["scale"] = float(m_sc.group(1))
+        if cur_name and cur_data.get("enabled") is False:
+            disabled[cur_name] = cur_data
+    except Exception:
+        pass
+    return disabled
+
+
 def _build_from_niri(niri_data):
+    saved_cfg = _saved_monitor_prefs()
     monitors = []
     for out_name, out in niri_data.items():
         if not isinstance(out, dict):
@@ -285,10 +361,17 @@ def _build_from_niri(niri_data):
         rate = int(round(int(cur_mode.get("refresh_rate", 60000) or 60000) / 1000.0)) if cur_mode else 60
         logical = out.get("logical")
         active = logical is not None
-        x = int(logical.get("x", 0)) if isinstance(logical, dict) else 0
-        y = int(logical.get("y", 0)) if isinstance(logical, dict) else 0
-        scale = float(logical.get("scale", 1.0) or 1.0) if isinstance(logical, dict) else 1.0
-        transform = _norm_transform(logical.get("transform")) if isinstance(logical, dict) else "normal"
+        saved_m = saved_cfg.get(name, {}) if isinstance(saved_cfg.get(name), dict) else {}
+        if isinstance(logical, dict):
+            x = int(logical.get("x", 0))
+            y = int(logical.get("y", 0))
+            scale = float(logical.get("scale", 1.0) or 1.0)
+            transform = _norm_transform(logical.get("transform"))
+        else:
+            x = int(saved_m.get("x", 0) or 0)
+            y = int(saved_m.get("y", 0) or 0)
+            scale = float(saved_m.get("scale", 1.0) or 1.0)
+            transform = "normal"
 
         res_list, res_rates_map = _collect_mode_table(
             modes,
@@ -299,12 +382,13 @@ def _build_from_niri(niri_data):
 
 
 def _build_from_wlr_randr(wlr_data, drm_modes):
+    saved_cfg = _saved_monitor_prefs()
     monitors = []
     for out in wlr_data:
         name = out.get("name", "Display")
         cur_mode = next((m for m in out.get("modes", []) if m.get("current")), None)
         if not cur_mode and out.get("modes"):
-            cur_mode = out["modes"][0]
+            cur_mode = next((m for m in out["modes"] if m.get("preferred")), out["modes"][0])
 
         w = int(cur_mode.get("width", 1920)) if cur_mode else 1920
         h = int(cur_mode.get("height", 1080)) if cur_mode else 1080
@@ -312,8 +396,18 @@ def _build_from_wlr_randr(wlr_data, drm_modes):
         scale = float(out.get("scale", 1.0) or 1.0)
         active = out.get("enabled", True) is not False
         pos = out.get("position") or {}
-        x = int(pos.get("x", 0) or 0) if isinstance(pos, dict) else 0
-        y = int(pos.get("y", 0) or 0) if isinstance(pos, dict) else 0
+        saved_m = saved_cfg.get(name, {}) if isinstance(saved_cfg.get(name), dict) else {}
+        if isinstance(pos, dict) and (active or pos.get("x", 0) != 0 or pos.get("y", 0) != 0):
+            x = int(pos.get("x", 0) or 0)
+            y = int(pos.get("y", 0) or 0)
+        else:
+            x = int(saved_m.get("x", 0) or 0)
+            y = int(saved_m.get("y", 0) or 0)
+        if not active and saved_m.get("scale") is not None:
+            try:
+                scale = float(saved_m.get("scale", scale) or scale)
+            except (TypeError, ValueError):
+                pass
         transform = _norm_transform(out.get("transform", "normal"))
 
         res_list, res_rates_map = _collect_mode_table(out.get("modes", []))
@@ -325,35 +419,62 @@ def _build_from_wlr_randr(wlr_data, drm_modes):
 
 
 def _build_from_sway(sway_data, drm_modes):
+    saved_cfg = _saved_monitor_prefs()
     monitors = []
     for out in sway_data:
         name = out.get("name", "Display")
-        cur_mode = out.get("current_mode") or {}
+        modes = out.get("modes", []) or []
+        cur_mode = out.get("current_mode")
+        if not cur_mode and modes:
+            cur_mode = modes[0]
+        cur_mode = cur_mode or {}
         w = int(cur_mode.get("width", 1920) or 1920)
         h = int(cur_mode.get("height", 1080) or 1080)
         rate = int(round(int(cur_mode.get("refresh", 60000) or 60000) / 1000.0))
-        scale = float(out.get("scale", 1.0) or 1.0)
         active = bool(out.get("active", True))
+        saved_m = saved_cfg.get(name, {}) if isinstance(saved_cfg.get(name), dict) else {}
+        cur_res = f"{w}x{h}"
+        if not active and saved_m.get("resolution"):
+            cur_res = str(saved_m["resolution"])
+            if saved_m.get("framerate"):
+                try:
+                    rate = int(round(float(saved_m["framerate"])))
+                except (TypeError, ValueError):
+                    pass
+        scale = float(out.get("scale", 1.0) or 1.0)
         rect = out.get("rect") or {}
-        x = int(rect.get("x", 0) or 0)
-        y = int(rect.get("y", 0) or 0)
+        if active:
+            x = int(rect.get("x", 0) or 0)
+            y = int(rect.get("y", 0) or 0)
+        else:
+            x = int(saved_m.get("x", rect.get("x", 0)) or 0)
+            y = int(saved_m.get("y", rect.get("y", 0)) or 0)
+            if saved_m.get("scale") is not None:
+                try:
+                    scale = float(saved_m.get("scale", scale) or scale)
+                except (TypeError, ValueError):
+                    pass
         transform = _norm_transform(out.get("transform", "normal"))
 
         res_list, res_rates_map = _collect_mode_table(
-            out.get("modes", []),
+            modes,
             rate_fn=lambda m: int(round(int(m.get("refresh", 60000) or 60000) / 1000.0)),
         )
         if not res_list and name in drm_modes:
             res_list = list(drm_modes[name])
 
-        monitors.append(_make_entry(name, res_list, res_rates_map, f"{w}x{h}", rate, scale, active, x, y, transform))
+        monitors.append(_make_entry(name, res_list, res_rates_map, cur_res, rate, scale, active, x, y, transform))
     return monitors
 
 
 def _build_from_umbriel(umbriel_data, drm_modes):
+    saved_cfg = _saved_monitor_prefs()
+    disabled_toml = _umbriel_disabled_outputs()
     monitors = []
+    seen_names = set()
     for out in umbriel_data:
         name = out.get("name", "Display")
+        seen_names.add(name)
         modes = out.get("modes", []) or []
         cur_mode = next((m for m in modes if m.get("current")), None)
         if not cur_mode and modes:
@@ -384,6 +505,27 @@ def _build_from_umbriel(umbriel_data, drm_modes):
             res_list = list(drm_modes[name])
 
         monitors.append(_make_entry(name, res_list, res_rates_map, f"{w}x{h}", rate, scale, active, x, y, transform))
+
+    for name, info in disabled_toml.items():
+        if name in seen_names:
+            continue
+        saved_m = saved_cfg.get(name, {}) if isinstance(saved_cfg.get(name), dict) else {}
+        mode_raw = str(info.get("mode") or saved_m.get("resolution") or "1920x1080@60")
+        if "@" in mode_raw:
+            cur_res, rate_part = mode_raw.split("@", 1)
+            try:
+                rate = int(round(float(rate_part)))
+            except (TypeError, ValueError):
+                rate = 60
+        else:
+            cur_res = mode_raw
+            rate = int(round(float(saved_m.get("framerate", 60) or 60)))
+        res_list = list(drm_modes.get(name, [cur_res]))
+        res_rates_map = {r: [str(rate)] for r in res_list}
+        sc = float(info.get("scale", saved_m.get("scale", 1.0)) or 1.0)
+        px = int(info.get("x", saved_m.get("x", 0)) or 0)
+        py = int(info.get("y", saved_m.get("y", 0)) or 0)
+        monitors.append(_make_entry(name, res_list, res_rates_map, cur_res, rate, sc, False, px, py))
     return monitors
 
 
