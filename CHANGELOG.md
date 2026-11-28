@@ -1,3 +1,7 @@
+### 2.9.1.17
+
+- **UI / Rounded Masks**: Fixed square corner regression introduced in `2.9.1.16` by updating `maskThresholdMin` from `0.0` to `0.5` (`maskSpreadAtMin: 1.0`) across all 14 `MultiEffect` rounded mask sites (`MediaFace`, `MusicCover`, `MusicPopup`, `ImageBox`, `MusicFace`, `MusicFaceRound`, `MusicFaceLyrics`, `Screenshot`, `LockBackgroundPreview`, `AvatarPreview`, `SettingsPresetCard`, `WidgetPresetCard`, `FingerprintEnrollPopup`, `WallpaperPicker`), preserving full anti-aliased corner curvature without stair-stepping while keeping mipmapped thumbnails sharp.
+
 ### 2.9.1.16
 
 - **UI / Rendering & Anti-Aliasing**: Fixed pixelated small album art thumbnails, jagged rounded mask corners, and blurry HiDPI icons:
