@@ -1,3 +1,10 @@
+### 2.9.1.26
+
+- **Theming / Ski Config Preservation** (`sync_compositor_theme.py`, `migrate.sh`):
+  - Switched Ski `~/.config/ski/settings.json` opacity synchronization to `_config_home()`, `_apptheme_lock`, and `_atomic_write_if_changed`, and skipped writing altogether when `opacity` already matches `ski_opacity` so Selion updates and theme syncs no longer truncate `settings.json` under `ski`'s live `inotify` watcher.
+  - Added `ski` to `backup_managed_configs` so `~/.config/ski` is backed up alongside other managed configs during updates.
+  - Added `install/tests/ski_theme_sync_test.py` covering concurrent syncs with continuous reader checks, idempotent no-op writes, `XDG_CONFIG_HOME`, and malformed JSON safety.
+
 ### 2.9.1.25
 
 - **Display / Contiguous Snapping & Stationary Guides** (`DisplayMainTab.qml`):

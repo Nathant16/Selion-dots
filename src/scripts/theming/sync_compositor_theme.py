@@ -234,15 +234,19 @@ def sync_apps(app_opacity, ski_opacity, blur_background, apply_to_windows, state
             pass
 
     # 2. Ski file manager configuration
-    ski_cfg = Path.home() / ".config" / "ski" / "settings.json"
+    ski_cfg = _config_home() / "ski" / "settings.json"
     if ski_cfg.is_file():
         try:
-            with open(ski_cfg, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            if isinstance(data, dict):
-                data["opacity"] = ski_opacity
-                with open(ski_cfg, "w", encoding="utf-8") as f:
-                    json.dump(data, f, indent=2)
+            with _apptheme_lock(resolved_state):
+                data = json.loads(ski_cfg.read_text(encoding="utf-8"))
+                if isinstance(data, dict):
+                    cur_opacity = data.get("opacity")
+                    if isinstance(cur_opacity, bool) or cur_opacity != ski_opacity:
+                        data["opacity"] = ski_opacity
+                        _atomic_write_if_changed(
+                            ski_cfg,
+                            json.dumps(data, indent=2, ensure_ascii=False) + "\n",
+                        )
         except Exception:
             pass
 

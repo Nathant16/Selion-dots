@@ -36,7 +36,7 @@ backup_managed_configs() {
     done
 
     # 2. Managed extra config directories
-    local extra_managed_dirs=("kitty" "fastfetch" "fish" "serpantinum")
+    local extra_managed_dirs=("kitty" "fastfetch" "fish" "serpantinum" "ski")
     for d in "${extra_managed_dirs[@]}"; do
         local src_dir="$HOME/.config/$d"
         if [ -d "$src_dir" ] && [ "$(ls -A "$src_dir" 2>/dev/null)" ]; then
