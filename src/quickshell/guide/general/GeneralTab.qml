@@ -7,10 +7,10 @@ import "../../reusables/guide"
 
 GuideTab {
     id: generalTabRoot
-    subTabIndex: 0
 
     onVisibleChanged: {
         if (!visible) {
+            generalCfg.flush();
             if (langDropdown.isOpen) langDropdown.closePopup();
             if (avatarDropdown.isOpen) avatarDropdown.closePopup();
             if (locationPopupLoader.item) locationPopupLoader.item.close();
@@ -18,56 +18,39 @@ GuideTab {
         }
     }
 
-    property var defaultGeneralSettings: {
-        "language": "en",
-        "uiScale": 1.0,
-        "openGuideAtStartup": false,
-        "wallpaperDir": "",
-        "workspaceCount": 8,
-        "avatarPath": "",
-        "muteSfx": false,
-        "sfxVolume": 100,
-        "quickactions": true
+    ConfigSection {
+        id: generalCfg
+        section: "general"
+        defaults: ({
+            "language": "en",
+            "uiScale": 1.0,
+            "openGuideAtStartup": false,
+            "wallpaperDir": "",
+            "workspaceCount": 8,
+            "avatarPath": "",
+            "muteSfx": false,
+            "sfxVolume": 100,
+            "quickactions": true
+        })
     }
 
-    property var generalSettings: Config.getSetting("general", defaultGeneralSettings)
-    property string currentLanguage: generalSettings.language !== undefined ? generalSettings.language : I18n.currentLang
-    property real uiScale: {
+    readonly property var generalSettings: generalCfg.values
+    readonly property string currentLanguage: generalSettings.language !== undefined ? String(generalSettings.language) : I18n.currentLang
+    readonly property real uiScale: {
         let val = generalSettings.uiScale !== undefined ? Number(generalSettings.uiScale) : 1.0;
         return (!isNaN(val) && val > 0) ? Math.max(0.5, Math.min(2.0, val)) : 1.0;
     }
-    property bool muteSfx: generalSettings.muteSfx !== undefined ? generalSettings.muteSfx : false
-    property real sfxVolume: generalSettings.sfxVolume !== undefined ? generalSettings.sfxVolume : 100
-    property bool quickactions: generalSettings.quickactions !== undefined ? generalSettings.quickactions : true
+    readonly property bool muteSfx: Boolean(generalSettings.muteSfx !== undefined ? generalSettings.muteSfx : false)
+    readonly property real sfxVolume: Number(generalSettings.sfxVolume !== undefined ? generalSettings.sfxVolume : 100)
+    readonly property bool quickactions: Boolean(generalSettings.quickactions !== undefined ? generalSettings.quickactions : true)
     property bool isLocEditOpen: false
 
     property alias langDropdown: profileSection.langDropdown
     property alias avatarDropdown: profileSection.avatarDropdown
     property alias latInput: locationSection.latInput
     property alias lonInput: locationSection.lonInput
-    property alias sfxVolumeDebounceTimer: sfxVolumeDebounceTimer
-    property alias uiScaleDebounceTimer: uiScaleDebounceTimer
-
-    Timer {
-        id: sfxVolumeDebounceTimer
-        interval: 100
-        repeat: false
-        onTriggered: {
-            generalTabRoot.updateGeneralSettings();
-        }
-    }
-
-    Timer {
-        id: uiScaleDebounceTimer
-        interval: 120
-        repeat: false
-        onTriggered: {
-            generalTabRoot.updateGeneralSettings();
-        }
-    }
-
-    property string currentAvatarSourcePath: {
-        let saved = (generalSettings && generalSettings.avatarPath !== undefined) ? generalSettings.avatarPath : "";
+    readonly property string currentAvatarSourcePath: {
+        let saved = (generalSettings && generalSettings.avatarPath !== undefined) ? String(generalSettings.avatarPath) : "";
         let path = saved !== "" ? saved : (SystemInfo.avatarPath || "");
         if (path.startsWith("file://")) {
             path = path.substring(7);
@@ -75,22 +58,8 @@ GuideTab {
         return path;
     }
 
-    property var languageCodes: ["en", "fr", "ua", "ru", "de", "es", "it", "hy", "vi", "ko", "pt", "az", "ar", "ja", "zh", "zh_tw", "pl", "tr", "id", "nl", "fa", "hi", "bg", "hr", "sr"]
-    property var languageNames: ["English", "Français", "Українська", "Русский", "Deutsch", "Español", "Italiano", "Հայերեն", "Tiếng Việt", "한국어", "Português", "Azərbaycanca", "العربية", "日本語", "简体中文", "繁體中文", "Polski", "Türkçe", "Bahasa Indonesia", "Nederlands", "فارسی", "हिन्दी", "Български", "Hrvatski", "Српски (ћирилица)"]
-
-    Connections {
-        target: Config
-        function onSettingsLoaded() {
-            let gs = Config.getSetting("general", generalTabRoot.defaultGeneralSettings);
-            generalTabRoot.currentLanguage = gs.language !== undefined ? gs.language : I18n.currentLang;
-            let rawScale = gs.uiScale !== undefined ? Number(gs.uiScale) : 1.0;
-            generalTabRoot.uiScale = (!isNaN(rawScale) && rawScale > 0) ? Math.max(0.5, Math.min(2.0, rawScale)) : 1.0;
-            generalTabRoot.muteSfx = gs.muteSfx !== undefined ? gs.muteSfx : false;
-            generalTabRoot.sfxVolume = gs.sfxVolume !== undefined ? gs.sfxVolume : 100;
-            generalTabRoot.quickactions = gs.quickactions !== undefined ? gs.quickactions : true;
-            generalTabRoot.generalSettings = gs;
-        }
-    }
+    readonly property var languageCodes: I18n.languageCodes
+    readonly property var languageNames: I18n.languageNames
 
     Connections {
         target: Location
@@ -104,16 +73,18 @@ GuideTab {
         }
     }
 
-    function updateGeneralSettings() {
+    function setGeneralSetting(key, value) {
         if (typeof Config !== "undefined" && !Config.dataReady) return;
-        let current = Object.assign({}, Config.getSetting("general", generalTabRoot.defaultGeneralSettings));
-        current.language = generalTabRoot.currentLanguage;
-        current.uiScale = Math.round(generalTabRoot.uiScale * 100) / 100;
-        current.avatarPath = generalTabRoot.currentAvatarSourcePath;
-        current.muteSfx = generalTabRoot.muteSfx;
-        current.sfxVolume = generalTabRoot.sfxVolume;
-        current.quickactions = generalTabRoot.quickactions;
-        Config.setSetting("general", current);
+        generalCfg.set(key, value);
+    }
+
+    function setGeneralSettingDebounced(key, value) {
+        if (typeof Config !== "undefined" && !Config.dataReady) return;
+        generalCfg.setDebounced(key, value, 100);
+    }
+
+    function flushGeneralSettings() {
+        generalCfg.flush();
     }
 
     function openImagePicker(initialPath) {
@@ -132,10 +103,7 @@ GuideTab {
         sourceComponent: ImagePicker {
             rootObj: generalTabRoot.rootObj
             onImageSelected: function(filePath, fileName) {
-                let gs = Object.assign({}, generalTabRoot.generalSettings);
-                gs.avatarPath = filePath;
-                generalTabRoot.generalSettings = gs;
-                generalTabRoot.updateGeneralSettings();
+                generalTabRoot.setGeneralSetting("avatarPath", filePath);
             }
         }
     }

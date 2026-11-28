@@ -768,6 +768,14 @@
         "select_dir": "選取目錄...",
         "select_wallpaper": "選取桌布",
         "select": "桌布",
+        "carousel": {
+          "title": "桌布輪播",
+          "desc": "依排程從資料夾中隨機顯示桌布，所有桌布都顯示一遍後才會重複",
+          "interval": {
+            "title": "切換間隔",
+            "desc": "桌布切換之間的秒數，從 10 秒到一週"
+          }
+        },
         "transition": {
           "mode": {
             "title": "轉場效果",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "在應用程式後繪製背景",
         "desc": "在應用程式圖示後顯示 Dock 面板"
+      },
+      "icons_only": {
+        "title": "僅圖示",
+        "desc": "隱藏每個應用程式背後的方框，僅顯示其圖示"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "搜尋設定...",
       "prompt": "輸入以搜尋設定...",
+      "indexing": "正在建立設定索引...",
       "no_results": "找不到相關設定",
       "results": "搜尋結果"
     },
@@ -2491,10 +2504,34 @@
       "additional_pkgs_title": "=== 選擇附加套件 ===",
       "menu_additional_pkgs": "附加套件",
       "menu_keyboard": "鍵盤配置與快捷鍵",
-      "menu_fast_mirrors": "快速鏡像與 Chaotic-AUR"
+      "menu_fast_mirrors": "快速鏡像與 Chaotic-AUR",
+      "complete_keyboard": "鍵盤",
+      "complete_additional": "附加套件",
+      "complete_fast_mirrors": "快速鏡像",
+      "status_selected_count": "已選取 {count} 項",
+      "additional_cats_subtitle": "已選取 {count} 個選用套件",
+      "additional_cats_hint": "進入分類設定 · 按 c 清除",
+      "additional_items_hint": "按 Space 切換 · 按 a 切換全選 · 按 Esc 返回",
+      "additional_cleared": "已清除所有附加套件",
+      "add_cat_dev": "開發",
+      "add_cat_social": "社群媒體",
+      "add_cat_browsers": "網頁瀏覽器",
+      "add_cat_games": "遊戲",
+      "add_cat_office": "辦公",
+      "add_cat_media": "媒體與娛樂",
+      "keyboard_title": "鍵盤配置與切換快捷鍵",
+      "keyboard_subtitle": "選擇鍵盤配置 (XKB) 與切換快捷鍵",
+      "keyboard_layout_row": "鍵盤配置",
+      "keyboard_layout_hint": "←→ 預設集 · 按 e / Enter 編輯自訂配置",
+      "keyboard_toggle_section": "切換快捷鍵",
+      "hint_presets": "預設集",
+      "hint_edit": "編輯",
+      "hint_clear": "清除",
+      "hint_all": "切換全選"
     },
     "deps": {
       "syncing": "正在同步並更新系統套件 (pacman -syyu)...",
+      "syncing_portage": "正在同步 Portage 樹...",
       "all_installed": "-> 所有套件皆已安裝！跳過套件下載階段。",
       "missing_count": "-> 發現 {count} 個缺少的套件待安裝。",
       "installing_title": "正在安裝系統套件與相依套件...",
@@ -2504,6 +2541,7 @@
       "enabling_copr": "正在啟用 COPR 軟體庫 {repo}...",
       "enabling_repo": "正在啟用軟體庫 {repo}...",
       "enabling_terra": "正在啟用 Terra 軟體庫...",
+      "enabling_overlay": "正在啟用 Gentoo overlay {repo}...",
       "quickshell_outdated": "Quickshell {version} 版本過舊，需要 {minimum} 或更新版本。正在升級...",
       "quickshell_still_old": "Quickshell 仍然低於 {minimum}。請手動更新，否則將無法開啟設定視窗。",
       "ranking_pacman": "正在搜尋並對最快的 Pacman 鏡像進行排序...",

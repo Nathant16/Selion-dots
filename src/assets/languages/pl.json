@@ -956,7 +956,30 @@
       "additional_pkgs_title": "=== Wybór dodatkowych pakietów ===",
       "menu_additional_pkgs": "Dodatkowe pakiety",
       "menu_keyboard": "Układ klawiatury i skrót",
-      "menu_fast_mirrors": "Szybkie serwery lustrzane i Chaotic-AUR"
+      "menu_fast_mirrors": "Szybkie serwery lustrzane i Chaotic-AUR",
+      "complete_keyboard": "Klawiatura",
+      "complete_additional": "Dodatkowe pak.",
+      "complete_fast_mirrors": "Szybkie mirrory",
+      "status_selected_count": "Wybrano: {count}",
+      "additional_cats_subtitle": "Wybrano opcjonalnych pakietów: {count}",
+      "additional_cats_hint": "Otwórz kategorię, aby skonfigurować · c, aby wyczyścić",
+      "additional_items_hint": "Spacja — przełącz · a — przełącz wszystko · Esc — wróć",
+      "additional_cleared": "Wyczyszczono wszystkie dodatkowe pakiety",
+      "add_cat_dev": "Programowanie",
+      "add_cat_social": "Media społecznościowe",
+      "add_cat_browsers": "Przeglądarki internetowe",
+      "add_cat_games": "Gry",
+      "add_cat_office": "Biuro",
+      "add_cat_media": "Multimedia i rozrywka",
+      "keyboard_title": "Układ klawiatury i skrót przełączania",
+      "keyboard_subtitle": "Wybierz układy klawiatury (XKB) i skrót przełączania",
+      "keyboard_layout_row": "Układ klawiatury",
+      "keyboard_layout_hint": "←→ szablony · e / Enter — edytuj własny układ",
+      "keyboard_toggle_section": "Skrót przełączania",
+      "hint_presets": "Szablony",
+      "hint_edit": "Edytuj",
+      "hint_clear": "Wyczyść",
+      "hint_all": "Przełącz wszystko"
     },
     "steps": {
       "prepare": "Przygotuj telemetrię i środowisko",
@@ -978,6 +1001,7 @@
     },
     "deps": {
       "syncing": "Synchronizacja i aktualizacja pakietów systemowych (pacman -Syyu)...",
+      "syncing_portage": "Synchronizacja drzewa Portage...",
       "all_installed": "-> Wszystkie pakiety są już zainstalowane! Pomijanie etapu pobierania.",
       "missing_count": "-> Znaleziono {count} brakujących pakietów do zainstalowania.",
       "installing_title": "Instalowanie pakietów systemowych i zależności...",
@@ -986,6 +1010,7 @@
       "install_failed": "Nie udało się zainstalować {pkg}",
       "enabling_copr": "Włączanie repozytorium COPR {repo}...",
       "enabling_repo": "Włączanie repozytorium {repo}...",
+      "enabling_overlay": "Włączanie nakładki Gentoo {repo}...",
       "enabling_terra": "Włączanie repozytorium Terra...",
       "quickshell_outdated": "Quickshell {version} jest zbyt stary, wymagana jest wersja {minimum} lub nowsza. Aktualizowanie...",
       "quickshell_still_old": "Quickshell nadal jest starszy niż {minimum}. Zaktualizuj go ręcznie, w przeciwnym razie ustawienia się nie otworzą.",
@@ -1817,6 +1842,14 @@
         "select_dir": "Wybierz katalog...",
         "select_wallpaper": "Wybierz tapetę",
         "select": "Tapeta",
+        "carousel": {
+          "title": "Karuzela tapet",
+          "desc": "Pokazuj losową tapetę z katalogu według harmonogramu, przechodząc przez wszystkie przed powtórzeniem",
+          "interval": {
+            "title": "Interwał zmiany",
+            "desc": "Sekundy między zmianami tapety, od 10 sekund do tygodnia"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Przejście",
@@ -2266,6 +2299,10 @@
       "background": {
         "title": "Rysuj tło za aplikacjami",
         "desc": "Pokaż panel docka za ikonami aplikacji"
+      },
+      "icons_only": {
+        "title": "Tylko ikony",
+        "desc": "Ukryj pole za każdą aplikacją i pokazuj tylko jej ikonę"
       }
     },
     "lyrics_picker": {
@@ -2276,6 +2313,7 @@
     "search": {
       "placeholder": "Szukaj w ustawieniach...",
       "prompt": "Wpisz, aby wyszukać w ustawieniach...",
+      "indexing": "Indeksowanie ustawień...",
       "no_results": "Nie znaleziono ustawień",
       "results": "Wyniki wyszukiwania"
     },

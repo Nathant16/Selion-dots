@@ -9,9 +9,11 @@ import "../"
 ShellRoot {
     id: globalRoot
 
+    WallpaperCarousel {}
+
     Variants {
         id: overviewRoot
-        model: Compositor.name === "niri" ? Quickshell.screens : []
+        model: Compositor.hasOverviewBackdrop ? Quickshell.screens : []
 
         delegate: Component {
             PanelWindow {

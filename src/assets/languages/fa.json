@@ -768,6 +768,14 @@
         "select_dir": "انتخاب پوشه...",
         "select_wallpaper": "انتخاب پس‌زمینه",
         "select": "پس‌زمینه",
+        "carousel": {
+          "title": "چرخ‌فلک والپیپر",
+          "desc": "نمایش یک والپیپر تصادفی از پوشه طبق زمان‌بندی، با گذر از همه والپیپرها پیش از تکرار",
+          "interval": {
+            "title": "فاصله تغییر",
+            "desc": "ثانیه‌های بین تغییر والپیپر، از ۱۰ ثانیه تا یک هفته"
+          }
+        },
         "transition": {
           "mode": {
             "title": "گذار",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "رسم پس‌زمینه پشت برنامه‌ها",
         "desc": "نمایش پنل داک پشت آیکون‌های برنامه"
+      },
+      "icons_only": {
+        "title": "فقط آیکون‌ها",
+        "desc": "پنهان کردن کادر پشت هر برنامه و نمایش فقط آیکون آن"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "جست‌وجوی تنظیمات...",
       "prompt": "برای جست‌وجوی تنظیمات تایپ کنید...",
+      "indexing": "در حال نمایه‌سازی تنظیمات...",
       "no_results": "هیچ تنظیمی پیدا نشد",
       "results": "نتایج جست‌وجو"
     },
@@ -2491,7 +2504,30 @@
       "additional_pkgs_title": "=== انتخاب بسته‌های اضافی ===",
       "menu_additional_pkgs": "بسته‌های اضافی",
       "menu_keyboard": "چیدمان صفحه‌کلید و میانبر",
-      "menu_fast_mirrors": "آینه‌های سریع و Chaotic-AUR"
+      "menu_fast_mirrors": "آینه‌های سریع و Chaotic-AUR",
+      "complete_keyboard": "صفحه‌کلید",
+      "complete_additional": "بسته‌های اضافی",
+      "complete_fast_mirrors": "آینه‌های سریع",
+      "status_selected_count": "{count} انتخاب‌شده",
+      "additional_cats_subtitle": "{count} بسته اختیاری انتخاب‌شده",
+      "additional_cats_hint": "Enter برای ورود به دسته · c برای پاک‌سازی",
+      "additional_items_hint": "Space برای تغییر وضعیت · a انتخاب/لغو همه · Esc بازگشت",
+      "additional_cleared": "تمام بسته‌های اضافی پاک شد",
+      "add_cat_dev": "توسعه",
+      "add_cat_social": "شبکه‌های اجتماعی",
+      "add_cat_browsers": "مرورگرهای وب",
+      "add_cat_games": "بازی‌ها",
+      "add_cat_office": "اداری",
+      "add_cat_media": "رسانه و سرگرمی",
+      "keyboard_title": "چیدمان صفحه‌کلید و میانبر جابه‌جایی",
+      "keyboard_subtitle": "چیدمان‌های صفحه‌کلید (XKB) و میانبر جابه‌جایی را انتخاب کنید",
+      "keyboard_layout_row": "چیدمان صفحه‌کلید",
+      "keyboard_layout_hint": "←→ پیش‌تنظیم‌ها · e / Enter برای ویرایش چیدمان سفارشی",
+      "keyboard_toggle_section": "میانبر جابه‌جایی",
+      "hint_presets": "پیش‌تنظیم‌ها",
+      "hint_edit": "ویرایش",
+      "hint_clear": "پاک‌سازی",
+      "hint_all": "تغییر همه"
     },
     "steps": {
       "prepare": "آماده‌سازی داده‌سنجی و محیط",
@@ -2513,6 +2549,7 @@
     },
     "deps": {
       "syncing": "در حال همگام‌سازی و به‌روزرسانی بسته‌های سیستم (pacman -syyu)...",
+      "syncing_portage": "در حال همگام‌سازی درخت Portage...",
       "all_installed": "-> تمام بسته‌ها از قبل نصب شده‌اند! رد کردن مرحله بارگیری بسته‌ها.",
       "missing_count": "-> {count} بسته ناموجود برای نصب پیدا شد.",
       "installing_title": "در حال نصب بسته‌ها و وابستگی‌های سامانه...",
@@ -2521,6 +2558,7 @@
       "install_failed": "نصب بسته {pkg} ناموفق بود",
       "enabling_copr": "در حال فعال‌سازی مخزن COPR {repo}...",
       "enabling_repo": "در حال فعال‌سازی مخزن {repo}...",
+      "enabling_overlay": "در حال فعال‌سازی هم‌پوشان Gentoo {repo}...",
       "enabling_terra": "در حال فعال‌سازی مخزن Terra...",
       "quickshell_outdated": "نسخه Quickshell {version} بیش از حد قدیمی است، نسخه {minimum} یا جدیدتر لازم است. در حال ارتقا...",
       "quickshell_still_old": "نسخه Quickshell همچنان قدیمی‌تر از {minimum} است. آن را به صورت دستی به‌روزرسانی کنید، در غیر این صورت تنظیمات باز نخواهد شد.",

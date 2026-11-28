@@ -768,6 +768,14 @@
         "select_dir": "Pilih direktori...",
         "select_wallpaper": "Pilih gambar latar",
         "select": "Gambar latar",
+        "carousel": {
+          "title": "Karusel wallpaper",
+          "desc": "Tampilkan wallpaper acak dari folder sesuai jadwal, melewati semua wallpaper sebelum ada yang berulang",
+          "interval": {
+            "title": "Interval pergantian",
+            "desc": "Detik antar pergantian wallpaper, dari 10 detik hingga seminggu"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Transisi",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "Gambar latar di belakang aplikasi",
         "desc": "Tampilkan panel dock di belakang ikon aplikasi"
+      },
+      "icons_only": {
+        "title": "Hanya ikon",
+        "desc": "Sembunyikan kotak di belakang setiap aplikasi dan tampilkan hanya ikonnya"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "Cari pengaturan...",
       "prompt": "Ketik untuk mencari pengaturan...",
+      "indexing": "Mengindeks pengaturan...",
       "no_results": "Pengaturan tidak ditemukan",
       "results": "Hasil pencarian"
     },
@@ -2491,10 +2504,34 @@
       "additional_pkgs_title": "=== Pilih paket tambahan ===",
       "menu_additional_pkgs": "Paket tambahan",
       "menu_keyboard": "Tata letak keyboard & pintasan",
-      "menu_fast_mirrors": "Mirror cepat & Chaotic-AUR"
+      "menu_fast_mirrors": "Mirror cepat & Chaotic-AUR",
+      "complete_keyboard": "Papan ketik",
+      "complete_additional": "Paket tambahan",
+      "complete_fast_mirrors": "Mirror cepat",
+      "status_selected_count": "{count} dipilih",
+      "additional_cats_subtitle": "{count} paket opsional dipilih",
+      "additional_cats_hint": "Buka kategori untuk mengatur · c untuk membersihkan",
+      "additional_items_hint": "Space untuk alihkan · a alihkan semua · Esc kembali",
+      "additional_cleared": "Semua paket tambahan dibersihkan",
+      "add_cat_dev": "Pengembangan",
+      "add_cat_social": "Media Sosial",
+      "add_cat_browsers": "Peramban Web",
+      "add_cat_games": "Game",
+      "add_cat_office": "Perkantoran",
+      "add_cat_media": "Media & Hiburan",
+      "keyboard_title": "Tata letak keyboard & pintasan ganti",
+      "keyboard_subtitle": "Pilih tata letak keyboard (XKB) dan pintasan ganti",
+      "keyboard_layout_row": "Tata letak keyboard",
+      "keyboard_layout_hint": "←→ preset · e / Enter untuk sunting tata letak kustom",
+      "keyboard_toggle_section": "Pintasan ganti",
+      "hint_presets": "Preset",
+      "hint_edit": "Ubah",
+      "hint_clear": "Bersihkan",
+      "hint_all": "Alihkan semua"
     },
     "deps": {
       "syncing": "Menyinkronkan dan memperbarui paket sistem (pacman -Syyu)...",
+      "syncing_portage": "Menyinkronkan pohon Portage...",
       "all_installed": "-> Semua paket sudah terinstal! Melewati tahap pengunduhan paket.",
       "missing_count": "-> Ditemukan {count} paket yang hilang untuk diinstal.",
       "installing_title": "Menginstal paket sistem dan dependensi...",
@@ -2503,6 +2540,7 @@
       "install_failed": "Gagal menginstal {pkg}",
       "enabling_copr": "Mengaktifkan repositori COPR {repo}...",
       "enabling_repo": "Mengaktifkan repositori {repo}...",
+      "enabling_overlay": "Mengaktifkan overlay Gentoo {repo}...",
       "enabling_terra": "Mengaktifkan repositori Terra...",
       "quickshell_outdated": "Quickshell {version} terlalu lama, diperlukan {minimum} atau yang lebih baru. Memperbarui...",
       "quickshell_still_old": "Quickshell masih lebih lama dari {minimum}. Perbarui secara manual, jika tidak pengaturan tidak akan terbuka.",

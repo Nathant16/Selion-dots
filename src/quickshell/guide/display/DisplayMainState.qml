@@ -6,7 +6,6 @@ import "../../"
 
 GuideTab {
     id: displayTabRoot
-    subTabIndex: 0
 
     property var defaultDisplaySettings: ({
         "monitors": {}
@@ -434,33 +433,12 @@ GuideTab {
 
     function applyMonitorPower(monName, enabled) {
         if (!monName) return;
-        if (displayTabRoot.compositor === "niri") {
-            Quickshell.execDetached(["bash", "-c", enabled ? "niri msg output " + monName + " on" : "niri msg output " + monName + " off"]);
-        } else if (displayTabRoot.compositor === "sway") {
-            Quickshell.execDetached(["bash", "-c", "swaymsg output " + monName + (enabled ? " enable" : " disable")]);
-        } else if (displayTabRoot.compositor === "mango") {
-            Quickshell.execDetached(["mmsg", "dispatch", (enabled ? "wakeup_monitor," : "sleep_monitor,") + monName]);
-        } else if (displayTabRoot.compositor === "umbriel") {
-            UmbrielState.dispatch(enabled ? "output-enable" : "output-disable", [monName]);
-        } else if (displayTabRoot.compositor === "hyprland") {
-            let mon = displayTabRoot.monitorsList.find(m => m.name === monName);
-            let modeStr = mon ? (mon.dimensions + "@" + mon.framerate) : "preferred";
-            let scaleVal = mon ? mon.scale : 1.0;
-            if (enabled) {
-                let luaCmd =
-                    'hl.monitor({' +
-                    ' output = "' + monName + '",' +
-                    ' mode = "' + modeStr + '",' +
-                    ' position = "auto",' +
-                    ' scale = ' + scaleVal.toString() + ',' +
-                    ' disabled = false' +
-                    ' })';
-                Quickshell.execDetached(["bash", "-c", "hyprctl eval '" + luaCmd + "'"]);
-            } else {
-                let luaCmd =
-                    'hl.monitor({ output = "' + monName + '", disabled = true })';
-                Quickshell.execDetached(["bash", "-c", "hyprctl eval '" + luaCmd + "'"]);
-            }
+        let mon = displayTabRoot.monitorsList.find(m => m.name === monName);
+        let modeStr = mon ? (mon.dimensions + "@" + mon.framerate) : "preferred";
+        let scaleVal = mon ? mon.scale : 1.0;
+        let cmd = Compositor.outputEnableCommand(monName, enabled, modeStr, scaleVal);
+        if (cmd !== "") {
+            Quickshell.execDetached(["bash", "-c", cmd]);
         }
     }
 

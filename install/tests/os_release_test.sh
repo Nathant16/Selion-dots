@@ -276,8 +276,11 @@ rm -f "$TEL_PAYLOAD"
 PATH="$TEL_BIN:$PATH" MOCK_PAYLOAD_FILE="$TEL_PAYLOAD" OS_RELEASE_FILE="$TMP_ROOT/fedora-sq" \
     bash "$REPO_ROOT/install/modules/telemetry.sh" \
     --mode init --version "2.5.4" --id "1033a555-8580-43ba-893a-07abbb58f633" --enabled true
-sleep 0.2
-assert_fail "telemetry.sh skips single-quoted Fedora" test -s "$TEL_PAYLOAD"
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+    [ -s "$TEL_PAYLOAD" ] && break
+    sleep 0.05
+done
+assert_eq "telemetry.sh parses single-quoted Fedora PRETTY_NAME" "Fedora Linux 42" "$(jq -r '.os' "$TEL_PAYLOAD")"
 
 BOOT_BIN="$TMP_ROOT/boot_bin"
 mkdir -p "$BOOT_BIN"

@@ -15,6 +15,33 @@ Item {
     property var screenWallpaperPaths: ({})
     property var engines: ({})
 
+    readonly property string wallpaperDir: {
+        let _raw = (typeof Config !== "undefined") ? Config.rawSettings : null;
+        let fromCfg = (typeof Config !== "undefined") ? (Config.peekSetting("wallpaperDir", "") || Config.peekSetting("wallpaper_dir", "")) : "";
+        return fromCfg || Quickshell.env("WALLPAPER_DIR") || (Caching.xdgPicturesDir + "/Wallpapers");
+    }
+
+    readonly property string listScript:
+        "TARGET_DIR=\"$1\"\n" +
+        "[ -d \"$TARGET_DIR\" ] || if [ -d \"$HOME/Pictures/Wallpapers\" ]; then TARGET_DIR=\"$HOME/Pictures/Wallpapers\"; elif [ -d \"$HOME/Pictures/Wallpaper\" ]; then TARGET_DIR=\"$HOME/Pictures/Wallpaper\"; fi\n" +
+        "[ -d \"$TARGET_DIR\" ] || exit 0\n" +
+        "if [ \"${2:-1}\" = \"0\" ]; then\n" +
+        "  [ \"$(basename \"$TARGET_DIR\")\" = \"Selion\" ] && exit 0\n" +
+        "  find -L \"$TARGET_DIR\" -type f ! -path '*/.*' ! -path \"${TARGET_DIR%/}/Selion\" ! -path \"${TARGET_DIR%/}/Selion/*\" \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" -o -iname \"*.webp\" -o -iname \"*.bmp\" -o -iname \"*.mp4\" -o -iname \"*.mkv\" -o -iname \"*.mov\" -o -iname \"*.webm\" \\) 2>/dev/null\n" +
+        "else\n" +
+        "  find -L \"$TARGET_DIR\" -type f ! -path '*/.*' \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" -o -iname \"*.webp\" -o -iname \"*.bmp\" -o -iname \"*.mp4\" -o -iname \"*.mkv\" -o -iname \"*.mov\" -o -iname \"*.webm\" \\) 2>/dev/null\n" +
+        "fi"
+
+    readonly property int carouselMinInterval: 10
+    readonly property int carouselMaxInterval: 604800
+    readonly property int carouselDefaultInterval: 1800
+
+    function clampCarouselInterval(value): int {
+        let n = Math.round(Number(value));
+        if (isNaN(n)) return root.carouselDefaultInterval;
+        return Math.max(root.carouselMinInterval, Math.min(root.carouselMaxInterval, n));
+    }
+
     readonly property var transitionIds: ["fade", "wipe", "circle", "swipe", "paint", "wave", "blinds", "clock", "hex", "ink"]
     readonly property var transitionModes: ["random", "custom"]
     readonly property var wipeOrientations: ["random", "horizontal", "vertical"]
@@ -123,21 +150,9 @@ Item {
 
     function shuffle(screenName: string, transition: string): void {
         let scrName = screenName || "all";
-        let home = Quickshell.env("HOME") || "";
-        let dir = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || "";
-        if (dir.startsWith("~/") || dir === "~") dir = home + dir.substring(1);
-        if (!dir) dir = home + "/Pictures/Wallpapers";
+        let dir = root.wallpaperDir;
         let showSelion = Config.getSetting("showSelionWallpapers", true) !== false;
-        let script =
-            "TARGET_DIR=\"$1\"\n" +
-            "[ -d \"$TARGET_DIR\" ] || if [ -d \"$HOME/Pictures/Wallpapers\" ]; then TARGET_DIR=\"$HOME/Pictures/Wallpapers\"; elif [ -d \"$HOME/Pictures/Wallpaper\" ]; then TARGET_DIR=\"$HOME/Pictures/Wallpaper\"; fi\n" +
-            "[ -d \"$TARGET_DIR\" ] || exit 0\n" +
-            "if [ \"$2\" = \"0\" ]; then\n" +
-            "  [ \"$(basename \"$TARGET_DIR\")\" = \"Selion\" ] && exit 0\n" +
-            "  find -L \"$TARGET_DIR\" -type f ! -path '*/.*' ! -path \"${TARGET_DIR%/}/Selion\" ! -path \"${TARGET_DIR%/}/Selion/*\" \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" -o -iname \"*.webp\" -o -iname \"*.bmp\" -o -iname \"*.mp4\" -o -iname \"*.mkv\" -o -iname \"*.mov\" -o -iname \"*.webm\" \\) 2>/dev/null | shuf -n 1\n" +
-            "else\n" +
-            "  find -L \"$TARGET_DIR\" -type f ! -path '*/.*' \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" -o -iname \"*.webp\" -o -iname \"*.bmp\" -o -iname \"*.mp4\" -o -iname \"*.mkv\" -o -iname \"*.mov\" -o -iname \"*.webm\" \\) 2>/dev/null | shuf -n 1\n" +
-            "fi";
+        let script = root.listScript + " | shuf -n 1";
         shuffleProcess.targetScreenName = scrName;
         shuffleProcess.transition = transition || "";
         shuffleProcess.command = ["bash", "-c", script, "shuffle", dir, showSelion ? "1" : "0"];

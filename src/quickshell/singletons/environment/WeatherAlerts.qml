@@ -89,30 +89,28 @@ Item {
     function saveState() {
         if (!stateFile.path) return;
         root.pruneState();
-        stateFile.setText(JSON.stringify({
+        stateFile.save({
             "location": root.locationKey,
             "delivered": root.delivered,
             "lastDelivered": root.lastDelivered
-        }) + "\n");
+        });
     }
 
-    function loadState(text) {
-        try {
-            if (text && text.trim().length > 0) {
-                let data = JSON.parse(text);
-                if (data && typeof data === "object") {
-                    root.locationKey = data.location ? String(data.location) : "";
-                    root.delivered = data.delivered || {};
-                    root.lastDelivered = data.lastDelivered || {};
-                }
-            }
-        } catch (e) {}
+    function loadState(data) {
+        if (data && typeof data === "object") {
+            root.locationKey = data.location ? String(data.location) : "";
+            root.delivered = data.delivered || {};
+            root.lastDelivered = data.lastDelivered || {};
+        }
         root.pruneState();
         root.stateLoaded = true;
         root.maybeReload();
     }
 
     function currentLocationKey() {
+        if (typeof Location !== "undefined" && Location.hasValidCoordinates) {
+            return Location.fingerprint;
+        }
         let d = Weather.data || {};
         if (d.latitude === undefined || d.longitude === undefined) return "";
         return Number(d.latitude).toFixed(2) + "," + Number(d.longitude).toFixed(2);
@@ -164,15 +162,13 @@ Item {
         root.saveState();
         let title = alert.titleKey ? root.resolveText(alert.titleKey, alert.args) : alert.title;
         let body = alert.bodyKey ? root.resolveText(alert.bodyKey, alert.args) : alert.body;
-        Quickshell.execDetached([
-            "serpantinum-core", "notify",
-            "--app", "Weather",
-            "--urgency", alert.urgency === "critical" ? "critical" : "normal",
-            "--icon", "weather-kind-" + alert.kind,
-            "--",
-            title,
-            body
-        ]);
+        SysNotif.send({
+            app: I18n.t("widgets.types.weather", "Weather"),
+            title: title,
+            body: body,
+            icon: "weather-kind-" + alert.kind,
+            urgency: alert.urgency === "critical" ? "critical" : "normal"
+        });
     }
 
     function maybeReload() {
@@ -233,17 +229,16 @@ Item {
         }
     }
 
-    FileView {
+    JsonStateFile {
         id: stateFile
         path: root.weatherDir ? root.weatherDir + "/alerts_state.json" : ""
         watchChanges: false
         printErrors: false
-        atomicWrites: true
-        onLoaded: {
-            if (!root.stateLoaded) root.loadState(typeof stateFile.text === "function" ? stateFile.text() : stateFile.text);
+        onLoaded: function(data) {
+            if (!root.stateLoaded) root.loadState(data);
         }
         onLoadFailed: {
-            if (!root.stateLoaded) root.loadState("");
+            if (!root.stateLoaded) root.loadState(null);
         }
     }
 

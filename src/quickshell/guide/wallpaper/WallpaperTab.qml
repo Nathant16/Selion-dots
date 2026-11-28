@@ -22,6 +22,8 @@ WallpaperTabState {
 
         ShowSelionRow { tab: wallpaperTabRoot }
 
+        WallpaperCarouselSection { tab: wallpaperTabRoot }
+
         Loader {
             Layout.fillWidth: true
             active: wallpaperTabRoot.deferredStage >= 1

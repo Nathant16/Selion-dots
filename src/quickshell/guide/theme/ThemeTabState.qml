@@ -3,12 +3,14 @@ import Quickshell
 import Quickshell.Io
 import "../"
 import "../../"
+import "../../reusables"
 import "../wallpaper"
+import "ThemePresetCache.js" as PresetCache
 
 GuideTab {
     id: themeTabRoot
 
-    property var defaultThemeSettings: {
+    property var defaultThemeSettings: ({
         "fontFamily": ThemeBackend.fontFamily,
         "borderRadius": ThemeBackend.borderRadius,
         "elementOpacity": 100,
@@ -19,21 +21,24 @@ GuideTab {
         "matugen": true,
         "mode": "dark",
         "colors": {}
+    })
+
+    ConfigSection {
+        id: themeCfg
+        section: "theme"
+        defaults: themeTabRoot.defaultThemeSettings
     }
 
-    property alias borderRadiusDebounceTimer: borderRadiusDebounceTimer
-    property alias elementOpacityDebounceTimer: elementOpacityDebounceTimer
-
-    property var themeSettings: Config.getSetting("theme", defaultThemeSettings)
-    property string currentFontFamily: themeSettings.fontFamily !== undefined ? themeSettings.fontFamily : ThemeBackend.fontFamily
-    property int currentBorderRadius: themeSettings.borderRadius !== undefined ? themeSettings.borderRadius : ThemeBackend.borderRadius
-    property int currentElementOpacity: themeSettings.elementOpacity !== undefined ? Number(themeSettings.elementOpacity) : 100
-    property string currentBlurStyle: themeSettings.blurStyle === "liquid" ? "liquid" : "blur"
-    property bool currentBlurBackground: themeSettings.blurBackground !== undefined ? Boolean(themeSettings.blurBackground) : false
-    property bool currentApplyEffectsToWindows: themeSettings.applyEffectsToWindows !== undefined ? Boolean(themeSettings.applyEffectsToWindows) : true
-    property string currentPreset: themeSettings.activePreset !== undefined ? themeSettings.activePreset : "Matugen"
-    property bool useMatugen: themeSettings.matugen !== undefined ? themeSettings.matugen : true
-    property string currentMode: themeSettings.mode === "light" ? "light" : "dark"
+    readonly property var themeSettings: themeCfg.values
+    readonly property string currentFontFamily: themeSettings.fontFamily !== undefined ? String(themeSettings.fontFamily) : ThemeBackend.fontFamily
+    readonly property int currentBorderRadius: themeSettings.borderRadius !== undefined ? Number(themeSettings.borderRadius) : ThemeBackend.borderRadius
+    readonly property int currentElementOpacity: themeSettings.elementOpacity !== undefined ? Number(themeSettings.elementOpacity) : 100
+    readonly property string currentBlurStyle: themeSettings.blurStyle === "liquid" ? "liquid" : "blur"
+    readonly property bool currentBlurBackground: themeSettings.blurBackground !== undefined ? Boolean(themeSettings.blurBackground) : false
+    readonly property bool currentApplyEffectsToWindows: themeSettings.applyEffectsToWindows !== undefined ? Boolean(themeSettings.applyEffectsToWindows) : true
+    readonly property string currentPreset: themeSettings.activePreset !== undefined ? String(themeSettings.activePreset) : "Matugen"
+    readonly property bool useMatugen: themeSettings.matugen !== undefined ? Boolean(themeSettings.matugen) : true
+    readonly property string currentMode: themeSettings.mode === "light" ? "light" : "dark"
     readonly property string effectiveMode: useMatugen ? currentMode : Matugen.modeOfColors(themeSettings.colors)
 
     property var curatedFonts: ThemeBackend.bundledNames
@@ -142,38 +147,20 @@ GuideTab {
         }
     }
 
-    property var matugenColors: ({})
-    property color prevMatugenBase: ThemeBackend.base
-    property color prevMatugenText: ThemeBackend.text
-    property color prevMatugenBlue: ThemeBackend.blue
-    property color prevMatugenMauve: ThemeBackend.mauve
-    property color prevMatugenPeach: ThemeBackend.peach
-    property color prevMatugenGreen: ThemeBackend.green
-    property color prevMatugenRed: ThemeBackend.red
+    readonly property var matugenColors: (typeof ThemeBackend !== "undefined" && ThemeBackend.matugenColors) ? ThemeBackend.matugenColors : ({})
+    readonly property color prevMatugenBase: (matugenColors && matugenColors.base) ? matugenColors.base : ThemeBackend.base
+    readonly property color prevMatugenText: (matugenColors && matugenColors.text) ? matugenColors.text : ThemeBackend.text
+    readonly property color prevMatugenBlue: (matugenColors && matugenColors.blue) ? matugenColors.blue : ThemeBackend.blue
+    readonly property color prevMatugenMauve: (matugenColors && matugenColors.mauve) ? matugenColors.mauve : ThemeBackend.mauve
+    readonly property color prevMatugenPeach: (matugenColors && matugenColors.peach) ? matugenColors.peach : ThemeBackend.peach
+    readonly property color prevMatugenGreen: (matugenColors && matugenColors.green) ? matugenColors.green : ThemeBackend.green
+    readonly property color prevMatugenRed: (matugenColors && matugenColors.red) ? matugenColors.red : ThemeBackend.red
 
     property alias currentWallpaperPath: currentWallpaper.path
     property alias wallpaperRevision: currentWallpaper.revision
     property alias isWallpaperVideo: currentWallpaper.isVideo
 
     CurrentWallpaper { id: currentWallpaper }
-
-    Timer {
-        id: borderRadiusDebounceTimer
-        interval: 250
-        repeat: false
-        onTriggered: {
-            themeTabRoot.updateBorderRadiusSetting();
-        }
-    }
-
-    Timer {
-        id: elementOpacityDebounceTimer
-        interval: 100
-        repeat: false
-        onTriggered: {
-            themeTabRoot.updateElementOpacitySetting();
-        }
-    }
 
     function getSnappedRadius(rawVal) {
         let snapPoints = [0, 2, 4, 8, 10, 16, 24, 32, 48, 52, 58, 64];
@@ -208,6 +195,11 @@ GuideTab {
 
     function activateTab() {
         themeTabRoot.loadAvailableFonts();
+        if (themeTabRoot.systemPresets.length === 0 && PresetCache.systemPresets.length > 0) {
+            themeTabRoot._lastPresetsStr = PresetCache.text;
+            themeTabRoot.systemPresets = PresetCache.systemPresets;
+            themeTabRoot.userPresets = PresetCache.userPresets;
+        }
         activateDebounceTimer.restart();
     }
 
@@ -215,18 +207,9 @@ GuideTab {
         if (visible) {
             activateTab();
         } else {
+            themeCfg.flush();
             activateDebounceTimer.stop();
         }
-    }
-
-    onMatugenColorsChanged: {
-        prevMatugenBase = matugenColors.base || ThemeBackend.base;
-        prevMatugenText = matugenColors.text || ThemeBackend.text;
-        prevMatugenBlue = matugenColors.blue || ThemeBackend.blue;
-        prevMatugenMauve = matugenColors.mauve || ThemeBackend.mauve;
-        prevMatugenPeach = matugenColors.peach || ThemeBackend.peach;
-        prevMatugenGreen = matugenColors.green || ThemeBackend.green;
-        prevMatugenRed = matugenColors.red || ThemeBackend.red;
     }
 
     function getCardBase(m) { return m.isMatugen ? themeTabRoot.prevMatugenBase : (m.colors && m.colors.base ? m.colors.base : ThemeBackend.base); }
@@ -235,19 +218,6 @@ GuideTab {
         if (m.isMatugen) return [themeTabRoot.prevMatugenBase, themeTabRoot.prevMatugenBlue, themeTabRoot.prevMatugenMauve, themeTabRoot.prevMatugenPeach, themeTabRoot.prevMatugenGreen, themeTabRoot.prevMatugenRed];
         if (m.colors) return [m.colors.text || ThemeBackend.text, m.colors.blue || ThemeBackend.blue, m.colors.mauve || ThemeBackend.mauve, m.colors.peach || ThemeBackend.peach, m.colors.green || ThemeBackend.green, m.colors.red || ThemeBackend.red];
         return [];
-    }
-
-    FileView {
-        id: matugenColorsWatcher
-        path: (typeof Caching !== "undefined" && Caching.stateDir ? Caching.stateDir : ((Quickshell.env("HOME") ?? "") + "/.local/state/serpantinum")) + "/qs_matugen_colors.json"
-        watchChanges: true
-        onFileChanged: reload()
-        onLoaded: {
-            try {
-                let data = JSON.parse(text().trim());
-                themeTabRoot.matugenColors = data.colors || data;
-            } catch(e) {}
-        }
     }
 
     function reloadThemes() {
@@ -260,7 +230,7 @@ GuideTab {
         running: false
         command: {
             let assetsPath = Caching.serpantinumDir ? (Caching.serpantinumDir + "/assets/themes") : "";
-            let userPath = Caching.stateDir ? (Caching.stateDir + "/themes") : (Caching.home + "/.local/state/serpantinum/themes");
+            let userPath = Caching.stateDir + "/themes";
             let cachePath = Caching.getCacheDir("themes") + "/theme_sort_cache.json";
             let scriptPath = Caching.qsDir ? (Caching.qsDir + "/guide/theme/theme_sorter.py") : "theme_sorter.py";
             return ["python3", scriptPath, assetsPath, userPath, cachePath];
@@ -284,10 +254,15 @@ GuideTab {
                                 sys.push(item);
                             }
                         }
-                        if (themeTabRoot.systemPresets.length === 0) {
+                        let sysStr = JSON.stringify(sys);
+                        if (themeTabRoot.systemPresets.length === 0 || sysStr !== PresetCache.systemStr) {
                             themeTabRoot.systemPresets = sys;
                         }
                         themeTabRoot.userPresets = usr;
+                        PresetCache.text = txt;
+                        PresetCache.systemStr = sysStr;
+                        PresetCache.systemPresets = themeTabRoot.systemPresets;
+                        PresetCache.userPresets = usr;
                     }
                 } catch(e) {}
             }
@@ -315,7 +290,7 @@ GuideTab {
     }
 
     function saveCustomTheme(themeObj) {
-        let userPath = Caching.stateDir ? (Caching.stateDir + "/themes") : (Caching.home + "/.local/state/serpantinum/themes");
+        let userPath = Caching.stateDir + "/themes";
         let sanitizeName = themeObj.name.replace(/[^a-zA-Z0-9_\- ]/g, "").trim();
         if (sanitizeName === "") sanitizeName = "CustomTheme";
         themeObj.name = sanitizeName;
@@ -327,10 +302,11 @@ GuideTab {
         let arr = themeTabRoot.userPresets.filter(t => t.name !== themeObj.name);
         arr.push(themeObj);
         themeTabRoot.userPresets = arr;
+        PresetCache.userPresets = arr;
     }
 
     function deleteCustomTheme(themeName) {
-        let userPath = Caching.stateDir ? (Caching.stateDir + "/themes") : (Caching.home + "/.local/state/serpantinum/themes");
+        let userPath = Caching.stateDir + "/themes";
         let sanitizeName = themeName.replace(/[^a-zA-Z0-9_\- ]/g, "").trim();
         let filePath = userPath + "/" + sanitizeName + ".json";
         let escapeBash = function(str) { return String(str).replace(/(["\\$`])/g, '\\$1'); };
@@ -338,93 +314,55 @@ GuideTab {
         Quickshell.execDetached(["bash", "-c", cmd]);
 
         themeTabRoot.userPresets = themeTabRoot.userPresets.filter(t => t.name !== themeName);
+        PresetCache.userPresets = themeTabRoot.userPresets;
     }
 
-    Connections {
-        target: Config
-        function onSettingsLoaded() {
-            let ts = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
-            themeTabRoot.currentFontFamily = ts.fontFamily !== undefined ? ts.fontFamily : ThemeBackend.fontFamily;
-            themeTabRoot.currentBorderRadius = ts.borderRadius !== undefined ? ts.borderRadius : ThemeBackend.borderRadius;
-            themeTabRoot.currentElementOpacity = ts.elementOpacity !== undefined ? Number(ts.elementOpacity) : 100;
-            themeTabRoot.currentBlurBackground = ts.blurBackground !== undefined ? Boolean(ts.blurBackground) : false;
-            themeTabRoot.currentBlurStyle = ts.blurStyle === "liquid" ? "liquid" : "blur";
-            themeTabRoot.currentApplyEffectsToWindows = ts.applyEffectsToWindows !== undefined ? Boolean(ts.applyEffectsToWindows) : true;
-            themeTabRoot.currentPreset = ts.activePreset !== undefined ? ts.activePreset : "Matugen";
-            themeTabRoot.useMatugen = ts.matugen !== undefined ? ts.matugen : true;
-            themeTabRoot.currentMode = ts.mode === "light" ? "light" : "dark";
-            themeTabRoot.themeSettings = ts;
-        }
+    function setFontFamily(family) {
+        themeCfg.set("fontFamily", family);
     }
 
-    function updateFontSetting() {
-        let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
-        current.fontFamily = themeTabRoot.currentFontFamily;
-        Config.setSetting("theme", current);
-    }
-
-    function updateBorderRadiusSetting() {
-        let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
-        current.borderRadius = themeTabRoot.currentBorderRadius;
-        Config.setSetting("theme", current);
+    function setBorderRadius(val) {
+        themeCfg.set("borderRadius", val);
         if (typeof ThemeBackend !== "undefined") {
             ThemeBackend.reloadColors();
         }
     }
 
-    function updateElementOpacitySetting() {
-        let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
-        current.elementOpacity = themeTabRoot.currentElementOpacity;
-        Config.setSetting("theme", current);
-        if (typeof ThemeBackend !== "undefined") {
-            ThemeBackend.syncElementOpacity();
-            ThemeBackend.syncCompositors();
-        }
+    function setBorderRadiusDebounced(val) {
+        themeCfg.setDebounced("borderRadius", val, 250);
+    }
+
+    function setElementOpacityDebounced(val) {
+        themeCfg.setDebounced("elementOpacity", val, 100);
+    }
+
+    function flushThemeSettings() {
+        themeCfg.flush();
     }
 
     function updateBlurBackgroundSetting(val) {
-        themeTabRoot.currentBlurBackground = val;
-        let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
-        current.blurBackground = val;
-        Config.setSetting("theme", current);
-        if (typeof ThemeBackend !== "undefined") {
-            ThemeBackend.syncElementOpacity();
-            ThemeBackend.syncCompositors();
-        }
+        themeCfg.set("blurBackground", val);
     }
 
     function updateBlurStyleSetting(val) {
-        themeTabRoot.currentBlurStyle = val;
-        let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
-        current.blurStyle = val;
-        Config.setSetting("theme", current);
-        if (typeof ThemeBackend !== "undefined") {
-            ThemeBackend.syncElementOpacity();
-            ThemeBackend.syncCompositors();
-        }
+        themeCfg.set("blurStyle", val);
     }
 
     function updateApplyEffectsToWindowsSetting(val) {
-        themeTabRoot.currentApplyEffectsToWindows = val;
-        let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
-        current.applyEffectsToWindows = val;
-        Config.setSetting("theme", current);
+        themeCfg.set("applyEffectsToWindows", val);
         if (typeof ThemeBackend !== "undefined") {
-            ThemeBackend.syncElementOpacity();
-            ThemeBackend.syncCompositors();
+            if (typeof ThemeBackend.syncElementOpacity === "function") ThemeBackend.syncElementOpacity();
+            if (typeof ThemeBackend.syncCompositors === "function") ThemeBackend.syncCompositors();
         }
     }
 
     function updateModeSetting(mode) {
-        themeTabRoot.currentMode = mode;
-        let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
-        current.mode = mode;
-        Config.setSetting("theme", current);
+        themeCfg.set("mode", mode);
         AppTheming.requestColorSchemeSync();
 
         let wallpaper = themeTabRoot.currentWallpaperPath || Matugen.lastWallpaper;
         if (wallpaper && wallpaper !== "") {
-            Matugen.generate(wallpaper, mode, current.schemeType);
+            Matugen.generate(wallpaper, mode, themeSettings.schemeType);
         }
     }
 
@@ -432,17 +370,14 @@ GuideTab {
         if (!modelData) return;
 
         let isMatugen = modelData.isMatugen === true;
-        themeTabRoot.currentPreset = modelData.name;
-        themeTabRoot.useMatugen = isMatugen;
-
-        let current = Config.getSetting("theme", themeTabRoot.defaultThemeSettings);
-        current.activePreset = modelData.name;
-        current.matugen = isMatugen;
+        let patch = {
+            "activePreset": modelData.name,
+            "matugen": isMatugen
+        };
         if (!isMatugen) {
-            current.colors = modelData.colors;
+            patch.colors = modelData.colors;
         }
-
-        Config.setSetting("theme", current);
+        themeCfg.setMany(patch);
         AppTheming.requestColorSchemeSync();
 
         if (isMatugen) {
@@ -455,7 +390,7 @@ GuideTab {
 
             if (themeTabRoot.currentWallpaperPath && themeTabRoot.currentWallpaperPath !== "") {
                 if (typeof Matugen !== "undefined" && typeof Matugen.generate === "function") {
-                    Matugen.generate(themeTabRoot.currentWallpaperPath, current.mode, current.schemeType);
+                    Matugen.generate(themeTabRoot.currentWallpaperPath, themeTabRoot.currentMode, themeSettings.schemeType);
                 }
             } else if (typeof ThemeBackend !== "undefined") {
                 ThemeBackend.reloadColors();
@@ -465,7 +400,7 @@ GuideTab {
                 ThemeBackend.applyColorObject(modelData.colors);
             }
             if (typeof Matugen !== "undefined" && typeof Matugen.generateFromStatic === "function") {
-                Matugen.generateFromStatic(modelData.colors, current.mode);
+                Matugen.generateFromStatic(modelData.colors, themeTabRoot.currentMode);
             }
         }
     }
@@ -510,8 +445,7 @@ GuideTab {
 
                         ThemeBackend.scanFonts();
 
-                        themeTabRoot.currentFontFamily = fName;
-                        themeTabRoot.updateFontSetting();
+                        themeTabRoot.setFontFamily(fName);
 
                         if (themeTabRoot.availableFonts.indexOf(fName) === -1) {
                             let arr = themeTabRoot.availableFonts.slice();
@@ -532,7 +466,7 @@ GuideTab {
             return;
         }
 
-        let userFontsPath = Caching.stateDir ? (Caching.stateDir + "/fonts") : (Caching.home + "/.local/state/serpantinum/fonts");
+        let userFontsPath = Caching.stateDir + "/fonts";
         let escapeBash = function(str) { return String(str).replace(/(["\\$`])/g, '\\$1'); };
 
         let script = 

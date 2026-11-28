@@ -1,6 +1,5 @@
 pragma Singleton
 import QtQuick
-import QtQuick.Window
 import Quickshell
 import "../../"
 

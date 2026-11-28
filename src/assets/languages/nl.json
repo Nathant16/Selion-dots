@@ -768,6 +768,14 @@
         "select_dir": "Map selecteren...",
         "select_wallpaper": "Achtergrond selecteren",
         "select": "Achtergrond",
+        "carousel": {
+          "title": "Achtergrondcarrousel",
+          "desc": "Toon volgens een schema een willekeurige achtergrond uit de map en loop ze allemaal door voordat er een herhaalt",
+          "interval": {
+            "title": "Wisselinterval",
+            "desc": "Seconden tussen achtergrondwisselingen, van 10 seconden tot een week"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Overgang",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "Achtergrond achter apps tekenen",
         "desc": "Toon het dockpaneel achter de app-pictogrammen"
+      },
+      "icons_only": {
+        "title": "Alleen pictogrammen",
+        "desc": "Verberg het vak achter elke app en toon alleen het pictogram"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "Instellingen zoeken...",
       "prompt": "Typ om instellingen te zoeken...",
+      "indexing": "Instellingen indexeren...",
       "no_results": "Geen instellingen gevonden",
       "results": "Zoekresultaten"
     },
@@ -2491,7 +2504,30 @@
       "additional_pkgs_title": "=== Extra pakketten selecteren ===",
       "menu_additional_pkgs": "Extra pakketten",
       "menu_keyboard": "Toetsenbordindeling & sneltoets",
-      "menu_fast_mirrors": "Snelle mirrors & Chaotic-AUR"
+      "menu_fast_mirrors": "Snelle mirrors & Chaotic-AUR",
+      "complete_keyboard": "Toetsenbord",
+      "complete_additional": "Extra pakketten",
+      "complete_fast_mirrors": "Snelle mirrors",
+      "status_selected_count": "{count} geselecteerd",
+      "additional_cats_subtitle": "{count} optionele pakketten geselecteerd",
+      "additional_cats_hint": "Categorie openen om te configureren · c om te wissen",
+      "additional_items_hint": "Spatie om te schakelen · a alles schakelen · Esc terug",
+      "additional_cleared": "Alle extra pakketten gewist",
+      "add_cat_dev": "Ontwikkeling",
+      "add_cat_social": "Sociale media",
+      "add_cat_browsers": "Webbrowsers",
+      "add_cat_games": "Spellen",
+      "add_cat_office": "Kantoor",
+      "add_cat_media": "Media & vermaak",
+      "keyboard_title": "Toetsenbordindeling & wisselsneltoets",
+      "keyboard_subtitle": "Selecteer toetsenbordindelingen (XKB) en wisselsneltoets",
+      "keyboard_layout_row": "Toetsenbordindeling",
+      "keyboard_layout_hint": "←→ voorinstellingen · e / Enter aangepaste indeling bewerken",
+      "keyboard_toggle_section": "Wisselsneltoets",
+      "hint_presets": "Voorinstellingen",
+      "hint_edit": "Bewerken",
+      "hint_clear": "Wissen",
+      "hint_all": "Alles omschakelen"
     },
     "steps": {
       "prepare": "Telemetrie en omgeving voorbereiden",
@@ -2513,6 +2549,7 @@
     },
     "deps": {
       "syncing": "Systeempakketten synchroniseren en bijwerken (pacman -syyu)...",
+      "syncing_portage": "Portage-boom synchroniseren...",
       "all_installed": "-> Alle pakketten zijn al geïnstalleerd! Pakketdownloadfase wordt overgeslagen.",
       "missing_count": "-> {count} ontbrekende pakketten gevonden om te installeren.",
       "installing_title": "Systeempakketten en afhankelijkheden installeren...",
@@ -2521,6 +2558,7 @@
       "install_failed": "Kan {pkg} niet installeren",
       "enabling_copr": "COPR-pakketbron {repo} inschakelen...",
       "enabling_repo": "Pakketbron {repo} inschakelen...",
+      "enabling_overlay": "Gentoo-overlay {repo} inschakelen...",
       "enabling_terra": "Terra-pakketbron inschakelen...",
       "quickshell_outdated": "Quickshell {version} is te oud, {minimum} of nieuwer is vereist. Bijwerken...",
       "quickshell_still_old": "Quickshell is nog steeds ouder dan {minimum}. Werk het handmatig bij, anders worden de instellingen niet geopend.",

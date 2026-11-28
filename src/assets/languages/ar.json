@@ -744,6 +744,10 @@
       "background": {
         "title": "رسم خلفية خلف التطبيقات",
         "desc": "إظهار لوحة الشريط خلف أيقونات التطبيقات"
+      },
+      "icons_only": {
+        "title": "الأيقونات فقط",
+        "desc": "إخفاء المربع خلف كل تطبيق وعرض أيقونته فقط"
       }
     },
     "file_picker": {
@@ -1052,6 +1056,7 @@
       "no_results": "لم يتم العثور على إعدادات مطابقة",
       "placeholder": "ابحث في الإعدادات...",
       "prompt": "اكتب للبحث في جميع الإعدادات...",
+      "indexing": "جارٍ فهرسة الإعدادات...",
       "results": "نتائج البحث"
     },
     "settings": "الإعدادات",
@@ -1116,6 +1121,14 @@
         "select_dir": "اختر مجلدًا...",
         "select_wallpaper": "اختر الخلفية",
         "title": "مجلد الخلفيات",
+        "carousel": {
+          "title": "دوّامة الخلفيات",
+          "desc": "اعرض خلفية عشوائية من المجلد وفق جدول زمني، مع المرور على جميع الخلفيات قبل أي تكرار",
+          "interval": {
+            "title": "فترة التغيير",
+            "desc": "الثواني بين تغييرات الخلفية، من 10 ثوانٍ حتى أسبوع"
+          }
+        },
         "transition": {
           "mode": {
             "title": "الانتقال",
@@ -1729,8 +1742,10 @@
       "installing_title": "جارٍ تثبيت حزم النظام والاعتماديات...",
       "missing_count": "مفقود {count} من الاعتماديات",
       "syncing": "جارٍ مزامنة وتحديث حزم النظام (pacman -Syyu)...",
+      "syncing_portage": "جارٍ مزامنة شجرة Portage...",
       "enabling_copr": "جارٍ تفعيل مستودع COPR {repo}...",
       "enabling_repo": "جارٍ تفعيل المستودع {repo}...",
+      "enabling_overlay": "جارٍ تفعيل تراكب Gentoo {repo}...",
       "enabling_terra": "جارٍ تفعيل مستودع Terra...",
       "quickshell_outdated": "إصدار Quickshell {version} قديم جدًا، والمطلوب {minimum} أو أحدث. جارٍ الترقية...",
       "quickshell_still_old": "لا يزال Quickshell أقدم من {minimum}. قم بتحديثه يدويًا، وإلا فلن تفتح الإعدادات.",
@@ -1893,7 +1908,30 @@
       "additional_pkgs_title": "=== تحديد الحزم الإضافية ===",
       "menu_additional_pkgs": "حزم إضافية",
       "menu_keyboard": "تخطيط لوحة المفاتيح والاختصار",
-      "menu_fast_mirrors": "خوادم متطابقة سريعة و Chaotic-AUR"
+      "menu_fast_mirrors": "خوادم متطابقة سريعة و Chaotic-AUR",
+      "complete_keyboard": "لوحة المفاتيح",
+      "complete_additional": "حزم إضافية",
+      "complete_fast_mirrors": "خوادم سريعة",
+      "status_selected_count": "{count} محدد",
+      "additional_cats_subtitle": "{count} حزمة اختيارية محددة",
+      "additional_cats_hint": "Enter لتهيئة فئة · c للمسح",
+      "additional_items_hint": "Space للتبديل · a لتبديل الكل · Esc للرجوع",
+      "additional_cleared": "تم مسح جميع الحزم الإضافية",
+      "add_cat_dev": "التطوير",
+      "add_cat_social": "التواصل الاجتماعي",
+      "add_cat_browsers": "متصفحات الويب",
+      "add_cat_games": "الألعاب",
+      "add_cat_office": "المكتب",
+      "add_cat_media": "الوسائط والترفيه",
+      "keyboard_title": "تخطيط لوحة المفاتيح واختصار التبديل",
+      "keyboard_subtitle": "اختر تخطيطات لوحة المفاتيح (XKB) واختصار التبديل",
+      "keyboard_layout_row": "تخطيط لوحة المفاتيح",
+      "keyboard_layout_hint": "←→ أنماط مسبقة · e / Enter لتعديل التخطيط المخصص",
+      "keyboard_toggle_section": "اختصار التبديل",
+      "hint_presets": "إعدادات مسبقة",
+      "hint_edit": "تعديل",
+      "hint_clear": "مسح",
+      "hint_all": "تبديل الكل"
     },
     "steps": {
       "prepare": "تهيئة القياس عن بُعد والبيئة",

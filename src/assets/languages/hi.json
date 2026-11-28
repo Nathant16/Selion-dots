@@ -768,6 +768,14 @@
         "select_dir": "निर्देशिका चुनें...",
         "select_wallpaper": "वॉलपेपर चुनें",
         "select": "वॉलपेपर",
+        "carousel": {
+          "title": "वॉलपेपर कैरोसेल",
+          "desc": "शेड्यूल पर फ़ोल्डर से एक रैंडम वॉलपेपर दिखाएँ, दोहराने से पहले सभी वॉलपेपर से गुज़रें",
+          "interval": {
+            "title": "बदलने का अंतराल",
+            "desc": "वॉलपेपर बदलने के बीच सेकंड, 10 सेकंड से एक सप्ताह तक"
+          }
+        },
         "transition": {
           "mode": {
             "title": "ट्रांज़िशन",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "ऐप्स के पीछे पृष्ठभूमि बनाएं",
         "desc": "ऐप आइकन के पीछे डॉक पैनल दिखाएं"
+      },
+      "icons_only": {
+        "title": "केवल आइकन",
+        "desc": "प्रत्येक ऐप के पीछे का बॉक्स छिपाएं और केवल उसका आइकन दिखाएं"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "सेटिंग्स खोजें...",
       "prompt": "सेटिंग्स खोजने के लिए टाइप करें...",
+      "indexing": "सेटिंग्स इंडेक्स की जा रही हैं...",
       "no_results": "कोई सेटिंग्स नहीं मिलीं",
       "results": "खोज परिणाम"
     },
@@ -2491,10 +2504,34 @@
       "additional_pkgs_title": "=== अतिरिक्त पैकेज चुनें ===",
       "menu_additional_pkgs": "अतिरिक्त पैकेज",
       "menu_keyboard": "कीबोर्ड लेआउट और शॉर्टकट",
-      "menu_fast_mirrors": "तेज़ दर्पण और Chaotic-AUR"
+      "menu_fast_mirrors": "तेज़ दर्पण और Chaotic-AUR",
+      "complete_keyboard": "कीबोर्ड",
+      "complete_additional": "अतिरिक्त पैकेज",
+      "complete_fast_mirrors": "तेज़ दर्पण",
+      "status_selected_count": "{count} चयनित",
+      "additional_cats_subtitle": "{count} वैकल्पिक पैकेज चयनित",
+      "additional_cats_hint": "श्रेणी खोलने के लिए Enter · साफ़ करने के लिए c",
+      "additional_items_hint": "टॉगल: Space · सभी टॉगल: a · वापस: Esc",
+      "additional_cleared": "सभी अतिरिक्त पैकेज साफ़ किए गए",
+      "add_cat_dev": "डेवलपमेंट",
+      "add_cat_social": "सोशल मीडिया",
+      "add_cat_browsers": "वेब ब्राउज़र",
+      "add_cat_games": "गेम्स",
+      "add_cat_office": "ऑफ़िस",
+      "add_cat_media": "मीडिया और मनोरंजन",
+      "keyboard_title": "कीबोर्ड लेआउट और स्विच शॉर्टकट",
+      "keyboard_subtitle": "कीबोर्ड लेआउट (XKB) और स्विच शॉर्टकट चुनें",
+      "keyboard_layout_row": "कीबोर्ड लेआउट",
+      "keyboard_layout_hint": "←→ प्रीसेट · कस्टम लेआउट संपादन हेतु e / Enter",
+      "keyboard_toggle_section": "स्विच शॉर्टकट",
+      "hint_presets": "प्रीसेट",
+      "hint_edit": "संपादित करें",
+      "hint_clear": "साफ़ करें",
+      "hint_all": "सभी टॉगल करें"
     },
     "deps": {
       "syncing": "सिस्टम पैकेज सिंक्रनाइज़ और अपडेट किए जा रहे हैं (pacman -syyu)...",
+      "syncing_portage": "Portage ट्री सिंक्रनाइज़ किया जा रहा है...",
       "all_installed": "-> सभी पैकेज पहले से इंस्टॉल हैं! पैकेज डाउनलोड चरण को छोड़ रहे हैं।",
       "missing_count": "-> इंस्टॉल करने के लिए {count} अनुपलब्ध पैकेज मिले।",
       "installing_title": "सिस्टम पैकेज और निर्भरताएं इंस्टॉल की जा रही हैं...",
@@ -2503,6 +2540,7 @@
       "install_failed": "{pkg} इंस्टॉल करने में विफल",
       "enabling_copr": "COPR रिपॉज़िटरी {repo} सक्षम की जा रही है...",
       "enabling_repo": "रिपॉज़िटरी {repo} सक्षम की जा रही है...",
+      "enabling_overlay": "Gentoo ओवरले {repo} सक्षम किया जा रहा है...",
       "enabling_terra": "Terra रिपॉज़िटरी सक्षम की जा रही है...",
       "quickshell_outdated": "Quickshell {version} बहुत पुराना है, {minimum} या नया आवश्यक है। अपग्रेड किया जा रहा है...",
       "quickshell_still_old": "Quickshell अभी भी {minimum} से पुराना है। इसे मैन्युअल रूप से अपडेट करें, अन्यथा सेटिंग्स नहीं खुलेंगी।",

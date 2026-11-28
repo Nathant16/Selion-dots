@@ -6,25 +6,10 @@ import "../../"
 
 GuideTab {
     id: wallpaperTabRoot
-    subTabIndex: 1
 
     property alias wallpaperDirScanner: wallpaperDirScanner
 
-    function normalizeDir(p) {
-        if (!p) return "";
-        let home = Quickshell.env("HOME") || "";
-        let s = String(p).trim();
-        if (s.startsWith("file://")) s = s.substring(7);
-        if (s.startsWith("~/") || s === "~") s = home + s.substring(1);
-        while (s.length > 1 && s.endsWith("/")) s = s.substring(0, s.length - 1);
-        return s;
-    }
-
-    property string currentWallpaperDir: {
-        let p = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || "";
-        if (p) return normalizeDir(p);
-        return normalizeDir(Quickshell.env("HOME") + "/Pictures/Wallpapers");
-    }
+    property string currentWallpaperDir: Wallpaper.wallpaperDir
     property var availableWallpaperDirs: []
     property bool showSelionWallpapers: Config.getSetting("showSelionWallpapers", true) !== false
 
@@ -99,9 +84,8 @@ GuideTab {
         target: Config
         function onSettingsLoaded() {
             wallpaperTabRoot.transition = Wallpaper.transitionSettings();
-            let wpDir = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "");
-            if (wpDir && wpDir !== "") {
-                wallpaperTabRoot.currentWallpaperDir = wpDir;
+            if (Wallpaper.wallpaperDir) {
+                wallpaperTabRoot.currentWallpaperDir = Wallpaper.wallpaperDir;
             }
             wallpaperTabRoot.showSelionWallpapers = (Config.getSetting("showSelionWallpapers", true) !== false);
         }

@@ -75,7 +75,6 @@ DisplayLockscreenState {
                     handleColor: ThemeBackend.crust
                     handleOffColor: ThemeBackend.text
                     onToggled: function(c) {
-                        displayLockscreenRoot.currentFingerprintEnabled = c;
                         displayLockscreenRoot.updateLockscreenSetting("fingerprintEnabled", c);
                     }
                 }
@@ -128,7 +127,6 @@ DisplayLockscreenState {
                     handleColor: ThemeBackend.crust
                     handleOffColor: ThemeBackend.text
                     onToggled: function(c) {
-                        displayLockscreenRoot.currentAttemptLimitEnabled = c;
                         displayLockscreenRoot.updateLockscreenSetting("attemptLimitEnabled", c);
                     }
                 }
@@ -166,7 +164,6 @@ DisplayLockscreenState {
                             onValueChanged: {
                                 let v = Math.round(passwordAttemptsSelector.value);
                                 if (!isNaN(v) && v > 0 && displayLockscreenRoot.currentPasswordMaxAttempts !== v) {
-                                    displayLockscreenRoot.currentPasswordMaxAttempts = v;
                                     displayLockscreenRoot.updateLockscreenSetting("passwordMaxAttempts", v);
                                 }
                             }
@@ -207,7 +204,6 @@ DisplayLockscreenState {
                             onValueChanged: {
                                 let v = Math.round(fingerprintAttemptsSelector.value);
                                 if (!isNaN(v) && v > 0 && displayLockscreenRoot.currentFingerprintMaxAttempts !== v) {
-                                    displayLockscreenRoot.currentFingerprintMaxAttempts = v;
                                     displayLockscreenRoot.updateLockscreenSetting("fingerprintMaxAttempts", v);
                                 }
                             }

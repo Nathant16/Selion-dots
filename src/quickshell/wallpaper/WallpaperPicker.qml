@@ -9,82 +9,13 @@ import Quickshell.Io
 import "../"
 import "../reusables"
 
-Item {
+HostedPanel {
     id: window
-    visible: false
     width: Screen.width
-    focus: true
-    Keys.forwardTo: [view]
 
-    function dismissHost() {
-        if (typeof masterWindow !== "undefined" && masterWindow.switchWidget) {
-            masterWindow.switchWidget("hidden", "");
-        } else {
-            Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/qs_manager.sh", "close"]);
-        }
-    }
-
-    Keys.onEscapePressed: (event) => {
-        window.dismissHost();
-        event.accepted = true;
-    }
-
-    Keys.onLeftPressed: (event) => {
-        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
-            window.stepToNextValidIndex(-1);
-            event.accepted = true;
-        }
-    }
-
-    Keys.onRightPressed: (event) => {
-        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
-            window.stepToNextValidIndex(1);
-            event.accepted = true;
-        }
-    }
-
-    Keys.onUpPressed: (event) => {
-        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
-            window.cycleFilter(-1);
-            event.accepted = true;
-        }
-    }
-
-    Keys.onDownPressed: (event) => {
-        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
-            window.cycleFilter(1);
-            event.accepted = true;
-        }
-    }
-
-    Keys.onReturnPressed: (event) => {
-        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
-            if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
-                let item = displayModel.get(view.currentIndex);
-                if (item && item.fileName) {
-                    let fp = item.filePath || (item.fileUrl ? decodeURIComponent(String(item.fileUrl).replace(/^file:\/\//, "")) : "");
-                    window.applyWallpaper(String(item.fileName), !!item.isVideo, fp);
-                }
-            }
-            event.accepted = true;
-        }
-    }
-
-    Keys.onEnterPressed: (event) => {
-        if (!searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying) {
-            if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
-                let item = displayModel.get(view.currentIndex);
-                if (item && item.fileName) {
-                    let fp = item.filePath || (item.fileUrl ? decodeURIComponent(String(item.fileUrl).replace(/^file:\/\//, "")) : "");
-                    window.applyWallpaper(String(item.fileName), !!item.isVideo, fp);
-                }
-            }
-            event.accepted = true;
-        }
-    }
-
-    function s(val) {
-        return Scaler.s(val);
+    function activate(arg) {
+        window.widgetArg = (arg !== undefined && arg !== null) ? String(arg) : "";
+        window.refreshForDisplay();
     }
 
     readonly property string scriptDir: Caching.serpantinumDir + "/scripts/wallpaper"
@@ -122,25 +53,9 @@ Item {
     property string _lastFilterApplied: ""
     property int _lastProxyVersion: -1
 
-    function normalizePath(p) {
-        if (!p) return "";
-        let home = Quickshell.env("HOME") || "";
-        let s = String(p).trim();
-        if (s.startsWith("file://")) s = s.substring(7);
-        if (s.startsWith("~/") || s === "~") s = home + s.substring(1);
-        while (s.length > 1 && s.endsWith("/")) s = s.substring(0, s.length - 1);
-        return s;
-    }
-
-    property var configSettings: Config.rawSettings
-    property string srcDir: {
-        let dummy = configSettings;
-        let p = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || "";
-        if (p) return window.normalizePath(p);
-        return window.normalizePath(Quickshell.env("HOME") + "/Pictures/Wallpapers");
-    }
-    property bool showSelionWallpapers: {
-        let dummy = configSettings;
+    readonly property string srcDir: Wallpaper.wallpaperDir
+    readonly property bool showSelionWallpapers: {
+        let dummy = Config.rawSettings;
         return Config.getSetting("showSelionWallpapers", true) !== false;
     }
 
@@ -162,18 +77,6 @@ Item {
         window.syncFromSrcModel();
         window.triggerIndexer();
     }
-
-    Connections {
-        target: Config
-        function onSettingsLoaded() {
-            let p = Config.getSetting("wallpaperDir", "") || Config.getSetting("wallpaper_dir", "") || Quickshell.env("WALLPAPER_DIR") || "";
-            let dir = p ? window.normalizePath(p) : window.normalizePath(Quickshell.env("HOME") + "/Pictures/Wallpapers");
-            if (dir && dir !== window.srcDir) {
-                window.srcDir = dir;
-            }
-        }
-    }
-
     Timer {
         id: focusTimer
         interval: 50
@@ -206,8 +109,6 @@ Item {
     property bool isExiting: false
     property bool isReady: visible && !isExiting
 
-    property var exitCallback: null
-
     function startExit(onFinished) {
         if (isExiting) return;
         isExiting = true;
@@ -225,13 +126,7 @@ Item {
             NumberAnimation { target: view; property: "anchors.margins"; to: window.s(45); duration: 250; easing.type: Easing.InCubic }
         }
         ScriptAction {
-            script: {
-                if (window.exitCallback) {
-                    let cb = window.exitCallback;
-                    window.exitCallback = null;
-                    cb();
-                }
-            }
+            script: window.finishExit()
         }
     }
 

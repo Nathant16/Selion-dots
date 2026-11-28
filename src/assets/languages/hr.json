@@ -780,6 +780,14 @@
         "select_dir": "Odaberi direktorij...",
         "select_wallpaper": "Odaberi pozadinu",
         "select": "Pozadina",
+        "carousel": {
+          "title": "Vrtuljak pozadina",
+          "desc": "Prikazuj nasumičnu pozadinu iz mape prema rasporedu, prolazeći kroz sve prije ponavljanja",
+          "interval": {
+            "title": "Interval promjene",
+            "desc": "Sekunde između promjena pozadine, od 10 sekundi do tjedan dana"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Prijelaz",
@@ -1141,6 +1149,10 @@
         "title": "Prikaži pozadinu iza aplikacija",
         "desc": "Prikaži ploču docka iza ikona aplikacija"
       },
+      "icons_only": {
+        "title": "Samo ikone",
+        "desc": "Sakrij okvir iza svake aplikacije i prikaži samo njezinu ikonu"
+      },
       "transparency": {
         "title": "Prozirnost docka",
         "desc": "Prilagodite razinu neprozirnosti pozadine docka"
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "Pretraži postavke...",
       "prompt": "Upišite za pretraživanje postavki...",
+      "indexing": "Indeksiranje postavki...",
       "no_results": "Nema pronađenih postavki",
       "results": "Rezultati pretraživanja"
     },
@@ -2491,13 +2504,38 @@
       "additional_pkgs_prompt": " Additional packages > ",
       "main_menu_prompt": " Main menu > ",
       "main_menu_header": " Use arrow keys to navigate, enter to select ",
-      "menu_fast_mirrors": "Fast mirrors & Chaotic-AUR"
+      "menu_fast_mirrors": "Fast mirrors & Chaotic-AUR",
+      "complete_keyboard": "Tipkovnica",
+      "complete_additional": "Dodatni paketi",
+      "complete_fast_mirrors": "Brza zrcala",
+      "status_selected_count": "Odabrano: {count}",
+      "additional_cats_subtitle": "Odabrano neobaveznih paketa: {count}",
+      "additional_cats_hint": "Otvorite kategoriju za postavke · c za čišćenje",
+      "additional_items_hint": "Space za prebacivanje · a sve · Esc natrag",
+      "additional_cleared": "Očišćeni su svi dodatni paketi",
+      "add_cat_dev": "Razvoj",
+      "add_cat_social": "Društvene mreže",
+      "add_cat_browsers": "Web preglednici",
+      "add_cat_games": "Igre",
+      "add_cat_office": "Ured",
+      "add_cat_media": "Mediji i zabava",
+      "keyboard_title": "Raspored tipkovnice i prečac za prebacivanje",
+      "keyboard_subtitle": "Odaberite rasporede tipkovnice (XKB) i prečac za prebacivanje",
+      "keyboard_layout_row": "Raspored tipkovnice",
+      "keyboard_layout_hint": "←→ predlošci · e / Enter za prilagođeni raspored",
+      "keyboard_toggle_section": "Prečac za prebacivanje",
+      "hint_presets": "Predlošci",
+      "hint_edit": "Uredi",
+      "hint_clear": "Očisti",
+      "hint_all": "Prebaci sve"
     },
     "deps": {
       "syncing": "Sinkronizacija i ažuriranje sistemskih paketa (pacman -syyu)...",
+      "syncing_portage": "Sinkronizacija Portage stabla...",
       "enabling_copr": "Omogućavanje COPR repozitorija {repo}...",
       "enabling_terra": "Omogućavanje repozitorija Terra...",
       "enabling_repo": "Omogućavanje repozitorija {repo}...",
+      "enabling_overlay": "Omogućavanje Gentoo overlay repozitorija {repo}...",
       "all_installed": "-> Svi su paketi već instalirani! Preskače se preuzimanje paketa.",
       "missing_count": "-> Pronađeno je {count} paketa koji nedostaju i koje treba instalirati.",
       "installing_title": "Instaliranje sistemskih paketa i ovisnosti...",

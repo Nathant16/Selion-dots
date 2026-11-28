@@ -768,6 +768,14 @@
         "select_dir": "Seleziona cartella...",
         "select_wallpaper": "Seleziona sfondo",
         "select": "Sfondo",
+        "carousel": {
+          "title": "Carosello di sfondi",
+          "desc": "Mostra uno sfondo casuale dalla cartella a intervalli regolari, passando per tutti prima di ripeterne uno",
+          "interval": {
+            "title": "Intervallo di cambio",
+            "desc": "Secondi tra un cambio di sfondo e l'altro, da 10 secondi a una settimana"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Transizione",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "Disegna uno sfondo dietro le app",
         "desc": "Mostra il pannello del dock dietro le icone delle app"
+      },
+      "icons_only": {
+        "title": "Solo icone",
+        "desc": "Nascondi il riquadro dietro ogni app e mostra solo la sua icona"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "Cerca impostazioni...",
       "prompt": "Digita per cercare impostazioni...",
+      "indexing": "Indicizzazione impostazioni...",
       "no_results": "Nessuna impostazione trovata",
       "results": "Risultati di ricerca"
     },
@@ -2491,10 +2504,34 @@
       "additional_pkgs_title": "=== Selezione pacchetti aggiuntivi ===",
       "menu_additional_pkgs": "Pacchetti aggiuntivi",
       "menu_keyboard": "Layout della tastiera e scorciatoia",
-      "menu_fast_mirrors": "Mirror veloci e Chaotic-AUR"
+      "menu_fast_mirrors": "Mirror veloci e Chaotic-AUR",
+      "complete_keyboard": "Tastiera",
+      "complete_additional": "Pacchetti agg.",
+      "complete_fast_mirrors": "Mirror veloci",
+      "status_selected_count": "{count} selezionati",
+      "additional_cats_subtitle": "{count} pacchetti opzionali selezionati",
+      "additional_cats_hint": "Apri una categoria per configurare · c per svuotare",
+      "additional_items_hint": "Space attiva/disattiva · a tutti · Esc indietro",
+      "additional_cleared": "Rimossi tutti i pacchetti aggiuntivi",
+      "add_cat_dev": "Sviluppo",
+      "add_cat_social": "Social media",
+      "add_cat_browsers": "Browser web",
+      "add_cat_games": "Giochi",
+      "add_cat_office": "Ufficio",
+      "add_cat_media": "Media e intrattenimento",
+      "keyboard_title": "Layout della tastiera e scorciatoia di cambio",
+      "keyboard_subtitle": "Seleziona i layout della tastiera (XKB) e la scorciatoia di cambio",
+      "keyboard_layout_row": "Layout della tastiera",
+      "keyboard_layout_hint": "←→ preimpostazioni · e / Enter per layout personalizzato",
+      "keyboard_toggle_section": "Scorciatoia di cambio",
+      "hint_presets": "Preimpostazioni",
+      "hint_edit": "Modifica",
+      "hint_clear": "Svuota",
+      "hint_all": "Alterna tutti"
     },
     "deps": {
       "syncing": "Sincronizzazione e aggiornamento dei pacchetti di sistema (pacman -syyu)...",
+      "syncing_portage": "Sincronizzazione dell'albero Portage...",
       "all_installed": "-> Tutti i pacchetti sono già installati! Download dei pacchetti ignorato.",
       "missing_count": "-> Trovati {count} pacchetti mancanti da installare.",
       "installing_title": "Installazione dei pacchetti di sistema e delle dipendenze...",
@@ -2503,6 +2540,7 @@
       "install_failed": "Impossibile installare {pkg}",
       "enabling_copr": "Abilitazione del repository COPR {repo}...",
       "enabling_repo": "Abilitazione del repository {repo}...",
+      "enabling_overlay": "Abilitazione dell'overlay Gentoo {repo}...",
       "enabling_terra": "Abilitazione del repository Terra...",
       "quickshell_outdated": "Quickshell {version} è troppo vecchio, è richiesta la versione {minimum} o successiva. Aggiornamento...",
       "quickshell_still_old": "Quickshell è ancora precedente alla versione {minimum}. Aggiornalo manualmente, altrimenti le impostazioni non si apriranno.",

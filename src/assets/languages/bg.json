@@ -768,6 +768,14 @@
         "select_dir": "Избор на директория...",
         "select_wallpaper": "Избор на тапет",
         "select": "Тапет",
+        "carousel": {
+          "title": "Въртележка на тапети",
+          "desc": "Показвай случаен тапет от папката по график, като минаваш през всички преди повторение",
+          "interval": {
+            "title": "Интервал на смяна",
+            "desc": "Секунди между смените на тапета, от 10 секунди до седмица"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Преход",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "Показване на фон зад приложенията",
         "desc": "Показване на панела на дока зад иконите на приложенията"
+      },
+      "icons_only": {
+        "title": "Само икони",
+        "desc": "Скриване на рамката зад всяко приложение и показване само на иконата му"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "Търсене в настройките...",
       "prompt": "Въведете текст за търсене в настройките...",
+      "indexing": "Индексиране на настройките...",
       "no_results": "Няма намерени настройки",
       "results": "Резултати от търсенето"
     },
@@ -2491,7 +2504,30 @@
       "additional_pkgs_title": "=== Избор на допълнителни пакети ===",
       "menu_additional_pkgs": "Допълнителни пакети",
       "menu_keyboard": "Клавиатурна подредба и клавишна комбинация",
-      "menu_fast_mirrors": "Бързи огледала и Chaotic-AUR"
+      "menu_fast_mirrors": "Бързи огледала и Chaotic-AUR",
+      "complete_keyboard": "Клавиатура",
+      "complete_additional": "Доп. пакети",
+      "complete_fast_mirrors": "Бързи огледала",
+      "status_selected_count": "{count} избрани",
+      "additional_cats_subtitle": "Избрани незадължителни пакети: {count}",
+      "additional_cats_hint": "Отворете категория за настройка · c за изчистване",
+      "additional_items_hint": "Space за превключване · a всички · Esc назад",
+      "additional_cleared": "Всички допълнителни пакети са изчистени",
+      "add_cat_dev": "Разработка",
+      "add_cat_social": "Социални мрежи",
+      "add_cat_browsers": "Уеб браузъри",
+      "add_cat_games": "Игри",
+      "add_cat_office": "Офис",
+      "add_cat_media": "Медия и развлечения",
+      "keyboard_title": "Клавиатурна подредба и комбинация за смяна",
+      "keyboard_subtitle": "Изберете клавиатурни подредби (XKB) и комбинация за смяна",
+      "keyboard_layout_row": "Клавиатурна подредба",
+      "keyboard_layout_hint": "←→ шаблони · e / Enter за ръчна подредба",
+      "keyboard_toggle_section": "Комбинация за смяна",
+      "hint_presets": "Шаблони",
+      "hint_edit": "Редактиране",
+      "hint_clear": "Изчистване",
+      "hint_all": "Превключи всички"
     },
     "steps": {
       "prepare": "Подготовка на телеметрията и средата",
@@ -2513,6 +2549,7 @@
     },
     "deps": {
       "syncing": "Синхронизиране и обновяване на системните пакети (pacman -syyu)...",
+      "syncing_portage": "Синхронизиране на дървото на Portage...",
       "all_installed": "-> Всички пакети вече са инсталирани! Пропускане на фазата за изтегляне на пакети.",
       "missing_count": "-> Открити {count} липсващи пакета за инсталиране.",
       "installing_title": "Инсталиране на системни пакети и зависимости...",
@@ -2521,6 +2558,7 @@
       "install_failed": "Неуспешно инсталиране на {pkg}",
       "enabling_copr": "Активиране на COPR хранилище {repo}...",
       "enabling_repo": "Активиране на хранилище {repo}...",
+      "enabling_overlay": "Активиране на Gentoo overlay {repo}...",
       "enabling_terra": "Активиране на хранилището Terra...",
       "quickshell_outdated": "Quickshell {version} е твърде стар, необходима е версия {minimum} или по-нова. Обновяване...",
       "quickshell_still_old": "Quickshell все още е по-стар от {minimum}. Обновете го ръчно, иначе настройките няма да се отворят.",

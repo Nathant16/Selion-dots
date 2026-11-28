@@ -37,13 +37,11 @@ SettingsBlob {
             onMoved: function(val) {
                 let scaleVal = Math.round(val) / 100.0;
                 if (Math.abs(section.tab.uiScale - scaleVal) > 0.001) {
-                    section.tab.uiScale = scaleVal;
-                    section.tab.uiScaleDebounceTimer.restart();
+                    section.tab.setGeneralSettingDebounced("uiScale", scaleVal);
                 }
             }
             onDragFinished: {
-                section.tab.uiScaleDebounceTimer.stop();
-                section.tab.updateGeneralSettings();
+                section.tab.flushGeneralSettings();
             }
         }
     }
@@ -63,8 +61,7 @@ SettingsBlob {
             handleColor: ThemeBackend.crust
             handleOffColor: ThemeBackend.text
             onToggled: function(c) {
-                section.tab.quickactions = c;
-                section.tab.updateGeneralSettings();
+                section.tab.setGeneralSetting("quickactions", c);
             }
         }
     }

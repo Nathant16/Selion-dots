@@ -768,6 +768,14 @@
         "select_dir": "Qovluq seç...",
         "select_wallpaper": "Fon şəkli seç",
         "select": "Divar kağızı",
+        "carousel": {
+          "title": "Divar kağızı karuseli",
+          "desc": "Qovluqdan təsadüfi divar kağızını cədvəl üzrə göstər, təkrarlanmadan əvvəl hamısını keç",
+          "interval": {
+            "title": "Dəyişmə intervalı",
+            "desc": "Divar kağızı dəyişiklikləri arasındakı saniyələr, 10 saniyədən bir həftəyə qədər"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Keçid",
@@ -1214,6 +1222,10 @@
         "title": "Tətbiqlərin arxasında fon çək",
         "desc": "Tətbiq ikonalarının arxasında dok panelini göstər"
       },
+      "icons_only": {
+        "title": "Yalnız ikonalar",
+        "desc": "Hər tətbiqin arxasındakı qutunu gizlət və yalnız ikonasını göstər"
+      },
       "exclusive": {
         "desc": "Pəncərələrin tətbiq rəfinin tutduğu sahəni tutmasının qarşısını alın",
         "title": "Eksklüziv rejim"
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "Tənzimləmələri axtarın...",
       "prompt": "Axtarmaq üçün yazın...",
+      "indexing": "Tənzimləmələr indekslənir...",
       "no_results": "Tənzimləmə tapılmadı",
       "results": "Axtarış nəticələri"
     },
@@ -2491,7 +2504,30 @@
       "additional_pkgs_title": "=== Əlavə paketləri seçin ===",
       "menu_additional_pkgs": "Əlavə paketlər",
       "menu_keyboard": "Klaviatura düzümü və qısayol",
-      "menu_fast_mirrors": "Sürətli güzgülər və Chaotic-AUR"
+      "menu_fast_mirrors": "Sürətli güzgülər və Chaotic-AUR",
+      "complete_keyboard": "Klaviatura",
+      "complete_additional": "Əlavə paketlər",
+      "complete_fast_mirrors": "Sürətli güzgülər",
+      "status_selected_count": "{count} seçilib",
+      "additional_cats_subtitle": "{count} istəyə bağlı paket seçilib",
+      "additional_cats_hint": "Kateqoriyaya keçin (Enter) · təmizləmək üçün c",
+      "additional_items_hint": "Dəyişmək: Space · hamısı: a · geri: Esc",
+      "additional_cleared": "Bütün əlavə paketlər təmizləndi",
+      "add_cat_dev": "Tərtibat",
+      "add_cat_social": "Sosial Media",
+      "add_cat_browsers": "Veb-brauzerlər",
+      "add_cat_games": "Oyunlar",
+      "add_cat_office": "Ofis",
+      "add_cat_media": "Media və Əyləncə",
+      "keyboard_title": "Klaviatura düzümü və keçid qısayolu",
+      "keyboard_subtitle": "Klaviatura düzümlərini (XKB) və keçid qısayolunu seçin",
+      "keyboard_layout_row": "Klaviatura düzümü",
+      "keyboard_layout_hint": "←→ şablonlar · fərdi düzümü redaktə üçün e / Enter",
+      "keyboard_toggle_section": "Keçid qısayolu",
+      "hint_presets": "Şablonlar",
+      "hint_edit": "Redaktə et",
+      "hint_clear": "Təmizlə",
+      "hint_all": "Hamısını dəyiş"
     },
     "steps": {
       "prepare": "Telemetriya və mühiti hazırla",
@@ -2513,6 +2549,7 @@
     },
     "deps": {
       "syncing": "Sistem paketləri sinxronlaşdırılır və yenilənir (pacman -syyu)...",
+      "syncing_portage": "Portage ağacı sinxronlaşdırılır...",
       "all_installed": "-> Bütün paketlər artıq quraşdırılıb! Paketlərin endirilməsi mərhələsi ötürülür.",
       "missing_count": "-> Quraşdırılmamış {count} paket tapıldı. Bu paketlər quraşdırılacaq.",
       "installing_title": "Sistem paketləri və asılılıqlar quraşdırılır...",
@@ -2521,6 +2558,7 @@
       "install_failed": "{pkg} quraşdırıla bilmədi",
       "enabling_copr": "{repo} COPR repozitoriyası aktivləşdirilir...",
       "enabling_repo": "{repo} repozitoriyası aktivləşdirilir...",
+      "enabling_overlay": "{repo} Gentoo overlay-i aktivləşdirilir...",
       "enabling_terra": "Terra repozitoriyası aktivləşdirilir...",
       "quickshell_outdated": "Quickshell {version} çox köhnədir, {minimum} və ya daha yeni versiya tələb olunur. Yenilənir...",
       "quickshell_still_old": "Quickshell hələ də {minimum} versiyasından köhnədir. Onu əl ilə yeniləyin, əks halda ayarlar açılmayacaq.",

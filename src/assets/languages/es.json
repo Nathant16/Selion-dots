@@ -768,6 +768,14 @@
         "select_dir": "Seleccionar directorio...",
         "select_wallpaper": "Seleccionar fondo de pantalla",
         "select": "Fondo de pantalla",
+        "carousel": {
+          "title": "Carrusel de fondos",
+          "desc": "Muestra un fondo aleatorio de la carpeta según un horario, recorriendo todos antes de repetir",
+          "interval": {
+            "title": "Intervalo de cambio",
+            "desc": "Segundos entre cambios de fondo, de 10 segundos a una semana"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Transición",
@@ -1218,6 +1226,10 @@
       "background": {
         "title": "Dibujar un fondo detrás de las apps",
         "desc": "Mostrar el panel del dock detrás de los iconos de las apps"
+      },
+      "icons_only": {
+        "title": "Solo iconos",
+        "desc": "Ocultar el recuadro detrás de cada app y mostrar solo su icono"
       }
     },
     "lyrics_picker": {
@@ -1228,6 +1240,7 @@
     "search": {
       "placeholder": "Buscar ajustes...",
       "prompt": "Escribe para buscar ajustes...",
+      "indexing": "Indexando ajustes...",
       "no_results": "No se encontraron ajustes",
       "results": "Resultados de búsqueda"
     },
@@ -2492,7 +2505,30 @@
       "additional_pkgs_title": "=== Seleccionar paquetes adicionales ===",
       "menu_additional_pkgs": "Paquetes adicionales",
       "menu_keyboard": "Distribución del teclado y atajo",
-      "menu_fast_mirrors": "Espejos rápidos y Chaotic-AUR"
+      "menu_fast_mirrors": "Espejos rápidos y Chaotic-AUR",
+      "complete_keyboard": "Teclado",
+      "complete_additional": "Paquetes adic.",
+      "complete_fast_mirrors": "Espejos rápidos",
+      "status_selected_count": "{count} seleccionados",
+      "additional_cats_subtitle": "{count} paquetes opcionales seleccionados",
+      "additional_cats_hint": "Abre una categoría para configurar · c para limpiar",
+      "additional_items_hint": "Space para alternar · a alternar todo · Esc volver",
+      "additional_cleared": "Se limpiaron todos los paquetes adicionales",
+      "add_cat_dev": "Desarrollo",
+      "add_cat_social": "Redes sociales",
+      "add_cat_browsers": "Navegadores web",
+      "add_cat_games": "Juegos",
+      "add_cat_office": "Ofimática",
+      "add_cat_media": "Multimedia y entretenimiento",
+      "keyboard_title": "Distribución del teclado y atajo de cambio",
+      "keyboard_subtitle": "Selecciona distribuciones de teclado (XKB) y atajo de cambio",
+      "keyboard_layout_row": "Distribución del teclado",
+      "keyboard_layout_hint": "←→ preajustes · e / Enter para distribución personalizada",
+      "keyboard_toggle_section": "Atajo de cambio",
+      "hint_presets": "Preajustes",
+      "hint_edit": "Editar",
+      "hint_clear": "Limpiar",
+      "hint_all": "Alternar todo"
     },
     "steps": {
       "prepare": "Preparar telemetría y entorno",
@@ -2514,6 +2550,7 @@
     },
     "deps": {
       "syncing": "Sincronizando y actualizando paquetes del sistema (pacman -syyu)...",
+      "syncing_portage": "Sincronizando el árbol de Portage...",
       "all_installed": "-> ¡Todos los paquetes ya están instalados! Omitiendo descarga de paquetes.",
       "missing_count": "-> Se encontraron {count} paquetes faltantes para instalar.",
       "installing_title": "Instalando paquetes del sistema y dependencias...",
@@ -2522,6 +2559,7 @@
       "install_failed": "Error al instalar {pkg}",
       "enabling_copr": "Habilitando repositorio COPR {repo}...",
       "enabling_repo": "Habilitando repositorio {repo}...",
+      "enabling_overlay": "Habilitando overlay de Gentoo {repo}...",
       "enabling_terra": "Habilitando el repositorio Terra...",
       "quickshell_outdated": "Quickshell {version} es demasiado antiguo, se requiere {minimum} o superior. Actualizando...",
       "quickshell_still_old": "Quickshell sigue siendo anterior a {minimum}. Actualízalo manualmente; de lo contrario, los ajustes no se abrirán.",

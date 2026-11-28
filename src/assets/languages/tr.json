@@ -768,6 +768,14 @@
         "select_dir": "Dizin seçin...",
         "select_wallpaper": "Duvar kâğıdı seç",
         "select": "Duvar Kâğıdı",
+        "carousel": {
+          "title": "Duvar kağıdı karuseli",
+          "desc": "Klasörden rastgele bir duvar kağıdını belirli aralıklarla göster, tekrar etmeden önce hepsini dolaş",
+          "interval": {
+            "title": "Değişim aralığı",
+            "desc": "Duvar kağıdı değişimleri arasındaki saniye, 10 saniyeden bir haftaya kadar"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Geçiş",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "Uygulamaların arkasına arka plan çiz",
         "desc": "Dok panelini uygulama simgelerinin arkasında göster"
+      },
+      "icons_only": {
+        "title": "Yalnızca simgeler",
+        "desc": "Her uygulamanın arkasındaki kutuyu gizleyin ve yalnızca simgesini gösterin"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "Ayarlarda ara...",
       "prompt": "Ayarlarda aramak için yazın...",
+      "indexing": "Ayarlar dizine ekleniyor...",
       "no_results": "Ayar bulunamadı",
       "results": "Arama sonuçları"
     },
@@ -2491,10 +2504,34 @@
       "additional_pkgs_title": "=== Ek paketleri seçin ===",
       "menu_additional_pkgs": "Ek paketler",
       "menu_keyboard": "Klavye düzeni ve kısayol",
-      "menu_fast_mirrors": "Hızlı yansılar ve Chaotic-AUR"
+      "menu_fast_mirrors": "Hızlı yansılar ve Chaotic-AUR",
+      "complete_keyboard": "Klavye",
+      "complete_additional": "Ek paketler",
+      "complete_fast_mirrors": "Hızlı yansılar",
+      "status_selected_count": "{count} seçili",
+      "additional_cats_subtitle": "{count} isteğe bağlı paket seçili",
+      "additional_cats_hint": "Kategori seçmek için Enter · Temizlemek için c",
+      "additional_items_hint": "Değiştir: Space · Tümünü değiştir: a · Geri: Esc",
+      "additional_cleared": "Tüm ek paketler temizlendi",
+      "add_cat_dev": "Geliştirme",
+      "add_cat_social": "Sosyal Medya",
+      "add_cat_browsers": "Web Tarayıcıları",
+      "add_cat_games": "Oyunlar",
+      "add_cat_office": "Ofis",
+      "add_cat_media": "Medya ve Eğlence",
+      "keyboard_title": "Klavye düzeni ve geçiş kısayolu",
+      "keyboard_subtitle": "Klavye düzenlerini (XKB) ve geçiş kısayolunu seçin",
+      "keyboard_layout_row": "Klavye düzeni",
+      "keyboard_layout_hint": "←→ ön ayarlar · özel düzeni düzenlemek için e / Enter",
+      "keyboard_toggle_section": "Geçiş kısayolu",
+      "hint_presets": "Ön ayarlar",
+      "hint_edit": "Düzenle",
+      "hint_clear": "Temizle",
+      "hint_all": "Tümünü değiştir"
     },
     "deps": {
       "syncing": "Sistem paketleri senkronize ediliyor ve güncelleniyor (pacman -syyu)...",
+      "syncing_portage": "Portage ağacı senkronize ediliyor...",
       "all_installed": "-> Tüm paketler zaten yüklü! Paket indirme aşaması atlanıyor.",
       "missing_count": "-> Yüklenecek {count} eksik paket bulundu.",
       "installing_title": "Sistem paketleri ve bağımlılıklar yükleniyor...",
@@ -2503,6 +2540,7 @@
       "install_failed": "{pkg} yüklenemedi",
       "enabling_copr": "{repo} COPR deposu etkinleştiriliyor...",
       "enabling_repo": "{repo} deposu etkinleştiriliyor...",
+      "enabling_overlay": "{repo} Gentoo katmanı (overlay) etkinleştiriliyor...",
       "enabling_terra": "Terra deposu etkinleştiriliyor...",
       "quickshell_outdated": "Quickshell {version} çok eski, {minimum} veya daha yeni bir sürüm gerekiyor. Yükseltiliyor...",
       "quickshell_still_old": "Quickshell hâlâ {minimum} sürümünden daha eski. Manuel olarak güncelleyin, aksi takdirde ayarlar açılmayacaktır.",

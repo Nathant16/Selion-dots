@@ -768,6 +768,14 @@
         "select_dir": "Sélectionner le dossier...",
         "select_wallpaper": "Sélectionner un fond d'écran",
         "select": "Fond d'écran",
+        "carousel": {
+          "title": "Carrousel de fonds d'écran",
+          "desc": "Affiche un fond d'écran aléatoire du dossier selon un intervalle, en les parcourant tous avant toute répétition",
+          "interval": {
+            "title": "Intervalle de changement",
+            "desc": "Secondes entre les changements de fond d'écran, de 10 secondes à une semaine"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Transition",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "Dessiner un arrière-plan derrière les applications",
         "desc": "Afficher le panneau du dock derrière les icônes des applications"
+      },
+      "icons_only": {
+        "title": "Icônes uniquement",
+        "desc": "Masquer le cadre derrière chaque application et n'afficher que son icône"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "Rechercher dans les paramètres...",
       "prompt": "Tapez pour rechercher dans les paramètres...",
+      "indexing": "Indexation des paramètres...",
       "no_results": "Aucun paramètre trouvé",
       "results": "Résultats de recherche"
     },
@@ -2491,10 +2504,34 @@
       "additional_pkgs_title": "=== Sélection des paquets supplémentaires ===",
       "menu_additional_pkgs": "Paquets supplémentaires",
       "menu_keyboard": "Disposition du clavier et raccourci",
-      "menu_fast_mirrors": "Miroirs rapides et Chaotic-AUR"
+      "menu_fast_mirrors": "Miroirs rapides et Chaotic-AUR",
+      "complete_keyboard": "Clavier",
+      "complete_additional": "Paquets suppl.",
+      "complete_fast_mirrors": "Miroirs rapides",
+      "status_selected_count": "{count} sélectionné(s)",
+      "additional_cats_subtitle": "{count} paquet(s) optionnel(s) sélectionné(s)",
+      "additional_cats_hint": "Ouvrez une catégorie à configurer · c pour effacer",
+      "additional_items_hint": "Space pour basculer · a tout basculer · Esc retour",
+      "additional_cleared": "Tous les paquets supplémentaires ont été effacés",
+      "add_cat_dev": "Développement",
+      "add_cat_social": "Réseaux sociaux",
+      "add_cat_browsers": "Navigateurs web",
+      "add_cat_games": "Jeux",
+      "add_cat_office": "Bureautique",
+      "add_cat_media": "Médias et divertissement",
+      "keyboard_title": "Disposition du clavier et raccourci de bascule",
+      "keyboard_subtitle": "Choisissez les dispositions clavier (XKB) et le raccourci de bascule",
+      "keyboard_layout_row": "Disposition du clavier",
+      "keyboard_layout_hint": "←→ préréglages · e / Enter pour disposition personnalisée",
+      "keyboard_toggle_section": "Raccourci de bascule",
+      "hint_presets": "Préréglages",
+      "hint_edit": "Modifier",
+      "hint_clear": "Effacer",
+      "hint_all": "Tout basculer"
     },
     "deps": {
       "syncing": "Synchronisation et mise à jour des paquets système (pacman -Syyu)...",
+      "syncing_portage": "Synchronisation de l'arbre Portage...",
       "all_installed": "-> Tous les paquets sont déjà installés ! Étape de téléchargement des paquets ignorée.",
       "missing_count": "-> {count} paquets manquants trouvés à installer.",
       "installing_title": "Installation des paquets système et des dépendances...",
@@ -2503,6 +2540,7 @@
       "install_failed": "Échec de l'installation de {pkg}",
       "enabling_copr": "Activation du dépôt COPR {repo}...",
       "enabling_repo": "Activation du dépôt {repo}...",
+      "enabling_overlay": "Activation de l'overlay Gentoo {repo}...",
       "enabling_terra": "Activation du dépôt Terra...",
       "quickshell_outdated": "Quickshell {version} est trop ancien, la version {minimum} ou supérieure est requise. Mise à niveau...",
       "quickshell_still_old": "Quickshell est toujours antérieur à {minimum}. Mettez-le à jour manuellement, sinon les paramètres ne s'ouvriront pas.",

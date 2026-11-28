@@ -768,6 +768,14 @@
         "select_dir": "디렉터리 선택...",
         "select_wallpaper": "배경화면 선택",
         "select": "배경화면",
+        "carousel": {
+          "title": "배경화면 캐러셀",
+          "desc": "폴더에서 무작위 배경화면을 일정에 따라 표시하며, 모두 한 번씩 표시한 후에 반복합니다",
+          "interval": {
+            "title": "변경 간격",
+            "desc": "배경화면 변경 사이의 초, 10초부터 일주일까지"
+          }
+        },
         "transition": {
           "mode": {
             "title": "전환 효과",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "앱 뒤에 배경 그리기",
         "desc": "앱 아이콘 뒤에 독 패널 표시"
+      },
+      "icons_only": {
+        "title": "아이콘만 표시",
+        "desc": "각 앱 뒤의 상자를 숨기고 아이콘만 표시합니다"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "설정 검색...",
       "prompt": "설정을 검색하려면 입력하세요...",
+      "indexing": "설정 색인 생성 중...",
       "no_results": "설정을 찾을 수 없습니다",
       "results": "검색 결과"
     },
@@ -2491,7 +2504,30 @@
       "additional_pkgs_title": "=== 추가 패키지 선택 ===",
       "menu_additional_pkgs": "추가 패키지",
       "menu_keyboard": "키보드 레이아웃 및 바로가기",
-      "menu_fast_mirrors": "빠른 미러 및 Chaotic-AUR"
+      "menu_fast_mirrors": "빠른 미러 및 Chaotic-AUR",
+      "complete_keyboard": "키보드",
+      "complete_additional": "추가 패키지",
+      "complete_fast_mirrors": "빠른 미러",
+      "status_selected_count": "{count}개 선택됨",
+      "additional_cats_subtitle": "선택 패키지 {count}개 선택됨",
+      "additional_cats_hint": "카테고리를 열어 설정 · c로 지우기",
+      "additional_items_hint": "Space 전환 · a 전체 전환 · Esc 뒤로",
+      "additional_cleared": "추가 패키지를 모두 지웠습니다",
+      "add_cat_dev": "개발",
+      "add_cat_social": "소셜 미디어",
+      "add_cat_browsers": "웹 브라우저",
+      "add_cat_games": "게임",
+      "add_cat_office": "오피스",
+      "add_cat_media": "미디어 및 엔터테인먼트",
+      "keyboard_title": "키보드 레이아웃 및 전환 단축키",
+      "keyboard_subtitle": "키보드 레이아웃(XKB)과 전환 단축키를 선택하세요",
+      "keyboard_layout_row": "키보드 레이아웃",
+      "keyboard_layout_hint": "←→ 프리셋 · e / Enter로 사용자 지정 레이아웃 편집",
+      "keyboard_toggle_section": "전환 단축키",
+      "hint_presets": "프리셋",
+      "hint_edit": "편집",
+      "hint_clear": "지우기",
+      "hint_all": "전체 전환"
     },
     "steps": {
       "prepare": "텔레메트리 및 환경 준비",
@@ -2513,6 +2549,7 @@
     },
     "deps": {
       "syncing": "시스템 패키지를 동기화하고 업데이트하는 중 (pacman -syyu)...",
+      "syncing_portage": "Portage 트리 동기화 중...",
       "all_installed": "-> 모든 패키지가 이미 설치되어 있습니다! 패키지 다운로드 단계를 건너뜁니다.",
       "missing_count": "-> 설치할 패키지 {count}개를 찾았습니다.",
       "installing_title": "시스템 패키지와 의존성을 설치하는 중...",
@@ -2522,6 +2559,7 @@
       "enabling_copr": "COPR 저장소 {repo} 활성화 중...",
       "enabling_repo": "저장소 {repo} 활성화 중...",
       "enabling_terra": "Terra 저장소 활성화 중...",
+      "enabling_overlay": "Gentoo 오버레이 {repo} 활성화 중...",
       "quickshell_outdated": "Quickshell {version} 버전이 너무 오래되어 {minimum} 이상이 필요합니다. 업그레이드 중...",
       "quickshell_still_old": "Quickshell이 여전히 {minimum}보다 이전 버전입니다. 수동으로 업데이트하지 않으면 설정이 열리지 않습니다.",
       "ranking_pacman": "가장 빠른 Pacman 미러를 검색하고 정렬하는 중...",

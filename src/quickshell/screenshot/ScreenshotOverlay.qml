@@ -10,22 +10,17 @@ import Quickshell.Services.Pipewire
 import "../reusables"
 import "../"
 
-PanelWindow {
+ShellOverlayWindow {
     id: root
-    color: "transparent"
 
     WlrLayershell.namespace: "qs-screenshot-overlay"
-    WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: root.isActive ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-
-    exclusionMode: ExclusionMode.Ignore
+    overlayOpen: root.isActive
+    exclusiveKeyboardFocus: true
     focusable: root.isActive
     visible: root.isActive
 
     property string targetMonitorName: ""
 
-    // Take the shot as soon as the region drag ends, instead of requiring a
-    // second click on the toolbar shutter. Off by default.
     property var generalSettings: Config.getSetting("general", { "screenshotCaptureOnRelease": false })
     readonly property bool captureOnRelease: generalSettings && generalSettings.screenshotCaptureOnRelease === true
 
@@ -36,25 +31,22 @@ PanelWindow {
         }
     }
 
-    property var targetScreen: {
-        if (targetMonitorName !== "") {
-            for (let i = 0; i < Quickshell.screens.length; i++) {
-                if (Quickshell.screens[i].name === targetMonitorName) {
-                    return Quickshell.screens[i];
-                }
-            }
+    property var _resolvedScreen: null
+    screen: _resolvedScreen
+
+    function _updateTargetScreen() {
+        root._resolvedScreen = Compositor.resolveTargetScreen(root.targetMonitorName);
+    }
+
+    function handleEscape() {
+        if (root.isColorPickerMode && !root.standaloneColorPicker) {
+            root.isColorPickerMode = false;
+            return true;
         }
-        return Quickshell.cursorScreen ?? (Quickshell.screens.length > 0 ? Quickshell.screens[0] : null);
+        return false;
     }
 
-    screen: targetScreen
-
-    anchors {
-        top: true
-        bottom: true
-        left: true
-        right: true
-    }
+    onEscapeDismissed: root.deactivate()
 
     property bool isActive: false
     property bool isLoading: false
@@ -63,8 +55,6 @@ PanelWindow {
     property bool isInitialized: false
     property bool isRefreezing: false
     property string videoBackend: "gpu-screen-recorder"
-
-    function s(val) { return Scaler.s(val); }
 
     property color dimColor: Qt.alpha(ThemeBackend.crust, 0.72)
 
@@ -75,24 +65,6 @@ PanelWindow {
     property bool pendingColorPicker: false
     property bool standaloneColorPicker: false
     property int colorFormatIndex: 0
-
-    function resolveMonitorScreen(targetMon) {
-        let name = (targetMon !== undefined && targetMon !== null) ? String(targetMon) : "";
-        root.targetMonitorName = name;
-        let resolved = null;
-        if (name !== "") {
-            for (let i = 0; i < Quickshell.screens.length; i++) {
-                if (Quickshell.screens[i].name === name) {
-                    resolved = Quickshell.screens[i];
-                    break;
-                }
-            }
-        }
-        if (!resolved) {
-            resolved = Quickshell.cursorScreen ?? (Quickshell.screens.length > 0 ? Quickshell.screens[0] : null);
-        }
-        return resolved;
-    }
 
     function toggleOverlay(img, editMode, audioPrefs, cGeom, cGeomVideo, cMode, cBackend, targetMon) {
         if (root.isActive) {
@@ -121,7 +93,8 @@ PanelWindow {
             root.enterColorPicker();
             return;
         }
-        root.screen = root.resolveMonitorScreen(targetMon);
+        root.targetMonitorName = (targetMon !== undefined && targetMon !== null) ? String(targetMon) : "";
+        root._updateTargetScreen();
         root.isLoading = true;
         root.animateChanges = false;
         root.isRefreezing = false;
@@ -145,20 +118,9 @@ PanelWindow {
 
     onIsActiveChanged: {
         if (root.isActive) {
-            root.grabKeyboardFocus();
-            Qt.callLater(root.grabKeyboardFocus);
+            Qt.callLater(root.acquireFocus);
         } else {
             if (root.freezeImg !== "") Quickshell.execDetached(["rm", "-f", root.freezeImg]);
-        }
-    }
-
-    function grabKeyboardFocus() {
-        if (!root.isActive) return;
-        if (typeof root.requestActivate === "function") {
-            root.requestActivate();
-        }
-        if (root.contentItem) {
-            root.contentItem.forceActiveFocus();
         }
     }
 
@@ -216,19 +178,7 @@ PanelWindow {
 
     function activate(img, editMode, audioPrefs, cGeom, cGeomVideo, cMode, cBackend, targetMon) {
         root.targetMonitorName = (targetMon !== undefined && targetMon !== null) ? String(targetMon) : "";
-        let resolved = null;
-        if (root.targetMonitorName !== "") {
-            for (let i = 0; i < Quickshell.screens.length; i++) {
-                if (Quickshell.screens[i].name === root.targetMonitorName) {
-                    resolved = Quickshell.screens[i];
-                    break;
-                }
-            }
-        }
-        if (!resolved) {
-            resolved = Quickshell.cursorScreen ?? (Quickshell.screens.length > 0 ? Quickshell.screens[0] : null);
-        }
-        root.screen = resolved;
+        root._updateTargetScreen();
 
         root.isLoading = true;
         root.animateChanges = false;
@@ -534,6 +484,7 @@ PanelWindow {
     }
 
     Component.onCompleted: {
+        root._updateTargetScreen();
         root.isInitialized = true;
     }
 
@@ -610,20 +561,6 @@ PanelWindow {
         root.saveCache();
     }
 
-    Shortcut {
-        sequence: "Escape"
-        onActivated: {
-            if (root.isColorPickerMode) {
-                if (root.standaloneColorPicker) {
-                    root.deactivate();
-                } else {
-                    root.isColorPickerMode = false;
-                }
-            } else {
-                root.deactivate();
-            }
-        }
-    }
     Shortcut {
         sequence: "Return"
         onActivated: {

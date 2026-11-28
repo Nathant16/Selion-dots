@@ -7,9 +7,27 @@ import "notifications/weather"
 import "notifications/battery"
 
 ShellRoot {
-    readonly property bool performanceMode: !!(Config.getSetting("general", {}).performance)
-    readonly property bool quickactionsEnabled: Config.getSetting("general", {}).quickactions !== false
-    readonly property bool dockEnabled: Config.getSetting("dock", {}).enabled !== false
+    id: shellRoot
+
+    readonly property bool performanceMode: !!(Config.getSetting("general.performance", false))
+    readonly property bool quickactionsEnabled: Config.getSetting("general.quickactions", true) !== false
+    readonly property bool dockEnabled: Config.getSetting("dock.enabled", true) !== false
+    property bool clipboardLoaded: false
+    property bool dashboardLoaded: false
+
+    Connections {
+        target: ClipboardController
+        function onIsVisibleChanged() {
+            if (ClipboardController.isVisible) shellRoot.clipboardLoaded = true;
+        }
+    }
+
+    Connections {
+        target: DashboardController
+        function onIsVisibleChanged() {
+            if (DashboardController.isVisible) shellRoot.dashboardLoaded = true;
+        }
+    }
 
     Connections {
         target: Quickshell
@@ -70,9 +88,19 @@ ShellRoot {
     LockRedactor {}
 
     Launcher {}
-    Clipboard {}
+    LazyLoader {
+        active: shellRoot.clipboardLoaded
+        Clipboard {}
+    }
+    LazyLoader {
+        active: shellRoot.dashboardLoaded
+        Dashboard {}
+    }
 
-    Polkit {}
+    LazyLoader {
+        active: PolkitService.isActive
+        Polkit {}
+    }
     WellbeingLimitOverlay {}
     PopoutManager {}
 
@@ -81,7 +109,11 @@ ShellRoot {
         sourceComponent: Dock {}
     }
 
-    Idle {}
+    Idle {
+        id: idleService
+        Component.onCompleted: ShellRouter.registerIdle(idleService)
+        Component.onDestruction: ShellRouter.unregisterIdle(idleService)
+    }
     Variants {
         model: performanceMode ? [] : Quickshell.screens
         delegate: WidgetLoader {

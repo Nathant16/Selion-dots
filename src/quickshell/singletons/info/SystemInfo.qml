@@ -36,8 +36,25 @@ Item {
     Connections {
         target: Config
         function onSettingsLoaded() {
-            root.fetch();
+            root.refreshAvatar();
         }
+    }
+
+    function refreshAvatar() {
+        let cropped = Caching.getCacheDir("avatar") + "/avatar_cropped.png";
+        let cfgAvatar = Config.peekSetting("general.avatarPath", "") || "";
+        avatarProc.command = [
+            "bash", "-c",
+            "cropped_avatar=\"$1\"; cfg_avatar=\"$2\"; avatar=\"\"; " +
+            "if [ -f \"$cropped_avatar\" ]; then avatar=\"$cropped_avatar\"; " +
+            "elif [ -n \"$cfg_avatar\" ] && [ -f \"$cfg_avatar\" ]; then avatar=\"$cfg_avatar\"; " +
+            "else for a in \"$HOME/.face\" \"$HOME/.face.icon\" \"/var/lib/AccountsService/icons/$USER\"; do " +
+            "if [ -f \"$a\" ]; then avatar=\"$a\"; break; fi; done; fi; " +
+            "printf '%s' \"$avatar\"",
+            "_", cropped, cfgAvatar
+        ];
+        avatarProc.running = false;
+        avatarProc.running = true;
     }
 
     function fetch() {
@@ -49,6 +66,7 @@ Item {
         uptimeFile.reload();
         chassisFile.reload();
 
+        root.refreshAvatar();
         hwProc.running = false;
         hwProc.running = true;
         root.probeFingerprint();
@@ -279,15 +297,6 @@ Item {
             "disk_mod=$(lsblk -d -n -o MODEL 2>/dev/null | grep -v '^$' | head -n1); " +
             "[ -z \"$disk_mod\" ] && disk_mod=\"Generic Drive\"; " +
             "df_out=$(df -B1 / 2>/dev/null | awk 'NR==2 {print $2\"|\"$3\"|\"$5}'); " +
-            "cropped_avatar=\"" + Caching.getCacheDir("avatar") + "/avatar_cropped.png\"; " +
-            "cfg_avatar=\"" + (Config.getSetting("general", {}).avatarPath || "") + "\"; " +
-            "avatar=\"\"; " +
-            "if [ -f \"$cropped_avatar\" ]; then avatar=\"$cropped_avatar\"; " +
-            "elif [ -n \"$cfg_avatar\" ] && [ -f \"$cfg_avatar\" ]; then avatar=\"$cfg_avatar\"; " +
-            "else " +
-            "for a in \"$HOME/.face\" \"$HOME/.face.icon\" \"/var/lib/AccountsService/icons/$USER\"; do " +
-                "if [ -f \"$a\" ]; then avatar=\"$a\"; break; fi; " +
-            "done; fi; " +
             "has_battery=0; " +
             "for p in /sys/class/power_supply/*; do " +
                 "if [ -f \"$p/type\" ] && grep -qi 'Battery' \"$p/type\" 2>/dev/null; then " +
@@ -297,29 +306,27 @@ Item {
             "done; " +
             "bat_named=0; compgen -G '/sys/class/power_supply/BAT*' >/dev/null && bat_named=1; " +
             "has_backlight=0; compgen -G '/sys/class/backlight/*' >/dev/null && has_backlight=1; " +
-            "[ -n \"$df_out\" ] || df_out=\"0|0|0%\"; " +
-            "echo \"$gpu|$disk_mod|$df_out|$avatar|$has_battery|$bat_named|$has_backlight\""
+            "echo \"$gpu|$disk_mod|$df_out|$has_battery|$bat_named|$has_backlight\""
         ]
         stdout: StdioCollector {
             onStreamFinished: {
                 let txt = this.text ? this.text.trim() : "";
                 if (!txt) return;
                 let p = txt.split("|");
-                if (p.length >= 7) {
+                if (p.length >= 6) {
                     root.gpuModel = p[0];
                     root.diskModel = p[1];
                     root.diskTotalGb = parseFloat((parseInt(p[2]) / 1073741824).toFixed(1));
                     root.diskUsedGb = parseFloat((parseInt(p[3]) / 1073741824).toFixed(1));
                     root.diskPercent = parseInt(p[4].replace("%", ""));
-                    root.avatarPath = p[5];
-                    if (p[6] === "1") {
+                    if (p[5] === "1") {
                         root.isDesktop = false;
                     }
-                    if (p.length >= 8) {
-                        root.hasBatSupply = p[7] === "1";
+                    if (p.length >= 7) {
+                        root.hasBatSupply = p[6] === "1";
                     }
-                    if (p.length >= 9) {
-                        root.hasBacklight = p[8] === "1";
+                    if (p.length >= 8) {
+                        root.hasBacklight = p[7] === "1";
                     }
                 }
             }
@@ -334,6 +341,16 @@ Item {
         command: ["bash", "-c", "if command -v busctl >/dev/null 2>&1 && out=$(busctl --system call net.reactivated.Fprint /net/reactivated/Fprint/Manager net.reactivated.Fprint.Manager GetDevices 2>/dev/null); then printf '%s\\n' \"$out\" | grep -qE '^ao [1-9][0-9]*'; elif command -v fprintd-list >/dev/null 2>&1; then out=$(LC_ALL=C fprintd-list \"${USER:-$(id -un)}\" 2>&1) || exit 1; ! printf '%s\\n' \"$out\" | grep -qiE 'No devices available|found 0 devices' && printf '%s\\n' \"$out\" | grep -qiE 'Device at /net/reactivated/Fprint/Device/|found [1-9][0-9]* devices|Fingerprints for user|has no fingers enrolled'; else exit 1; fi"]
         onExited: (exitCode) => {
             root.hasFingerprint = (exitCode === 0);
+        }
+    }
+
+    Process {
+        id: avatarProc
+        running: false
+        stdout: StdioCollector {
+            onStreamFinished: {
+                root.avatarPath = this.text ? this.text.trim() : "";
+            }
         }
     }
 }

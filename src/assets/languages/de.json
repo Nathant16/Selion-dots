@@ -768,6 +768,14 @@
         "select_dir": "Ordner auswählen...",
         "select_wallpaper": "Hintergrundbild auswählen",
         "select": "Hintergrundbild",
+        "carousel": {
+          "title": "Hintergrundkarussell",
+          "desc": "Zeigt nach Zeitplan ein zufälliges Hintergrundbild aus dem Ordner und geht alle durch, bevor sich eines wiederholt",
+          "interval": {
+            "title": "Wechselintervall",
+            "desc": "Sekunden zwischen Hintergrundwechseln, von 10 Sekunden bis zu einer Woche"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Übergang",
@@ -1218,6 +1226,10 @@
       "background": {
         "title": "Hintergrund hinter Apps zeichnen",
         "desc": "Dock-Leiste hinter den App-Symbolen anzeigen"
+      },
+      "icons_only": {
+        "title": "Nur Symbole",
+        "desc": "Kästchen hinter jeder App ausblenden und nur ihr Symbol anzeigen"
       }
     },
     "lyrics_picker": {
@@ -1228,6 +1240,7 @@
     "search": {
       "placeholder": "Einstellungen suchen...",
       "prompt": "Tippen, um Einstellungen zu suchen...",
+      "indexing": "Einstellungen werden indiziert...",
       "no_results": "Keine Einstellungen gefunden",
       "results": "Suchergebnisse"
     },
@@ -2492,7 +2505,30 @@
       "additional_pkgs_title": "=== Zusatzpakete auswählen ===",
       "menu_additional_pkgs": "Zusatzpakete",
       "menu_keyboard": "Tastaturlayout & Tastenkürzel",
-      "menu_fast_mirrors": "Schnelle Spiegelserver & Chaotic-AUR"
+      "menu_fast_mirrors": "Schnelle Spiegelserver & Chaotic-AUR",
+      "complete_keyboard": "Tastatur",
+      "complete_additional": "Zusatzpakete",
+      "complete_fast_mirrors": "Schnelle Spiegel",
+      "status_selected_count": "{count} ausgewählt",
+      "additional_cats_subtitle": "{count} optionale Pakete ausgewählt",
+      "additional_cats_hint": "Kategorie zum Konfigurieren öffnen · c zum Leeren",
+      "additional_items_hint": "Leertaste zum Umschalten · a alle umschalten · Esc zurück",
+      "additional_cleared": "Alle Zusatzpakete abgewählt",
+      "add_cat_dev": "Entwicklung",
+      "add_cat_social": "Soziale Medien",
+      "add_cat_browsers": "Webbrowser",
+      "add_cat_games": "Spiele",
+      "add_cat_office": "Büro",
+      "add_cat_media": "Medien & Unterhaltung",
+      "keyboard_title": "Tastaturlayout & Umschaltkürzel",
+      "keyboard_subtitle": "Tastaturlayouts (XKB) und Umschaltkürzel auswählen",
+      "keyboard_layout_row": "Tastaturlayout",
+      "keyboard_layout_hint": "←→ Vorlagen · e / Enter: eigenes Layout bearbeiten",
+      "keyboard_toggle_section": "Umschaltkürzel",
+      "hint_presets": "Vorlagen",
+      "hint_edit": "Bearbeiten",
+      "hint_clear": "Leeren",
+      "hint_all": "Alle umschalten"
     },
     "steps": {
       "prepare": "Telemetrie und Umgebung vorbereiten",
@@ -2514,6 +2550,7 @@
     },
     "deps": {
       "syncing": "Systempakete werden synchronisiert und aktualisiert (pacman -Syyu)...",
+      "syncing_portage": "Portage-Baum wird synchronisiert...",
       "all_installed": "-> Alle Pakete sind bereits installiert! Paket-Download übersprungen.",
       "missing_count": "-> {count} fehlende Pakete zur Installation gefunden.",
       "installing_title": "Systempakete und Abhängigkeiten werden installiert...",
@@ -2522,6 +2559,7 @@
       "install_failed": "Installation von {pkg} fehlgeschlagen",
       "enabling_copr": "COPR-Repository {repo} wird aktiviert...",
       "enabling_repo": "Repository {repo} wird aktiviert...",
+      "enabling_overlay": "Gentoo-Overlay {repo} wird aktiviert...",
       "enabling_terra": "Terra-Repository wird aktiviert...",
       "quickshell_outdated": "Quickshell {version} ist zu alt, {minimum} oder neuer wird benötigt. Aktualisierung läuft...",
       "quickshell_still_old": "Quickshell ist immer noch älter als {minimum}. Bitte manuell aktualisieren, sonst lassen sich die Einstellungen nicht öffnen.",

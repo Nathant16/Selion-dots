@@ -64,14 +64,16 @@ class TestDriftWmKeyboardLayout(unittest.TestCase):
             sys_out = app_dir / "singletons/system"
             sys_out.mkdir(parents=True)
 
-            for name in ("CompositorStateBase.qml", "DriftState.qml", "KeyboardLayout.qml"):
+            for name in ("CompositorStateBase.qml", "DriftState.qml", "JsonStreamProcess.qml", "KeyboardLayout.qml", "RefCountedService.qml"):
                 shutil.copy(SYSTEM_DIR / name, sys_out / name)
 
             (app_dir / "qmldir").write_text(
                 "\n".join([
                     "singleton Compositor 1.0 Compositor.qml",
                     "singleton DriftState 1.0 singletons/system/DriftState.qml",
+                    "JsonStreamProcess 1.0 singletons/system/JsonStreamProcess.qml",
                     "singleton KeyboardLayout 1.0 singletons/system/KeyboardLayout.qml",
+                    "RefCountedService 1.0 singletons/system/RefCountedService.qml",
                     "singleton NiriState 1.0 DummyState.qml",
                     "singleton SwayState 1.0 DummyState.qml",
                     "singleton MangoState 1.0 DummyState.qml",
@@ -80,7 +82,7 @@ class TestDriftWmKeyboardLayout(unittest.TestCase):
                 encoding="utf-8",
             )
             (app_dir / "Compositor.qml").write_text(
-                "pragma Singleton\nimport QtQuick\nQtObject { readonly property string name: 'driftwm' }\n",
+                "pragma Singleton\nimport QtQuick\nItem {\n    readonly property string name: 'driftwm'\n    function subscribe() { DriftState.subscribe(); }\n    function unsubscribe() { DriftState.unsubscribe(); }\n    function switchKeyboardLayout() { DriftState.switchLayout(); }\n}\n",
                 encoding="utf-8",
             )
             (app_dir / "DummyState.qml").write_text(

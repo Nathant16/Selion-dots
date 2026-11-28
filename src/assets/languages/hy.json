@@ -768,6 +768,14 @@
         "select_dir": "Ընտրեք պանակը...",
         "select_wallpaper": "Ընտրել պաստառ",
         "select": "Պաստառ",
+        "carousel": {
+          "title": "Պաստառների կարուսել",
+          "desc": "Ցուցադրել պատահական պաստառ թղթապանակից ըստ ժամանակացույցի՝ անցնելով բոլորի միջով կրկնելուց առաջ",
+          "interval": {
+            "title": "Փոփոխման միջակայք",
+            "desc": "Վայրկյաններ պաստառի փոփոխությունների միջև՝ 10 վայրկյանից մինչև մեկ շաբաթ"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Անցում",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "Ցուցադրել ֆոն հավելվածների հետևում",
         "desc": "Ցուցադրել դոկի վահանակը հավելվածների պատկերակների հետևում"
+      },
+      "icons_only": {
+        "title": "Միայն պատկերակները",
+        "desc": "Թաքցնել յուրաքանչյուր հավելվածի հետևի շրջանակը և ցուցադրել միայն պատկերակը"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "Որոնել կարգավորումները...",
       "prompt": "Մուտքագրեք որոնման համար...",
+      "indexing": "Կարգավորումները ինդեքսավորվում են...",
       "no_results": "Կարգավորումներ չեն գտնվել",
       "results": "Որոնման արդյունքներ"
     },
@@ -2491,10 +2504,34 @@
       "additional_pkgs_title": "=== Լրացուցիչ փաթեթների ընտրություն ===",
       "menu_additional_pkgs": "Լրացուցիչ փաթեթներ",
       "menu_keyboard": "Ստեղնաշարի դասավորություն և դյուրանցում",
-      "menu_fast_mirrors": "Արագ հայելիներ և Chaotic-AUR"
+      "menu_fast_mirrors": "Արագ հայելիներ և Chaotic-AUR",
+      "complete_keyboard": "Ստեղնաշար",
+      "complete_additional": "Լրացուցիչ փաթեթ",
+      "complete_fast_mirrors": "Արագ հայելիներ",
+      "status_selected_count": "Ընտրված է՝ {count}",
+      "additional_cats_subtitle": "Ընտրված է {count} կամընտիր փաթեթ",
+      "additional_cats_hint": "Բացել բաժինը՝ Enter · մաքրել՝ c",
+      "additional_items_hint": "Փոխարկել՝ Space · բոլորը՝ a · հետ՝ Esc",
+      "additional_cleared": "Բոլոր լրացուցիչ փաթեթները մաքրվեցին",
+      "add_cat_dev": "Մշակում",
+      "add_cat_social": "Սոցիալական մեդիա",
+      "add_cat_browsers": "Վեբ դիտարկիչներ",
+      "add_cat_games": "Խաղեր",
+      "add_cat_office": "Գրասենյակ",
+      "add_cat_media": "Մեդիա և ժամանց",
+      "keyboard_title": "Ստեղնաշարի դասավորություն և անցման դյուրանցում",
+      "keyboard_subtitle": "Ընտրեք ստեղնաշարի դասավորությունները (XKB) և անցման դյուրանցումը",
+      "keyboard_layout_row": "Ստեղնաշարի դասավորություն",
+      "keyboard_layout_hint": "←→ նախադրվածքներ · սեփականը խմբագրել՝ e / Enter",
+      "keyboard_toggle_section": "Անցման դյուրանցում",
+      "hint_presets": "Նախադրվածքներ",
+      "hint_edit": "Խմբագրել",
+      "hint_clear": "Մաքրել",
+      "hint_all": "Փոխարկել բոլորը"
     },
     "deps": {
       "syncing": "Համակարգային փաթեթների համաժամացում և թարմացում (pacman -syyu)...",
+      "syncing_portage": "Portage ծառի համաժամացում...",
       "all_installed": "-> Բոլոր փաթեթներն արդեն տեղադրված են։ Ներբեռնման փուլը բաց է թողնվում։",
       "missing_count": "-> Գտնվել է տեղադրման ենթակա {count} փաթեթ։",
       "installing_title": "Համակարգային փաթեթներն ու կախվածությունները տեղադրվում են...",
@@ -2503,6 +2540,7 @@
       "install_failed": "Չհաջողվեց տեղադրել {pkg}-ը",
       "enabling_copr": "Ակտիվացվում է {repo} COPR պահոցը...",
       "enabling_repo": "Ակտիվացվում է {repo} պահոցը...",
+      "enabling_overlay": "Ակտիվացվում է {repo} Gentoo overlay-ը...",
       "enabling_terra": "Ակտիվացվում է Terra պահոցը...",
       "quickshell_outdated": "Quickshell {version}-ը չափազանց հին է, պահանջվում է {minimum} կամ ավելի նոր տարբերակ։ Թարմացվում է...",
       "quickshell_still_old": "Quickshell-ը դեռևս հին է {minimum}-ից։ Թարմացրեք այն ձեռքով, հակառակ դեպքում կարգավորումները չեն բացվի։",

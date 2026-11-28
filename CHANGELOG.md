@@ -1,3 +1,10 @@
+### 2.9.1.15
+
+- **Upstream Merge (`a60765c0..a26b3411`)**: Merged upstream Serpantinum architecture updates, including `ShellRouter`, `ShellOverlayWindow`, `HostedPanel`, `SurfaceRegistry`, `Compositor`, `Connectivity`, `Brightness`, `WallpaperCarousel`, liquid glass morph workspaces, lazy-loaded overlays, async app-icon fallback badges, and localized calendar month/weekday formatting:
+  - **DriftWM & Compositor Unification**: Wired `driftwm` into `Compositor.qml` (`detectedName` + socket/process fallback probe, workspace state/focus, `wlopm` DPMS, `wlr-randr` output toggle, and `DriftState` layout switching with `hyprctl switchxkblayout all next`), preserving the `v2.9.1.14` `DriftState`/`KeyboardLayout` EN/RU layout fix and decoupled `Scaler.uiScale`.
+  - **Dashboard & Scaling Integration**: Adapted the 3D orbital `CalendarPopup` to `Dashboard` (`vertical` sidebar layout, per-corner radii, and `backgroundColor`) and applied `Scaler.s()` scaling to `SurfaceRegistry.barThickness` and `barInset`.
+  - **Fork Exclusions & Feature Preservation**: Stripped upstream `DailyPing`/`GeneralTelemetrySection` telemetry and `packaging/aur`; unified recursive `showSelionWallpapers`-aware listing across `WallpaperPicker`, `Wallpaper.shuffle`, and `WallpaperCarousel`; kept `SystemInfo` backlight and `fprintd` hardware probing, `Polkit` fingerprint prompt, hardware-adaptive UI hiding across Settings/SystemPanel/OSD/Lockscreen, `applyEffectsToWindows`, `Nathant16/Selion-dots` updater/telemetry routes, and full 25-locale parity.
+
 ### 2.9.1.14
 
 - **DriftWM / Keyboard Layout Sync**: Fixed inverted EN/RU layout indicator on the bar under `driftwm`:

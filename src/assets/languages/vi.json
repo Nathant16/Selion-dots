@@ -768,6 +768,14 @@
         "select_dir": "Chọn thư mục...",
         "select_wallpaper": "Chọn hình nền",
         "select": "Hình nền",
+        "carousel": {
+          "title": "Băng chuyền hình nền",
+          "desc": "Hiển thị hình nền ngẫu nhiên từ thư mục theo lịch, đi qua tất cả trước khi lặp lại",
+          "interval": {
+            "title": "Khoảng thời gian thay đổi",
+            "desc": "Số giây giữa các lần đổi hình nền, từ 10 giây đến một tuần"
+          }
+        },
         "transition": {
           "mode": {
             "title": "Hiệu ứng chuyển",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "Vẽ nền phía sau ứng dụng",
         "desc": "Hiển thị bảng dock phía sau biểu tượng ứng dụng"
+      },
+      "icons_only": {
+        "title": "Chỉ hiện biểu tượng",
+        "desc": "Ẩn khung nền phía sau mỗi ứng dụng và chỉ hiển thị biểu tượng"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "Tìm kiếm cài đặt...",
       "prompt": "Nhập để tìm kiếm cài đặt...",
+      "indexing": "Đang lập chỉ mục cài đặt...",
       "no_results": "Không tìm thấy cài đặt",
       "results": "Kết quả tìm kiếm"
     },
@@ -2491,10 +2504,34 @@
       "additional_pkgs_title": "=== Chọn gói bổ sung ===",
       "menu_additional_pkgs": "Gói bổ sung",
       "menu_keyboard": "Bố cục bàn phím & phím tắt",
-      "menu_fast_mirrors": "Máy chủ nhân bản nhanh & Chaotic-AUR"
+      "menu_fast_mirrors": "Máy chủ nhân bản nhanh & Chaotic-AUR",
+      "complete_keyboard": "Bàn phím",
+      "complete_additional": "Gói bổ sung",
+      "complete_fast_mirrors": "Máy chủ nhanh",
+      "status_selected_count": "Đã chọn {count}",
+      "additional_cats_subtitle": "Đã chọn {count} gói tùy chọn",
+      "additional_cats_hint": "Mở danh mục để cấu hình · c để xóa",
+      "additional_items_hint": "Space để bật/tắt · a bật/tắt tất cả · Esc quay lại",
+      "additional_cleared": "Đã xóa tất cả gói bổ sung",
+      "add_cat_dev": "Phát triển",
+      "add_cat_social": "Mạng xã hội",
+      "add_cat_browsers": "Trình duyệt web",
+      "add_cat_games": "Trò chơi",
+      "add_cat_office": "Văn phòng",
+      "add_cat_media": "Đa phương tiện & Giải trí",
+      "keyboard_title": "Bố cục bàn phím & phím tắt chuyển",
+      "keyboard_subtitle": "Chọn bố cục bàn phím (XKB) và phím tắt chuyển đổi",
+      "keyboard_layout_row": "Bố cục bàn phím",
+      "keyboard_layout_hint": "←→ mẫu sẵn · e / Enter để sửa bố cục tùy chỉnh",
+      "keyboard_toggle_section": "Phím tắt chuyển đổi",
+      "hint_presets": "Mẫu sẵn",
+      "hint_edit": "Sửa",
+      "hint_clear": "Xóa",
+      "hint_all": "Bật/tắt tất cả"
     },
     "deps": {
       "syncing": "Đang đồng bộ hóa và cập nhật các gói hệ thống (pacman -syyu)...",
+      "syncing_portage": "Đang đồng bộ hóa cây Portage...",
       "all_installed": "-> Tất cả các gói đã được cài đặt sẵn! Bỏ qua giai đoạn tải xuống gói.",
       "missing_count": "-> Tìm thấy {count} gói còn thiếu cần cài đặt.",
       "installing_title": "Đang cài đặt các gói hệ thống và phần phụ thuộc...",
@@ -2504,6 +2541,7 @@
       "enabling_copr": "Đang bật kho lưu trữ COPR {repo}...",
       "enabling_repo": "Đang bật kho lưu trữ {repo}...",
       "enabling_terra": "Đang bật kho lưu trữ Terra...",
+      "enabling_overlay": "Đang bật overlay Gentoo {repo}...",
       "quickshell_outdated": "Quickshell {version} quá cũ, cần phiên bản {minimum} trở lên. Đang nâng cấp...",
       "quickshell_still_old": "Quickshell vẫn cũ hơn phiên bản {minimum}. Hãy cập nhật thủ công, nếu không phần cài đặt sẽ không mở được.",
       "ranking_pacman": "Đang tìm và xếp hạng máy chủ nhân bản Pacman nhanh nhất...",

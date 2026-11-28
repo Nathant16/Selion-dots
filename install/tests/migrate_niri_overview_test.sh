@@ -41,7 +41,7 @@ if command -v niri >/dev/null 2>&1; then
     echo "== an updated user whose config lacks the rule"
     reset_home update
     cp -r "$REPO_ROOT/compositors/niri/." "$NIRI_DIR/"
-    sed -i '/^layer-rule {/,/^}/d' "$NIRI_DIR/config/layout.kdl"
+    sed -i '/^layer-rule {/,/^}/d' "$NIRI_DIR/default/windowrules.kdl"
     original="$(cat "$CONFIG")"
     original_lines="$(wc -l < "$CONFIG")"
     bash "$SCRIPT"

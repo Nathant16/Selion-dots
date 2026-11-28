@@ -5,10 +5,9 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import "../../"
 
-Item {
+RefCountedService {
     id: root
 
-    property int subscribers: 0
     signal updated()
 
     property var windows: []
@@ -16,31 +15,17 @@ Item {
     property var groupOrder: []
     property var activeWorkspaceByOutput: ({})
 
-
     property var _mruTimestamps: ({})
     property int _seqCounter: 0
 
-    function subscribe() {
-        subscribers++;
-        if (subscribers === 1) {
-            if (Compositor.name === "niri" && typeof NiriState !== "undefined") NiriState.subscribe();
-            if (Compositor.name === "mango") MangoState.subscribeClients();
-            if (Compositor.name === "umbriel") UmbrielState.subscribeClients();
-            if (Compositor.name === "sway") SwayState.subscribeWindows();
-            if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") DriftState.subscribeWindows();
-            _requestRebuild();
-        }
+    onActivated: {
+        Compositor.subscribe();
+        _requestRebuild();
     }
 
-    function unsubscribe() {
-        subscribers = Math.max(0, subscribers - 1);
-        if (subscribers === 0) {
-            if (Compositor.name === "niri" && typeof NiriState !== "undefined") NiriState.unsubscribe();
-            if (Compositor.name === "mango") MangoState.unsubscribeClients();
-            if (Compositor.name === "umbriel") UmbrielState.unsubscribeClients();
-            if (Compositor.name === "sway") SwayState.unsubscribeWindows();
-            if (Compositor.name === "driftwm" && typeof DriftState !== "undefined") DriftState.unsubscribeWindows();
-        }
+    onDeactivated: {
+        debounceTimer.stop();
+        Compositor.unsubscribe();
     }
 
     Timer {
@@ -51,7 +36,7 @@ Item {
     }
 
     function _requestRebuild() {
-        if (root.subscribers <= 0) return;
+        if (!root.active) return;
         if (!debounceTimer.running) {
             debounceTimer.restart();
         }
@@ -622,21 +607,25 @@ Item {
 
     Connections {
         target: (typeof ToplevelManager !== "undefined" && ToplevelManager.toplevels) ? ToplevelManager.toplevels : null
+        enabled: root.active
         function onValuesChanged() { root._requestRebuild(); }
     }
 
     Connections {
         target: (typeof ToplevelManager !== "undefined") ? ToplevelManager : null
+        enabled: root.active
         function onActiveToplevelChanged() { root._requestRebuild(); }
     }
 
     Connections {
         target: (typeof Hyprland !== "undefined" && Hyprland.toplevels) ? Hyprland.toplevels : null
+        enabled: root.active
         function onValuesChanged() { root._requestRebuild(); }
     }
 
     Connections {
         target: (typeof Hyprland !== "undefined") ? Hyprland : null
+        enabled: root.active
         function onActiveToplevelChanged() { root._requestRebuild(); }
         function onFocusedMonitorChanged() { root._requestRebuild(); }
         function onFocusedWorkspaceChanged() { root._requestRebuild(); }
@@ -651,17 +640,15 @@ Item {
 
     Connections {
         target: AppMatcher
+        enabled: root.active
         function onIndexChanged() { root._requestRebuild(); }
     }
 
     Connections {
         target: (typeof NiriState !== "undefined") ? NiriState : null
-        function onWindowsUpdated() {
-            if (Compositor.name === "niri") root._requestRebuild();
-        }
-        function onWindowsMapChanged() {
-            if (Compositor.name === "niri") root._requestRebuild();
-        }
+        enabled: root.active && Compositor.name === "niri"
+        function onWindowsUpdated() { root._requestRebuild(); }
+        function onWindowsMapChanged() { root._requestRebuild(); }
     }
 
     Connections {
@@ -673,22 +660,19 @@ Item {
 
     Connections {
         target: SwayState
-        function onWindowsUpdated() {
-            if (Compositor.name === "sway") root._requestRebuild();
-        }
+        enabled: root.active && Compositor.name === "sway"
+        function onWindowsUpdated() { root._requestRebuild(); }
     }
 
     Connections {
         target: MangoState
-        function onClientsUpdated() {
-            if (Compositor.name === "mango") root._requestRebuild();
-        }
+        enabled: root.active && Compositor.name === "mango"
+        function onClientsUpdated() { root._requestRebuild(); }
     }
 
     Connections {
         target: UmbrielState
-        function onWindowsUpdated() {
-            if (Compositor.name === "umbriel") root._requestRebuild();
-        }
+        enabled: root.active && Compositor.name === "umbriel"
+        function onWindowsUpdated() { root._requestRebuild(); }
     }
 }

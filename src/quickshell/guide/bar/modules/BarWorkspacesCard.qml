@@ -25,6 +25,8 @@ BarModuleCard {
             moduleActive: true
             property int workspaceCount: 5
             property int activeIndex: 1
+            property var shownIndices: [0, 1, 2, 3, 4]
+            property int shownCount: 5
             property var isOccupied: function(idx) { return idx === 0 || idx === 1 || idx === 2; }
             property var focusWorkspace: function(idx) {}
         }
@@ -202,7 +204,7 @@ BarModuleCard {
         baseColor: Qt.alpha(ThemeBackend.surface1, 0.35)
         icon: "󰍹"
         title: I18n.t("guide.bar.workspaces.per_monitor.title", "Per-monitor numbering")
-        hiddenByConfig: Compositor.name !== "hyprland"
+        hiddenByConfig: !Compositor.supportsPerMonitorWorkspaceNumbering
         unavailableReason: I18n.t("guide.bar.workspaces.per_monitor.unavailable", "Available only on Hyprland")
         description: I18n.t("guide.bar.workspaces.per_monitor.desc", "Hyprland only. Number workspaces from 1 on each monitor and set how many workspaces each monitor owns")
 
@@ -220,7 +222,7 @@ BarModuleCard {
     }
 
     Repeater {
-        model: (Compositor.name === "hyprland" && card.tab.perMonitorNumbering) ? card.tab.workspaceMonitorNames : []
+        model: (Compositor.supportsPerMonitorWorkspaceNumbering && card.tab.perMonitorNumbering) ? card.tab.workspaceMonitorNames : []
         delegate: SettingsRow {
             id: monitorRow
             required property string modelData

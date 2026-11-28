@@ -17,19 +17,17 @@ Item {
         return Scaler.s(val);
     }
 
-    property real targetMasterHeight: window.s(510)
-    property real targetMasterWidth: window.s(1360)
-    implicitWidth: targetMasterWidth
-    implicitHeight: targetMasterHeight
-    width: targetMasterWidth
-    height: targetMasterHeight
+    property bool vertical: false
 
-    Timer {
-        id: focusTimer
-        interval: 50
-        repeat: false
-        onTriggered: window.forceActiveFocus()
-    }
+    implicitWidth: vertical ? window.s(380) : window.s(1360)
+    implicitHeight: vertical ? window.s(980) : window.s(510)
+
+    readonly property real panelRadius: Math.min(ThemeBackend.borderRadius, window.s(28))
+    property color backgroundColor: Qt.alpha(ThemeBackend.base, ThemeBackend.elementOpacity)
+    property real cornerTopLeft: panelRadius
+    property real cornerTopRight: panelRadius
+    property real cornerBottomLeft: panelRadius
+    property real cornerBottomRight: panelRadius
 
     Shortcut {
         sequence: "Left"
@@ -133,7 +131,6 @@ Item {
     onVisibleChanged: {
         if (visible) {
             forceActiveFocus();
-            focusTimer.restart();
             window.gridDay = DateTime.now.getDate();
             updateCalendarGrid();
             Weather.refresh(false);
@@ -449,7 +446,6 @@ Item {
         updateCalendarGrid();
         if (visible) {
             forceActiveFocus();
-            focusTimer.restart();
             Weather.refresh(false);
             resetAndPlayIntro();
         }
@@ -457,23 +453,17 @@ Item {
 
     Item {
         anchors.fill: parent
-        scale: 0.95 + (0.05 * introMain)
         opacity: introMain
 
         Rectangle {
             anchors.fill: parent
-            radius: ThemeBackend.borderRadius
-            color: Qt.alpha(ThemeBackend.base, ThemeBackend.elementOpacity)
+            radius: window.panelRadius
+            topLeftRadius: window.cornerTopLeft
+            topRightRadius: window.cornerTopRight
+            bottomLeftRadius: window.cornerBottomLeft
+            bottomRightRadius: window.cornerBottomRight
+            color: window.backgroundColor
             clip: true
-
-            WallpaperBlur {
-                z: -1
-                anchors.fill: parent
-                topLeftRadius: parent.topLeftRadius
-                topRightRadius: parent.topRightRadius
-                bottomLeftRadius: parent.bottomLeftRadius
-                bottomRightRadius: parent.bottomRightRadius
-            }
 
             Rectangle {
                 width: parent.width * 0.5; height: width; radius: width / 2
@@ -595,14 +585,14 @@ Item {
 
             Item {
                 id: centralHub
-                anchors.centerIn: parent
-                anchors.verticalCenterOffset: window.centerOffset
+                x: parent.width / 2 - width / 2
+                y: window.vertical ? (parent.height * 0.49 - height / 2) : (parent.height / 2 + window.centerOffset - height / 2)
                 width: window.s(1)
                 height: window.s(1)
                 z: 5
 
                 opacity: introClock
-                scale: 0.85 + (0.15 * introClock)
+                scale: (window.vertical ? 0.52 : 1.0) * (0.85 + (0.15 * introClock))
 
                 transform: [
                     Translate { y: window.s(25) * (1.0 - introClock) },
@@ -800,11 +790,10 @@ Item {
 
             Rectangle {
                 id: calendarRect
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: window.s(40)
-                width: window.s(310)
-                height: window.s(350)
+                x: window.vertical ? window.s(20) : window.s(40)
+                y: window.vertical ? (parent.height - height - window.s(24)) : ((parent.height - height) / 2)
+                width: window.vertical ? (parent.width - window.s(40)) : window.s(310)
+                height: window.vertical ? window.s(290) : window.s(350)
                 color: calendarGlass.active ? "transparent" : Qt.alpha(window.surface0, 0.2)
                 radius: ThemeBackend.borderRadius
                 z: 10
@@ -941,11 +930,10 @@ Item {
 
             Item {
                 id: weatherContainer
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.rightMargin: window.s(40)
-                width: window.s(320)
-                height: window.s(430)
+                x: window.vertical ? window.s(20) : (parent.width - width - window.s(40))
+                y: window.vertical ? window.s(24) : ((parent.height - height) / 2)
+                width: window.vertical ? (parent.width - window.s(40)) : window.s(320)
+                height: window.vertical ? window.s(290) : window.s(430)
                 z: 10
 
                 opacity: introWeather

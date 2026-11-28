@@ -768,6 +768,14 @@
         "select_dir": "选择目录...",
         "select_wallpaper": "选择壁纸",
         "select": "壁纸",
+        "carousel": {
+          "title": "壁纸轮播",
+          "desc": "按计划从目录中随机显示壁纸，所有壁纸都显示一遍后才会重复",
+          "interval": {
+            "title": "切换间隔",
+            "desc": "壁纸切换之间的秒数，从 10 秒到一周"
+          }
+        },
         "transition": {
           "mode": {
             "title": "过渡效果",
@@ -1217,6 +1225,10 @@
       "background": {
         "title": "在应用后绘制背景",
         "desc": "在应用图标后显示程序坞面板"
+      },
+      "icons_only": {
+        "title": "仅图标",
+        "desc": "隐藏每个应用后的背景框，仅显示其图标"
       }
     },
     "lyrics_picker": {
@@ -1227,6 +1239,7 @@
     "search": {
       "placeholder": "搜索设置...",
       "prompt": "输入以搜索设置...",
+      "indexing": "正在建立设置索引...",
       "no_results": "未找到相关设置",
       "results": "搜索结果"
     },
@@ -2491,10 +2504,34 @@
       "additional_pkgs_title": "=== 选择附加软件包 ===",
       "menu_additional_pkgs": "附加软件包",
       "menu_keyboard": "键盘布局与快捷键",
-      "menu_fast_mirrors": "快速镜像与 Chaotic-AUR"
+      "menu_fast_mirrors": "快速镜像与 Chaotic-AUR",
+      "complete_keyboard": "键盘",
+      "complete_additional": "附加软件包",
+      "complete_fast_mirrors": "快速镜像",
+      "status_selected_count": "已选择 {count} 项",
+      "additional_cats_subtitle": "已选择 {count} 个可选软件包",
+      "additional_cats_hint": "进入分类配置 · 按 c 清空",
+      "additional_items_hint": "按 Space 切换 · 按 a 切换全选 · 按 Esc 返回",
+      "additional_cleared": "已清空所有附加软件包",
+      "add_cat_dev": "开发",
+      "add_cat_social": "社交媒体",
+      "add_cat_browsers": "网页浏览器",
+      "add_cat_games": "游戏",
+      "add_cat_office": "办公",
+      "add_cat_media": "媒体与娱乐",
+      "keyboard_title": "键盘布局与切换快捷键",
+      "keyboard_subtitle": "选择键盘布局 (XKB) 与切换快捷键",
+      "keyboard_layout_row": "键盘布局",
+      "keyboard_layout_hint": "←→ 预设 · 按 e / Enter 编辑自定义布局",
+      "keyboard_toggle_section": "切换快捷键",
+      "hint_presets": "预设",
+      "hint_edit": "编辑",
+      "hint_clear": "清空",
+      "hint_all": "切换全选"
     },
     "deps": {
       "syncing": "正在同步并更新系统软件包 (pacman -Syyu)...",
+      "syncing_portage": "正在同步 Portage 树...",
       "all_installed": "-> 所有软件包均已安装！跳过软件包下载阶段。",
       "missing_count": "-> 发现 {count} 个缺失的软件包需要安装。",
       "installing_title": "正在安装系统软件包与依赖项...",
@@ -2504,6 +2541,7 @@
       "enabling_copr": "正在启用 COPR 软件源 {repo}...",
       "enabling_repo": "正在启用软件源 {repo}...",
       "enabling_terra": "正在启用 Terra 软件源...",
+      "enabling_overlay": "正在启用 Gentoo overlay {repo}...",
       "quickshell_outdated": "Quickshell {version} 版本过旧，需要 {minimum} 或更高版本。正在升级...",
       "quickshell_still_old": "Quickshell 仍然低于 {minimum}。请手动更新，否则设置窗口将无法打开。",
       "ranking_pacman": "正在查找并对最快的 Pacman 镜像进行排序...",

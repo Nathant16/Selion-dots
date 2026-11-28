@@ -950,7 +950,30 @@
       "additional_pkgs_title": "=== 追加パッケージの選択 == ガ",
       "menu_additional_pkgs": "追加パッケージ",
       "menu_keyboard": "キーボードレイアウトとショートカット",
-      "menu_fast_mirrors": "高速ミラーと Chaotic-AUR"
+      "menu_fast_mirrors": "高速ミラーと Chaotic-AUR",
+      "complete_keyboard": "キーボード",
+      "complete_additional": "追加パッケージ",
+      "complete_fast_mirrors": "高速ミラー",
+      "status_selected_count": "{count} 件選択中",
+      "additional_cats_subtitle": "オプション {count} 件選択中",
+      "additional_cats_hint": "カテゴリを開いて設定 · c でクリア",
+      "additional_items_hint": "Space で切替 · a で全切替 · Esc で戻る",
+      "additional_cleared": "追加パッケージをすべてクリアしました",
+      "add_cat_dev": "開発",
+      "add_cat_social": "ソーシャルメディア",
+      "add_cat_browsers": "ウェブブラウザー",
+      "add_cat_games": "ゲーム",
+      "add_cat_office": "オフィス",
+      "add_cat_media": "メディアとエンターテイメント",
+      "keyboard_title": "キーボードレイアウトと切替ショートカット",
+      "keyboard_subtitle": "キーボードレイアウト (XKB) と切替ショートカットを選択",
+      "keyboard_layout_row": "キーボードレイアウト",
+      "keyboard_layout_hint": "←→ プリセット · e / Enter でカスタムレイアウトを編集",
+      "keyboard_toggle_section": "切替ショートカット",
+      "hint_presets": "プリセット",
+      "hint_edit": "編集",
+      "hint_clear": "クリア",
+      "hint_all": "すべて切替"
     },
     "steps": {
       "prepare": "テレメトリと環境を準備",
@@ -972,6 +995,7 @@
     },
     "deps": {
       "syncing": "システムパッケージを同期および更新中 (pacman -Syyu)...",
+      "syncing_portage": "Portage ツリーを同期中...",
       "all_installed": "-> すべてのパッケージが既にインストールされています！パッケージのダウンロードをスキップします。",
       "missing_count": "-> インストールが必要なパッケージが {count} 個見つかりました。",
       "installing_title": "システムパッケージと依存関係をインストール中...",
@@ -981,6 +1005,7 @@
       "enabling_copr": "COPR リポジトリ {repo} を有効化中...",
       "enabling_repo": "リポジトリ {repo} を有効化中...",
       "enabling_terra": "Terra リポジトリを有効化中...",
+      "enabling_overlay": "Gentoo オーバーレイ {repo} を有効化中...",
       "quickshell_outdated": "Quickshell {version} は古すぎるため、{minimum} 以降が必要です。アップグレード中...",
       "quickshell_still_old": "Quickshell がまだ {minimum} より古いままです。手動で更新してください。更新しないと設定画面が開きません。",
       "ranking_pacman": "最速の Pacman ミラーを検索してランク付けしています...",
@@ -1817,6 +1842,14 @@
         "select_dir": "ディレクトリを選択...",
         "select_wallpaper": "壁紙を選択",
         "select": "壁紙",
+        "carousel": {
+          "title": "壁紙カルーセル",
+          "desc": "フォルダーからランダムな壁紙を定期的に表示し、すべて表示し終えるまで重複しません",
+          "interval": {
+            "title": "切り替え間隔",
+            "desc": "壁紙を切り替える間隔（秒）。10秒から1週間まで"
+          }
+        },
         "transition": {
           "mode": {
             "title": "トランジション",
@@ -2266,6 +2299,10 @@
       "background": {
         "title": "アプリの背面に背景を描画",
         "desc": "アプリアイコンの背面にドックパネルを表示"
+      },
+      "icons_only": {
+        "title": "アイコンのみ",
+        "desc": "各アプリの背後の枠を非表示にし、アイコンのみを表示します"
       }
     },
     "lyrics_picker": {
@@ -2276,6 +2313,7 @@
     "search": {
       "placeholder": "設定を検索...",
       "prompt": "入力して設定を検索...",
+      "indexing": "設定のインデックスを作成中...",
       "no_results": "設定が見つかりませんでした",
       "results": "検索結果"
     },
