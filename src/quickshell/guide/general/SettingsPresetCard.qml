@@ -128,7 +128,7 @@ Rectangle {
         layer.effect: MultiEffect {
             maskEnabled: true
             maskSource: previewMask
-            maskThresholdMin: 0.0
+            maskThresholdMin: 0.5
             maskSpreadAtMin: 1.0
         }
 

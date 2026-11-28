@@ -84,7 +84,7 @@ Notification {
                 source: rawBgImg
                 maskSource: bgMask
                 maskEnabled: true
-                maskThresholdMin: 0.0
+                maskThresholdMin: 0.5
                 maskSpreadAtMin: 1.0
                 opacity: ThemeBackend.liquidGlass ? 0.3 : 0.22 * ThemeBackend.elementOpacity
             }

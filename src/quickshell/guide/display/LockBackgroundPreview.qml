@@ -51,7 +51,7 @@ Item {
         layer.effect: MultiEffect {
             maskEnabled: true
             maskSource: cardMask
-            maskThresholdMin: 0.0
+            maskThresholdMin: 0.5
             maskSpreadAtMin: 1.0
         }
 

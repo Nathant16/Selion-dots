@@ -405,7 +405,7 @@ MusicEqualizerState {
                 layer.effect: MultiEffect {
                     maskEnabled: true
                     maskSource: innerBgMask
-                    maskThresholdMin: 0.0
+                    maskThresholdMin: 0.5
                     maskSpreadAtMin: 1.0
                 }
 

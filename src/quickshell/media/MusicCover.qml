@@ -191,7 +191,7 @@ Item {
                         layer.effect: MultiEffect {
                             maskEnabled: true
                             maskSource: maskRect
-                            maskThresholdMin: 0.0
+                            maskThresholdMin: 0.5
                             maskSpreadAtMin: 1.0
                         }
 

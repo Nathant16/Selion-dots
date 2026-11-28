@@ -246,7 +246,7 @@ BarFaceBase {
                                     source: mediaArtImg
                                     maskEnabled: true
                                     maskSource: mediaArtMask
-                                    maskThresholdMin: 0.0
+                                    maskThresholdMin: 0.5
                                     maskSpreadAtMin: 1.0
                                     visible: root.hasArt && mediaArtImg.status === Image.Ready
                                 }
@@ -426,7 +426,7 @@ BarFaceBase {
                         source: sideArtImg
                         maskEnabled: true
                         maskSource: sideArtMask
-                        maskThresholdMin: 0.0
+                        maskThresholdMin: 0.5
                         maskSpreadAtMin: 1.0
                         visible: isMediaActive && root.activeArtUrl !== "" && sideArtImg.status === Image.Ready
                     }

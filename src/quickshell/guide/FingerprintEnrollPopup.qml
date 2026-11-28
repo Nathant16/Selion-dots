@@ -255,7 +255,7 @@ Popup {
                     source: filledSource
                     maskEnabled: true
                     maskSource: maskSourceItem
-                    maskThresholdMin: 0.0
+                    maskThresholdMin: 0.5
                     maskSpreadAtMin: 1.0
                     visible: (tab && (tab.currentPercent > 0 || tab.enrollStatus === "completed"))
                 }

@@ -1984,7 +1984,7 @@ HostedPanel {
                         layer.effect: MultiEffect {
                             maskEnabled: true
                             maskSource: paperMask
-                            maskThresholdMin: 0.0
+                            maskThresholdMin: 0.5
                             maskSpreadAtMin: 1.0
                         }
 

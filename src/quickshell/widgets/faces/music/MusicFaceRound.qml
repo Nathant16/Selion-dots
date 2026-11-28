@@ -221,7 +221,7 @@ Item {
                         source: artImg
                         maskEnabled: true
                         maskSource: maskRect
-                        maskThresholdMin: 0.0
+                        maskThresholdMin: 0.5
                         maskSpreadAtMin: 1.0
                         opacity: (root.isMediaActive && artImg.status === Image.Ready && MprisController.artUrl !== "") ? 1.0 : 0.0
 
